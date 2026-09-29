@@ -1,0 +1,2401 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="পত্রদ্বীপ এডমিন প্যানেল।">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#1D5358">
+<title>এডমিন প্যানেল | পত্রদ্বীপ | Potrodip</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary:#1D5358;
+    --primary-dark:#123A3D;
+    --secondary:#9B7257;
+    --secondary-light:#C9A98A;
+    --bg:#F7F3EC;
+    --surface:#FFFFFF;
+    --text:#2A2A28;
+    --text-muted:#6B6B63;
+    --border:#E4DDD0;
+    --success:#C99A3E;
+    --error:#B3402E;
+    --stock-ok:#3B8256;
+    --sidebar-bg:#123A3D;
+    --sidebar-text:#F2EFE8;
+    --field-bg:#FFFFFF;
+    --badge-pending:#B3402E;
+    --badge-verified:#9B7257;
+    --badge-delivered:#3B8256;
+  }
+  html[data-theme="dark"]{
+    --primary:#4FA8AD;
+    --primary-dark:#6FC3C8;
+    --secondary:#C9A98A;
+    --secondary-light:#E0C6A8;
+    --bg:#14181A;
+    --surface:#1E2426;
+    --text:#F2EFE8;
+    --text-muted:#A8A69E;
+    --border:#2C3335;
+    --success:#E0B354;
+    --error:#E06B57;
+    --stock-ok:#7CC99A;
+    --sidebar-bg:#0F1415;
+    --sidebar-text:#F2EFE8;
+    --field-bg:#1A2022;
+    --badge-pending:#E06B57;
+    --badge-verified:#E0C6A8;
+    --badge-delivered:#7CC99A;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Noto Serif Bengali', serif;
+    font-weight:400;
+    line-height:1.7;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  body.theme-ready, body.theme-ready *{
+    transition:background-color .25s ease, color .25s ease, border-color .25s ease, fill .25s ease, box-shadow .25s ease;
+  }
+  h1,h2,h3{font-family:'Noto Serif Bengali', serif; font-weight:700; line-height:1.3; color:var(--text);}
+  h4, button{font-family:'Noto Serif Bengali', serif; font-weight:600;}
+  p{font-weight:400;}
+  a{color:inherit; text-decoration:none;}
+  img{display:block; max-width:100%;}
+  button{font-family:inherit; cursor:pointer; border:none; background:none; color:inherit;}
+  input, select, textarea{font-family:inherit;}
+  .icon{display:inline-block; line-height:0;}
+  .icon svg{display:block;}
+
+  /* ============ লেআউট ============ */
+  .app{display:flex; min-height:100vh;}
+
+  /* ---------- সাইডবার ---------- */
+  .sidebar{
+    width:264px; flex-shrink:0;
+    background:var(--sidebar-bg); color:var(--sidebar-text);
+    display:flex; flex-direction:column;
+    position:sticky; top:0; height:100vh; z-index:200;
+  }
+  .sidebar-brand{
+    display:flex; align-items:center; gap:11px;
+    padding:26px 24px 22px;
+    border-bottom:1px solid rgba(255,255,255,.1);
+  }
+  .sidebar-brand .logo-mark{width:30px; height:auto; flex-shrink:0;}
+  .sidebar-brand .logo-mark svg{width:100%; height:auto; display:block;}
+  .sidebar-brand-text{min-width:0;}
+  .sidebar-brand-text .wordmark-logo{display:block; width:102px; max-width:100%; color:#fff; line-height:0;}
+  .sidebar-brand-text .wordmark-logo svg{width:100%; height:auto; display:block;}
+  .sidebar-brand-text .sub{font-size:11.5px; color:rgba(242,239,232,.55); margin-top:5px;}
+
+  .sidebar-nav{flex:1; padding:16px 14px; overflow-y:auto;}
+  .sidebar-group-label{
+    font-size:11.5px; color:rgba(242,239,232,.42); font-weight:600;
+    padding:14px 12px 8px; letter-spacing:.2px;
+  }
+  .sidebar-group-label:first-child{padding-top:2px;}
+  .nav-item{
+    display:flex; align-items:center; gap:12px;
+    width:100%; padding:10.5px 12px; border-radius:9px;
+    font-size:14px; color:rgba(242,239,232,.72);
+    margin-bottom:2px; text-align:right; justify-content:flex-start;
+  }
+  .nav-item svg{width:17px; height:17px; flex-shrink:0;}
+  .nav-item:hover{background:rgba(255,255,255,.06); color:#fff;}
+  .nav-item.active{background:var(--primary); color:#fff;}
+  html[data-theme="dark"] .nav-item.active{background:rgba(79,168,173,.22); color:var(--primary);}
+  .nav-item .nav-badge{
+    margin-right:auto; font-size:10.5px; font-weight:700; color:#fff;
+    background:var(--secondary); padding:1px 7px; border-radius:999px;
+  }
+
+  .sidebar-foot{
+    padding:16px 18px 20px; border-top:1px solid rgba(255,255,255,.1);
+    font-size:12px; color:rgba(242,239,232,.45);
+  }
+  .sidebar-foot a{color:rgba(242,239,232,.72); font-weight:600;}
+
+  .hamburger-btn{display:none;}
+
+  /* মোবাইল মেনু খোলা থাকা অবস্থায় পেছনের মূল পেজ স্ক্রল লক করার জন্য */
+  body.no-scroll{
+    position:fixed; left:0; right:0; overflow:hidden;
+    width:100%;
+  }
+
+  /* ---------- মূল কনটেন্ট ---------- */
+  .main{flex:1; min-width:0; display:flex; flex-direction:column;}
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:16px; padding:20px 34px;
+    background:var(--bg); border-bottom:1px solid var(--border);
+    position:sticky; top:0; z-index:100;
+  }
+  .topbar-title h1{font-size:22px; margin-bottom:3px;}
+  .topbar-title p{font-size:13px; color:var(--text-muted);}
+  .topbar-actions{display:flex; align-items:center; gap:10px; flex-shrink:0;}
+  #theme-toggle{
+    width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    color:var(--text-muted); border:1px solid var(--border);
+  }
+  #theme-toggle:hover{background:var(--border); color:var(--primary);}
+  #theme-toggle svg{width:18px; height:18px;}
+  #theme-toggle .icon-sun{display:none;}
+  html[data-theme="dark"] #theme-toggle .icon-moon{display:none;}
+  html[data-theme="dark"] #theme-toggle .icon-sun{display:block;}
+
+  .content{padding:30px 34px 60px;}
+  .page{display:none;}
+  .page.active{display:block;}
+
+  /* ---------- পেজ হেড ---------- */
+  .page-head{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:20px; flex-wrap:wrap;
+    margin-bottom:24px;
+  }
+  .page-head-copy p{font-size:13.5px; color:var(--text-muted); margin-top:4px; max-width:60ch;}
+
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:14px; font-weight:600; padding:11px 20px; border-radius:8px;
+    transition:background-color .18s ease, transform .1s ease, border-color .18s ease;
+  }
+  .btn svg{width:16px; height:16px; flex-shrink:0;}
+  .btn:active{transform:scale(.97);}
+  .btn-primary{background:var(--primary); color:#fff;}
+  .btn-primary:hover{background:var(--primary-dark);}
+  .btn-secondary{background:transparent; color:var(--text); border:1px solid var(--border);}
+  .btn-secondary:hover{border-color:var(--primary); color:var(--primary);}
+  .btn-danger-ghost{background:transparent; color:var(--text-muted); border:1px solid var(--border);}
+  .btn-danger-ghost:hover{border-color:var(--error); color:var(--error);}
+
+  /* ---------- স্ট্যাট চিপ ---------- */
+  .stat-row{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px;}
+  .stat-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:18px 20px;
+  }
+  .stat-card .stat-label{font-size:12.5px; color:var(--text-muted); margin-bottom:8px;}
+  .stat-card .stat-value{font-size:26px; font-weight:700;}
+  .stat-card .stat-value.accent{color:var(--secondary);}
+
+  @media(max-width:640px){
+    .stat-row{grid-template-columns:repeat(2,1fr); gap:10px;}
+    .stat-card{padding:14px 16px;}
+    .stat-card .stat-value{font-size:21px;}
+  }
+
+  /* ============ মোবাইল রেসপন্সিভ (এডমিন শেল) ============ */
+  @media(max-width:900px){
+    .sidebar{
+      position:fixed; left:0; top:0; bottom:0; z-index:400;
+      transform:translateX(-100%); transition:transform .25s ease;
+    }
+    .sidebar.open{transform:translateX(0);}
+    .hamburger-btn{
+      display:flex; width:38px; height:38px; border-radius:8px; align-items:center; justify-content:center;
+      color:var(--text-muted); border:1px solid var(--border); flex-shrink:0;
+    }
+    .hamburger-btn svg{width:19px; height:19px;}
+    #sidebar-scrim{
+      position:fixed; inset:0; background:rgba(20,24,26,.45); z-index:399;
+      opacity:0; pointer-events:none; transition:opacity .22s ease;
+    }
+    #sidebar-scrim.open{opacity:1; pointer-events:auto;}
+    .topbar{padding:16px 18px;}
+    .content{padding:20px 18px 50px;}
+    .topbar-title h1{font-size:19px;}
+    .page-head{flex-direction:column; align-items:stretch;}
+    .page-head .btn{width:100%; justify-content:center;}
+  }
+
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} }
+
+  /* ================================================================
+     ============ ড্যাশবোর্ড হোম ============
+  ================================================================= */
+  .dash-grid{display:grid; grid-template-columns:1.4fr 1fr; gap:22px; margin-bottom:8px;}
+  .dash-card{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:22px 24px;}
+  .dash-card h3{font-size:15.5px; margin-bottom:4px;}
+  .dash-card .dc-sub{font-size:12.5px; color:var(--text-muted); margin-bottom:18px;}
+  .quick-list{display:flex; flex-direction:column; gap:2px;}
+  .quick-row{
+    display:flex; align-items:center; gap:12px; padding:11px 6px;
+    border-bottom:1px solid var(--border); font-size:13.5px;
+  }
+  .quick-row:last-child{border-bottom:none;}
+  .quick-row .qr-icon{
+    width:32px; height:32px; border-radius:50%; flex-shrink:0;
+    background:color-mix(in srgb, var(--primary) 12%, transparent); color:var(--primary);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .quick-row .qr-icon svg{width:15px; height:15px;}
+  .quick-row .qr-text{flex:1; min-width:0;}
+  .quick-row .qr-text strong{display:block; font-weight:600; color:var(--text);}
+  .quick-row .qr-text span{font-size:12px; color:var(--text-muted);}
+  .quick-row .qr-time{font-size:11.5px; color:var(--text-muted); flex-shrink:0; white-space:nowrap;}
+  .top-issues-list{display:flex; flex-direction:column; gap:12px;}
+  .top-issue-row{display:flex; align-items:center; gap:12px;}
+  .top-issue-row .ti-rank{
+    width:24px; height:24px; border-radius:6px; background:var(--bg); border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--secondary); flex-shrink:0;
+  }
+  .top-issue-row .ti-info{flex:1; min-width:0;}
+  .top-issue-row .ti-title{display:block; font-size:13.5px; font-weight:600; line-height:1.4;}
+  .top-issue-row .ti-meta{display:block; font-size:11.5px; color:var(--text-muted); margin-top:2px;}
+  .top-issue-row .ti-views{font-size:13px; font-weight:700; color:var(--primary); flex-shrink:0;}
+  .quick-actions-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:18px;}
+  .quick-actions-row .btn{flex:1; min-width:150px; justify-content:center;}
+
+  @media(max-width:980px){ .dash-grid{grid-template-columns:1fr;} }
+
+  /* ================================================================
+     ============ কনটেন্ট টেবিল (সাধারণ — লেখা/লেখক/আর্কাইভ) ============
+  ================================================================= */
+  .table-wrap{
+    background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden;
+  }
+  .table-filters{
+    display:flex; gap:8px; flex-wrap:wrap; padding:16px 18px; border-bottom:1px solid var(--border);
+    align-items:center; justify-content:space-between;
+  }
+  .chip-row{display:flex; gap:8px; flex-wrap:wrap;}
+  .chip-row button{
+    font-size:12.5px; padding:7px 15px; border:1px solid var(--border); color:var(--text-muted); border-radius:999px;
+  }
+  .chip-row button.active{background:var(--primary); color:#fff; border-color:var(--primary);}
+  html[data-theme="dark"] .chip-row button.active{color:#0F1415;}
+  .table-search{
+    display:flex; align-items:center; gap:8px; background:var(--bg); border:1px solid var(--border);
+    border-radius:999px; padding:8px 14px; min-width:200px;
+  }
+  .table-search svg{width:14px; height:14px; color:var(--text-muted); flex-shrink:0;}
+  .table-search input{background:transparent; border:none; outline:none; font-size:13px; color:var(--text); width:100%;}
+
+  table.data-table{width:100%; border-collapse:collapse;}
+  table.data-table th, table.data-table td{
+    padding:13px 16px; text-align:right; font-size:13.5px; border-bottom:1px solid var(--border);
+    white-space:nowrap;
+  }
+  table.data-table th{font-size:12px; color:var(--text-muted); font-weight:600; background:var(--bg);}
+  table.data-table td.wrap-cell{white-space:normal; max-width:220px;}
+  table.data-table td.wrap-cell strong{display:block; font-weight:600; color:var(--text); font-size:13.5px;}
+  table.data-table td.wrap-cell span{font-size:12px; color:var(--text-muted);}
+  table.data-table tbody tr:last-child td{border-bottom:none;}
+  table.data-table tbody tr:hover{background:color-mix(in srgb, var(--primary) 4%, transparent);}
+  table.data-table td.thumb-cell{width:52px;}
+  table.data-table .row-thumb{width:44px; height:44px; border-radius:7px; overflow:hidden; background:var(--bg); flex-shrink:0;}
+  table.data-table .row-thumb img{width:100%; height:100%; object-fit:cover;}
+  table.data-table .row-thumb.round{border-radius:50%;}
+
+  .status-badge{
+    display:inline-flex; align-items:center; gap:5px;
+    font-size:12px; font-weight:600; padding:5px 12px; border-radius:999px;
+  }
+  .status-badge.pending{background:color-mix(in srgb, var(--badge-pending) 14%, transparent); color:var(--badge-pending);}
+  .status-badge.verified{background:color-mix(in srgb, var(--badge-verified) 20%, transparent); color:var(--secondary);}
+  .status-badge.delivered{background:color-mix(in srgb, var(--badge-delivered) 16%, transparent); color:var(--stock-ok);}
+  .status-badge.published{background:color-mix(in srgb, var(--stock-ok) 16%, transparent); color:var(--stock-ok);}
+  .status-badge.draft{background:color-mix(in srgb, var(--text-muted) 16%, transparent); color:var(--text-muted);}
+
+  select.status-select{
+    font-size:12.5px; padding:6px 10px; border-radius:8px; border:1px solid var(--border);
+    background:var(--field-bg); color:var(--text);
+  }
+
+  .icon-btn-sm{
+    width:32px; height:32px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
+    color:var(--text-muted); border:1px solid var(--border);
+  }
+  .icon-btn-sm:hover{border-color:var(--primary); color:var(--primary);}
+  .icon-btn-sm svg{width:14px; height:14px;}
+  .icon-btn-sm.danger:hover{border-color:var(--error); color:var(--error);}
+  .row-actions{display:flex; gap:6px; justify-content:flex-end;}
+
+  .stars-mini{color:var(--success); display:inline-flex; gap:1px; vertical-align:middle;}
+  .stars-mini svg{width:11px; height:11px;}
+
+  @media(max-width:900px){ .table-wrap{overflow-x:auto;} table.data-table{min-width:640px;} }
+  @media(max-width:640px){
+    .table-filters{flex-direction:column; align-items:stretch;}
+    .table-search{width:100%;}
+  }
+
+  /* ---------- খালি অবস্থা ---------- */
+  .empty-row-note{
+    text-align:center; padding:44px 20px; color:var(--text-muted); font-size:13.5px;
+  }
+
+  /* ================================================================
+     ============ কার্ড গ্রিড (প্রিন্ট সংখ্যা, লেখক) ============
+  ================================================================= */
+  .card-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:20px;}
+  .item-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden;
+  }
+  .item-cover{position:relative; aspect-ratio:3/4; background:var(--bg);}
+  .item-cover img{width:100%; height:100%; object-fit:cover;}
+  .item-cover.round-cover{aspect-ratio:1/1; padding:20px 20px 0;}
+  .item-cover.round-cover img{border-radius:50%; border:3px solid var(--bg); box-shadow:0 2px 8px rgba(0,0,0,.1);}
+  .item-badge{
+    position:absolute; top:10px; left:10px;
+    font-size:11px; font-weight:600; padding:4px 11px; border-radius:999px;
+    background:color-mix(in srgb, var(--stock-ok) 18%, var(--surface)); color:var(--stock-ok);
+  }
+  .item-badge.out{background:color-mix(in srgb, var(--error) 16%, var(--surface)); color:var(--error);}
+  .item-body{padding:14px 16px 16px; text-align:center;}
+  .item-body.left-align{text-align:right;}
+  .item-name{font-size:15px; font-weight:700; line-height:1.4; margin-bottom:6px;}
+  .item-sub-line{font-size:12.5px; color:var(--text-muted); line-height:1.55; margin-bottom:12px;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+  .item-foot{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+  .item-foot.centered{justify-content:center; gap:14px;}
+  .item-price{font-size:15px; font-weight:700; color:var(--text);}
+  .item-price .unit{font-size:11px; font-weight:400; color:var(--text-muted);}
+
+  .add-item-card{
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
+    border:1.5px dashed var(--border); border-radius:12px; min-height:100%;
+    color:var(--text-muted); padding:30px 16px;
+  }
+  .add-item-card:hover{border-color:var(--primary); color:var(--primary);}
+  .add-item-card .plus-circle{
+    width:38px; height:38px; border-radius:50%; border:1.5px solid currentColor;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .add-item-card .plus-circle svg{width:17px; height:17px;}
+  .add-item-card span{font-size:13.5px; font-weight:600;}
+
+  @media(max-width:860px){
+    .card-grid{grid-template-columns:repeat(auto-fill, minmax(150px,1fr));}
+  }
+
+  /* ================================================================
+     ============ সেটিংস ফর্ম ============
+  ================================================================= */
+  .settings-grid{display:grid; grid-template-columns:1fr 1fr; gap:22px;}
+  .settings-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:24px 26px;
+  }
+  .settings-card h3{font-size:16.5px; margin-bottom:4px;}
+  .settings-card .settings-sub{font-size:12.5px; color:var(--text-muted); margin-bottom:20px;}
+  .field-row{margin-bottom:16px;}
+  .field-row:last-of-type{margin-bottom:0;}
+  .field-row label{display:block; font-size:12.5px; color:var(--text-muted); margin-bottom:6px;}
+  .field-row input, .field-row textarea{
+    width:100%; padding:11px 13px; background:var(--field-bg); border:1px solid var(--border);
+    border-radius:8px; color:var(--text); font-size:14px;
+  }
+  .field-row input:focus, .field-row textarea:focus{outline:none; border-color:var(--primary);}
+  .field-row textarea{resize:vertical; min-height:70px; line-height:1.6;}
+  .field-grid-2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .settings-foot{display:flex; justify-content:flex-end; margin-top:20px; padding-top:18px; border-top:1px solid var(--border);}
+  .field-input-icon{position:relative;}
+  .field-input-icon .prefix{
+    position:absolute; right:13px; top:50%; transform:translateY(-50%);
+    font-size:13px; color:var(--text-muted); pointer-events:none;
+  }
+  .field-input-icon input{padding-right:30px;}
+
+  .stock-toggle-row{display:flex; align-items:center; justify-content:space-between; gap:12px;
+    background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:12px 14px;}
+  .stock-toggle-row span{font-size:13.5px;}
+  .switch{position:relative; width:44px; height:25px; flex-shrink:0;}
+  .switch input{opacity:0; width:0; height:0;}
+  .switch .track{
+    position:absolute; inset:0; background:var(--border); border-radius:999px; transition:background-color .18s ease; cursor:pointer;
+  }
+  .switch .track::before{
+    content:""; position:absolute; width:19px; height:19px; left:3px; top:3px; border-radius:50%;
+    background:#fff; transition:transform .18s ease; box-shadow:0 1px 3px rgba(0,0,0,.25);
+  }
+  .switch input:checked + .track{background:var(--stock-ok);}
+  .switch input:checked + .track::before{transform:translateX(19px);}
+
+  @media(max-width:960px){ .settings-grid{grid-template-columns:1fr;} }
+  @media(max-width:480px){ .field-grid-2{grid-template-columns:1fr;} }
+
+  /* ================================================================
+     ============ মডাল (কনটেন্ট এডিটর ও আইটেম ফর্ম) ============
+  ================================================================= */
+  #modal-scrim{
+    position:fixed; inset:0; background:rgba(20,24,26,.5); z-index:900;
+    opacity:0; pointer-events:none; transition:opacity .22s ease;
+  }
+  #modal-scrim.open{opacity:1; pointer-events:auto;}
+  .modal-box{
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-48%);
+    width:min(560px, 92vw); max-height:88vh; overflow-y:auto;
+    background:var(--bg); border-radius:14px; z-index:901;
+    box-shadow:0 24px 60px rgba(0,0,0,.28);
+    opacity:0; pointer-events:none; transition:opacity .22s ease, transform .22s ease;
+  }
+  .modal-box.open{opacity:1; pointer-events:auto; transform:translate(-50%,-50%);}
+  .modal-box.narrow{width:min(460px, 92vw);}
+  .modal-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 22px; border-bottom:1px solid var(--border);
+    position:sticky; top:0; background:var(--bg); z-index:6;
+  }
+  .modal-head h3{font-size:17px;}
+  .modal-close{
+    width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    color:var(--text-muted); flex-shrink:0;
+  }
+  .modal-close:hover{background:var(--border); color:var(--error);}
+  .modal-close svg{width:16px; height:16px;}
+  .modal-body{padding:22px;}
+  .modal-foot{
+    display:flex; gap:10px; padding:18px 22px; border-top:1px solid var(--border);
+    position:sticky; bottom:0; background:var(--bg); z-index:6;
+  }
+  .modal-foot .btn{flex:1; justify-content:center;}
+
+  /* ---------- লেখা প্রকাশের মডাল — বড় স্ক্রিনে ফুল-স্কেল এডিটর লেআউট ---------- */
+  .modal-box.article-box{ width:min(560px, 92vw); }
+  @media(min-width:961px){
+    .modal-box.article-box{
+      width:min(1180px, 95vw); max-height:92vh;
+      top:50%; left:50%;
+    }
+    .modal-box.article-box .modal-body{
+      display:grid; grid-template-columns:1fr 320px; gap:26px; align-items:start; padding:26px 28px;
+    }
+    .modal-box.article-box .art-main{ min-width:0; }
+    .modal-box.article-box .art-side{ min-width:0; display:flex; flex-direction:column; gap:0; }
+    .modal-box.article-box .art-side .field-row{
+      background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin-bottom:14px;
+    }
+    .modal-box.article-box .rte-body{ min-height:440px; font-size:15.5px; }
+    .modal-box.article-box .art-main-title input{ font-size:19px; font-weight:700; padding:14px 16px; }
+  }
+
+  .cover-upload{
+    aspect-ratio:3/4; width:150px; margin:0 auto 20px; border-radius:10px;
+    border:1.5px dashed var(--border); background:var(--surface);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
+    color:var(--text-muted); font-size:12px; text-align:center; padding:10px; position:relative; overflow:hidden; cursor:pointer;
+  }
+  .cover-upload.round{aspect-ratio:1/1; border-radius:50%; width:130px;}
+  .cover-upload svg{width:22px; height:22px; flex-shrink:0;}
+  .cover-upload img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:none;}
+  .modal-box.article-box .art-side .cover-upload{width:100%; aspect-ratio:16/9;}
+
+  /* ---------- রিচ টেক্সট এডিটর (contenteditable) — প্রিমিয়াম টুলবার ---------- */
+  .rte-field-label{font-size:12.5px; color:var(--text-muted); margin-bottom:6px; display:block;}
+  .rte-toolbar{
+    display:flex; align-items:center; gap:2px; flex-wrap:wrap; padding:7px; background:var(--surface);
+    border:1px solid var(--border); border-bottom:none; border-radius:8px 8px 0 0;
+    position:sticky; top:0; z-index:5;
+  }
+  .modal-box.article-box .art-main .rte-toolbar{ top:0; }
+  .rte-toolbar .rte-sep{width:1px; align-self:stretch; margin:4px 3px; background:var(--border); flex-shrink:0;}
+  .rte-toolbar button{
+    width:32px; height:32px; border-radius:6px; display:flex; align-items:center; justify-content:center;
+    color:var(--text-muted); font-size:13px; font-weight:700; flex-shrink:0; position:relative;
+    transition:background-color .15s ease, color .15s ease;
+  }
+  .rte-toolbar button:hover{background:var(--bg); color:var(--primary);}
+  .rte-toolbar button.is-active{background:var(--primary); color:#fff;}
+  .rte-toolbar button svg{width:16px; height:16px;}
+  .rte-toolbar button[data-cmd="highlight"] svg{color:var(--success);}
+  .rte-toolbar button.is-active[data-cmd="highlight"]{background:var(--success); color:#fff;}
+  .rte-body{
+    min-height:220px; padding:14px 16px; background:var(--field-bg); border:1px solid var(--border);
+    border-radius:0 0 8px 8px; font-size:14.5px; line-height:1.85; outline:none;
+  }
+  .rte-body, .rte-body *{ color:var(--text) !important; }
+  .rte-body mark, .rte-body mark.rte-highlight{
+    background:color-mix(in srgb, var(--success) 42%, transparent) !important;
+    color:var(--text) !important; border-radius:2px; padding:0 1px;
+  }
+  .rte-body blockquote{
+    margin:14px 0; padding:10px 16px; border-left:3px solid var(--secondary);
+    background:color-mix(in srgb, var(--secondary) 8%, transparent); border-radius:0 6px 6px 0;
+    font-style:italic;
+  }
+  .rte-body h3{font-size:1.2em; font-weight:700; margin:10px 0 6px;}
+  .rte-body ul, .rte-body ol{padding-right:22px; margin:8px 0;}
+  .rte-body a{color:var(--primary); text-decoration:underline;}
+  .rte-body:empty::before{content:attr(data-placeholder); color:var(--text-muted) !important; opacity:.6;}
+
+  /* ---------- PDF নমুনা আপলোড বক্স ---------- */
+  .pdf-upload-box{
+    border:1.5px dashed var(--border); border-radius:10px; padding:16px; text-align:center; cursor:pointer;
+    background:var(--surface); transition:border-color .18s ease;
+  }
+  .pdf-upload-box:hover{border-color:var(--primary);}
+  .pdf-upload-empty{display:flex; flex-direction:column; align-items:center; gap:7px; color:var(--text-muted); font-size:12.5px;}
+  .pdf-upload-empty svg{width:22px; height:22px; flex-shrink:0;}
+  .pdf-upload-filled{display:flex; align-items:center; gap:10px; justify-content:center;}
+  .pdf-upload-filled svg{width:20px; height:20px; color:var(--error); flex-shrink:0;}
+  .pdf-filename{font-size:12.5px; color:var(--text); font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:220px;}
+  .pdf-remove-btn{
+    width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    color:var(--text-muted); border:1px solid var(--border); flex-shrink:0;
+  }
+  .pdf-remove-btn:hover{border-color:var(--error); color:var(--error);}
+  .pdf-remove-btn svg{width:12px; height:12px;}
+  .field-hint{font-size:11.5px; color:var(--text-muted); margin-top:6px; line-height:1.6;}
+  .item-pdf-badge{
+    position:absolute; bottom:8px; right:8px; z-index:2;
+    display:flex; align-items:center; gap:4px;
+    background:rgba(18,58,61,.82); color:#fff; font-size:10.5px; font-weight:600;
+    padding:3px 9px; border-radius:999px; backdrop-filter:blur(4px);
+  }
+  .item-pdf-badge svg{width:11px; height:11px; flex-shrink:0;}
+
+
+  .img-upload-row{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;}
+  .img-upload-thumb{
+    width:70px; height:70px; border-radius:8px; overflow:hidden; position:relative; background:var(--surface); border:1px solid var(--border);
+  }
+  .img-upload-thumb img{width:100%; height:100%; object-fit:cover;}
+  .img-upload-thumb .rm-btn{
+    position:absolute; top:2px; right:2px; width:18px; height:18px; border-radius:50%;
+    background:rgba(0,0,0,.6); color:#fff; display:flex; align-items:center; justify-content:center;
+  }
+  .img-upload-thumb .rm-btn svg{width:10px; height:10px;}
+  .img-upload-add{
+    width:70px; height:70px; border-radius:8px; border:1.5px dashed var(--border);
+    display:flex; align-items:center; justify-content:center; color:var(--text-muted); cursor:pointer;
+  }
+  .img-upload-add:hover{border-color:var(--primary); color:var(--primary);}
+  .img-upload-add svg{width:18px; height:18px;}
+
+  /* ---------- toast ---------- */
+  #toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--primary); color:#fff; font-size:13.5px; font-weight:600;
+    padding:12px 22px; border-radius:999px; box-shadow:0 10px 26px -8px rgba(0,0,0,.3);
+    display:flex; align-items:center; gap:8px;
+    z-index:950; opacity:0; pointer-events:none; transition:opacity .22s ease, transform .22s ease;
+  }
+  #toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  #toast svg{width:16px; height:16px; flex-shrink:0;}
+
+  /* ---------- কনফার্মেশন পপআপ ---------- */
+  #confirm-overlay{
+    position:fixed; inset:0; z-index:2000; background:rgba(10,14,15,.5);
+    display:flex; align-items:center; justify-content:center; padding:20px;
+    opacity:0; pointer-events:none; transition:opacity .25s ease;
+  }
+  #confirm-overlay.show{opacity:1; pointer-events:auto;}
+  .confirm-card{
+    width:100%; max-width:380px; background:var(--surface); border:1px solid var(--border);
+    border-radius:18px; padding:30px 26px 24px; text-align:center;
+    box-shadow:0 26px 60px -20px rgba(0,0,0,.35);
+    transform:translateY(10px) scale(.97); transition:transform .25s ease;
+  }
+  #confirm-overlay.show .confirm-card{transform:translateY(0) scale(1);}
+  .confirm-icon{
+    width:56px; height:56px; margin:0 auto 16px; border-radius:50%;
+    background:color-mix(in srgb, var(--error) 14%, transparent);
+    color:var(--error); display:flex; align-items:center; justify-content:center;
+  }
+  .confirm-icon svg{width:26px; height:26px;}
+  .confirm-card h3{font-size:18px; margin-bottom:9px;}
+  .confirm-card p{font-size:13.5px; color:var(--text-muted); line-height:1.7; margin-bottom:22px;}
+  .confirm-actions{display:flex; flex-direction:column; gap:10px;}
+  .confirm-danger{width:100%; text-align:center; background:var(--error); color:#fff; font-size:14.5px; font-weight:600; padding:12px; border-radius:10px;}
+  .confirm-danger:hover{background:#8f2f21;}
+  html[data-theme="dark"] .confirm-danger:hover{background:#c65243;}
+  .confirm-cancel{font-size:13px; color:var(--text-muted); font-weight:600; padding:6px;}
+  .confirm-cancel:hover{color:var(--text);}
+
+  /* ================================================================
+     ============ কমেন্ট মডারেশন ============
+  ================================================================= */
+  .mod-list{display:flex; flex-direction:column; gap:12px;}
+  .mod-item{
+    display:flex; gap:14px; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px 18px;
+  }
+  .mod-item.flagged{border-color:color-mix(in srgb, var(--error) 35%, var(--border));}
+  .mod-item img{width:38px; height:38px; border-radius:50%; object-fit:cover; flex-shrink:0;}
+  .mod-body{flex:1; min-width:0;}
+  .mod-top{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px;}
+  .mod-top strong{font-size:14.5px; font-weight:600;}
+  .mod-top .flag-tag{
+    font-size:10.5px; font-weight:700; color:#fff; background:var(--error); padding:2px 9px; border-radius:999px;
+  }
+  .mod-context{font-size:12px; color:var(--secondary); font-weight:600;}
+  .mod-date{font-size:12px; color:var(--text-muted); margin-right:auto;}
+  .mod-text{font-size:14px; color:var(--text); line-height:1.7; margin-bottom:10px;}
+  .mod-actions{display:flex; gap:8px;}
+  .mod-actions .btn{padding:8px 16px; font-size:12.5px;}
+
+  /* ================================================================
+     ============ নিউজলেটার সাবস্ক্রাইবার ============
+  ================================================================= */
+  .subscriber-summary{display:flex; gap:18px; flex-wrap:wrap; margin-bottom:20px;}
+  .subs-chip{
+    background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px 20px; flex:1; min-width:160px;
+  }
+  .subs-chip .sc-label{font-size:12px; color:var(--text-muted); margin-bottom:6px;}
+  .subs-chip .sc-value{font-size:22px; font-weight:700;}
+
+  /* ================================================================
+     ============ অ্যানালিটিক্স ============
+  ================================================================= */
+  .bar-chart-wrap{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:24px 26px; margin-bottom:22px;}
+  .bar-chart-wrap h3{font-size:15.5px; margin-bottom:18px;}
+  .bar-row{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .bar-row:last-child{margin-bottom:0;}
+  .bar-label{width:160px; flex-shrink:0; font-size:13px; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .bar-track{flex:1; height:20px; border-radius:6px; background:var(--bg); overflow:hidden;}
+  .bar-fill{height:100%; border-radius:6px; background:var(--primary); transition:width .5s ease;}
+  .bar-value{width:56px; flex-shrink:0; text-align:left; font-size:13px; font-weight:700; color:var(--text);}
+  @media(max-width:600px){ .bar-label{width:100px; font-size:12px;} }
+</style>
+<meta name="robots" content="noindex, nofollow">
+<script src="assets/demo-storage.js" defer></script>
+</head>
+<body>
+
+<div class="app">
+  <div id="sidebar-scrim"></div>
+
+  <!-- ============ সাইডবার — পরের ধাপে পূর্ণ করা হবে ============ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <span class="logo-mark">
+        <svg viewBox="35 235 930 405" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#4FA8AD" d="M226.92,369.51l0.11-0.17l0.11-0.22l0.72-1.45l1.72-3.33l2-4.11l1.83-4.22l1.5-3.61l0.72-1.94l0.72-1.95l1.06-2.83l0.83-2.39l1-3.34l1.11-3.83l0.45-1.83l0.94-3.83l0.56-2.78l0.72-4c0.56-3.06,1-6.06,1.11-9.12l0.28-6.5l-0.17-5.89c-0.06-3-0.56-5.84-1-9l-0.78-0.33l-4.34,3.72c-2.56,2.11-5.34,3.89-8.28,5.5l-3.73,2.06c-0.33,0.17-0.94,0.78-1.06,1l2.45,8.73l0.61,2.56l0.45,2.06l0.55,3.61l0.72,5.45l0.33,3.95l0.22,4.11v6.11l-0.17,4.5l-0.22,2.89l-0.39,4.17l-0.39,2.61l-0.89,5.17l-0.72,3.45l-0.34,1.39c0,0-0.11,1.78-0.5,4.06L226.92,369.51z"/>
+          <path fill="#4FA8AD" d="M168.01,339.05l4.28,1.94l7.89,3.89l3,1.56l2.89,1.56l7.34,4.22l2.83,1.61l10.56,6.84l4.89,3.45l4.45,3.28l3.11,2.39l2.56,2l2.5,2.06l1.06,0.83l0.17-0.78l0.06-0.05l1.72-8l0.28-2.28l0.33-4.61l0.22-4.56v-8.06l-0.06-3.06l-0.11-2.5l-0.28-3.5l-0.39-3.95l-0.17-1.83l-0.61-4l-0.45-2.78l-0.78-3.95c-0.56-3.06-1.28-6-2.28-8.95l-2.11-6.11l-2.28-5.45c-1.17-2.78-2.67-5.22-4.23-8l-0.83-0.06l-2.67,5.06c-1.61,2.89-3.56,5.56-5.72,8.11l-2.73,3.28c-0.28,0.33-0.61,1.06-0.61,1.33l5.45,7.23l1.5,2.22l1.11,1.72l1.89,3.11l2.61,4.84l1.72,3.56l1.72,3.78l2.22,5.67l1.5,4.28l0.83,2.78l1.11,4l0.61,2.56l1.06,5.11l0.61,3.5l0.05,0.39l-0.17-0.22v-0.06l-0.89-3.67l-0.5-1.83l-1.78-5.89l-1.83-5.17l-1.78-4.34l-1.39-3.17l-0.83-1.78l-1.95-3.61c-4.11-7.84-9.06-15.06-15.12-21.57l-2.67-2.89c-2.39-2.5-4.89-4.78-7.67-7l-4.5-3.61c-0.11-0.11-0.78-0.33-0.78-0.17v0.56l-0.11,1.83l-0.11,2.11l-0.11,2.06l-0.11,2.11l-0.28,2.56l-0.39,2.28l-0.61,3.61l3.39,2.89c3.72,3.17,7.34,6.28,10.84,9.78l4.83,4.78l2.84,3.11l1.83,1.94l1.44,1.78l4.06,5c2.11,2.5,4,5.28,5.84,8.11l-5.12-5.17l-4.56-4.17l-1.72-1.5l-1.78-1.44l-2.84-2.28l-2.56-2l-3.39-2.56l-2.67-1.83l-3.22-2.22l-5.89-3.72l-6.5-3.95l-0.94-0.45l-4.33-2.28l-2.95-1.39l-8.39,6.06l5.28,2.39l3.06,1.39l7.78,4l3.17,1.72l5.28,3.11l2,1.11l7.39,4.78l6.45,4.56l-3.72-2.11l-5.89-3.5l-3.73-2.06l-4.28-2.33l-7.67-3.83l-2.89-1.39l-2.11-1l-2.11-0.94l-2.95-1.33l-4.61-2l-2.61-1.06l-3.95,2.56l-3.5,2.34l-0.17,0.5l7.73,2.83L168.01,339.05z"/>
+        </svg>
+      </span>
+      <div class="sidebar-brand-text">
+        <span class="wordmark-logo" aria-label="পত্রদ্বীপ">
+          <svg viewBox="35 235 930 405" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+            <path d="M666.21,400.44c0.89-0.78,0.61-2.63-0.15-4.69c-0.91-35.03,8.36-77.78-9.86-109.59c-19.09-33.33-71.59-33.98-104.53-28.42c-33.85,5.71-70.95,17.6-95.94,42.04c-2.5,2.45-19.61,18.68-16.62,23.81c3.38,5.82,13.27-3.99,16.39-7.04c11.63-11.37,36.76-16.56,51.85-20.38c16.6-4.2,33.83-6.46,50.97-5.75c35.31,1.46,67.24,14.9,73.47,52.56c0.7,4.22,1.42,11.99,2.12,21.62c-35.33-14.02-71.7-21.39-109.99-18.95c-12.18,0.77-24.28,2.32-36.33,4.19c-2.58,0.36-3.5,0.56-4.71,0.75c-7.31,1.19-14.61,2.45-21.89,3.78c-17.19,3.15-34.36,5.71-49.04,15.57c-11.89-8.21-24.84-13.29-37.27-12.56c-0.94-0.31-1.89-0.57-2.82-0.66c-25.85-2.35-52.01-1.32-77.97-1.32c-12.54-0.05-25.09-0.15-37.58-0.1c-3.62,0-7.19-0.15-10.61,0.2l-1.84,4.79l-0.61,1.48l-0.87,2.14l-1.88,4.34l-1.99,4.23l-1.53,2.96l-0.46,0.92l-4.69,20.65c-0.31-0.31-0.61-0.61-0.97-0.87c-14.58-12.9-30.8-23.76-48.09-32.08c-7.8-3.72-16.17-6.83-24.89-9.13c-17.08-4.49-35.29-5.71-52.07-1.94c-26.77,6.02-41.61,29.48-50.03,53.8c-0.46,0.61-0.66,1.58-0.61,2.81c-0.36,3.98,1.43,8.87,3.77,13.46c5.25,12.34,14.58,26.42,19.99,24.17c13.67-5.81,27.54-9.08,42.48-8.26c6.78,0.41,13.57,1.48,20.09,3.52c5.3,1.68-25.19,48.39-42.12,61.55c-8.01,6.22,17.14,45.03,22.49,40.95c34.52-26.26,71.7-49.21,104.54-77.56c-0.92,37.38,0.97,74.3,7.24,118.72c1.33,9.18,10.15,17.85,16.63,23.81c1.27,1.17,17.29,13.41,16.42,7.04c-8.92-62.98-9.03-110.92-4.85-166.4c0.51-6.22,1.02-12.49,1.58-18.97c0.66-7.14,1.32-14.48,2.09-22.03c4.59-6.43,6.63-15.25,26.06-19.17c12.54,0,25.09,0,37.63,0.05c1.87,0,3.75-0.02,5.62-0.03c-5.1,10.55-8.78,21.92-11.88,31.38c-7.43,22.65,3.15,26.44,17.56,48.07c11.67,17.5,30.37,32.86,50.66,19.5c19.95-13.14,18.2-37.59,7.66-56.06c-3.7-6.49-34.96,25.33-41.13,19.85c2.25-5.65,8.78-23.98,11.59-29.33c6.28-11.97,15.47-26.85,30.01-29.75c3.47-0.69,24.94,12.18,25.22,16.68c1.83,29.36-4.29,53.94-3.16,83.47c0.71,18.59,2.93,38.96,6.06,58.72c-7.66-6.93-15.94-13.61-25.44-17.47c-13.18-5.35-25.92-1.53-38.73,2.8c-14.87,5.02-28.1,13.35-42.69,18.84l-8.45,5.6c-1.41,0.26-7.58,5.13-8.99,5.19c-0.01-1.06,1.38-10.38,1-11.98c0.27-4.31,6.71-33.03,7.99-37.15c2.85-11.54-38.09-15.18-39.79-8.29c-8.32,33.67,16.48,69.8,46.91,84.04c15.42,7.21,30.54,3.89,44.6-4.19c75.36-43.33,56.41-32.54,67.22-16.84c0.94,4.87,1.91,9.68,2.93,14.32c2.12,9.65,13.43,19.81,20.9,25.58c3.61,2.78,14.04,10.33,11.92,0.7c-6.75-30.68-10.45-61.95-10.97-93.36c-0.48-28.7,6.25-58.79,1.83-87.2c-1.37-8.8-6.17-19.48-13.19-30.03c11.39-8.2,24.36-17.42,37.59-22.54c-0.67,25.87-1.35,51.74-2.02,77.6c-0.36,13.12-3.85,30.31,0,43.18c3.27,10.93,14.96,23.69,24.02,30.09c41.52,4.35,76.65-44.72,77.51-45.59c0.11,6.33-0.79,14.74-1.8,23.87c-1.22,1.19-2.34,2.41-3.49,3.81c-0.29,0.36-0.4,0.83-0.4,1.33c-20.17,20.38-37.17,43.07-50.66,67.73c-2.59,4.78,12.04,17.29,16.79,17.51c12.08,0.57,23.62-1.22,35.63,1.22c12.4,2.52,23.87,7.51,34.98,13.09c4.49,2.23,1.47-3.74,0.75-4.89c-2.77-4.31-7.26-8.52-11.83-11.18c5,2.91,3.52-1.01,3.09-4.39c-0.07-0.32-0.11-0.65-0.11-0.97c-0.07-1.62-0.14-3.24-0.21-4.85c-0.11-1.94-0.18-3.88-0.29-5.82c-0.29-4.71-0.75-9.35-1.26-14.02c-3.31-14.67-2.91-30.34-2.19-45.44c0.14-2.7,0.25-5.36,0.4-7.98c1.29-26.71,4.38-53.14,10.46-79.2c2.23-9.63-47.56-28.37-49.07-24.92c-9.85,22.43-2.49,36.86-18.41,55.77c-8.23,9.78-23.91,26.71-36.71,33.33c0.54-12.12,5.5-30.52,5.82-42.32c0.65-25.17,1.29-50.3,1.94-75.46c0.06-2.2-0.61-4.5-1.71-6.79c15.16-0.73,31.31-0.27,44.91-1.14c28.39-1.8,52.35,5.01,77.23,14.65c1.65,29.73,2.91,63.66,3,73.9c0.32,36.31-9.44,93.94-12.38,130.09c-0.53,6.54,48.59,21.34,49.93,20.11c6.18-5.71-6.57-42.18-5.84-51.13C673.63,519.46,667.87,444.85,666.21,400.44z M156.91,473.09c32.74-89.5-22.9-68.69-44.11-73.28c0.1-0.1,0.2-0.15,0.36-0.26c17.85-9.84,40.69-8.67,59.97-4.44c16.01,3.52,30.8,10.25,44.47,19.02C190.46,443,177.82,455.14,156.91,473.09z M565.1,584.71c-4.03-0.93-7.98-1.4-11.94-1.65c7.95-12.44,16.83-24.3,26.64-35.59c1.19-1.4,2.41-2.77,3.67-4.17c0.32,8.05,1.58,16.07,2.19,24.09c0.07,1.11,0.14,2.23,0.22,3.34c0.39,7.59,0,15.24,3.31,22.18C581.45,589.53,573.47,586.65,565.1,584.71z"/>
+            <path d="M943.28,381.25c-4.86-9.48-13.83-18.19-22.54-24.17c-16.47-11.3-53.47-19.06-66.26,1.51c-0.44,0.71-0.59,1.56-0.61,2.46c-1.68,16.27-3.17,31.52-4.41,46.18c-12.69-16.41-30.11-35.02-47.12-43.18c-23.08-11.07-51.61-16.73-76.96-11.03c-26.79,6.02-41.61,29.46-50.03,53.8c-0.45,0.6-0.64,1.55-0.62,2.78c-0.33,3.98,1.47,8.89,3.81,13.49c5.23,12.3,14.59,26.41,19.98,24.12c13.67-5.79,39.44-12.72,54.4-11.88c6.78,0.38,13.98,54.93-33.96,68.72c-8.01,6.23,17.13,45.04,22.5,40.97c34.59-26.28,71.68-49.35,104.56-77.7c-0.91,37.42,0.95,74.4,7.24,118.84c1.3,9.15,10.15,17.82,16.62,23.81c1.25,1.16,17.29,13.39,16.39,7.04c-11.86-83.82-8.05-141.08,0.6-224.86c0.02-0.03,0.09-0.02,0.11-0.06c8.98-14.44,37.09-14.24,50.27-5.2C944.27,391.72,946.84,388.22,943.28,381.25z M787.47,469.89c-1.62-4.35,3.2-17.98-3.53-29.53c-11.8-22.59-30.35-35.96-51.58-40.57c0.12-0.07,0.24-0.15,0.37-0.22c17.84-9.85,31.53-15.39,50.82-11.17c16.01,3.5,33.17,12.86,46.84,21.62C818.83,433.34,802.05,451.11,787.47,469.89z"/>
+            <path d="M594.55,542.54c-1.62-4.15-3.9-8.3-6.22-12.09c-2.35-3.85-4.77-7.78-7.76-11.16c-0.44-0.5-4.07-4.76-4.75-3.7c-10.69,16.48-28.74,27.36-36.8,45.67c-0.8,1.81,0.4,4.31,1.03,5.93c1.62,4.15,3.9,8.3,6.22,12.09c2.35,3.85,4.77,7.78,7.76,11.16c0.38,0.43,4.29,4.74,4.75,3.7c8.06-18.31,26.11-29.18,36.8-45.67C596.56,546.97,595.02,543.73,594.55,542.54z"/>
+            <path d="M226.57,382.83v-0.2c0,0.1,0,0.15-0.05,0.26c0,0,0.05,0.05,0.05,0.1l0.15-0.61C226.67,382.52,226.62,382.68,226.57,382.83z"/>
+            <path d="M226.47,383.03l-0.1-0.1l-0.15,0.82C226.31,383.49,226.42,383.29,226.47,383.03z"/>
+            <path d="M226.52,383.95c0-0.1,0.05-0.41,0.05-0.87v-0.1c0,0-0.05,0-0.05,0.05V383.95z"/>
+            <path d="M226.57,382.17l-0.05,0.05c0.05,0.05,0.05,0.05,0.05,0.1V382.17z"/>
+          </svg>
+        </span>
+        <div class="sub">এডমিন প্যানেল</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="sidebarNav"></nav>
+    <div class="sidebar-foot">
+      মূল সাইটে ফিরুন — <a href="index.html">পত্রদ্বীপ.com</a>
+    </div>
+  </aside>
+
+  <!-- ============ মূল কনটেন্ট ============ -->
+  <div class="main">
+    <div class="topbar">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <button class="hamburger-btn" id="hamburger-btn" aria-label="মেনু খুলুন">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="topbar-title">
+          <h1 id="topbar-heading">ড্যাশবোর্ড</h1>
+          <p id="topbar-sub">সাইটের সার্বিক অবস্থা এক নজরে</p>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="theme-toggle" aria-label="থিম বদলান" title="থিম বদলান">
+          <svg class="icon-moon" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="content" id="pagesContainer">
+
+      <!-- ============ পেজ: ড্যাশবোর্ড ============ -->
+      <section class="page active" id="page-dashboard">
+        <div class="stat-row">
+          <div class="stat-card"><div class="stat-label">মোট প্রকাশিত লেখা</div><div class="stat-value" id="dash-total-articles">৫৮</div></div>
+          <div class="stat-card"><div class="stat-label">নিবন্ধিত ইউজার</div><div class="stat-value" id="dash-total-users">৯৪২</div></div>
+          <div class="stat-card"><div class="stat-label">এই মাসে নতুন অর্ডার</div><div class="stat-value accent" id="dash-total-orders">৮</div></div>
+          <div class="stat-card"><div class="stat-label">যাচাই বাকি পেমেন্ট</div><div class="stat-value accent" id="dash-pending-payments">৩</div></div>
+        </div>
+
+        <div class="dash-grid">
+          <div class="dash-card">
+            <h3>সাম্প্রতিক কার্যক্রম</h3>
+            <div class="dc-sub">সাইটে সর্বশেষ যা ঘটেছে</div>
+            <div class="quick-list" id="recentActivityList"></div>
+          </div>
+          <div class="dash-card">
+            <h3>সবচেয়ে বেশি পঠিত লেখা</h3>
+            <div class="dc-sub">এই মাসের শীর্ষ ৫টি</div>
+            <div class="top-issues-list" id="topReadList"></div>
+          </div>
+        </div>
+
+        <div class="dash-card" style="margin-top:22px;">
+          <h3>দ্রুত কাজ</h3>
+          <div class="dc-sub">প্রায়ই যেসব কাজ করতে হয়</div>
+          <div class="quick-actions-row">
+            <button class="btn btn-primary" data-goto="articles" data-open-article>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              নতুন লেখা প্রকাশ
+            </button>
+            <button class="btn btn-secondary" data-goto="authors" data-open-author>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              নতুন লেখক যোগ করুন
+            </button>
+            <button class="btn btn-secondary" data-goto="orders">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+              অর্ডার যাচাই করুন
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ পেজ: লেখা প্রকাশ ============ -->
+      <section class="page" id="page-articles">
+        <div class="page-head">
+          <div class="page-head-copy">
+            <h2 style="font-size:17px;">সব লেখা</h2>
+            <p>নতুন লেখা প্রকাশ করুন অথবা পুরোনো লেখা এডিট, ড্রাফট বা মুছে ফেলুন।</p>
+          </div>
+          <button class="btn btn-primary" data-open-article>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            নতুন লেখা প্রকাশ করুন
+          </button>
+        </div>
+        <div class="table-wrap">
+          <div class="table-filters">
+            <div class="chip-row" id="articleFilters">
+              <button class="active" data-filter="all">সব</button>
+              <button data-filter="published">প্রকাশিত</button>
+              <button data-filter="draft">ড্রাফট</button>
+            </div>
+            <div class="table-search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="articleSearch" placeholder="শিরোনাম বা লেখক খুঁজুন">
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead><tr><th></th><th>শিরোনাম</th><th>লেখক</th><th>বিভাগ</th><th>তারিখ</th><th>স্ট্যাটাস</th><th></th></tr></thead>
+              <tbody id="articlesTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ পেজ: লেখক প্রোফাইল ============ -->
+      <section class="page" id="page-authors">
+        <div class="page-head">
+          <div class="page-head-copy">
+            <h2 style="font-size:17px;">সব লেখক</h2>
+            <p>লেখক প্রোফাইল তৈরি বা এডিট করুন — নাম, পেশা, ছবি, সোশ্যাল মিডিয়া লিংক।</p>
+          </div>
+          <button class="btn btn-primary" data-open-author>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            নতুন লেখক যোগ করুন
+          </button>
+        </div>
+        <div class="card-grid" id="authorsGrid"></div>
+      </section>
+
+      <!-- ============ পেজ: আর্কাইভ/সংখ্যা ============ -->
+      <section class="page" id="page-archive">
+        <div class="page-head">
+          <div class="page-head-copy">
+            <h2 style="font-size:17px;">আর্কাইভ — সব সংখ্যা</h2>
+            <p>প্রতিটা ত্রৈমাসিক সংখ্যা তৈরি করুন এবং তার সাথে কোন কোন লেখা যুক্ত থাকবে তা ঠিক করুন।</p>
+          </div>
+          <button class="btn btn-primary" data-open-issue-archive>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            নতুন সংখ্যা তৈরি করুন
+          </button>
+        </div>
+        <div class="card-grid" id="archiveGrid"></div>
+      </section>
+
+      <!-- ============ পেজ: প্রিন্ট সংখ্যা (স্টোর) ============ -->
+      <section class="page" id="page-issues">
+        <div class="stat-row">
+          <div class="stat-card"><div class="stat-label">মোট প্রকাশিত সংখ্যা</div><div class="stat-value" id="stat-total-issues">৬</div></div>
+          <div class="stat-card"><div class="stat-label">স্টকে আছে</div><div class="stat-value" id="stat-in-stock">২</div></div>
+          <div class="stat-card"><div class="stat-label">স্টক শেষ</div><div class="stat-value accent" id="stat-out-stock">৪</div></div>
+          <div class="stat-card"><div class="stat-label">গড় মূল্য</div><div class="stat-value">৳২১৭</div></div>
+        </div>
+        <div class="page-head">
+          <div class="page-head-copy">
+            <h2 style="font-size:17px;">প্রিন্ট সংখ্যা ব্যবস্থাপনা</h2>
+            <p>নতুন সংখ্যা যোগ করুন অথবা পুরোনো কোনোটার নাম, দাম, প্রচ্ছদ, টিজার ও স্টক অবস্থা বদলে দিন।</p>
+          </div>
+          <button class="btn btn-primary" id="btn-add-issue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            নতুন সংখ্যা যোগ করুন
+          </button>
+        </div>
+        <div class="card-grid" id="issue-grid"></div>
+      </section>
+
+      <!-- ============ পেজ: অর্ডার তালিকা ============ -->
+      <section class="page" id="page-orders">
+        <div class="stat-row">
+          <div class="stat-card"><div class="stat-label">মোট অর্ডার</div><div class="stat-value" id="stat-total-orders">৮</div></div>
+          <div class="stat-card"><div class="stat-label">যাচাই বাকি</div><div class="stat-value accent" id="stat-pending-orders">৩</div></div>
+          <div class="stat-card"><div class="stat-label">যাচাই হয়েছে</div><div class="stat-value" id="stat-verified-orders">২</div></div>
+          <div class="stat-card"><div class="stat-label">ডেলিভারি হয়েছে</div><div class="stat-value" id="stat-delivered-orders">৩</div></div>
+        </div>
+        <div class="page-head">
+          <div class="page-head-copy">
+            <h2 style="font-size:17px;">অর্ডারের তালিকা</h2>
+            <p>প্রতিটা অর্ডারের পেমেন্ট ট্রানজেকশন যাচাই করে স্ট্যাটাস আপডেট করুন। "যাচাই বাকি" অর্ডারগুলো আগে দেখুন।</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-filters">
+            <div class="chip-row" id="order-filters">
+              <button class="active" data-filter="all">সব</button>
+              <button data-filter="pending">যাচাই বাকি</button>
+              <button data-filter="verified">যাচাই হয়েছে</button>
+              <button data-filter="delivered">ডেলিভারি হয়েছে</button>
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead><tr><th>অর্ডার নম্বর</th><th>ক্রেতা</th><th>সংখ্যা</th><th>পরিমাণ</th><th>মোট (ডেলিভারি)</th><th>ট্রানজেকশন আইডি</th><th>স্ট্যাটাস</th></tr></thead>
+              <tbody id="orders-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ পেজ: এড স্লট ============ -->
+      <section class="page" id="page-ads">
+        <div class="page-head">
+          <div class="page-head-copy">
+            <h2 style="font-size:17px;">এড স্লট ব্যবস্থাপনা</h2>
+            <p>সাইটের নির্দিষ্ট এড স্লটে ছবি/GIF আপলোড ও ম্যানেজ করুন। যেকোনো সাইজের ছবি আপলোড করলে সেটা স্বয়ংক্রিয়ভাবে ঐ স্লটের নির্ধারিত মাপে ফিট হয়ে যাবে।</p>
+          </div>
+        </div>
+        <div class="card-grid" id="adSlotGrid" style="grid-template-columns:repeat(auto-fill, minmax(260px,1fr));"></div>
+      </section>
+
+      <!-- ============ পেজ: কমেন্ট মডারেশন ============ -->
+      <section class="page" id="page-comments">
+        <div class="page-head">
+          <div class="page-head-copy">
+            <h2 style="font-size:17px;">কমেন্ট মডারেশন</h2>
+            <p>আপত্তিকর বা রিপোর্ট হওয়া মন্তব্য এখান থেকে পর্যালোচনা করে ডিলিট করা যাবে।</p>
+          </div>
+        </div>
+        <div class="table-filters" style="background:var(--surface); border:1px solid var(--border); border-radius:12px 12px 0 0; border-bottom:none;">
+          <div class="chip-row" id="commentFilters">
+            <button class="active" data-filter="all">সব</button>
+            <button data-filter="flagged">রিপোর্ট হয়েছে</button>
+          </div>
+        </div>
+        <div class="mod-list" id="modList" style="border:1px solid var(--border); border-top:none; border-radius:0 0 12px 12px; padding:14px; background:var(--surface);"></div>
+      </section>
+
+      <!-- ============ পেজ: নিউজলেটার সাবস্ক্রাইবার ============ -->
+      <section class="page" id="page-newsletter">
+        <div class="page-head">
+          <div class="page-head-copy">
+            <h2 style="font-size:17px;">নিউজলেটার সাবস্ক্রাইবার</h2>
+            <p>সাইন-ইন করা মাত্রই স্বয়ংক্রিয়ভাবে সাবস্ক্রাইব হওয়া এবং ফুটার থেকে সরাসরি সাবস্ক্রাইব করা — দুই ধরনের সাবস্ক্রাইবারের তালিকা এখানে দেখা যাবে।</p>
+          </div>
+        </div>
+        <div class="subscriber-summary">
+          <div class="subs-chip"><div class="sc-label">মোট সাবস্ক্রাইবার</div><div class="sc-value" id="subs-total">৯৪২</div></div>
+          <div class="subs-chip"><div class="sc-label">সাইন-ইন থেকে</div><div class="sc-value" id="subs-signin">৭৮৬</div></div>
+          <div class="subs-chip"><div class="sc-label">শুধু ফুটার থেকে</div><div class="sc-value" id="subs-footer">১৫৬</div></div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-filters">
+            <div class="table-search" style="margin-right:auto;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="subscriberSearch" placeholder="ইমেইল খুঁজুন">
+            </div>
+            <button class="btn btn-secondary" id="exportSubsBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              তালিকা এক্সপোর্ট করুন
+            </button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead><tr><th>ইমেইল</th><th>উৎস</th><th>সাবস্ক্রাইব তারিখ</th><th></th></tr></thead>
+              <tbody id="subscribersTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ পেজ: অ্যানালিটিক্স ============ -->
+      <section class="page" id="page-analytics">
+        <div class="page-head">
+          <div class="page-head-copy">
+            <h2 style="font-size:17px;">বেসিক অ্যানালিটিক্স</h2>
+            <p>কোন লেখা কতবার পড়া হয়েছে এবং কোন বিভাগ সবচেয়ে জনপ্রিয় তার একটা সহজ চিত্র।</p>
+          </div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-card"><div class="stat-label">মোট পঠন (এই মাসে)</div><div class="stat-value">৪২,৯১০</div></div>
+          <div class="stat-card"><div class="stat-label">গড় রেটিং</div><div class="stat-value">৪.৭</div></div>
+          <div class="stat-card"><div class="stat-label">মোট মন্তব্য</div><div class="stat-value">৩৬৪</div></div>
+          <div class="stat-card"><div class="stat-label">সক্রিয় ফলোয়ার</div><div class="stat-value accent">১,২০৮</div></div>
+        </div>
+        <div class="bar-chart-wrap">
+          <h3>সবচেয়ে বেশি পঠিত লেখা (এই মাসে)</h3>
+          <div id="analyticsArticleBars"></div>
+        </div>
+        <div class="bar-chart-wrap">
+          <h3>বিভাগ অনুযায়ী জনপ্রিয়তা</h3>
+          <div id="analyticsCatBars"></div>
+        </div>
+      </section>
+
+      <!-- ============ পেজ: ডেলিভারি চার্জ ============ -->
+      <section class="page" id="page-delivery">
+        <div class="page-head">
+          <div class="page-head-copy">
+            <h2 style="font-size:17px;">ডেলিভারি চার্জ সেটিংস</h2>
+            <p>ঢাকার ভিতরে ও বাহিরে সাধারণ এবং বাল্ক অর্ডারের চার্জ এখান থেকে যেকোনো সময় বদলে দিতে পারবেন — সাইটের স্টোর পেজে সাথে সাথে আপডেট হয়ে যাবে।</p>
+          </div>
+        </div>
+        <div class="settings-grid">
+          <div class="settings-card">
+            <h3>ঢাকার ভিতরে</h3>
+            <div class="settings-sub">সাধারণ অর্ডার ও বাল্ক অর্ডারের চার্জ (টাকায়)</div>
+            <div class="field-grid-2">
+              <div class="field-row"><label>সাধারণ অর্ডার চার্জ</label><div class="field-input-icon"><input type="number" id="dhaka-normal" value="70"><span class="prefix">৳</span></div></div>
+              <div class="field-row"><label>বাল্ক অর্ডার চার্জ</label><div class="field-input-icon"><input type="number" id="dhaka-bulk" value="80"><span class="prefix">৳</span></div></div>
+            </div>
+          </div>
+          <div class="settings-card">
+            <h3>ঢাকার বাহিরে</h3>
+            <div class="settings-sub">সাধারণ অর্ডার ও বাল্ক অর্ডারের চার্জ (টাকায়)</div>
+            <div class="field-grid-2">
+              <div class="field-row"><label>সাধারণ অর্ডার চার্জ</label><div class="field-input-icon"><input type="number" id="outside-normal" value="120"><span class="prefix">৳</span></div></div>
+              <div class="field-row"><label>বাল্ক অর্ডার চার্জ</label><div class="field-input-icon"><input type="number" id="outside-bulk" value="130"><span class="prefix">৳</span></div></div>
+            </div>
+          </div>
+          <div class="settings-card" style="grid-column:1/-1;">
+            <h3>বাল্ক অর্ডারের সীমা</h3>
+            <div class="settings-sub">কত কপি বা তার বেশি হলে অর্ডারটাকে "বাল্ক" হিসেবে ধরে বেশি চার্জ নেয়া হবে</div>
+            <div class="field-row" style="max-width:220px;"><label>বাল্কের সর্বনিম্ন পরিমাণ</label><div class="field-input-icon"><input type="number" id="bulk-threshold" value="10"><span class="prefix">কপি+</span></div></div>
+          </div>
+        </div>
+        <div class="settings-foot">
+          <button class="btn btn-primary" id="save-delivery">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            পরিবর্তন সংরক্ষণ করুন
+          </button>
+        </div>
+      </section>
+
+      <!-- ============ পেজ: পেমেন্ট নাম্বার ============ -->
+      <section class="page" id="page-payment">
+        <div class="page-head">
+          <div class="page-head-copy">
+            <h2 style="font-size:17px;">পেমেন্ট নাম্বার সেটিংস</h2>
+            <p>এই নাম্বারগুলোই ইউজাররা স্টোর পেজে অর্ডারের সময় ডেলিভারি চার্জ পাঠানোর জন্য দেখবে (Send Money)।</p>
+          </div>
+        </div>
+        <div class="settings-grid">
+          <div class="settings-card"><h3>বিকাশ</h3><div class="settings-sub">Send Money নাম্বার</div><div class="field-row"><label>বিকাশ নাম্বার</label><input type="tel" id="pay-bkash" value="017xxxxxxxx" placeholder="01xxxxxxxxx"></div></div>
+          <div class="settings-card"><h3>নগদ</h3><div class="settings-sub">Send Money নাম্বার</div><div class="field-row"><label>নগদ নাম্বার</label><input type="tel" id="pay-nagad" value="018xxxxxxxx" placeholder="01xxxxxxxxx"></div></div>
+          <div class="settings-card"><h3>রকেট</h3><div class="settings-sub">Send Money নাম্বার</div><div class="field-row"><label>রকেট নাম্বার</label><input type="tel" id="pay-rocket" value="019xxxxxxxx" placeholder="01xxxxxxxxx"></div></div>
+        </div>
+        <div class="settings-foot">
+          <button class="btn btn-primary" id="save-payment">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            পরিবর্তন সংরক্ষণ করুন
+          </button>
+        </div>
+      </section>
+
+      <!-- ============ পেজ: যোগাযোগ তথ্য ============ -->
+      <section class="page" id="page-contact">
+        <div class="page-head">
+          <div class="page-head-copy">
+            <h2 style="font-size:17px;">সাইট যোগাযোগ তথ্য</h2>
+            <p>এই তথ্যগুলো সাইটের ফুটার ও যোগাযোগ সেকশনে স্বয়ংক্রিয়ভাবে আপডেট হয়ে যাবে।</p>
+          </div>
+        </div>
+        <div class="settings-grid">
+          <div class="settings-card">
+            <h3>যোগাযোগের মোবাইল নাম্বার</h3><div class="settings-sub">ইউজার সহায়তার জন্য</div>
+            <div class="field-row"><label>মোবাইল নাম্বার</label><input type="tel" id="contact-phone" value="016xxxxxxxx" placeholder="01xxxxxxxxx"></div>
+          </div>
+          <div class="settings-card">
+            <h3>সোশ্যাল মিডিয়া লিংক</h3><div class="settings-sub">ফেসবুক ও ইনস্টাগ্রাম প্রোফাইলের লিংক</div>
+            <div class="field-row"><label>ফেসবুক পেজ লিংক</label><input type="url" id="contact-fb" placeholder="https://facebook.com/potrodip"></div>
+            <div class="field-row"><label>ইনস্টাগ্রাম লিংক</label><input type="url" id="contact-ig" placeholder="https://instagram.com/potrodip"></div>
+          </div>
+        </div>
+        <div class="settings-foot">
+          <button class="btn btn-primary" id="save-contact">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            পরিবর্তন সংরক্ষণ করুন
+          </button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============ মডাল: লেখা প্রকাশ/এডিট ============ -->
+<div id="modal-scrim"></div>
+<div id="article-modal" class="modal-box article-box" role="dialog" aria-label="লেখা প্রকাশ বা এডিট করুন">
+  <div class="modal-head"><h3 id="article-modal-title">নতুন লেখা প্রকাশ করুন</h3>
+    <button class="modal-close" data-close-modal="article-modal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="modal-body">
+
+    <div class="art-main">
+      <div class="field-row art-main-title"><label>শিরোনাম</label><input type="text" id="art-title" placeholder="যেমন: আল্লাহকে চিনার উপায়"></div>
+
+      <div class="field-row">
+        <label class="rte-field-label">লেখার মূল অংশ</label>
+        <div class="rte-toolbar" id="art-toolbar">
+          <button type="button" data-cmd="undo" title="আনডু"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></svg></button>
+          <button type="button" data-cmd="redo" title="রিডু"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/></svg></button>
+          <span class="rte-sep"></span>
+          <button type="button" data-cmd="bold" title="বোল্ড (Ctrl+B)"><strong>B</strong></button>
+          <button type="button" data-cmd="italic" title="ইটালিক (Ctrl+I)"><em>I</em></button>
+          <button type="button" data-cmd="underline" title="আন্ডারলাইন (Ctrl+U)"><span style="text-decoration:underline;">U</span></button>
+          <button type="button" data-cmd="highlight" title="হাইলাইট করুন (আগে টেক্সট সিলেক্ট করুন)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+          </button>
+          <span class="rte-sep"></span>
+          <button type="button" data-cmd="formatBlock" data-value="h3" title="সাব-হেডিং">H</button>
+          <button type="button" data-cmd="formatBlock" data-value="blockquote" title="উদ্ধৃতি/কোট">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.5 3C6 3 4 6 4 9.5V16c0 1.66 1.34 3 3 3h.5c1.66 0 3-1.34 3-3v-3c0-1.66-1.34-3-3-3H6.1C6.5 5.5 8 4 9.5 4V3zM19 3c-3.5 0-5.5 3-5.5 6.5V16c0 1.66 1.34 3 3 3h.5c1.66 0 3-1.34 3-3v-3c0-1.66-1.34-3-3-3h-1.4c.4-3.5 1.9-5 3.4-5V3z"/></svg>
+          </button>
+          <span class="rte-sep"></span>
+          <button type="button" data-cmd="insertUnorderedList" title="বুলেট লিস্ট">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          </button>
+          <button type="button" data-cmd="insertOrderedList" title="নাম্বার লিস্ট">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4"/><path d="M4 10h2"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+          </button>
+          <span class="rte-sep"></span>
+          <button type="button" data-cmd="createLink" title="লিংক যুক্ত করুন">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.2 1.1"/><path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.1-1.1"/></svg>
+          </button>
+          <button type="button" data-cmd="removeFormat" title="ফরম্যাট মুছে ফেলুন">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/><line x1="4" y1="4" x2="20" y2="20"/></svg>
+          </button>
+        </div>
+        <div class="rte-body" id="art-body" contenteditable="true" data-placeholder="এখানে লেখার মূল অংশ লিখুন..."></div>
+        <p class="field-hint">সিলেক্ট করে বোল্ড/ইটালিক/হাইলাইট করতে পারবেন। কোন অপশন এখন চালু আছে তা বাটন গাঢ় রঙে বোঝা যাবে। টুলবারটি স্ক্রল করলেও উপরে আটকে থাকবে।</p>
+      </div>
+
+      <div class="field-row">
+        <label>অতিরিক্ত ছবি (গ্যালারি)</label>
+        <div class="img-upload-row" id="art-gallery-row">
+          <div class="img-upload-add" id="art-gallery-add">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </div>
+        <input type="file" accept="image/*" multiple style="display:none;" id="art-gallery-file">
+      </div>
+    </div>
+
+    <div class="art-side">
+      <div class="field-row"><label>লেখক</label>
+        <select id="art-author" style="width:100%; padding:11px 13px; background:var(--field-bg); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:14px;"></select>
+      </div>
+      <div class="field-row"><label>বিভাগ</label>
+        <select id="art-cat" style="width:100%; padding:11px 13px; background:var(--field-bg); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:14px;">
+          <option>গল্প</option><option>কবিতা</option><option>ভ্রমণ</option><option>রম্য</option><option>প্রবন্ধ</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <label>কভার ছবি</label>
+        <label class="cover-upload" id="art-cover-upload">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          <span>কভার আপলোড করতে ক্লিক করুন</span>
+          <img id="art-cover-preview" alt="">
+          <input type="file" accept="image/*" style="display:none;" id="art-cover-file">
+        </label>
+      </div>
+      <div class="field-row" style="margin-bottom:0;">
+        <div class="stock-toggle-row">
+          <span>এখনই প্রকাশ করুন<br><span style="font-size:11px; color:var(--text-muted); font-weight:400;">(বন্ধ থাকলে ড্রাফট হিসেবে সেভ হবে)</span></span>
+          <label class="switch"><input type="checkbox" id="art-published" checked><span class="track"></span></label>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="modal-foot">
+    <button class="btn btn-secondary" data-close-modal="article-modal">বাতিল করুন</button>
+    <button class="btn btn-primary" id="art-save-btn">লেখা সংরক্ষণ করুন</button>
+  </div>
+</div>
+
+<!-- ============ মডাল: লেখক প্রোফাইল ============ -->
+<div id="author-modal" class="modal-box narrow" role="dialog" aria-label="লেখক প্রোফাইল">
+  <div class="modal-head"><h3 id="author-modal-title">নতুন লেখক যোগ করুন</h3>
+    <button class="modal-close" data-close-modal="author-modal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="modal-body">
+    <label class="cover-upload round" id="author-cover-upload">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      <span>ছবি আপলোড</span>
+      <img id="author-cover-preview" alt="">
+      <input type="file" accept="image/*" style="display:none;" id="author-cover-file">
+    </label>
+    <div class="field-row"><label>নাম</label><input type="text" id="author-name" placeholder="যেমন: আব্দুল্লাহ"></div>
+    <div class="field-grid-2" style="margin-bottom:16px;">
+      <div class="field-row" style="margin-bottom:0;"><label>পেশা/ধরন</label><input type="text" id="author-role" placeholder="যেমন: গল্পকার"></div>
+      <div class="field-row" style="margin-bottom:0;"><label>শহর</label><input type="text" id="author-city" placeholder="যেমন: রাজশাহী"></div>
+    </div>
+    <div class="field-grid-2">
+      <div class="field-row"><label>ফেসবুক লিংক</label><input type="url" id="author-fb" placeholder="https://facebook.com/..."></div>
+      <div class="field-row"><label>ইনস্টাগ্রাম লিংক</label><input type="url" id="author-ig" placeholder="https://instagram.com/..."></div>
+    </div>
+  </div>
+  <div class="modal-foot">
+    <button class="btn btn-secondary" data-close-modal="author-modal">বাতিল করুন</button>
+    <button class="btn btn-primary" id="author-save-btn">লেখক সংরক্ষণ করুন</button>
+  </div>
+</div>
+
+<!-- ============ মডাল: আর্কাইভ সংখ্যা ============ -->
+<div id="issue-archive-modal" class="modal-box narrow" role="dialog" aria-label="আর্কাইভ সংখ্যা">
+  <div class="modal-head"><h3 id="issue-archive-modal-title">নতুন সংখ্যা তৈরি করুন</h3>
+    <button class="modal-close" data-close-modal="issue-archive-modal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="modal-body">
+    <label class="cover-upload" id="issue-archive-cover-upload">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      <span>প্রচ্ছদ আপলোড</span>
+      <img id="issue-archive-cover-preview" alt="">
+      <input type="file" accept="image/*" style="display:none;" id="issue-archive-cover-file">
+    </label>
+    <div class="field-row"><label>সংখ্যার নাম</label><input type="text" id="issue-archive-name" placeholder="যেমন: শরতের সংখ্যা — সেপ্টেম্বর ২০২৬"></div>
+    <div class="field-row"><label>সংখ্যা নম্বর</label><input type="text" id="issue-archive-number" placeholder="যেমন: সংখ্যা ৫"></div>
+    <div class="field-row" style="margin-bottom:0;">
+      <label>নমুনা পিডিএফ (প্রিভিউ)</label>
+      <div class="pdf-upload-box" id="issue-archive-pdf-box">
+        <input type="file" accept="application/pdf" style="display:none;" id="issue-archive-pdf-file">
+        <div class="pdf-upload-empty" id="issue-archive-pdf-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span>পিডিএফ আপলোড করতে ক্লিক করুন</span>
+        </div>
+        <div class="pdf-upload-filled" id="issue-archive-pdf-filled" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span class="pdf-filename" id="issue-archive-pdf-name"></span>
+          <button type="button" class="pdf-remove-btn" id="issue-archive-pdf-remove" aria-label="সরিয়ে ফেলুন">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+      <p class="field-hint">এই পিডিএফ যুক্ত করলে ইউজার প্রচ্ছদে ক্লিক করে সাইটেই বই আকারে কিছু পাতা পড়তে পারবে (রকমারির প্রিভিউ সিস্টেমের মতো)।</p>
+    </div>
+  </div>
+  <div class="modal-foot">
+    <button class="btn btn-secondary" data-close-modal="issue-archive-modal">বাতিল করুন</button>
+    <button class="btn btn-primary" id="issue-archive-save-btn">সংখ্যা সংরক্ষণ করুন</button>
+  </div>
+</div>
+
+<!-- ============ মডাল: প্রিন্ট সংখ্যা (স্টোর) ============ -->
+<div id="issue-modal" class="modal-box narrow" role="dialog" aria-label="সংখ্যা যোগ বা এডিট করুন">
+  <div class="modal-head">
+    <h3 id="modal-title">নতুন সংখ্যা যোগ করুন</h3>
+    <button class="modal-close" data-close-modal="issue-modal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="modal-body">
+    <label class="cover-upload" id="cover-upload">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      <span>প্রচ্ছদ ছবি আপলোড করতে ক্লিক করুন</span>
+      <img id="cover-preview" alt="">
+      <input type="file" accept="image/*" style="display:none;" id="cover-file">
+    </label>
+    <div class="field-row"><label>সংখ্যার নাম</label><input type="text" id="issue-name" placeholder="যেমন: শরতের সংখ্যা — সেপ্টেম্বর ২০২৬"></div>
+    <div class="field-row"><label>টিজার (আকর্ষণীয় গল্পের অংশ — ২-৩ লাইন)</label><textarea id="issue-teaser" placeholder="যেমন: চিলেকোঠার চিঠি ও আরও নতুন গল্প নিয়ে এই সংখ্যা..."></textarea></div>
+    <div class="field-grid-2" style="margin-bottom:16px;">
+      <div class="field-row" style="margin-bottom:0;"><label>দাম</label><div class="field-input-icon"><input type="number" id="issue-price" placeholder="২৫০"><span class="prefix">৳</span></div></div>
+      <div class="field-row" style="margin-bottom:0;"><label>সংখ্যা নম্বর</label><input type="text" id="issue-number" placeholder="যেমন: সংখ্যা ৫"></div>
+    </div>
+    <div class="stock-toggle-row"><span>স্টকে আছে</span><label class="switch"><input type="checkbox" id="issue-stock" checked><span class="track"></span></label></div>
+    <div class="field-row" style="margin-top:16px; margin-bottom:0;">
+      <label>নমুনা পিডিএফ (প্রিভিউ)</label>
+      <div class="pdf-upload-box" id="issue-pdf-box">
+        <input type="file" accept="application/pdf" style="display:none;" id="issue-pdf-file">
+        <div class="pdf-upload-empty" id="issue-pdf-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span>পিডিএফ আপলোড করতে ক্লিক করুন</span>
+        </div>
+        <div class="pdf-upload-filled" id="issue-pdf-filled" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span class="pdf-filename" id="issue-pdf-name"></span>
+          <button type="button" class="pdf-remove-btn" id="issue-pdf-remove" aria-label="সরিয়ে ফেলুন">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+      <p class="field-hint">এই পিডিএফ যুক্ত করলে ক্রেতা কেনার আগে প্রচ্ছদে ক্লিক করে কিছু পাতা পড়ে দেখতে পারবে।</p>
+    </div>
+  </div>
+  <div class="modal-foot">
+    <button class="btn btn-secondary" data-close-modal="issue-modal">বাতিল করুন</button>
+    <button class="btn btn-primary" id="modal-save">সংখ্যা সংরক্ষণ করুন</button>
+  </div>
+</div>
+
+<!-- ============ টোস্ট ============ -->
+<div id="toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-text">সংরক্ষণ হয়েছে</span>
+</div>
+
+<!-- ============ কনফার্মেশন পপআপ ============ -->
+<div id="confirm-overlay" role="dialog" aria-label="নিশ্চিতকরণ">
+  <div class="confirm-card">
+    <div class="confirm-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+    </div>
+    <h3 id="confirm-title">আপনি কি নিশ্চিত?</h3>
+    <p id="confirm-desc">এই কাজটা করতে চান?</p>
+    <div class="confirm-actions">
+      <button class="confirm-danger" id="confirm-yes">হ্যাঁ, নিশ্চিত</button>
+      <button class="confirm-cancel" id="confirm-no">না, থাক</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var root = document.documentElement;
+  var STORAGE_KEY = 'potrodip-theme';
+  function getInitialTheme(){
+    var saved = null;
+    try{ saved = localStorage.getItem(STORAGE_KEY); }catch(e){}
+    if(saved === 'light' || saved === 'dark') return saved;
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  var currentTheme = getInitialTheme();
+  root.setAttribute('data-theme', currentTheme);
+
+  document.addEventListener('DOMContentLoaded', function(){
+    var btn = document.getElementById('theme-toggle');
+    btn.addEventListener('click', function(){
+      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', currentTheme);
+      try{ localStorage.setItem(STORAGE_KEY, currentTheme); }catch(e){}
+    });
+    setTimeout(function(){ document.body.classList.add('theme-ready'); }, 60);
+  });
+})();
+</script>
+
+<script>
+/* ============ সহায়ক ফাংশন ============ */
+var bnDigits = {'0':'০','1':'১','2':'২','3':'৩','4':'৪','5':'৫','6':'৬','7':'৭','8':'৮','9':'৯'};
+function toBn(n){ return String(n).replace(/[0-9]/g, function(d){ return bnDigits[d]; }); }
+function bnTaka(n){ return '৳' + toBn(n); }
+
+function starSVG(filled){
+  return '<svg viewBox="0 0 24 24" fill="'+(filled?'currentColor':'none')+'" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>';
+}
+function starsMarkup(n){
+  var out = '';
+  for(var i=1;i<=5;i++){ out += starSVG(i<=n); }
+  return out;
+}
+
+/* ============ টোস্ট ============ */
+var toastEl = document.getElementById('toast');
+var toastTimer;
+function showToast(msg){
+  document.getElementById('toast-text').textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 2200);
+}
+
+/* ============ কনফার্মেশন পপআপ ============ */
+var confirmOverlay = document.getElementById('confirm-overlay');
+var pendingConfirmAction = null;
+function showConfirm(title, desc, onYes){
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-desc').textContent = desc;
+  pendingConfirmAction = onYes;
+  confirmOverlay.classList.add('show');
+}
+document.getElementById('confirm-yes').addEventListener('click', function(){
+  var action = pendingConfirmAction;
+  pendingConfirmAction = null;
+  confirmOverlay.classList.remove('show');
+  if(typeof action === 'function') action();
+});
+document.getElementById('confirm-no').addEventListener('click', function(){
+  pendingConfirmAction = null;
+  confirmOverlay.classList.remove('show');
+});
+confirmOverlay.addEventListener('click', function(e){
+  if(e.target === confirmOverlay){ pendingConfirmAction = null; confirmOverlay.classList.remove('show'); }
+});
+
+/* ============ মোবাইল/মডাল স্ক্রল-লক হেল্পার (পেছনের পেজ স্ক্রল আটকানোর জন্য) ============ */
+var scrollLockCount = 0;
+var savedScrollY = 0;
+function lockBodyScroll(){
+  if(scrollLockCount === 0){
+    savedScrollY = window.scrollY || window.pageYOffset || 0;
+    document.body.style.top = (-savedScrollY) + 'px';
+    document.body.classList.add('no-scroll');
+  }
+  scrollLockCount++;
+}
+function unlockBodyScroll(){
+  scrollLockCount = Math.max(0, scrollLockCount - 1);
+  if(scrollLockCount === 0){
+    document.body.classList.remove('no-scroll');
+    document.body.style.top = '';
+    window.scrollTo(0, savedScrollY);
+  }
+}
+
+/* ============ মডাল খোলা/বন্ধ (সাধারণ হেল্পার) ============ */
+var modalScrim = document.getElementById('modal-scrim');
+var openModalEl = null;
+function openModal(id){
+  document.querySelectorAll('.modal-box.open').forEach(function(m){ m.classList.remove('open'); });
+  var m = document.getElementById(id);
+  modalScrim.classList.add('open');
+  m.classList.add('open');
+  openModalEl = m;
+  lockBodyScroll();
+}
+function closeModal(id){
+  var m = document.getElementById(id);
+  m.classList.remove('open');
+  modalScrim.classList.remove('open');
+  openModalEl = null;
+  unlockBodyScroll();
+}
+document.querySelectorAll('[data-close-modal]').forEach(function(btn){
+  btn.addEventListener('click', function(){ closeModal(this.dataset.closeModal); });
+});
+modalScrim.addEventListener('click', function(){
+  if(openModalEl) closeModal(openModalEl.id);
+});
+
+/* ============ সাইডবার নেভিগেশন গঠন ============ */
+var NAV_STRUCTURE = [
+  { group:'সার্বিক', items:[
+    { id:'dashboard', label:'ড্যাশবোর্ড', icon:'<rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/>' }
+  ]},
+  { group:'কনটেন্ট', items:[
+    { id:'articles', label:'লেখা প্রকাশ', icon:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>' },
+    { id:'authors', label:'লেখক প্রোফাইল', icon:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>' },
+    { id:'archive', label:'আর্কাইভ/সংখ্যা', icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>' },
+    { id:'ads', label:'এড স্লট', icon:'<rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="9" x2="22" y2="9"/>' }
+  ]},
+  { group:'স্টোর', items:[
+    { id:'issues', label:'প্রিন্ট সংখ্যা', icon:'<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>' },
+    { id:'orders', label:'অর্ডার তালিকা', icon:'<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>' }
+  ]},
+  { group:'কমিউনিটি', items:[
+    { id:'comments', label:'কমেন্ট মডারেশন', icon:'<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>' },
+    { id:'newsletter', label:'নিউজলেটার', icon:'<path d="M4 4h16v16H4z" opacity="0"/><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2 7 12 13 22 7"/>' },
+    { id:'analytics', label:'অ্যানালিটিক্স', icon:'<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>' }
+  ]},
+  { group:'সেটিংস', items:[
+    { id:'delivery', label:'ডেলিভারি চার্জ', icon:'<rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>' },
+    { id:'payment', label:'পেমেন্ট নাম্বার', icon:'<rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>' },
+    { id:'contact', label:'যোগাযোগ তথ্য', icon:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/>' }
+  ]}
+];
+
+var PAGE_META = {
+  dashboard:{ title:'ড্যাশবোর্ড', sub:'সাইটের সার্বিক অবস্থা এক নজরে' },
+  articles:{ title:'লেখা প্রকাশ', sub:'নতুন লেখা প্রকাশ করুন বা পুরোনো লেখা ব্যবস্থাপনা করুন' },
+  authors:{ title:'লেখক প্রোফাইল', sub:'লেখক প্রোফাইল তৈরি ও এডিট করুন' },
+  archive:{ title:'আর্কাইভ ব্যবস্থাপনা', sub:'ত্রৈমাসিক সংখ্যা তৈরি ও ব্যবস্থাপনা করুন' },
+  issues:{ title:'প্রিন্ট সংখ্যা ব্যবস্থাপনা', sub:'প্রকাশিত সংখ্যা যোগ করুন, দাম-স্টক আপডেট করুন' },
+  orders:{ title:'অর্ডার তালিকা', sub:'পেমেন্ট যাচাই করে অর্ডারের স্ট্যাটাস আপডেট করুন' },
+  ads:{ title:'এড স্লট ব্যবস্থাপনা', sub:'সাইটের নির্দিষ্ট এড স্লট নিয়ন্ত্রণ করুন' },
+  comments:{ title:'কমেন্ট মডারেশন', sub:'আপত্তিকর মন্তব্য পর্যালোচনা ও অপসারণ করুন' },
+  newsletter:{ title:'নিউজলেটার সাবস্ক্রাইবার', sub:'সব সাবস্ক্রাইবারের তালিকা দেখুন' },
+  analytics:{ title:'বেসিক অ্যানালিটিক্স', sub:'পঠন ও জনপ্রিয়তার পরিসংখ্যান' },
+  delivery:{ title:'ডেলিভারি চার্জ সেটিংস', sub:'ঢাকা ও ঢাকার বাহিরের চার্জ নিয়ন্ত্রণ করুন' },
+  payment:{ title:'পেমেন্ট নাম্বার সেটিংস', sub:'বিকাশ, নগদ, রকেট নাম্বার পরিবর্তন করুন' },
+  contact:{ title:'যোগাযোগ তথ্য', sub:'সাইটের ফুটারে দেখানো তথ্য পরিবর্তন করুন' }
+};
+
+var sidebarNav = document.getElementById('sidebarNav');
+var navHtml = '';
+NAV_STRUCTURE.forEach(function(grp){
+  navHtml += '<div class="sidebar-group-label">'+grp.group+'</div>';
+  grp.items.forEach(function(it){
+    navHtml += '<button class="nav-item'+(it.id==='dashboard'?' active':'')+'" data-page="'+it.id+'">'+
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+it.icon+'</svg>'+
+      it.label+
+    '</button>';
+  });
+});
+sidebarNav.innerHTML = navHtml;
+
+var sidebarEl = document.getElementById('sidebar');
+var sidebarScrim = document.getElementById('sidebar-scrim');
+
+function goToPage(pageId){
+  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.toggle('active', n.dataset.page === pageId); });
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  var target = document.getElementById('page-'+pageId);
+  if(target) target.classList.add('active');
+  document.getElementById('topbar-heading').textContent = PAGE_META[pageId].title;
+  document.getElementById('topbar-sub').textContent = PAGE_META[pageId].sub;
+  if(sidebarEl.classList.contains('open')){
+    sidebarEl.classList.remove('open');
+    sidebarScrim.classList.remove('open');
+    unlockBodyScroll();
+  }
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+sidebarNav.addEventListener('click', function(e){
+  var btn = e.target.closest('.nav-item');
+  if(!btn) return;
+  goToPage(btn.dataset.page);
+});
+
+document.getElementById('hamburger-btn').addEventListener('click', function(){
+  sidebarEl.classList.add('open'); sidebarScrim.classList.add('open');
+  lockBodyScroll();
+});
+sidebarScrim.addEventListener('click', function(){
+  sidebarEl.classList.remove('open'); sidebarScrim.classList.remove('open');
+  unlockBodyScroll();
+});
+
+/* দ্রুত-কাজ বাটনগুলোর "data-goto" পেজ বদলাবে, তারপর যদি মডাল-ওপেনার থাকে সেটাও ট্রিগার হবে (নিচের নির্দিষ্ট বাইন্ডিং-এ) */
+document.querySelectorAll('[data-goto]').forEach(function(btn){
+  btn.addEventListener('click', function(){ goToPage(this.dataset.goto); });
+});
+</script>
+
+<script>
+/* ================================================================
+   ============ নমুনা ডেটা (Firestore সংযোগের আগ পর্যন্ত — ধাপ ১২-তে বাস্তব ডেটার সাথে যুক্ত হবে) ============
+================================================================= */
+
+var authors = [
+  { id:'a1', name:'নাজমুল হাসান', role:'কথাসাহিত্যিক', city:'ঢাকা', img:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&q=80', articles:6, rating:4.8 },
+  { id:'a2', name:'রুমানা আক্তার', role:'কবি', city:'চট্টগ্রাম', img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80', articles:5, rating:4.9 },
+  { id:'a3', name:'তানভীর আহমেদ', role:'ভ্রমণ লেখক', city:'সিলেট', img:'https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?w=200&q=80', articles:4, rating:4.7 },
+  { id:'a4', name:'ফারহানা ইসলাম', role:'গল্পকার', city:'রাজশাহী', img:'https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=200&q=80', articles:12, rating:4.8 },
+  { id:'a5', name:'ইমতিয়াজ কবির', role:'রম্য লেখক', city:'খুলনা', img:'https://images.unsplash.com/photo-1531891437562-4301cf35b7e4?w=200&q=80', articles:3, rating:4.5 }
+];
+
+var articles = [
+  { id:'r1', title:'চিলেকোঠার চিঠি', authorId:'a4', cat:'গল্প', date:'৮ সেপ্টেম্বর, ২০২৬', status:'published', cover:'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=200&q=80' },
+  { id:'r2', title:'নদীর নাম মনে নেই', authorId:'a2', cat:'কবিতা', date:'৫ সেপ্টেম্বর, ২০২৬', status:'published', cover:'https://images.unsplash.com/photo-1516414447565-b14be0adf13e?w=200&q=80' },
+  { id:'r3', title:'সাজেকের মেঘে দুই রাত', authorId:'a3', cat:'ভ্রমণ', date:'২ সেপ্টেম্বর, ২০২৬', status:'published', cover:'https://images.unsplash.com/photo-1519669417670-68775a50919e?w=200&q=80' },
+  { id:'r4', title:'ছাদ-বাগান ও প্রতিবেশীর টম্যাটো', authorId:'a5', cat:'রম্য', date:'২৮ আগস্ট, ২০২৬', status:'published', cover:'https://images.unsplash.com/photo-1490730141103-6cac27aaab94?w=200&q=80' },
+  { id:'r5', title:'জোছনার ভাষা', authorId:'a2', cat:'কবিতা', date:'২১ আগস্ট, ২০২৬', status:'published', cover:'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=200&q=80' },
+  { id:'r6', title:'বইয়ের দোকানগুলো কোথায় গেল', authorId:'a1', cat:'প্রবন্ধ', date:'১৫ আগস্ট, ২০২৬', status:'published', cover:'https://images.unsplash.com/photo-1499363536502-87642509e31b?w=200&q=80' },
+  { id:'r7', title:'শেষ বাসের যাত্রী', authorId:'a4', cat:'গল্প', date:'—', status:'draft', cover:'https://images.unsplash.com/photo-1455849318743-b2233052fcff?w=200&q=80' },
+  { id:'r8', title:'দুপুরের ট্রেন, একটা জানালার আসন', authorId:'a4', cat:'প্রবন্ধ', date:'—', status:'draft', cover:'https://images.unsplash.com/photo-1518281420975-50db6e5d0a97?w=200&q=80' }
+];
+
+var archiveIssues = [
+  { id:'ar4', num:'সংখ্যা ৪', name:'শরতের সংখ্যা — সেপ্টেম্বর ২০২৬', count:14, cover:'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&q=75' },
+  { id:'ar3', num:'সংখ্যা ৩', name:'বর্ষার সংখ্যা — জুলাই ২০২৬', count:12, cover:'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&q=75' },
+  { id:'ar2', num:'সংখ্যা ২', name:'গ্রীষ্মের সংখ্যা — এপ্রিল ২০২৬', count:10, cover:'https://images.unsplash.com/photo-1455849318743-b2233052fcff?w=400&q=75' },
+  { id:'ar1', num:'সংখ্যা ১', name:'১ম সংখ্যা — জানুয়ারি ২০২৬', count:9, cover:'https://images.unsplash.com/photo-1516414447565-b14be0adf13e?w=400&q=75' }
+];
+
+var issues = [
+  { id:'issue-4', num:'সংখ্যা ৪', name:'শরতের সংখ্যা — সেপ্টেম্বর ২০২৬', teaser:'"চিলেকোঠার চিঠি" ও আরও নতুন গল্প নিয়ে এই সংখ্যা...', price:250, cover:'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&q=75', inStock:true },
+  { id:'issue-3', num:'সংখ্যা ৩', name:'বর্ষার সংখ্যা — জুলাই ২০২৬', teaser:'সাজেকের মেঘে দুই রাত নিয়ে একটা ভ্রমণকথা...', price:220, cover:'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&q=75', inStock:true },
+  { id:'issue-2', num:'সংখ্যা ২', name:'গ্রীষ্মের সংখ্যা — এপ্রিল ২০২৬', teaser:'দাদার ট্রাংক থেকে পাওয়া এক অসম্পূর্ণ চিঠির গল্প...', price:210, cover:'https://images.unsplash.com/photo-1455849318743-b2233052fcff?w=400&q=75', inStock:false },
+  { id:'issue-1', num:'সংখ্যা ১', name:'১ম সংখ্যা — জানুয়ারি ২০২৬', teaser:'শীতের রাতে যে গল্পটা কেউ শোনায়নি — উদ্বোধনী সংখ্যা...', price:200, cover:'https://images.unsplash.com/photo-1516414447565-b14be0adf13e?w=400&q=75', inStock:false },
+  { id:'issue-special', num:'বিশেষ সংখ্যা', name:'শীত-বিশেষ সংখ্যা — ডিসেম্বর ২০২৫', teaser:'জোছনার ভাষা নিয়ে কবিতার একটা বিশেষ সংকলন...', price:240, cover:'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&q=75', inStock:false },
+  { id:'issue-pilot', num:'পাইলট সংখ্যা', name:'পাইলট সংখ্যা — অক্টোবর ২০২৫', teaser:'বইয়ের দোকানগুলো কোথায় গেল — প্রথম প্রকাশিত প্রবন্ধ...', price:180, cover:'https://images.unsplash.com/photo-1499363536502-87642509e31b?w=400&q=75', inStock:false }
+];
+
+var orders = [
+  { id:'PD-00128', name:'রুবাইয়াত হোসেন', phone:'017xxxxxxx', issue:'শরতের সংখ্যা', qty:2, deliveryAmt:70, txn:'9F7K2XQZ1A', status:'pending' },
+  { id:'PD-00127', name:'তানভীর আহমেদ', phone:'018xxxxxxx', issue:'বর্ষার সংখ্যা', qty:1, deliveryAmt:70, txn:'7B2M9LPX4C', status:'verified' },
+  { id:'PD-00126', name:'নাজিয়া করিম', phone:'019xxxxxxx', issue:'১ম সংখ্যা', qty:12, deliveryAmt:80, txn:'3D8N1QRT7E', status:'delivered' },
+  { id:'PD-00125', name:'ইমতিয়াজ কবির', phone:'016xxxxxxx', issue:'শরতের সংখ্যা', qty:1, deliveryAmt:120, txn:'5H4P6WSY2F', status:'pending' },
+  { id:'PD-00124', name:'ফারহানা ইসলাম', phone:'017xxxxxxx', issue:'বর্ষার সংখ্যা', qty:3, deliveryAmt:130, txn:'2K9J5MVU8G', status:'verified' },
+  { id:'PD-00123', name:'রুমানা আক্তার', phone:'015xxxxxxx', issue:'১ম সংখ্যা', qty:1, deliveryAmt:70, txn:'8L3R7NXQ1H', status:'delivered' },
+  { id:'PD-00122', name:'মেহজাবিন রহমান', phone:'013xxxxxxx', issue:'শরতের সংখ্যা', qty:1, deliveryAmt:120, txn:'6T2Y9BCE5I', status:'delivered' },
+  { id:'PD-00121', name:'সাদিয়া আফরিন', phone:'014xxxxxxx', issue:'বর্ষার সংখ্যা', qty:1, deliveryAmt:70, txn:'4Q8W3ZFD0J', status:'pending' }
+];
+
+var adSlots = [
+  { id:'top', name:'টপ ব্যানার', size:'১২০০ × ২০০ px', where:'হোমপেজ উপরে', ratio:'6/1', image:'https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=1400&q=75', active:true },
+  { id:'mid', name:'মিড-স্ক্রল ব্যানার', size:'৭২৮ × ১৫০ px', where:'হোমপেজ/আর্টিকেল লিস্টের মাঝে', ratio:'4.85/1', image:'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1000&q=75', active:true },
+  { id:'square', name:'সাইডবার/স্কোয়ার', size:'৩০০ × ৩০০ px', where:'আর্টিকেল পেজের পাশে', ratio:'1/1', image:null, active:false },
+  { id:'mobile', name:'মোবাইল ব্যানার', size:'৩২০ × ১০০ px', where:'মোবাইলে স্বয়ংক্রিয়ভাবে', ratio:'3.2/1', image:null, active:false }
+];
+
+var comments = [
+  { id:'c1', name:'সাদিয়া আফরিন', img:'https://images.unsplash.com/photo-1531891437562-4301cf35b7e4?w=100&q=80', context:'চিলেকোঠার চিঠি', date:'৭ সেপ্টেম্বর, ২০২৬', stars:5, text:'শেষ লাইনটা পড়ে থেমে যেতে হলো। এই ধরনের নিরুচ্চার গল্প খুব কম লেখা হয় আজকাল।', flagged:false },
+  { id:'c2', name:'অজ্ঞাত ইউজার', img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80', context:'সাজেকের মেঘে দুই রাত', date:'৩ সেপ্টেম্বর, ২০২৬', stars:1, text:'এই লেখাটা একদম মানহীন, লেখক নিজেই জানে না কী লিখছে। [আপত্তিকর ভাষা রিপোর্ট হয়েছে]', flagged:true },
+  { id:'c3', name:'ইমতিয়াজ কবির', img:'https://images.unsplash.com/photo-1531891437562-4301cf35b7e4?w=100&q=80', context:'জোছনার ভাষা', date:'২৯ আগস্ট, ২০২৬', stars:4, text:'কবিতাটা পড়ে মন ভালো হয়ে গেল। আরও এমন লেখা চাই।', flagged:false },
+  { id:'c4', name:'স্প্যাম অ্যাকাউন্ট', img:'https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?w=100&q=80', context:'বইয়ের দোকানগুলো কোথায় গেল', date:'২৬ আগস্ট, ২০২৬', stars:0, text:'বিজ্ঞাপনমূলক লিংক ও প্রাসঙ্গিকতাহীন মন্তব্য — রিপোর্ট হয়েছে।', flagged:true }
+];
+
+var subscribers = [
+  { email:'nazmul.hasan@example.com', source:'সাইন-ইন', date:'৮ সেপ্টেম্বর, ২০২৬' },
+  { email:'rumana.akter@example.com', source:'সাইন-ইন', date:'৬ সেপ্টেম্বর, ২০২৬' },
+  { email:'reader.footer1@example.com', source:'ফুটার', date:'৪ সেপ্টেম্বর, ২০২৬' },
+  { email:'farhana.islam@example.com', source:'সাইন-ইন', date:'১ সেপ্টেম্বর, ২০২৬' },
+  { email:'reader.footer2@example.com', source:'ফুটার', date:'২৮ আগস্ট, ২০২৬' },
+  { email:'imtiaz.kabir@example.com', source:'সাইন-ইন', date:'২৫ আগস্ট, ২০২৬' }
+];
+
+var STATUS_LABEL = { pending:'যাচাই বাকি', verified:'যাচাই হয়েছে', delivered:'ডেলিভারি হয়েছে' };
+function authorById(id){ return authors.find(function(a){ return a.id===id; }); }
+
+/* ================================================================
+   ============ ড্যাশবোর্ড রেন্ডার ============
+================================================================= */
+function renderDashboard(){
+  var activity = [
+    { icon:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>', title:'"চিলেকোঠার চিঠি" প্রকাশিত হয়েছে', sub:'ফারহানা ইসলাম', time:'২ ঘণ্টা আগে' },
+    { icon:'<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>', title:'নতুন অর্ডার #PD-00128 এসেছে', sub:'রুবাইয়াত হোসেন — ২ কপি', time:'৪ ঘণ্টা আগে' },
+    { icon:'<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>', title:'নতুন মন্তব্য রিপোর্ট হয়েছে', sub:'"সাজেকের মেঘে দুই রাত"-তে', time:'৬ ঘণ্টা আগে' },
+    { icon:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>', title:'১২ জন নতুন সাবস্ক্রাইব করেছেন', sub:'নিউজলেটার', time:'গতকাল' }
+  ];
+  document.getElementById('recentActivityList').innerHTML = activity.map(function(a){
+    return '<div class="quick-row">'+
+      '<span class="qr-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+a.icon+'</svg></span>'+
+      '<span class="qr-text"><strong>'+a.title+'</strong><span>'+a.sub+'</span></span>'+
+      '<span class="qr-time">'+a.time+'</span>'+
+    '</div>';
+  }).join('');
+
+  var topRead = [
+    { title:'চিলেকোঠার চিঠি', meta:'ফারহানা ইসলাম · গল্প', views:'৩,২৪০' },
+    { title:'সাজেকের মেঘে দুই রাত', meta:'তানভীর আহমেদ · ভ্রমণ', views:'২,৮১০' },
+    { title:'নদীর নাম মনে নেই', meta:'রুমানা আক্তার · কবিতা', views:'২,১৯০' },
+    { title:'বইয়ের দোকানগুলো কোথায় গেল', meta:'নাজমুল হাসান · প্রবন্ধ', views:'১,৯৪০' },
+    { title:'ছাদ-বাগান ও প্রতিবেশীর টম্যাটো', meta:'ইমতিয়াজ কবির · রম্য', views:'১,৭২০' }
+  ];
+  document.getElementById('topReadList').innerHTML = topRead.map(function(t,i){
+    return '<div class="top-issue-row">'+
+      '<span class="ti-rank">'+toBn(i+1)+'</span>'+
+      '<span class="ti-info"><span class="ti-title">'+t.title+'</span><span class="ti-meta">'+t.meta+'</span></span>'+
+      '<span class="ti-views">'+toBn(t.views)+'</span>'+
+    '</div>';
+  }).join('');
+
+  document.getElementById('dash-total-articles').textContent = toBn(articles.filter(function(a){return a.status==='published';}).length);
+  document.getElementById('dash-total-orders').textContent = toBn(orders.length);
+  document.getElementById('dash-pending-payments').textContent = toBn(orders.filter(function(o){return o.status==='pending';}).length);
+}
+
+/* ================================================================
+   ============ লেখা প্রকাশ — রেন্ডার ============
+================================================================= */
+var currentArticleFilter = 'all';
+var currentArticleQuery = '';
+function renderArticles(){
+  var list = articles.filter(function(a){
+    if(currentArticleFilter !== 'all' && a.status !== currentArticleFilter) return false;
+    if(currentArticleQuery){
+      var q = currentArticleQuery.toLowerCase();
+      var authorName = (authorById(a.authorId)||{}).name || '';
+      if(a.title.toLowerCase().indexOf(q)===-1 && authorName.toLowerCase().indexOf(q)===-1) return false;
+    }
+    return true;
+  });
+  var tbody = document.getElementById('articlesTbody');
+  if(list.length === 0){
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty-row-note">কোনো লেখা পাওয়া যায়নি।</div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map(function(a){
+    var author = authorById(a.authorId) || {name:'—', img:''};
+    return '<tr>'+
+      '<td class="thumb-cell"><div class="row-thumb"><img src="'+a.cover+'" alt=""></div></td>'+
+      '<td class="wrap-cell"><strong>'+a.title+'</strong></td>'+
+      '<td>'+author.name+'</td>'+
+      '<td>'+a.cat+'</td>'+
+      '<td>'+a.date+'</td>'+
+      '<td><span class="status-badge '+a.status+'">'+(a.status==='published'?'প্রকাশিত':'ড্রাফট')+'</span></td>'+
+      '<td><div class="row-actions">'+
+        '<button class="icon-btn-sm" data-edit-article="'+a.id+'" title="এডিট করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>'+
+        '<button class="icon-btn-sm danger" data-delete-article="'+a.id+'" title="মুছে ফেলুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>'+
+      '</div></td>'+
+    '</tr>';
+  }).join('');
+
+  tbody.querySelectorAll('[data-delete-article]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var id = this.dataset.deleteArticle;
+      var art = articles.find(function(a){ return a.id===id; });
+      showConfirm('লেখাটা মুছে ফেলবেন?', '"'+art.title+'" লেখাটা স্থায়ীভাবে মুছে ফেলা হবে।', function(){
+        articles = articles.filter(function(a){ return a.id !== id; });
+        renderArticles();
+        showToast('লেখাটা মুছে ফেলা হয়েছে');
+      });
+    });
+  });
+  tbody.querySelectorAll('[data-edit-article]').forEach(function(btn){
+    btn.addEventListener('click', function(){ openArticleModal(this.dataset.editArticle); });
+  });
+}
+
+document.getElementById('articleFilters').addEventListener('click', function(e){
+  var btn = e.target.closest('button'); if(!btn) return;
+  this.querySelectorAll('button').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  currentArticleFilter = btn.dataset.filter;
+  renderArticles();
+});
+document.getElementById('articleSearch').addEventListener('input', function(){
+  currentArticleQuery = this.value.trim();
+  renderArticles();
+});
+
+/* ---------- লেখা মডাল ---------- */
+var editingArticleId = null;
+function populateAuthorSelect(){
+  var sel = document.getElementById('art-author');
+  sel.innerHTML = authors.map(function(a){ return '<option value="'+a.id+'">'+a.name+'</option>'; }).join('');
+}
+function openArticleModal(id){
+  editingArticleId = id || null;
+  var art = id ? articles.find(function(a){ return a.id===id; }) : null;
+  populateAuthorSelect();
+
+  document.getElementById('article-modal-title').textContent = art ? 'লেখা এডিট করুন' : 'নতুন লেখা প্রকাশ করুন';
+  document.getElementById('art-title').value = art ? art.title : '';
+  document.getElementById('art-author').value = art ? art.authorId : authors[0].id;
+  document.getElementById('art-cat').value = art ? art.cat : 'গল্প';
+  document.getElementById('art-body').innerHTML = art ? (art.body || '') : '';
+  document.getElementById('art-published').checked = art ? art.status === 'published' : true;
+
+  var preview = document.getElementById('art-cover-preview');
+  var uploadText = document.querySelector('#art-cover-upload span');
+  if(art && art.cover){ preview.src = art.cover; preview.style.display='block'; uploadText.style.display='none'; }
+  else{ preview.src=''; preview.style.display='none'; uploadText.style.display='block'; }
+
+  document.getElementById('art-gallery-row').querySelectorAll('.img-upload-thumb').forEach(function(t){ t.remove(); });
+
+  openModal('article-modal');
+}
+document.querySelectorAll('[data-open-article]').forEach(function(btn){
+  btn.addEventListener('click', function(){ openArticleModal(); });
+});
+document.getElementById('art-cover-upload').addEventListener('click', function(){ document.getElementById('art-cover-file').click(); });
+document.getElementById('art-cover-file').addEventListener('change', function(e){
+  var file = e.target.files[0]; if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev){
+    var preview = document.getElementById('art-cover-preview');
+    preview.src = ev.target.result; preview.style.display='block';
+    document.querySelector('#art-cover-upload span').style.display='none';
+  };
+  reader.readAsDataURL(file);
+});
+document.getElementById('art-gallery-add').addEventListener('click', function(){ document.getElementById('art-gallery-file').click(); });
+document.getElementById('art-gallery-file').addEventListener('change', function(e){
+  var files = Array.prototype.slice.call(e.target.files);
+  var row = document.getElementById('art-gallery-row');
+  var addBtn = document.getElementById('art-gallery-add');
+  files.forEach(function(file){
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      var thumb = document.createElement('div');
+      thumb.className = 'img-upload-thumb';
+      thumb.innerHTML = '<img src="'+ev.target.result+'" alt=""><span class="rm-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>';
+      thumb.querySelector('.rm-btn').addEventListener('click', function(){ thumb.remove(); });
+      row.insertBefore(thumb, addBtn);
+    };
+    reader.readAsDataURL(file);
+  });
+});
+/* ============ রিচ-টেক্সট টুলবার — বোল্ড/ইটালিক/হাইলাইট/হেডিং/লিংক ইত্যাদি ============ */
+(function(){
+  var artBody = document.getElementById('art-body');
+  var toolbar = document.getElementById('art-toolbar');
+  if(!toolbar || !artBody) return;
+
+  function applyHighlight(){
+    var sel = window.getSelection();
+    if(!sel || !sel.rangeCount || sel.isCollapsed) return;
+    var range = sel.getRangeAt(0);
+    if(!artBody.contains(range.commonAncestorContainer)) return;
+    var mark = document.createElement('mark');
+    mark.className = 'rte-highlight';
+    try{
+      range.surroundContents(mark);
+    }catch(e){
+      var frag = range.extractContents();
+      mark.appendChild(frag);
+      range.insertNode(mark);
+    }
+    sel.removeAllRanges();
+    var newRange = document.createRange();
+    newRange.selectNodeContents(mark);
+    sel.addRange(newRange);
+  }
+
+  function insertLink(){
+    var sel = window.getSelection();
+    if(!sel || !sel.rangeCount || sel.isCollapsed){
+      alert('প্রথমে যে টেক্সটে লিংক যুক্ত করতে চান সেটা সিলেক্ট করুন।');
+      return;
+    }
+    var url = prompt('লিংক (URL) লিখুন:', 'https://');
+    if(!url) return;
+    document.execCommand('createLink', false, url);
+  }
+
+  toolbar.querySelectorAll('button[data-cmd]').forEach(function(btn){
+    btn.addEventListener('mousedown', function(e){ e.preventDefault(); }); /* সিলেকশন হারানো ঠেকানোর জন্য */
+    btn.addEventListener('click', function(){
+      artBody.focus();
+      var cmd = this.dataset.cmd;
+      if(cmd === 'highlight'){ applyHighlight(); }
+      else if(cmd === 'createLink'){ insertLink(); }
+      else if(cmd === 'formatBlock'){ document.execCommand('formatBlock', false, '<'+this.dataset.value+'>'); }
+      else{ document.execCommand(cmd, false, this.dataset.value || null); }
+      updateToolbarState();
+    });
+  });
+
+  function updateToolbarState(){
+    var checks = { bold:'bold', italic:'italic', underline:'underline', insertUnorderedList:'insertUnorderedList', insertOrderedList:'insertOrderedList' };
+    Object.keys(checks).forEach(function(cmd){
+      var btn = toolbar.querySelector('button[data-cmd="'+cmd+'"]');
+      if(!btn) return;
+      var active = false;
+      try{ active = document.queryCommandState(checks[cmd]); }catch(e){}
+      btn.classList.toggle('is-active', !!active);
+    });
+    var blockBtns = toolbar.querySelectorAll('button[data-cmd="formatBlock"]');
+    var curBlock = '';
+    try{ curBlock = (document.queryCommandValue('formatBlock') || '').toLowerCase(); }catch(e){}
+    blockBtns.forEach(function(b){ b.classList.toggle('is-active', curBlock === b.dataset.value); });
+  }
+
+  document.addEventListener('selectionchange', function(){
+    var sel = window.getSelection();
+    if(sel && sel.anchorNode && artBody.contains(sel.anchorNode)){ updateToolbarState(); }
+  });
+  artBody.addEventListener('keyup', updateToolbarState);
+  artBody.addEventListener('mouseup', updateToolbarState);
+})();
+
+/* ============ PDF নমুনা আপলোড — সাধারণ হেল্পার (আর্কাইভ + প্রিন্ট সংখ্যা দুই মডালেই ব্যবহৃত) ============ */
+function setupPdfUploader(prefix){
+  var box = document.getElementById(prefix+'-pdf-box');
+  var fileInput = document.getElementById(prefix+'-pdf-file');
+  var emptyEl = document.getElementById(prefix+'-pdf-empty');
+  var filledEl = document.getElementById(prefix+'-pdf-filled');
+  var nameEl = document.getElementById(prefix+'-pdf-name');
+  var removeBtn = document.getElementById(prefix+'-pdf-remove');
+  var state = { name:null };
+
+  box.addEventListener('click', function(){ fileInput.click(); });
+  fileInput.addEventListener('change', function(e){
+    var file = e.target.files[0]; if(!file) return;
+    state.name = file.name;
+    nameEl.textContent = file.name;
+    emptyEl.style.display = 'none';
+    filledEl.style.display = 'flex';
+  });
+  removeBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    state.name = null;
+    fileInput.value = '';
+    emptyEl.style.display = 'flex';
+    filledEl.style.display = 'none';
+  });
+
+  return {
+    get: function(){ return state.name; },
+    set: function(name){
+      state.name = name || null;
+      if(name){ nameEl.textContent = name; emptyEl.style.display='none'; filledEl.style.display='flex'; }
+      else{ nameEl.textContent=''; emptyEl.style.display='flex'; filledEl.style.display='none'; fileInput.value=''; }
+    }
+  };
+}
+var archivePdfUploader = setupPdfUploader('issue-archive');
+var issuePdfUploader = setupPdfUploader('issue');
+document.getElementById('art-save-btn').addEventListener('click', function(){
+  var title = document.getElementById('art-title').value.trim();
+  if(!title){ document.getElementById('art-title').focus(); return; }
+  var data = {
+    title: title,
+    authorId: document.getElementById('art-author').value,
+    cat: document.getElementById('art-cat').value,
+    body: document.getElementById('art-body').innerHTML,
+    status: document.getElementById('art-published').checked ? 'published' : 'draft',
+    cover: document.getElementById('art-cover-preview').src || 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=200&q=80'
+  };
+  data.date = data.status === 'published' ? 'এইমাত্র' : '—';
+  if(editingArticleId){
+    var idx = articles.findIndex(function(a){ return a.id===editingArticleId; });
+    articles[idx] = Object.assign(articles[idx], data);
+    showToast('লেখাটা আপডেট হয়েছে');
+  } else {
+    data.id = 'r' + Date.now();
+    articles.unshift(data);
+    showToast(data.status === 'published' ? 'নতুন লেখা প্রকাশিত হয়েছে' : 'ড্রাফট হিসেবে সংরক্ষিত হয়েছে');
+  }
+  renderArticles();
+  closeModal('article-modal');
+});
+
+/* ================================================================
+   ============ লেখক প্রোফাইল — রেন্ডার ============
+================================================================= */
+function renderAuthors(){
+  var grid = document.getElementById('authorsGrid');
+  grid.innerHTML = authors.map(function(a){
+    return '<div class="item-card">'+
+      '<div class="item-cover round-cover"><img src="'+a.img+'" alt=""></div>'+
+      '<div class="item-body">'+
+        '<div class="item-name">'+a.name+'</div>'+
+        '<div class="item-sub-line">'+a.role+' &middot; '+a.city+'</div>'+
+        '<div style="font-size:12.5px; color:var(--text-muted); margin-bottom:12px;">'+toBn(a.articles)+'টি লেখা &middot; <span class="stars-mini">'+starSVG(true)+'</span> '+toBn(a.rating)+'</div>'+
+        '<div class="item-foot centered">'+
+          '<button class="icon-btn-sm" data-edit-author="'+a.id+'" title="এডিট করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>'+
+          '<button class="icon-btn-sm danger" data-delete-author="'+a.id+'" title="মুছে ফেলুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('') + '<button class="add-item-card" id="btn-add-author-inline"><span class="plus-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>নতুন লেখক যোগ করুন</span></button>';
+
+  grid.querySelectorAll('[data-edit-author]').forEach(function(btn){
+    btn.addEventListener('click', function(){ openAuthorModal(this.dataset.editAuthor); });
+  });
+  grid.querySelectorAll('[data-delete-author]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var id = this.dataset.deleteAuthor;
+      var a = authorById(id);
+      showConfirm('লেখক মুছে ফেলবেন?', '"'+a.name+'" এর প্রোফাইল মুছে ফেললে তার লেখাগুলোর লেখক তথ্যও প্রভাবিত হবে।', function(){
+        authors = authors.filter(function(x){ return x.id !== id; });
+        renderAuthors();
+        showToast('লেখক প্রোফাইল মুছে ফেলা হয়েছে');
+      });
+    });
+  });
+  document.getElementById('btn-add-author-inline').addEventListener('click', function(){ openAuthorModal(); });
+}
+
+var editingAuthorId = null;
+function openAuthorModal(id){
+  editingAuthorId = id || null;
+  var a = id ? authorById(id) : null;
+  document.getElementById('author-modal-title').textContent = a ? 'লেখক প্রোফাইল এডিট করুন' : 'নতুন লেখক যোগ করুন';
+  document.getElementById('author-name').value = a ? a.name : '';
+  document.getElementById('author-role').value = a ? a.role : '';
+  document.getElementById('author-city').value = a ? a.city : '';
+  document.getElementById('author-fb').value = '';
+  document.getElementById('author-ig').value = '';
+
+  var preview = document.getElementById('author-cover-preview');
+  var uploadText = document.querySelector('#author-cover-upload span');
+  if(a){ preview.src = a.img; preview.style.display='block'; uploadText.style.display='none'; }
+  else{ preview.src=''; preview.style.display='none'; uploadText.style.display='block'; }
+
+  openModal('author-modal');
+}
+document.querySelectorAll('[data-open-author]').forEach(function(btn){
+  btn.addEventListener('click', function(){ openAuthorModal(); });
+});
+document.getElementById('author-cover-upload').addEventListener('click', function(){ document.getElementById('author-cover-file').click(); });
+document.getElementById('author-cover-file').addEventListener('change', function(e){
+  var file = e.target.files[0]; if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev){
+    var preview = document.getElementById('author-cover-preview');
+    preview.src = ev.target.result; preview.style.display='block';
+    document.querySelector('#author-cover-upload span').style.display='none';
+  };
+  reader.readAsDataURL(file);
+});
+document.getElementById('author-save-btn').addEventListener('click', function(){
+  var name = document.getElementById('author-name').value.trim();
+  if(!name){ document.getElementById('author-name').focus(); return; }
+  var data = {
+    name: name,
+    role: document.getElementById('author-role').value.trim() || 'লেখক',
+    city: document.getElementById('author-city').value.trim() || '—',
+    img: document.getElementById('author-cover-preview').src || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&q=80'
+  };
+  if(editingAuthorId){
+    var idx = authors.findIndex(function(a){ return a.id===editingAuthorId; });
+    authors[idx] = Object.assign(authors[idx], data);
+    showToast('লেখক প্রোফাইল আপডেট হয়েছে');
+  } else {
+    data.id = 'a' + Date.now();
+    data.articles = 0;
+    data.rating = 0;
+    authors.unshift(data);
+    showToast('নতুন লেখক যোগ হয়েছে');
+  }
+  renderAuthors();
+  closeModal('author-modal');
+});
+
+/* ================================================================
+   ============ আর্কাইভ — রেন্ডার ============
+================================================================= */
+function renderArchive(){
+  var grid = document.getElementById('archiveGrid');
+  grid.innerHTML = archiveIssues.map(function(iss){
+    return '<div class="item-card">'+
+      '<div class="item-cover"><img src="'+iss.cover+'" alt=""><span class="item-badge">'+iss.num+'</span>'+
+        (iss.pdfName ? '<span class="item-pdf-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>প্রিভিউ</span>' : '')+
+      '</div>'+
+      '<div class="item-body">'+
+        '<div class="item-name">'+iss.name+'</div>'+
+        '<div class="item-sub-line">'+toBn(iss.count)+'টি লেখা যুক্ত আছে</div>'+
+        '<div class="item-foot centered">'+
+          '<button class="icon-btn-sm" data-edit-archive="'+iss.id+'" title="এডিট করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>'+
+          '<button class="icon-btn-sm danger" data-delete-archive="'+iss.id+'" title="মুছে ফেলুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('') + '<button class="add-item-card" id="btn-add-archive-inline"><span class="plus-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>নতুন সংখ্যা তৈরি করুন</span></button>';
+
+  grid.querySelectorAll('[data-edit-archive]').forEach(function(btn){
+    btn.addEventListener('click', function(){ openArchiveModal(this.dataset.editArchive); });
+  });
+  grid.querySelectorAll('[data-delete-archive]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var id = this.dataset.deleteArchive;
+      var iss = archiveIssues.find(function(x){ return x.id===id; });
+      showConfirm('সংখ্যা মুছে ফেলবেন?', '"'+iss.name+'" আর্কাইভ থেকে স্থায়ীভাবে মুছে যাবে।', function(){
+        archiveIssues = archiveIssues.filter(function(x){ return x.id !== id; });
+        renderArchive();
+        showToast('সংখ্যা মুছে ফেলা হয়েছে');
+      });
+    });
+  });
+  document.getElementById('btn-add-archive-inline').addEventListener('click', function(){ openArchiveModal(); });
+}
+
+var editingArchiveId = null;
+function openArchiveModal(id){
+  editingArchiveId = id || null;
+  var iss = id ? archiveIssues.find(function(x){ return x.id===id; }) : null;
+  document.getElementById('issue-archive-modal-title').textContent = iss ? 'সংখ্যা এডিট করুন' : 'নতুন সংখ্যা তৈরি করুন';
+  document.getElementById('issue-archive-name').value = iss ? iss.name : '';
+  document.getElementById('issue-archive-number').value = iss ? iss.num : '';
+
+  var preview = document.getElementById('issue-archive-cover-preview');
+  var uploadText = document.querySelector('#issue-archive-cover-upload span');
+  if(iss){ preview.src = iss.cover; preview.style.display='block'; uploadText.style.display='none'; }
+  else{ preview.src=''; preview.style.display='none'; uploadText.style.display='block'; }
+  archivePdfUploader.set(iss ? iss.pdfName : null);
+
+  openModal('issue-archive-modal');
+}
+document.querySelectorAll('[data-open-issue-archive]').forEach(function(btn){
+  btn.addEventListener('click', function(){ openArchiveModal(); });
+});
+document.getElementById('issue-archive-cover-upload').addEventListener('click', function(){ document.getElementById('issue-archive-cover-file').click(); });
+document.getElementById('issue-archive-cover-file').addEventListener('change', function(e){
+  var file = e.target.files[0]; if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev){
+    var preview = document.getElementById('issue-archive-cover-preview');
+    preview.src = ev.target.result; preview.style.display='block';
+    document.querySelector('#issue-archive-cover-upload span').style.display='none';
+  };
+  reader.readAsDataURL(file);
+});
+document.getElementById('issue-archive-save-btn').addEventListener('click', function(){
+  var name = document.getElementById('issue-archive-name').value.trim();
+  if(!name){ document.getElementById('issue-archive-name').focus(); return; }
+  var data = {
+    name: name,
+    num: document.getElementById('issue-archive-number').value.trim() || 'নতুন সংখ্যা',
+    cover: document.getElementById('issue-archive-cover-preview').src || 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&q=75',
+    pdfName: archivePdfUploader.get()
+  };
+  if(editingArchiveId){
+    var idx = archiveIssues.findIndex(function(x){ return x.id===editingArchiveId; });
+    archiveIssues[idx] = Object.assign(archiveIssues[idx], data);
+    showToast('সংখ্যাটা আপডেট হয়েছে');
+  } else {
+    data.id = 'ar' + Date.now();
+    data.count = 0;
+    archiveIssues.unshift(data);
+    showToast('নতুন সংখ্যা তৈরি হয়েছে');
+  }
+  renderArchive();
+  closeModal('issue-archive-modal');
+});
+
+/* ================================================================
+   ============ প্রিন্ট সংখ্যা (স্টোর) — রেন্ডার ============
+================================================================= */
+var editingIssueId = null;
+function renderIssueStats(){
+  var inStock = issues.filter(function(i){ return i.inStock; }).length;
+  document.getElementById('stat-total-issues').textContent = toBn(issues.length);
+  document.getElementById('stat-in-stock').textContent = toBn(inStock);
+  document.getElementById('stat-out-stock').textContent = toBn(issues.length - inStock);
+}
+function renderIssues(){
+  var issueGrid = document.getElementById('issue-grid');
+  issueGrid.innerHTML = issues.map(function(issue){
+    return '<div class="item-card">'+
+      '<div class="item-cover"><img src="'+issue.cover+'" alt=""><span class="item-badge'+(issue.inStock?'':' out')+'">'+(issue.inStock?'স্টকে আছে':'স্টক শেষ')+'</span>'+
+        (issue.pdfName ? '<span class="item-pdf-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>প্রিভিউ</span>' : '')+
+      '</div>'+
+      '<div class="item-body">'+
+        '<div class="item-name">'+issue.name+'</div>'+
+        '<div class="item-sub-line">'+issue.teaser+'</div>'+
+        '<div class="item-foot">'+
+          '<div class="item-price"><span class="unit">৳</span>'+toBn(issue.price)+'</div>'+
+          '<button class="icon-btn-sm" data-edit="'+issue.id+'" title="এডিট করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('') + '<button class="add-item-card" id="btn-add-issue-inline"><span class="plus-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span>নতুন সংখ্যা যোগ করুন</span></button>';
+
+  issueGrid.querySelectorAll('[data-edit]').forEach(function(btn){
+    btn.addEventListener('click', function(){ openIssueModal(this.dataset.edit); });
+  });
+  document.getElementById('btn-add-issue-inline').addEventListener('click', function(){ openIssueModal(); });
+  renderIssueStats();
+}
+function openIssueModal(id){
+  editingIssueId = id || null;
+  var issue = id ? issues.find(function(i){ return i.id === id; }) : null;
+  document.getElementById('modal-title').textContent = issue ? 'সংখ্যা এডিট করুন' : 'নতুন সংখ্যা যোগ করুন';
+  document.getElementById('issue-name').value = issue ? issue.name : '';
+  document.getElementById('issue-teaser').value = issue ? issue.teaser : '';
+  document.getElementById('issue-price').value = issue ? issue.price : '';
+  document.getElementById('issue-number').value = issue ? issue.num : '';
+  document.getElementById('issue-stock').checked = issue ? issue.inStock : true;
+
+  var preview = document.getElementById('cover-preview');
+  var uploadText = document.querySelector('#cover-upload span');
+  if(issue){ preview.src = issue.cover; preview.style.display = 'block'; uploadText.style.display = 'none'; }
+  else{ preview.src = ''; preview.style.display = 'none'; uploadText.style.display = 'block'; }
+  issuePdfUploader.set(issue ? issue.pdfName : null);
+
+  openModal('issue-modal');
+}
+document.getElementById('btn-add-issue').addEventListener('click', function(){ openIssueModal(); });
+document.getElementById('cover-upload').addEventListener('click', function(){ document.getElementById('cover-file').click(); });
+document.getElementById('cover-file').addEventListener('change', function(e){
+  var file = e.target.files[0]; if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev){
+    var preview = document.getElementById('cover-preview');
+    preview.src = ev.target.result; preview.style.display = 'block';
+    document.querySelector('#cover-upload span').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+});
+document.getElementById('modal-save').addEventListener('click', function(){
+  var name = document.getElementById('issue-name').value.trim();
+  if(!name){ document.getElementById('issue-name').focus(); return; }
+  var data = {
+    name: name,
+    teaser: document.getElementById('issue-teaser').value.trim(),
+    price: parseInt(document.getElementById('issue-price').value, 10) || 0,
+    num: document.getElementById('issue-number').value.trim() || 'নতুন সংখ্যা',
+    inStock: document.getElementById('issue-stock').checked,
+    cover: document.getElementById('cover-preview').src || 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&q=75',
+    pdfName: issuePdfUploader.get()
+  };
+  if(editingIssueId){
+    var idx = issues.findIndex(function(i){ return i.id === editingIssueId; });
+    issues[idx] = Object.assign(issues[idx], data);
+    showToast('সংখ্যাটা আপডেট হয়েছে');
+  } else {
+    data.id = 'issue-' + Date.now();
+    issues.unshift(data);
+    showToast('নতুন সংখ্যা যোগ হয়েছে');
+  }
+  renderIssues();
+  closeModal('issue-modal');
+});
+
+/* ================================================================
+   ============ অর্ডার তালিকা — রেন্ডার ============
+================================================================= */
+var currentOrderFilter = 'all';
+function renderOrderStats(){
+  document.getElementById('stat-total-orders').textContent = toBn(orders.length);
+  document.getElementById('stat-pending-orders').textContent = toBn(orders.filter(function(o){ return o.status==='pending'; }).length);
+  document.getElementById('stat-verified-orders').textContent = toBn(orders.filter(function(o){ return o.status==='verified'; }).length);
+  document.getElementById('stat-delivered-orders').textContent = toBn(orders.filter(function(o){ return o.status==='delivered'; }).length);
+}
+function renderOrders(){
+  var list = currentOrderFilter === 'all' ? orders : orders.filter(function(o){ return o.status === currentOrderFilter; });
+  var tbody = document.getElementById('orders-tbody');
+  tbody.innerHTML = '';
+  list.forEach(function(o){
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td>#'+o.id+'</td>'+
+      '<td class="wrap-cell"><strong>'+o.name+'</strong><span>'+o.phone+'</span></td>'+
+      '<td>'+o.issue+'</td>'+
+      '<td>'+toBn(o.qty)+' কপি</td>'+
+      '<td>'+bnTaka(o.deliveryAmt)+'</td>'+
+      '<td>'+o.txn+'</td>'+
+      '<td><select class="status-select" data-id="'+o.id+'">'+
+          '<option value="pending"'+(o.status==='pending'?' selected':'')+'>যাচাই বাকি</option>'+
+          '<option value="verified"'+(o.status==='verified'?' selected':'')+'>যাচাই হয়েছে</option>'+
+          '<option value="delivered"'+(o.status==='delivered'?' selected':'')+'>ডেলিভারি হয়েছে</option>'+
+        '</select></td>';
+    tbody.appendChild(tr);
+  });
+  tbody.querySelectorAll('.status-select').forEach(function(sel){
+    sel.addEventListener('change', function(){
+      var id = this.dataset.id;
+      var order = orders.find(function(o){ return o.id === id; });
+      order.status = this.value;
+      renderOrderStats();
+      showToast('অর্ডার #'+order.id+' এর স্ট্যাটাস "'+STATUS_LABEL[order.status]+'" করা হয়েছে');
+    });
+  });
+  renderOrderStats();
+}
+document.querySelectorAll('#order-filters button').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('#order-filters button').forEach(function(b){ b.classList.remove('active'); });
+    this.classList.add('active');
+    currentOrderFilter = this.dataset.filter;
+    renderOrders();
+  });
+});
+
+/* ================================================================
+   ============ এড স্লট — রেন্ডার ============
+================================================================= */
+var uploadIconSVG = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;flex-shrink:0;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>';
+function renderAdSlots(){
+  var grid = document.getElementById('adSlotGrid');
+  grid.innerHTML = adSlots.map(function(slot){
+    return '<div class="item-card">'+
+      '<div class="item-cover" style="aspect-ratio:'+slot.ratio+'; cursor:pointer;" data-slot-trigger="'+slot.id+'">'+
+        (slot.image ? '<img src="'+slot.image+'" alt="">' : '<div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; color:var(--text-muted); font-size:12px; text-align:center; padding:10px;">'+uploadIconSVG+'<span>ক্লিক করে আপলোড করুন</span></div>')+
+      '</div>'+
+      '<input type="file" accept="image/*" style="display:none;" data-slot-file="'+slot.id+'">'+
+      '<div class="item-body left-align">'+
+        '<div class="item-name">'+slot.name+'</div>'+
+        '<div style="font-size:12px; color:var(--secondary); font-weight:600; margin-bottom:4px;">'+slot.size+'</div>'+
+        '<div class="item-sub-line">'+slot.where+'</div>'+
+        '<div class="item-foot">'+
+          '<label class="switch"><input type="checkbox" data-slot-active="'+slot.id+'" '+(slot.active?'checked':'')+'><span class="track"></span></label>'+
+          '<div style="display:flex; gap:6px;">'+
+            (slot.image ? '<button class="icon-btn-sm danger" data-slot-remove="'+slot.id+'" title="সরিয়ে ফেলুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>' : '')+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+
+  grid.querySelectorAll('[data-slot-trigger]').forEach(function(el){
+    el.addEventListener('click', function(){
+      grid.querySelector('[data-slot-file="'+this.dataset.slotTrigger+'"]').click();
+    });
+  });
+  grid.querySelectorAll('[data-slot-file]').forEach(function(input){
+    input.addEventListener('change', function(e){
+      var id = this.dataset.slotFile;
+      var file = e.target.files[0]; if(!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev){
+        var slot = adSlots.find(function(s){ return s.id === id; });
+        slot.image = ev.target.result; slot.active = true;
+        renderAdSlots();
+        showToast('ছবি আপলোড হয়েছে, স্লটের মাপে অটো-ফিট করা হয়েছে');
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+  grid.querySelectorAll('[data-slot-remove]').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var id = this.dataset.slotRemove;
+      var slot = adSlots.find(function(s){ return s.id === id; });
+      showConfirm('এড সরিয়ে ফেলবেন?', '"'+slot.name+'" স্লটের ছবিটা সরিয়ে ফেললে সাইটে ঐ জায়গায় আর কিছু দেখাবে না।', function(){
+        slot.image = null; slot.active = false;
+        renderAdSlots();
+        showToast('এড সরিয়ে ফেলা হয়েছে');
+      });
+    });
+  });
+  grid.querySelectorAll('[data-slot-active]').forEach(function(chk){
+    chk.addEventListener('change', function(){
+      var slot = adSlots.find(function(s){ return s.id === this.dataset.slotActive; }.bind(this));
+      slot.active = this.checked;
+      showToast(slot.name + (slot.active ? ' সক্রিয় করা হয়েছে' : ' নিষ্ক্রিয় করা হয়েছে'));
+    });
+  });
+}
+
+/* ================================================================
+   ============ কমেন্ট মডারেশন — রেন্ডার ============
+================================================================= */
+var currentCommentFilter = 'all';
+function renderComments(){
+  var list = currentCommentFilter === 'flagged' ? comments.filter(function(c){ return c.flagged; }) : comments;
+  var modList = document.getElementById('modList');
+  if(list.length === 0){
+    modList.innerHTML = '<div class="empty-row-note">কোনো মন্তব্য নেই।</div>';
+    return;
+  }
+  modList.innerHTML = list.map(function(c){
+    return '<div class="mod-item'+(c.flagged?' flagged':'')+'">'+
+      '<img src="'+c.img+'" alt="">'+
+      '<div class="mod-body">'+
+        '<div class="mod-top">'+
+          '<strong>'+c.name+'</strong>'+
+          (c.flagged ? '<span class="flag-tag">রিপোর্ট হয়েছে</span>' : '')+
+          '<span class="mod-context">"'+c.context+'"</span>'+
+          '<span class="mod-date">'+c.date+'</span>'+
+        '</div>'+
+        '<p class="mod-text">'+c.text+'</p>'+
+        '<div class="mod-actions">'+
+          '<button class="btn btn-danger-ghost" data-delete-comment="'+c.id+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg> মুছে ফেলুন</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+
+  modList.querySelectorAll('[data-delete-comment]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var id = this.dataset.deleteComment;
+      showConfirm('মন্তব্য মুছে ফেলবেন?', 'এই মন্তব্যটা মুছে ফেললে আর ফিরিয়ে আনা যাবে না।', function(){
+        comments = comments.filter(function(c){ return c.id !== id; });
+        renderComments();
+        showToast('মন্তব্য মুছে ফেলা হয়েছে');
+      });
+    });
+  });
+}
+document.getElementById('commentFilters').addEventListener('click', function(e){
+  var btn = e.target.closest('button'); if(!btn) return;
+  this.querySelectorAll('button').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  currentCommentFilter = btn.dataset.filter;
+  renderComments();
+});
+
+/* ================================================================
+   ============ নিউজলেটার সাবস্ক্রাইবার — রেন্ডার ============
+================================================================= */
+var subscriberQuery = '';
+function renderSubscribers(){
+  var list = subscribers.filter(function(s){
+    return !subscriberQuery || s.email.toLowerCase().indexOf(subscriberQuery.toLowerCase()) !== -1;
+  });
+  var tbody = document.getElementById('subscribersTbody');
+  if(list.length === 0){
+    tbody.innerHTML = '<tr><td colspan="4"><div class="empty-row-note">কোনো সাবস্ক্রাইবার পাওয়া যায়নি।</div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map(function(s){
+    return '<tr>'+
+      '<td>'+s.email+'</td>'+
+      '<td><span class="status-badge '+(s.source==='সাইন-ইন'?'published':'draft')+'">'+s.source+'</span></td>'+
+      '<td>'+s.date+'</td>'+
+      '<td><button class="icon-btn-sm danger" data-remove-sub="'+s.email+'" title="তালিকা থেকে সরান"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></td>'+
+    '</tr>';
+  }).join('');
+  tbody.querySelectorAll('[data-remove-sub]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var email = this.dataset.removeSub;
+      showConfirm('সাবস্ক্রাইবার সরাবেন?', '"'+email+'" আর নিউজলেটার পাবে না।', function(){
+        subscribers = subscribers.filter(function(s){ return s.email !== email; });
+        renderSubscribers();
+        renderSubscriberSummary();
+        showToast('সাবস্ক্রাইবার তালিকা থেকে সরানো হয়েছে');
+      });
+    });
+  });
+}
+function renderSubscriberSummary(){
+  document.getElementById('subs-signin').textContent = toBn(subscribers.filter(function(s){return s.source==='সাইন-ইন';}).length + 780);
+  document.getElementById('subs-footer').textContent = toBn(subscribers.filter(function(s){return s.source==='ফুটার';}).length + 154);
+}
+document.getElementById('subscriberSearch').addEventListener('input', function(){
+  subscriberQuery = this.value.trim();
+  renderSubscribers();
+});
+document.getElementById('exportSubsBtn').addEventListener('click', function(){
+  showToast('সাবস্ক্রাইবার তালিকা এক্সপোর্ট হচ্ছে (CSV)');
+});
+
+/* ================================================================
+   ============ অ্যানালিটিক্স — রেন্ডার ============
+================================================================= */
+function renderAnalytics(){
+  var articleData = [
+    { label:'চিলেকোঠার চিঠি', value:3240 },
+    { label:'সাজেকের মেঘে দুই রাত', value:2810 },
+    { label:'নদীর নাম মনে নেই', value:2190 },
+    { label:'বইয়ের দোকানগুলো কোথায় গেল', value:1940 },
+    { label:'ছাদ-বাগান ও প্রতিবেশীর টম্যাটো', value:1720 }
+  ];
+  var catData = [
+    { label:'গল্প', value:38 },
+    { label:'কবিতা', value:27 },
+    { label:'ভ্রমণ', value:19 },
+    { label:'রম্য', value:11 },
+    { label:'প্রবন্ধ', value:5 }
+  ];
+  function renderBars(containerId, data){
+    var max = Math.max.apply(null, data.map(function(d){ return d.value; }));
+    document.getElementById(containerId).innerHTML = data.map(function(d){
+      var pct = Math.round((d.value / max) * 100);
+      return '<div class="bar-row">'+
+        '<span class="bar-label" title="'+d.label+'">'+d.label+'</span>'+
+        '<span class="bar-track"><span class="bar-fill" style="width:'+pct+'%"></span></span>'+
+        '<span class="bar-value">'+toBn(d.value)+'</span>'+
+      '</div>';
+    }).join('');
+  }
+  renderBars('analyticsArticleBars', articleData);
+  renderBars('analyticsCatBars', catData);
+}
+
+/* ================================================================
+   ============ সেটিংস — সেভ বাটন ============
+================================================================= */
+document.getElementById('save-delivery').addEventListener('click', function(){ showToast('ডেলিভারি চার্জ সংরক্ষণ হয়েছে'); });
+document.getElementById('save-payment').addEventListener('click', function(){ showToast('পেমেন্ট নাম্বার সংরক্ষণ হয়েছে'); });
+document.getElementById('save-contact').addEventListener('click', function(){ showToast('যোগাযোগ তথ্য সংরক্ষণ হয়েছে'); });
+
+/* ================================================================
+   ============ প্রাথমিক রেন্ডার ============
+================================================================= */
+renderDashboard();
+renderArticles();
+renderAuthors();
+renderArchive();
+renderIssues();
+renderOrders();
+renderAdSlots();
+renderComments();
+renderSubscribers();
+renderSubscriberSummary();
+renderAnalytics();
+</script>
+
+</body>
+</html>

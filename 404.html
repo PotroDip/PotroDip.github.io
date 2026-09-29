@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>পেজটি পাওয়া যায়নি | পত্রদ্বীপ</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--primary:#1D5358;--bg:#F7F3EC;--text:#2A2A28;--muted:#6B6B63;--border:#E4DDD0;--secondary:#9B7257;}
+  html[data-theme="dark"]{--primary:#4FA8AD;--bg:#14181A;--text:#F2EFE8;--muted:#A8A69E;--border:#2C3335;--secondary:#C9A98A;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;
+    background:var(--bg);color:var(--text);font-family:'Noto Serif Bengali',serif;line-height:1.8}
+  .num{font-size:88px;font-weight:700;color:var(--primary);line-height:1}
+  h1{font-size:24px;margin:14px 0 8px}
+  p{color:var(--muted);font-size:15px;margin-bottom:26px}
+  a.btn{display:inline-block;padding:11px 26px;border-radius:999px;background:var(--primary);color:var(--bg);text-decoration:none;font-size:15px;font-weight:600}
+  a.btn:hover{opacity:.9}
+  .rule{width:56px;height:2px;background:var(--secondary);margin:18px auto}
+</style>
+<script>
+  (function(){var t=null;try{t=localStorage.getItem('potrodip-theme')}catch(e){}
+  if(t!=='light'&&t!=='dark')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
+  document.documentElement.setAttribute('data-theme',t);})();
+</script>
+</head>
+<body>
+  <main>
+    <div class="num">৪০৪</div>
+    <div class="rule"></div>
+    <h1>পেজটি খুঁজে পাওয়া যায়নি</h1>
+    <p>যে ঠিকানায় এসেছেন সেখানে কোনো পাতা নেই। হয়তো লিংকটা ভুল, কিংবা পেজটা সরিয়ে ফেলা হয়েছে।</p>
+    <a class="btn" id="home" href="index.html">হোম পেজে ফিরুন</a>
+  </main>
+  <script>
+    /* গিটহাব পেজেস প্রজেক্ট সাইটে (username.github.io/repo/) যেকোনো গভীর ঠিকানা থেকেও হোমে ফেরার জন্য */
+    (function(){
+      var parts=location.pathname.split('/').filter(Boolean);
+      var base=(location.hostname.slice(-10)==='github.io' && parts.length) ? '/'+parts[0]+'/' : '/';
+      document.getElementById('home').href=base;
+    })();
+  </script>
+</body>
+</html>
