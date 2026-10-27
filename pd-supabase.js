@@ -5,7 +5,11 @@ var PD=window.PD={pages:{home:'auth.html',admin:'auth.html',auth:'auth.html'},db
 function toast(m,bad){var t=document.createElement('div');t.textContent=m;t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:12px 22px;border-radius:99px;z-index:9999;font:600 15px "Noto Serif Bengali",serif;color:#fff;background:'+(bad?'#B3402E':'#1D5358');document.body.appendChild(t);setTimeout(function(){t.remove()},3500)}PD.toast=toast;
 var ERR={'Invalid login credentials':'ইমেইল বা পাসওয়ার্ড ভুল','User already registered':'এই ইমেইলে আগেই অ্যাকাউন্ট আছে','Email not confirmed':'আগে ইমেইল ভেরিফাই করুন'};
 var msg=function(e){return ERR[e.message]||('সমস্যা: '+e.message)};
-if(!window.supabase){console.warn('supabase-js লোড হয়নি');return}
+PD.fixLinks=function(){var M=[[/^হোম$/,'index.html'],[/^আর্কাইভ$/,'archive.html'],[/^লেখক( তালিকা)?$/,'author.html'],[/^সংখ্যা কিনুন$/,'store.html'],[/^(লগইন|সাইনআপ|আমার প্রোফাইল)$/,'auth.html']];
+[].forEach.call(document.querySelectorAll('a[href="#"],a:not([href])'),function(a){var t=a.textContent.replace(/\s+/g,' ').trim();if(a.classList.contains('brand')){a.href='index.html';return}for(var i=0;i<M.length;i++)if(M[i][0].test(t)){a.href=M[i][1];return}});
+[].forEach.call(document.querySelectorAll('button[aria-label="প্রোফাইল"]'),function(b){b.onclick=function(){location.href='auth.html'}});
+if(window.PD&&PD.db)PD.db.from('site_settings').select('key,value').eq('key','contact').then(function(r){var c=r.data&&r.data[0]&&r.data[0].value;if(!c)return;[].forEach.call(document.querySelectorAll('footer a'),function(a){var t=a.textContent.trim();if(t=='ফেসবুক'&&c.facebook)a.href=c.facebook;if(t=='ইনস্টাগ্রাম'&&c.instagram)a.href=c.instagram;if(t=='ইমেইল করুন'&&c.email)a.href='mailto:'+c.email;[].forEach.call(['ফেসবুক','ইনস্টাগ্রাম'],function(){});if(a.getAttribute('href')=='#'&&/ফেসবুক|ইনস্টাগ্রাম|ইমেইল/.test(t))a.style.display='none'})})};
+if(!window.supabase){document.addEventListener('DOMContentLoaded',PD.fixLinks);console.warn('supabase-js লোড হয়নি');return}
 var db=PD.db=window.supabase.createClient(URL,KEY);
 PD.load=function(){return db.auth.getSession().then(function(r){PD.user=r.data.session?r.data.session.user:null;if(!PD.user)return null;return db.from('profiles').select('*').eq('id',PD.user.id).single().then(function(p){PD.profile=p.data;return PD.profile})})};
 PD.isAdmin=function(){return !!(PD.profile&&PD.profile.role==='admin')};
@@ -28,5 +32,5 @@ PD.load().then(function(){
  if(/admin/.test(location.pathname)&&!PD.isAdmin()){location.replace(PD.pages.auth);return}
  if(PD.user&&window.pdShowDashboard)pdShowDashboard();
 });
-if(document.readyState!=='loading')wire();else document.addEventListener('DOMContentLoaded',wire);
+if(document.readyState!=='loading'){wire();PD.fixLinks()}else document.addEventListener('DOMContentLoaded',function(){wire();PD.fixLinks()});
 })();
