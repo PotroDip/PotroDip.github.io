@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://pqoszcuhxdavehnxundq.supabase.co https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>লগইন / সাইনআপ | পত্রদ্বীপ | Potrodip</title>
@@ -873,7 +875,8 @@
               </div>
             </div>
             <a href="#" class="forgot-link">পাসওয়ার্ড ভুলে গেছেন?</a>
-            <button type="submit" class="btn-primary-full" id="btn-login-submit">লগইন করুন</button>
+            <div id="ts-login" style="margin:0 0 14px;display:flex;justify-content:center"></div>
+<button type="submit" class="btn-primary-full" id="btn-login-submit">লগইন করুন</button>
           </form>
 
           <p class="auth-switch">একাউন্ট নেই? <a href="#" data-switch="signup">সাইনআপ করুন</a></p>
@@ -911,7 +914,8 @@
                 </button>
               </div>
             </div>
-            <button type="submit" class="btn-primary-full" id="btn-signup-submit">সাইনআপ করুন</button>
+            <div id="ts-signup" style="margin:0 0 14px;display:flex;justify-content:center"></div>
+<button type="submit" class="btn-primary-full" id="btn-signup-submit">সাইনআপ করুন</button>
           </form>
 
           <div class="newsletter-note">
@@ -1971,7 +1975,8 @@
 })();
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="vendor/supabase.js"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 <script src="pd-supabase.js"></script>
 </body>
 </html>
