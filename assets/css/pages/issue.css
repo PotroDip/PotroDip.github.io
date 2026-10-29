@@ -1,0 +1,73 @@
+/* ============================================================
+   issue.css — একটা সংখ্যার পাতা (হোম ও আর্কাইভের সাথে একই ধাঁচ)
+   home.css (কার্ড, সেকশন-হেড) ও issue-band.css-এর ওপর ভিত্তি করে
+   ============================================================ */
+
+/* ============ ব্রেডক্রাম্ব ============ */
+.breadcrumb{padding:22px 0 22px;font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.breadcrumb a{color:var(--text-muted);}
+.breadcrumb a:hover{color:var(--primary);}
+.breadcrumb .sep{width:4px;height:4px;border-radius:50%;background:var(--border);}
+.breadcrumb .current{color:var(--secondary);}
+
+/* ============ প্রচ্ছদ-ব্যান্ড ============ */
+.issue-band{margin:0;}
+.ib-text h1{font-size:clamp(32px,4.4vw,56px);color:#fff;line-height:1.18;margin-bottom:18px;}
+.ib-btn.is-off{opacity:.55;cursor:default;}
+.ib-btn.primary svg{transition:transform .25s ease;}
+.ib-btn.primary:hover svg{transform:translateY(3px);}
+
+/* ============ সেকশন হেড (আর্কাইভের মতো) ============ */
+.toc .section-head,#contents .section-head,.issue-writers .section-head{border-top:none;padding-top:64px;margin-bottom:26px;}
+.toc-note{font-size:14px;color:var(--text-muted);}
+
+/* ============ সূচিপত্র ============ */
+.toc-list{
+  list-style:none;
+  display:grid;grid-template-columns:1fr 1fr;column-gap:56px;
+  border-top:2px solid var(--text);
+}
+.toc-list li{border-bottom:1px solid var(--border);}
+.toc-list a{
+  display:grid;grid-template-columns:auto 1fr auto auto;gap:18px;align-items:center;
+  padding:20px 4px;
+}
+.toc-num{font-size:28px;font-weight:700;line-height:1;color:var(--secondary-light);min-width:42px;}
+.toc-main{display:flex;flex-direction:column;min-width:0;}
+.toc-title{font-size:18px;font-weight:700;line-height:1.4;color:var(--text);transition:color .2s ease;}
+.toc-by{font-size:13.5px;color:var(--text-muted);}
+.toc-cat{font-size:12px;color:var(--secondary);border:1px solid var(--border);padding:2px 10px;border-radius:999px;white-space:nowrap;}
+.toc-go{display:flex;color:var(--text-muted);transition:transform .25s ease,color .2s ease;}
+.toc-go svg{width:17px;height:17px;}
+.toc-list a:hover .toc-title{color:var(--primary);}
+.toc-list a:hover .toc-go{transform:translateX(4px);color:var(--primary);}
+
+/* ============ এই সংখ্যার লেখক ============ */
+.issue-writers{padding-bottom:80px;}
+.writer-row{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.writer{
+  display:flex;align-items:center;gap:16px;
+  padding:18px 20px;background:var(--surface);border:1px solid var(--border);border-radius:6px;
+  transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease;
+}
+.writer:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(29,83,88,.10);border-color:transparent;}
+.w-ava{flex-shrink:0;width:62px;height:62px;padding:3px;border-radius:50%;background:conic-gradient(from 210deg,var(--secondary-light),var(--primary),var(--secondary-light));}
+.w-ava img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:3px solid var(--surface);}
+.w-text strong{display:block;font-size:16.5px;color:var(--text);line-height:1.4;}
+.w-text span{font-size:13px;color:var(--text-muted);}
+#contents{padding-bottom:8px;}
+
+@media(max-width:900px){
+  .toc-list{grid-template-columns:1fr;}
+  .writer-row{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:640px){
+  .breadcrumb{padding:16px 0;}
+  .toc .section-head,#contents .section-head,.issue-writers .section-head{padding-top:46px;margin-bottom:18px;}
+  .toc-list a{grid-template-columns:auto 1fr auto;gap:12px;padding:16px 2px;}
+  .toc-cat{display:none;}
+  .toc-num{font-size:22px;min-width:30px;}
+  .toc-title{font-size:16px;}
+  .writer-row{grid-template-columns:1fr;gap:12px;}
+  .issue-writers{padding-bottom:56px;}
+}

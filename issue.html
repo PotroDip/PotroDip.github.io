@@ -12,6 +12,8 @@
 <link href="assets/css/layout.css" rel="stylesheet"/>
 <link href="assets/css/pages/home.css" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/css/components/nav.css">
+<link rel="stylesheet" href="assets/css/components/issue-band.css">
+<link rel="stylesheet" href="assets/css/pages/issue.css">
 </head>
 <body data-intro="instant">
 <!-- ============ ইন্ট্রো ওভারলে (লোগো এনিমেশন) ============ -->
@@ -508,8 +510,8 @@
 </a>
 <nav class="main-nav">
 <div class="nav-links">
-<a class="active" href="#">হোম</a>
-<a href="#">আর্কাইভ</a>
+<a href="#">হোম</a>
+<a href="#" class="active">আর্কাইভ</a>
 <a href="#">লেখক</a>
 <a href="#">সংখ্যা কিনুন</a>
 </div>
@@ -531,25 +533,36 @@
 </button>
 </div>
 </header>
-<main class="wrap">
-<!-- ============ হিরো ============ -->
-<section class="hero">
-<div class="hero-grid" id="hero-grid"></div>
+<main>
+<div class="wrap">
+<div class="breadcrumb">
+<a href="index.html">হোম</a><span class="sep"></span>
+<a href="archive.html">আর্কাইভ</a><span class="sep"></span>
+<span class="current" id="crumb-title">সংখ্যা</span>
+</div>
+</div>
+<!-- ============ সংখ্যার প্রচ্ছদ ও পরিচিতি (আর্কাইভ/হোমের ব্যান্ডের মতো) ============ -->
+<section class="issue-band" id="issue-hero"></section>
+<div class="wrap">
+<!-- ============ সূচিপত্র ============ -->
+<section class="toc" id="toc">
+<div class="section-head"><h2>সূচিপত্র</h2><span class="toc-note" id="toc-note"></span></div>
+<ol class="toc-list" id="toc-list"></ol>
 </section>
-<!-- ============ এড স্লট: টপ ব্যানার ============ -->
-
-<!-- ============ আর্টিকেল গ্রিড ============ -->
-<section>
+<!-- ============ এই সংখ্যার লেখা ============ -->
+<section id="contents">
 <div class="section-head">
 <h2>এই সংখ্যার লেখা</h2>
-
+<div class="filter-chips" id="chips"></div>
 </div>
-<template id="tpl-card"><article class="article-card"><div class="thumb"><img alt="" loading="lazy"/></div><span class="cat-label"></span><h3></h3><p></p><div class="card-meta"><img alt=""/><span></span></div></article></template><div class="article-grid" id="article-grid"></div>
+<div class="article-grid" id="article-grid"></div>
 </section>
-<!-- ============ এড স্লট: মিড-স্ক্রল ============ -->
-
-<!-- ============ জনপ্রিয় লেখক ============ -->
-
+<!-- ============ এই সংখ্যার লেখক ============ -->
+<section class="issue-writers" id="writers">
+<div class="section-head"><h2>এই সংখ্যার লেখক</h2><a class="see-all" href="archive.html">আর্কাইভে সব সংখ্যা →</a></div>
+<div class="writer-row" id="writer-row"></div>
+</section>
+</div>
 </main>
 <!-- ============ ফুটার ============ -->
 <footer>
