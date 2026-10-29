@@ -2,11 +2,6 @@
    base.css — সব পেজে লাগে: রঙ (লাইট/ডার্ক), ফন্ট, হেডার, নেভিগেশন, ফুটার
    ============================================================ */
 
-/* ============ ফন্ট: Gunjoron-Font (নিজস্ব সার্ভারে রাখা; Thin / Normal / Bold) ============ */
-@font-face{font-family:'Gunjoron';src:url('../fonts/Gunjoron-Font-Thin.ttf') format('truetype');font-weight:100 300;font-style:normal;font-display:swap;}
-@font-face{font-family:'Gunjoron';src:url('../fonts/Gunjoron-Font-Normal.ttf') format('truetype');font-weight:400 500;font-style:normal;font-display:swap;}
-@font-face{font-family:'Gunjoron';src:url('../fonts/Gunjoron-Font-Bold.ttf') format('truetype');font-weight:600 900;font-style:normal;font-display:swap;}
-
 *{margin:0;padding:0;box-sizing:border-box;}
 
 html{scroll-behavior:smooth;}
@@ -14,7 +9,7 @@ html{scroll-behavior:smooth;}
 /* ============ টাইপোগ্রাফি হায়ারার্কি — ওজন দিয়ে ============ */
   /* Bold(700): হেডলাইন/শিরোনাম — h1, আর্টিকেল টাইটেল, সেকশন হেডিং */
   h1,h2,h3{
-    font-family:'Gunjoron', serif;
+    font-family:'Noto Serif Bengali', serif;
     font-weight:700;
     line-height:1.3;
     color:var(--text);
@@ -251,7 +246,7 @@ html[data-theme="dark"] .free-badge{color:#123A3D;}
     position:absolute;
     right:4px;
     bottom:100%;
-    margin-bottom:10px;
+    margin-bottom:-15px;
     width:108px;
     line-height:0;
     opacity:.92;

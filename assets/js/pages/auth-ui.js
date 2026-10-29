@@ -53,10 +53,10 @@
     showConfirm('লগ-আউট করবেন?', 'আপনি কি সত্যিই এই একাউন্ট থেকে লগ-আউট করতে চান?', function(){ if(window.PD) PD.signOut(); else showAuth(); });
   });
   window.pdShowDashboard = showDashboard; window.pdShowAuth = showAuth;
-  if(profileIconBtn) profileIconBtn.addEventListener('click', function(e){
-    /* লগইন থাকলে একই পেজে ড্যাশবোর্ড খোলা; না থাকলে লগইন ফর্মই থাকে */
-    if(window.PD && PD.user){ e.preventDefault(); showDashboard(); }
-    else e.preventDefault();
+  profileIconBtn.addEventListener('click', function(){
+    if(dashSection.style.display === 'none' || !dashSection.style.display){
+      showDashboard();
+    }
   });
 })();
 ;

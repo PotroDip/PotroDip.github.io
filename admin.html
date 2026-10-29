@@ -2,14 +2,17 @@
 <html lang="bn">
 <html lang="bn">
 <head>
-<meta charset="utf-8"/><meta content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; connect-src 'self' https://pqoszcuhxdavehnxundq.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'" http-equiv="Content-Security-Policy"/>
+<meta charset="utf-8"/><meta content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://pqoszcuhxdavehnxundq.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'" http-equiv="Content-Security-Policy"/>
 <meta content="strict-origin-when-cross-origin" name="referrer"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>এডমিন প্যানেল | পত্রদ্বীপ | Potrodip</title>
-<meta name="description" content="পত্রদ্বীপ এডমিন প্যানেল।">
 <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="assets/css/base.css" rel="stylesheet"/>
 <link href="assets/css/pages/admin.css" rel="stylesheet"/>
+<link href="assets/css/pages/site-designer.css" rel="stylesheet"/>
 </head>
 <body>
 <div class="app" style="display:none">
@@ -378,6 +381,35 @@
           </button>
 </div>
 </section>
+<section class="page" id="page-designer">
+<div class="page-head">
+<div class="page-head-copy">
+<h2 style="font-size:17px;">সাইট ডিজাইনার</h2>
+<p>পুরো ওয়েবসাইটের লেখা, রং, আকার, ছবি, বাটন, সেকশন — সব কিছু নিজের মতো সাজান। পাশে মোবাইল ও পিসির প্রিভিউ দেখে, পছন্দ হলে "পাবলিশ" চাপুন।</p>
+</div>
+</div>
+<div class="pdd-launch">
+<div class="pdd-hero">
+<h3>আপনার সাইট, আপনার মতো করে</h3>
+<p>প্রিভিউতে যেকোনো জিনিসে ক্লিক করুন, তারপর সেটার লেখা, রং, গ্রেডিয়েন্ট, সাইজ, ফাঁক বদলান। নতুন এলিমেন্ট যোগ করুন, অপ্রয়োজনীয় অংশ অফ করুন, জায়গা বদলান। এই প্যানেলের বাকি সব অংশ আগের মতোই থাকবে।</p>
+<button class="btn" id="pdd-open" type="button">🎨 সাইট ডিজাইনার খুলুন</button>
+<small id="pdd-launch-status">লোড হচ্ছে…</small>
+</div>
+<div class="pdd-feats">
+<h4>কী কী করা যাবে</h4>
+<ul>
+<li>পুরো সাইটের রং ও থিম এক ক্লিকে বদলানো (দিন ও রাতের মোড আলাদা)</li>
+<li>যেকোনো লেখা, লিংক ও ছবি সরাসরি এডিট করা</li>
+<li>লেখার সাইজ, ওজন, রং, গ্রেডিয়েন্ট, বর্ডার, ছায়া নিয়ন্ত্রণ</li>
+<li>নতুন শিরোনাম, বাটন, ছবি, বক্স, আইকন যোগ করা</li>
+<li>যেকোনো অংশ অন/অফ করা এবং উপর-নিচ সরানো</li>
+<li>পিসি, ট্যাবলেট ও মোবাইল প্রিভিউ — পাবলিশের আগে ড্রাফট সেভ</li>
+<li>ভুল হলে পূর্বাবস্থা (Undo) ও আগের ভার্সনে ফেরা</li>
+</ul>
+</div>
+</div>
+</section>
+
 </div>
 </div>
 </div>
@@ -588,5 +620,6 @@
 <script src="assets/js/pages/admin-editor.js"></script>
 <script src="assets/js/pages/admin.js"></script>
 <script src="assets/js/pages/admin-forms.js"></script>
+<script src="assets/js/pages/site-designer.js"></script>
 </body>
 </html>

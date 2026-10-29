@@ -147,47 +147,9 @@
     on('demo-logout-btn', function() {
       PD.signOut()
     });
-    /* পাসওয়ার্ড ভুলে গেলে: ইমেইলে রিসেট লিংক পাঠানো */
-    [].forEach.call(document.querySelectorAll('.forgot-link'), function(a) {
-      a.addEventListener('click', function(ev) {
-        ev.preventDefault();
-        var e = ($('li-email') && $('li-email').value.trim()) || '';
-        if (!e) e = (prompt('আপনার অ্যাকাউন্টের ইমেইল ঠিকানা লিখুন:', '') || '').trim();
-        if (!e) return;
-        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)) return toast('সঠিক ইমেইল ঠিকানা দিন', 1);
-        var ct = tok('ts-login');
-        if (!ct) return toast(WAIT, 1);
-        db.auth.resetPasswordForEmail(e, {
-          redirectTo: location.origin + '/' + PD.pages.auth,
-          captchaToken: ct
-        }).then(function(r) {
-          rs('ts-login');
-          if (r.error) return toast(msg(r.error), 1);
-          toast('পাসওয়ার্ড রিসেটের লিংক আপনার ইমেইলে পাঠানো হয়েছে')
-        })
-      })
-    });
   }
-
-  /* রিসেট লিংক থেকে ফিরে এলে: নতুন পাসওয়ার্ড নেওয়া */
-  function askNewPassword() {
-    if (!PD.recovery || !PD.user) return;
-    PD.recovery = false;
-    var p = prompt('নতুন পাসওয়ার্ড লিখুন (কমপক্ষে ৬ অক্ষর):', '');
-    if (p === null) return;
-    if (p.length < 6) { toast('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে', 1); PD.recovery = true; return setTimeout(askNewPassword, 400); }
-    db.auth.updateUser({ password: p }).then(function(r) {
-      if (r.error) return toast(msg(r.error), 1);
-      toast('পাসওয়ার্ড বদলানো হয়েছে');
-      if (history.replaceState) history.replaceState(null, '', location.pathname);
-    })
-  }
-  db.auth.onAuthStateChange(function(ev) {
-    if (ev === 'PASSWORD_RECOVERY') { PD.recovery = true; PD.load().then(function() { setTimeout(askNewPassword, 300) }) }
-  });
   PD.ready.then(function() {
-    if (PD.user && window.pdShowDashboard) pdShowDashboard();
-    setTimeout(askNewPassword, 500)
+    if (PD.user && window.pdShowDashboard) pdShowDashboard()
   });
 
   function forms() {

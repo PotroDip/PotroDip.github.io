@@ -36,7 +36,7 @@ html[data-theme="dark"]{
 body{
     background:var(--bg);
     color:var(--text);
-    font-family:'Gunjoron', serif;
+    font-family:'Noto Serif Bengali', serif;
     font-weight:400;
     line-height:1.7;
     overflow-x:hidden;
@@ -47,7 +47,7 @@ body{
 
 /* SemiBold(600): সাব-হেডিং, ব্র্যান্ড নাম, বাটন টেক্সট, লেখকের নাম */
   h4, .semibold, button, .brand-name, .byline-info strong{
-    font-family:'Gunjoron', serif;
+    font-family:'Noto Serif Bengali', serif;
     font-weight:600;
   }
 

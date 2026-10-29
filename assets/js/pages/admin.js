@@ -32,8 +32,8 @@
   var SLOTS = [
     { id: 'top', re: /top/i, name: 'টপ ব্যানার', size: '১২০০ × ২০০ px', where: 'হোমপেজ উপরে', ratio: '6/1' },
     { id: 'mid', re: /mid/i, name: 'মিড-স্ক্রল ব্যানার', size: '৭২৮ × ১৫০ px', where: 'হোমপেজ/আর্টিকেল লিস্টের মাঝে', ratio: '4.85/1' },
-    { id: 'square', re: /square|side/i, name: 'সাইডবার/স্কোয়ার', size: '৩০০ × ৩০০ px', where: 'আর্টিকেল পেজে, লেখার শেষে', ratio: '1/1' },
-    { id: 'mobile', re: /mobile/i, name: 'মোবাইল ব্যানার', size: '৩২০ × ১০০ px', where: 'মোবাইলে হোমপেজের উপরের ব্যানারের জায়গায়', ratio: '3.2/1' }
+    { id: 'square', re: /square|side/i, name: 'সাইডবার/স্কোয়ার', size: '৩০০ × ৩০০ px', where: 'আর্টিকেল পেজের পাশে', ratio: '1/1' },
+    { id: 'mobile', re: /mobile/i, name: 'মোবাইল ব্যানার', size: '৩২০ × ১০০ px', where: 'মোবাইলে স্বয়ংক্রিয়ভাবে', ratio: '3.2/1' }
   ];
   function ok(r) { if (r && r.error) { A.showToast('সমস্যা: ' + PD.msg(r.error)); return false; } return true; }
   function byId(list, id) { return list.filter(function (x) { return x.id === id; })[0]; }
@@ -150,7 +150,7 @@
   function renderArchive() {
     var cnt = {}; S.articles.forEach(function (a) { if (a.issue_id) cnt[a.issue_id] = (cnt[a.issue_id] || 0) + 1; });
     $('archiveGrid').innerHTML = S.issues.map(function (i) {
-      return H`<div class="item-card"><div class="item-cover"><img src="${UI.cover(i.cover_url)}" alt=""><span class="item-badge">সংখ্যা ${UI.bn(i.issue_number || '')}</span></div><div class="item-body"><div class="item-name">${i.title}</div><div class="item-sub-line">${UI.bn(cnt[i.id] || 0)}টি লেখা যুক্ত আছে</div><div class="item-foot centered"><button class="icon-btn-sm" data-edit-archive="${i.id}" title="এডিট করুন">${raw(ICON.edit)}</button><button class="icon-btn-sm danger" data-delete-archive="${i.id}" title="মুছে ফেলুন">${raw(ICON.del)}</button></div></div></div>`;
+      return H`<div class="item-card"><div class="item-cover"><img src="${UI.cover(i.cover_url)}" alt=""><span class="item-badge">সংখ্যা ${i.issue_number || ''}</span></div><div class="item-body"><div class="item-name">${i.title}</div><div class="item-sub-line">${UI.bn(cnt[i.id] || 0)}টি লেখা যুক্ত আছে</div><div class="item-foot centered"><button class="icon-btn-sm" data-edit-archive="${i.id}" title="এডিট করুন">${raw(ICON.edit)}</button><button class="icon-btn-sm danger" data-delete-archive="${i.id}" title="মুছে ফেলুন">${raw(ICON.del)}</button></div></div></div>`;
     }).join('') + '<button class="add-item-card" id="btn-add-archive-inline"><span class="plus-circle">' + ICON.plus + '</span><span>নতুন সংখ্যা তৈরি করুন</span></button>';
   }
   $('archiveGrid').addEventListener('click', function (e) {

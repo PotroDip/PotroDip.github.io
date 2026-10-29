@@ -16,7 +16,7 @@
   }
   function count(tab, n) { var b = document.querySelector('[data-dtab="' + tab + '"] .count'); if (b) b.textContent = UI.bn(n); }
   function empty(box, text) { var p = document.createElement('p'); p.className = 'pd-empty'; p.style.cssText = 'grid-column:1/-1;text-align:center;color:var(--text-muted);padding:36px 0'; p.textContent = text; box.appendChild(p); }
-  function safeLink(u) { u = String(u || '').replace(/^\//, ''); return /^(article|author|issue|store|archive)\.html(\?[\w=&%.-]*)?$/.test(u) ? u : ''; }
+  function safeLink(u) { return /^(article|author|issue|store|archive)\.html(\?[\w=&%.-]*)?$/.test(u || '') ? u : ''; }
   function fade(card) { card.style.transition = 'opacity .25s ease, transform .25s ease'; card.style.opacity = '0'; card.style.transform = 'scale(.95)'; setTimeout(function () { card.remove(); }, 250); }
 
   /* ---------- প্রোফাইল ---------- */
@@ -128,30 +128,16 @@
   /* ---------- আমার অর্ডার ---------- */
   function orders() {
     var box = $('orders-list'); box.innerHTML = '';
-    var esc = function (t) { return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
-    var tk = function (n) { return '৳' + UI.bn(Number(n || 0)); };
-    return db.from('orders').select('id,order_number,subtotal,delivery_charge,payment_status,area,created_at').eq('user_id', PD.user.id).order('created_at', { ascending: false }).limit(30).then(function (r) {
+    return db.from('orders').select('id,order_number,subtotal,delivery_charge,payment_status,created_at').eq('user_id', PD.user.id).order('created_at', { ascending: false }).limit(30).then(function (r) {
       var list = r.data || [];
       count('orders', list.length);
-      if (!list.length) {
-        box.innerHTML = '<div class="order-empty"><p>এখনো কোনো অর্ডার করেননি।</p><a href="store.html" class="order-shop">ছাপা সংখ্যা দেখুন →</a></div>';
-        return;
-      }
-      var ids = list.map(function (o) { return o.id; });
-      return db.from('order_items').select('order_id,title_snapshot,quantity,price_snapshot').in('order_id', ids).then(function (it) {
-        var items = {};
-        (it.data || []).forEach(function (x) { (items[x.order_id] = items[x.order_id] || []).push(x); });
-        box.innerHTML = list.map(function (o) {
-          var st = o.payment_status === 'verified' || o.payment_status === 'delivered' ? o.payment_status : 'pending';
-          var lv = { pending: 0, verified: 1, delivered: 2 }[st];
-          var steps = ['অর্ডার জমা', 'পেমেন্ট যাচাই', 'ডেলিভারি'].map(function (t, k) {
-            return '<li class="' + (k <= lv ? 'done' : '') + (k === lv ? ' now' : '') + '"><span></span>' + t + '</li>';
-          }).join('');
-          var rows = (items[o.id] || []).map(function (x) {
-            return '<li><span>' + esc(x.title_snapshot) + ' <em>× ' + UI.bn(x.quantity) + '</em></span><span>' + tk(x.price_snapshot * x.quantity) + '</span></li>';
-          }).join('');
-          return '<div class="order-card"><div class="oc-head"><div><strong>#' + esc(o.order_number) + '</strong><span>' + UI.date(o.created_at) + (o.area ? ' · ' + (o.area === 'dhaka' ? 'ঢাকার ভিতরে' : 'ঢাকার বাহিরে') : '') + '</span></div><span class="oc-status s-' + st + '">' + STATUS[st] + '</span></div><ol class="oc-track">' + steps + '</ol>' + (rows ? '<ul class="oc-items">' + rows + '</ul>' : '') + '<div class="oc-total"><div><span>বইয়ের দাম (ক্যাশ অন ডেলিভারি)</span><b>' + tk(o.subtotal) + '</b></div><div><span>ডেলিভারি চার্জ (অগ্রিম)</span><b>' + tk(o.delivery_charge) + '</b></div><div class="grand"><span>মোট</span><b>' + tk(Number(o.subtotal || 0) + Number(o.delivery_charge || 0)) + '</b></div></div></div>';
-        }).join('');
+      if (!list.length) return empty(box, 'এখনো কোনো অর্ডার করেননি। ' );
+      list.forEach(function (o) {
+        var c = UI.tpl('tpl-order'), st = o.payment_status === 'verified' || o.payment_status === 'delivered' ? o.payment_status : 'pending';
+        UI.set(c, '.notif-body strong', '#' + o.order_number);
+        UI.set(c, '.o-text', ' — বই ' + UI.bn(Number(o.subtotal || 0)) + ' ৳ (ডেলিভারির সময় পরিশোধ) + ডেলিভারি চার্জ ' + UI.bn(Number(o.delivery_charge || 0)) + ' ৳ · ' + STATUS[st]);
+        UI.set(c, '.notif-time', UI.date(o.created_at));
+        box.appendChild(c);
       });
     });
   }
@@ -165,7 +151,6 @@
       if (r.error) { nl.checked = !on; return UI.toast(PD.msg(r.error), 1); }
       PD.profile = Object.assign({}, PD.profile, { newsletter_subscribed: on });
       if (on && PD.user.email) PD.subscribe(PD.user.email, PD.user.id);
-      if (!on) db.from('newsletter_subscribers').delete().or('user_id.eq.' + PD.user.id + (PD.user.email ? ',email.eq."' + PD.user.email.replace(/"/g, '') + '"' : '')).then(function () {});
       UI.toast(on ? 'নিউজলেটার চালু হয়েছে' : 'নিউজলেটার বন্ধ করা হয়েছে');
     });
   });

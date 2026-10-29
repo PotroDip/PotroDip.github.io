@@ -47,7 +47,7 @@ html[data-theme="dark"]{
 body{
     background:var(--bg);
     color:var(--text);
-    font-family:'Gunjoron', serif;
+    font-family:'Noto Serif Bengali', serif;
     font-weight:400;
     line-height:1.7;
     overflow-x:hidden;
@@ -58,7 +58,7 @@ body.theme-ready, body.theme-ready *{
     transition:background-color .25s ease, color .25s ease, border-color .25s ease, fill .25s ease, box-shadow .25s ease;
   }
 
-h4, button{font-family:'Gunjoron', serif; font-weight:600;}
+h4, button{font-family:'Noto Serif Bengali', serif; font-weight:600;}
 
 p{font-weight:400;}
 
