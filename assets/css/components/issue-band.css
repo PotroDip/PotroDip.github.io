@@ -1,0 +1,80 @@
+/* issue-band.css — 'চলতি/সর্বশেষ সংখ্যা' ব্যান্ড (হোম ও আর্কাইভে একই ডিজাইন) */
+/* ============ চলতি সংখ্যা ============ */
+  .issue-band{
+    position:relative;
+    margin:70px calc(50% - 50vw) 10px;
+    background:var(--primary-dark);
+    color:#F2EFE8;
+    overflow:hidden;
+  }
+
+.issue-band::before{
+    content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(circle at 85% 20%, rgba(201,169,138,.22), transparent 45%),
+      radial-gradient(circle at 10% 90%, rgba(79,168,173,.18), transparent 40%);
+    pointer-events:none;
+  }
+
+html[data-theme="dark"] .issue-band{background:#0F2628;}
+
+.ib-inner{
+    position:relative;
+    max-width:1200px;margin:0 auto;padding:76px 16px;
+    display:grid;grid-template-columns:minmax(0,360px) 1fr;gap:72px;align-items:center;
+  }
+
+.ib-cover{
+    display:block;position:relative;
+    aspect-ratio:3/4;
+    transform:rotate(-2.5deg);
+    box-shadow:24px 30px 60px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.08);
+    transition:transform .5s cubic-bezier(0.2,0.8,0.2,1);
+  }
+
+.ib-cover::after{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:14px;
+    background:linear-gradient(90deg, rgba(0,0,0,.35), rgba(255,255,255,.12) 40%, rgba(0,0,0,0));
+  }
+
+.ib-cover:hover{transform:rotate(0deg) translateY(-6px);}
+
+.ib-cover img{width:100%;height:100%;object-fit:cover;}
+
+.ib-kicker{display:flex;align-items:center;gap:14px;margin-bottom:14px;font-size:14px;color:var(--secondary-light);font-weight:600;}
+
+.ib-no{padding-left:14px;border-left:1px solid rgba(242,239,232,.35);color:rgba(242,239,232,.8);font-weight:400;}
+
+.ib-text h2{font-size:clamp(32px,4vw,52px);color:#fff;line-height:1.2;margin-bottom:18px;}
+
+.ib-teaser{font-size:17px;line-height:1.8;color:rgba(242,239,232,.82);max-width:58ch;margin-bottom:30px;}
+
+.ib-stats{display:flex;gap:40px;margin-bottom:34px;padding:20px 0;border-top:1px solid rgba(242,239,232,.18);border-bottom:1px solid rgba(242,239,232,.18);max-width:520px;}
+
+.ib-stats strong{display:block;font-size:26px;color:#fff;line-height:1.2;}
+
+.ib-stats span{font-size:13px;color:rgba(242,239,232,.65);}
+
+.ib-actions{display:flex;flex-wrap:wrap;gap:14px;}
+
+.ib-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:999px;font-size:15px;font-weight:600;transition:gap .25s ease, background .25s ease, color .25s ease;}
+
+.ib-btn svg{width:16px;height:16px;}
+
+.ib-btn.primary{background:#F2EFE8;color:#123A3D;}
+
+.ib-btn.primary:hover{gap:13px;background:#fff;}
+
+.ib-btn.ghost{border:1px solid rgba(242,239,232,.5);color:#F2EFE8;}
+
+.ib-btn.ghost:hover{background:rgba(242,239,232,.1);}
+
+@media(max-width:860px){
+  .ib-inner{grid-template-columns:1fr;gap:40px;padding:56px 20px;}
+  .ib-cover{max-width:250px;margin:0 auto;}
+  .ib-text{text-align:center;}
+  .ib-kicker,.ib-actions{justify-content:center;}
+  .ib-stats{justify-content:center;margin-left:auto;margin-right:auto;gap:28px;}
+  .ib-teaser{margin-left:auto;margin-right:auto;font-size:15.5px;}
+}
+

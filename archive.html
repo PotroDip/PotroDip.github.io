@@ -11,6 +11,7 @@
 <link href="assets/css/base.css" rel="stylesheet"/>
 <link href="assets/css/pages/archive.css" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/css/components/nav.css">
+<link rel="stylesheet" href="assets/css/components/issue-band.css">
 </head>
 <body>
 <!-- ============ পেজ-লোডিং ওভারলে ============ -->
@@ -229,34 +230,35 @@
 <span class="current">আর্কাইভ</span>
 </div>
 <!-- ============ আর্কাইভ ইন্ট্রো ============ -->
-<section class="archive-intro">
+<section class="archive-head">
+<div class="ah-text">
+<span class="ah-kicker">পত্রদ্বীপ আর্কাইভ</span>
 <h1>প্রকাশিত সব সংখ্যা, এক জায়গায়</h1>
 <p>পত্রদ্বীপের প্রতিটা ত্রৈমাসিক সংখ্যা এখানে সাজানো আছে আসল পত্রিকার মলাটের মতো করে। যেকোনো সংখ্যায় ক্লিক করে সেই সংখ্যার সব লেখা একসাথে পড়তে পারবেন।</p>
+</div>
+<div class="ah-stats" id="archiveStats"></div>
 </section>
-<!-- ============ ফিল্টার ============ -->
-<div class="archive-filters">
-<div class="filter-chips" id="yearFilters">
-<button class="active" data-year="all">সব বছর</button>
-<button data-year="2026">২০২৬</button>
-<button data-year="2025">২০২৫</button>
 </div>
-<div class="archive-count">মোট <strong id="issueCount">৬টি</strong> সংখ্যা প্রকাশিত হয়েছে</div>
+<!-- ============ সর্বশেষ সংখ্যা (হোমপেজের "চলতি সংখ্যা"-র মতো) ============ -->
+<section class="issue-band" id="latestIssue"></section>
+<div class="wrap">
+<!-- ============ সব সংখ্যা + বছর ফিল্টার ============ -->
+<div class="section-head">
+<h2>সব সংখ্যা</h2>
+<div class="filter-chips" id="yearFilters"></div>
 </div>
-<!-- ============ সংখ্যা গ্রিড ============ -->
-<template id="tpl-issue"><a class="issue-card" data-year="2026" href="#">
+<div class="archive-count">মোট <strong id="issueCount">০টি</strong> সংখ্যা</div>
+<template id="tpl-issue"><a class="issue-card" href="#">
 <div class="issue-cover">
-<img alt="৪র্থ সংখ্যা প্রচ্ছদ" src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=700&amp;q=80"/>
+<img alt="" src="" loading="lazy"/>
 <div class="spine-edge"></div>
-<span class="issue-badge">সাম্প্রতিক</span>
-<span class="issue-num-badge">সংখ্যা ৪</span>
+<span class="issue-num-badge"></span>
 </div>
-<h3 class="issue-title">শরতের সংখ্যা — সেপ্টেম্বর ২০২৬</h3>
-<div class="issue-meta">
-<div>
-<div class="meta-left">১৪টি লেখা</div>
-<div class="meta-teaser">"চিলেকোঠার চিঠি" ও আরও নতুন গল্প নিয়ে এই সংখ্যা...</div>
-</div>
-<span class="stock-tag">স্টকে আছে</span>
+<div class="ic-body">
+<h3 class="issue-title"></h3>
+<div class="ic-meta"><span class="meta-left"></span><span class="meta-date"></span></div>
+<p class="meta-teaser"></p>
+<div class="ic-foot"><span class="stock-tag"></span><span class="ic-read">সংখ্যাটি পড়ুন <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
 </div>
 </a></template><div class="issue-grid" id="issueGrid"></div>
 </div>
