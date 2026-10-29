@@ -39,7 +39,7 @@ html[data-theme="dark"]{
 body{
     background:var(--bg);
     color:var(--text);
-    font-family:'Noto Serif Bengali', serif;
+    font-family:'Gunjoron', serif;
     font-weight:400;
     line-height:1.7;
     overflow-x:hidden;
@@ -50,7 +50,7 @@ body.theme-ready, body.theme-ready *{
     transition:background-color .3s ease, color .3s ease, border-color .3s ease, fill .3s ease, stroke .3s ease, filter .3s ease, box-shadow .3s ease;
   }
 
-h4, button, .brand-name{font-family:'Noto Serif Bengali', serif; font-weight:600;}
+h4, button, .brand-name{font-family:'Gunjoron', serif; font-weight:600;}
 
 p{font-weight:400; overflow-wrap:anywhere;}
 
@@ -621,3 +621,34 @@ html[data-theme="dark"] #npo-brand-logo{filter:brightness(0) invert(1);}
 
 /* ============ ফুটার (আগের পেজগুলোর সাথে হুবহু) ============ */
   footer{margin-top:0; background:var(--primary-dark); color:#F2EFE8; overflow-x:hidden;}
+
+/* ============ আমার অর্ডার — স্টোরের সাথে মিলিয়ে অর্ডার কার্ড ============ */
+#orders-list{gap:16px;}
+.order-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:20px 22px;}
+.oc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px;}
+.oc-head strong{display:block;font-size:17px;color:var(--text);}
+.oc-head span{font-size:13px;color:var(--text-muted);}
+.oc-status{flex-shrink:0;font-size:12px !important;font-weight:600;padding:4px 12px;border-radius:999px;white-space:nowrap;}
+.oc-status.s-pending{background:color-mix(in srgb, var(--success) 18%, transparent);color:var(--secondary) !important;}
+.oc-status.s-verified{background:color-mix(in srgb, var(--primary) 14%, transparent);color:var(--primary) !important;}
+.oc-status.s-delivered{background:color-mix(in srgb, #3B8256 16%, transparent);color:#3B8256 !important;}
+.oc-track{list-style:none;display:flex;margin-bottom:16px;}
+.oc-track li{flex:1;position:relative;font-size:12px;color:var(--text-muted);padding-top:20px;text-align:center;}
+.oc-track li span{position:absolute;top:0;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;background:var(--surface);border:2px solid var(--border);z-index:1;}
+.oc-track li::before{content:"";position:absolute;top:5px;left:-50%;width:100%;height:2px;background:var(--border);}
+.oc-track li:first-child::before{display:none;}
+.oc-track li.done span{background:var(--primary);border-color:var(--primary);}
+.oc-track li.done::before{background:var(--primary);}
+.oc-track li.done{color:var(--text);}
+.oc-track li.now{font-weight:600;color:var(--primary);}
+.oc-items{list-style:none;border-top:1px solid var(--border);padding:12px 0 4px;}
+.oc-items li{display:flex;justify-content:space-between;gap:12px;font-size:14px;color:var(--text);padding:3px 0;}
+.oc-items em{font-style:normal;color:var(--text-muted);font-size:13px;}
+.oc-total{border-top:1px dashed var(--border);margin-top:8px;padding-top:10px;}
+.oc-total div{display:flex;justify-content:space-between;font-size:13px;color:var(--text-muted);padding:2px 0;}
+.oc-total b{font-weight:600;color:var(--text);}
+.oc-total .grand{font-size:15px;color:var(--text);padding-top:6px;}
+.oc-total .grand b{color:var(--primary);font-size:16px;}
+.order-empty{text-align:center;padding:40px 0;color:var(--text-muted);}
+.order-shop{display:inline-block;margin-top:12px;padding:9px 20px;border-radius:999px;background:var(--primary);color:#fff;font-size:14px;font-weight:600;}
+html[data-theme="dark"] .order-shop{color:#0F1415;}

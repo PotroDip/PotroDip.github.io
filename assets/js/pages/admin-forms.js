@@ -196,7 +196,8 @@
     if (isNaN(price) || price < 0 || price > 100000) return A.showToast('দাম সঠিকভাবে লিখুন');
     busy(btn, true, 1);
     var old = pr.id ? C.byId(S.prints, pr.id) : null, num = val('issue-number');
-    var link = num ? S.issues.filter(function (i) { return String(i.issue_number).trim() === num; })[0] : null;
+    var en = function (x) { return String(x == null ? '' : x).trim().replace(/[০-৯]/g, function (d) { return '০১২৩৪৫৬৭৮৯'.indexOf(d); }); };
+    var link = num ? S.issues.filter(function (i) { return en(i.issue_number) === en(num); })[0] : null;
     var row = { title: t, teaser: $('issue-teaser').value.trim(), price: price, in_stock: $('issue-stock').checked, issue_id: link ? link.id : null };
     if (pr.clearPdf) row.preview_pdf_url = null;
     Promise.all([upload(pr.cover, 'issues'), upload(pr.pdf, 'previews')]).then(function (u) {
