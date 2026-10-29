@@ -98,7 +98,7 @@
       return !tag || a.category == tag
     });
     $('article-grid').innerHTML = l.length ? l.map(function(a) {
-      return '<article class="article-card" data-id="' + a.id + '"><div class="thumb"><img src="' + esc(a.cover_url || PH) + '" alt="" loading="lazy"></div><span class="cat-label">' + esc(a.category) + '</span><h3>' + esc(a.title) + '</h3><p>' + esc(a.excerpt) + '</p><div class="card-meta">' + im(au(a)) + '<span>' + meta(au(a)) + '</span></div></article>'
+      return '<article class="article-card" data-id="' + a.id + '"><a class="ac-link" href="article.html?id=' + a.id + '"><div class="thumb"><img src="' + esc(a.cover_url || PH) + '" alt="" loading="lazy">' + (a.category ? '<span class="ac-cat">' + esc(a.category) + '</span>' : '') + '</div><div class="ac-body"><h3>' + esc(a.title) + '</h3><p>' + esc(cut(a.excerpt, 120)) + '</p><div class="card-meta">' + im(au(a)) + '<span class="cm-name">' + esc(au(a).name) + '</span><span class="cm-date">' + dt(a.published_at || a.created_at) + '</span></div></div></a></article>'
     }).join('') : '<p class="pd-empty">এই বিভাগে এখনো লেখা নেই।</p>'
   }
   var tags = [];

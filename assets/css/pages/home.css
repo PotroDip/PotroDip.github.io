@@ -266,7 +266,9 @@ body.theme-ready, body.theme-ready *{
     gap:20px;
   }
 
-.section-head h2{font-size:28px;flex-shrink:0;}
+.section-head h2{font-size:30px;flex-shrink:0;display:flex;align-items:center;gap:14px;}
+
+.section-head h2::before{content:"";width:6px;height:28px;background:var(--secondary);border-radius:1px;flex-shrink:0;}
 
 .filter-chips{display:flex;gap:10px;flex-wrap:wrap;}
 
@@ -302,45 +304,67 @@ html[data-theme="dark"] .filter-chips button.active{color:#0F1415;}
   .filter-chips button{flex-shrink:0;}
 }
 
-/* ============ আর্টিকেল গ্রিড ============ */
+/* ============ আর্টিকেল গ্রিড — সাম্প্রতিক লেখা ============ */
   .article-grid{
     display:grid;
     grid-template-columns:repeat(3,1fr);
-    gap:36px 30px;
+    gap:44px 32px;
     padding-bottom:16px;
   }
 
 .article-card{display:flex;flex-direction:column;}
 
+.ac-link{display:flex;flex-direction:column;height:100%;}
+
 .article-card .thumb{
-    aspect-ratio:3/2;
+    position:relative;
+    aspect-ratio:4/3;
     background:var(--surface);
-    border:1px solid var(--border);
-    overflow:hidden;margin-bottom:16px;
+    overflow:hidden;margin-bottom:18px;
+    border-radius:3px;
   }
 
-.article-card .thumb img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease;}
+.article-card .thumb img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(0.2,0.8,0.2,1);}
 
-.article-card:hover .thumb img{transform:scale(1.04);}
+.article-card:hover .thumb img{transform:scale(1.05);}
 
-.cat-label{
-    font-size:12px;color:var(--secondary);margin-bottom:8px;
+.ac-cat{
+    position:absolute;left:12px;top:12px;
+    font-size:12px;font-weight:700;
+    background:var(--bg);color:var(--secondary);
+    padding:3px 11px;border-radius:2px;
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
   }
 
-.article-card h3{font-size:20px;margin-bottom:10px;}
+.ac-body{display:flex;flex-direction:column;flex:1;}
 
-.article-card p{font-size:14.5px;color:var(--text-muted);margin-bottom:14px;}
+.article-card h3{
+    font-size:21px;line-height:1.4;margin-bottom:10px;
+    transition:color .2s ease;
+  }
+
+.article-card:hover h3{color:var(--primary);}
+
+.article-card p{
+    font-size:15px;line-height:1.7;color:var(--text-muted);margin-bottom:18px;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
 
 .card-meta{
-    display:flex;align-items:center;gap:8px;
+    display:flex;align-items:center;gap:10px;
     font-size:13px;color:var(--text-muted);
-    margin-top:auto;
+    margin-top:auto;padding-top:14px;border-top:1px solid var(--border);
   }
 
-.card-meta img{width:24px;height:24px;border-radius:50%;object-fit:cover;}
+.card-meta img{width:28px;height:28px;border-radius:50%;object-fit:cover;}
 
+.card-meta .cm-name{font-weight:600;color:var(--text);}
+
+.card-meta .cm-date{margin-left:auto;font-size:12.5px;font-weight:400;color:var(--text-muted);}
+
+/* পুরোনো ক্লাস (অন্য জায়গায় থাকলে) */
+.cat-label{font-size:12px;color:var(--secondary);margin-bottom:8px;}
 .card-meta span{font-weight:600;color:var(--text);}
-
 .card-meta .city{font-weight:400;color:var(--text-muted);}
 
 /* নাম ও শহরের মাঝে ব্যবহৃত বড়, মাঝ-বরাবর ডট সেপারেটর — সাইটজুড়ে একই স্টাইলে */
@@ -361,7 +385,22 @@ html[data-theme="dark"] .filter-chips button.active{color:#0F1415;}
 }
 
 @media(max-width:600px) {
-  .article-grid{grid-template-columns:1fr;}
+  .article-grid{grid-template-columns:1fr;gap:0;}
+  .article-card h3{font-size:19px;}
+  /* মোবাইলে প্রথম লেখা বড়, বাকিগুলো কমপ্যাক্ট সারি */
+  .article-card:first-child{padding-bottom:26px;margin-bottom:6px;}
+  .article-card:not(:first-child) .ac-link{
+    display:grid;grid-template-columns:112px 1fr;gap:14px;align-items:start;
+    padding:18px 0;border-top:1px solid var(--border);
+  }
+  .article-card:not(:first-child) .thumb{margin:0;aspect-ratio:1/1;}
+  .article-card:not(:first-child) .ac-cat{display:none;}
+  .article-card:not(:first-child) h3{font-size:16.5px;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+  .article-card:not(:first-child) p{display:none;}
+  .article-card:not(:first-child) .card-meta{border-top:none;padding-top:0;gap:6px;flex-wrap:wrap;}
+  .article-card:not(:first-child) .card-meta img{display:none;}
+  .article-card:not(:first-child) .cm-date{margin-left:0;}
+  .article-card:not(:first-child) .cm-date::before{content:"·";margin-right:6px;}
 }
 
 /* ============ জনপ্রিয় লেখক ============ */
