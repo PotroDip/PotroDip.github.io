@@ -305,6 +305,13 @@
     drawerPrimaryBtn.textContent = STEP_BTN_LABELS[step];
     drawerPrimaryBtn.disabled = false;
     document.querySelector('.drawer-body').scrollTop = 0;
+    /* ধাপ-নির্দেশক: আগের ধাপগুলো 'done', বর্তমানটা 'on' */
+    var order = ['form', 'payment', 'success'], at = order.indexOf(step);
+    document.querySelectorAll('#drawer-steps span').forEach(function(s) {
+      var k = order.indexOf(s.dataset.s);
+      s.classList.toggle('on', k === at);
+      s.classList.toggle('done', k < at);
+    });
   }
 
   function openDrawer(step) {
@@ -630,10 +637,17 @@
           }
         };
         BULK_THRESHOLD = +v.bulk_min || 10;
+        var setT = function(id, t) { var e = document.getElementById(id); if (e) e.textContent = t; };
+        setT('info-dhaka', bnTaka(DELIVERY_RULES.dhaka.normal));
+        setT('info-out', bnTaka(DELIVERY_RULES.outside.normal));
+        setT('info-dhaka-bulk', toBn(BULK_THRESHOLD) + '+ কপিতে ' + bnTaka(DELIVERY_RULES.dhaka.bulk));
+        setT('info-out-bulk', toBn(BULK_THRESHOLD) + '+ কপিতে ' + bnTaka(DELIVERY_RULES.outside.bulk));
         bulkNote.textContent = 'বাল্ক অর্ডার হারে ডেলিভারি চার্জ ধরা হয়েছে (' + toBn(BULK_THRESHOLD) + '+ কপি)।';
       }
       if (r.key === 'payment') {
-        var names = ['bkash', 'nagad', 'rocket'];
+        var names = ['bkash', 'nagad', 'rocket'], label = { bkash: 'বিকাশ', nagad: 'নগদ', rocket: 'রকেট' };
+        var on = names.filter(function(n) { return v[n]; }).map(function(n) { return label[n]; });
+        var ip = document.getElementById('info-pay'); if (ip && on.length) ip.textContent = on.join(' · ');
         document.querySelectorAll('.pay-method').forEach(function(m, i) {
           var num = v[names[i]] || '';
           if (!num) {
@@ -695,6 +709,27 @@
     });
   }
 
+  /* বিশেষ সংখ্যা: স্টকে থাকা সর্বশেষ সংখ্যা — বাটনগুলো গ্রিডের কার্ডের মতোই কাজ করে */
+  function renderFeature(items, nums) {
+    var box = document.getElementById('storeFeature');
+    if (!box) return;
+    var list = items.filter(function(x) { return x.in_stock; });
+    var p = list.sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); })[0];
+    if (!p) return box.remove();
+    var arrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+    var teaser = String(p.teaser || '').replace(/\s+/g, ' ').trim();
+    if (teaser.length > 200) { teaser = teaser.slice(0, 200); teaser = teaser.slice(0, teaser.lastIndexOf(' ')) + ' …'; }
+    box.innerHTML = '<div class="ib-inner"><button type="button" class="ib-cover" data-act="preview"><img src="' + esc(UI.cover(p.cover_url)) + '" alt="' + esc(p.title) + ' প্রচ্ছদ">' + (p.preview_pdf_url ? '<span class="ib-peek">নমুনা পাতা পড়ুন</span>' : '') + '</button><div class="ib-text"><div class="ib-kicker"><span>এখন অর্ডার চলছে</span>' + (nums[p.issue_id] ? '<span class="ib-no">সংখ্যা ' + toBn(nums[p.issue_id]) + '</span>' : '') + '</div><h2>' + esc(p.title) + '</h2>' + (teaser ? '<p class="ib-teaser">' + esc(teaser) + '</p>' : '') + '<div class="ib-price"><span class="unit">৳</span>' + toBn(p.price) + '<small>+ ডেলিভারি চার্জ</small></div><div class="ib-actions"><button type="button" class="ib-btn primary" data-act="order">অর্ডার করুন ' + arrow + '</button>' + (p.preview_pdf_url ? '<button type="button" class="ib-btn ghost" data-act="preview">নমুনা পাতা পড়ুন</button>' : '') + '</div></div></div>';
+    box.addEventListener('click', function(e) {
+      var b = e.target.closest('[data-act]');
+      if (!b) return;
+      var card = issueGridEl.querySelector('.issue-card[data-id="' + p.id + '"]');
+      if (!card) return;
+      if (b.dataset.act === 'order') { var ob = card.querySelector('.order-btn'); if (ob) ob.click(); }
+      else if (card.dataset.pdf) openReader(card);
+    });
+  }
+
   function restoreCart(items) {
     var saved = [];
     try {
@@ -736,6 +771,9 @@
       });
       applySettings(r[2].data || []);
       render(items, nums);
+      renderFeature(items, nums);
+      var sc = document.getElementById('storeCount');
+      if (sc) sc.textContent = items.length ? toBn(items.length) + 'টি সংখ্যা · ' + toBn(items.filter(function(x) { return x.in_stock; }).length) + 'টি স্টকে' : '';
       restoreCart(items);
       renderCart();
       updateFab();

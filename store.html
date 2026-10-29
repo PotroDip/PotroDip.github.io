@@ -9,6 +9,7 @@
 <meta name="description" content="পত্রদ্বীপের ছাপা সংখ্যা ঘরে বসে অর্ডার করুন।">
 <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
 <link href="assets/css/base.css" rel="stylesheet"/>
+<link href="assets/css/components/issue-band.css" rel="stylesheet"/>
 <link href="assets/css/pages/store.css" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/css/components/nav.css">
 </head>
@@ -228,12 +229,27 @@
 <a href="index.html">হোম</a><span class="sep"></span>
 <span class="current">সংখ্যা কিনুন</span>
 </div>
-<!-- ============ স্টোর ইন্ট্রো ============ -->
-<section class="store-intro">
+<!-- ============ স্টোর হেড ============ -->
+<section class="store-head">
+<div class="sh-text">
+<span class="sh-kicker">পত্রদ্বীপ স্টোর</span>
 <h1>ছাপা সংখ্যা সংগ্রহে রাখুন, ঘরে বসেই</h1>
-<p>পত্রদ্বীপের প্রতিটা প্রকাশিত সংখ্যা এখন সরাসরি অর্ডার করা যায়। যেকোনো সংখ্যার ছবি বা নামে ক্লিক করে প্রথম কিছু পাতা পড়েও দেখতে পারবেন অর্ডার করার আগে।</p>
+<p>পত্রদ্বীপের প্রতিটা প্রকাশিত সংখ্যা এখন সরাসরি অর্ডার করা যায়। যেকোনো সংখ্যার প্রচ্ছদে ক্লিক করে অর্ডারের আগে প্রথম কিছু পাতা পড়ে দেখতে পারবেন।</p>
+</div>
+<ol class="sh-steps">
+<li><span class="st-no">১</span><div><strong>সংখ্যা বেছে নিন</strong><span>কার্টে যোগ করে ঠিকানা দিন</span></div></li>
+<li><span class="st-no">২</span><div><strong>ডেলিভারি চার্জ পাঠান</strong><span>বিকাশ / নগদ / রকেটে অগ্রিম</span></div></li>
+<li><span class="st-no">৩</span><div><strong>বই হাতে পেয়ে দাম দিন</strong><span>বইয়ের দাম ক্যাশ অন ডেলিভারি</span></div></li>
+</ol>
 </section>
-<div class="section-divider"></div>
+</div>
+<!-- ============ বিশেষ সংখ্যা (হোম/আর্কাইভের ব্যান্ডের মতো) ============ -->
+<section class="issue-band" id="storeFeature"></section>
+<div class="wrap">
+<div class="section-head">
+<h2>সব ছাপা সংখ্যা</h2>
+<span class="sh-count" id="storeCount"></span>
+</div>
 <!-- ============ সংখ্যা গ্রিড ============ -->
 <template id="tpl-issue"><div class="issue-card">
 <div class="issue-cover preview-trigger">
@@ -276,6 +292,15 @@
 <span class="stock-tag-out">স্টক শেষ</span>
 </div>
 </div></template><div class="issue-grid" id="issueGrid"></div>
+<!-- ============ ডেলিভারি ও পেমেন্ট তথ্য ============ -->
+<section class="store-info">
+<div class="section-head"><h2>ডেলিভারি ও পেমেন্ট</h2></div>
+<div class="info-grid">
+<div class="info-card"><span class="ic-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span><h3>ঢাকার ভিতরে</h3><div class="ic-price" id="info-dhaka">৳৭০</div><p id="info-dhaka-bulk">১০+ কপিতে ৳৮০</p></div>
+<div class="info-card"><span class="ic-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></span><h3>ঢাকার বাহিরে</h3><div class="ic-price" id="info-out">৳১২০</div><p id="info-out-bulk">১০+ কপিতে ৳১৩০</p></div>
+<div class="info-card"><span class="ic-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></span><h3>পেমেন্ট</h3><div class="ic-price small" id="info-pay">বিকাশ · নগদ · রকেট</div><p>শুধু ডেলিভারি চার্জ অগ্রিম; বইয়ের দাম হাতে পেয়ে</p></div>
+</div>
+</section>
 </div>
 </main>
 <!-- ============ ফুটার ============ -->
@@ -658,6 +683,7 @@
 <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg>
 </button>
 </div>
+<div class="drawer-steps" id="drawer-steps"><span data-s="form"><b>১</b> ঠিকানা</span><i></i><span data-s="payment"><b>২</b> পেমেন্ট</span><i></i><span data-s="success"><b>৩</b> সম্পন্ন</span></div>
 <div class="drawer-body">
 <!-- ধাপ ১: কার্ট + ঠিকানা ফর্ম -->
 <div class="drawer-step active" id="step-form">
