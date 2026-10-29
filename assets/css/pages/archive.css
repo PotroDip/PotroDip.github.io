@@ -1,0 +1,219 @@
+/* ============================================================
+   archive.css — আর্কাইভ (সব সংখ্যা)
+   ============================================================ */
+
+:root{
+    --primary:#1D5358;
+    --primary-dark:#123A3D;
+    --secondary:#9B7257;
+    --secondary-light:#C9A98A;
+    --bg:#F7F3EC;
+    --surface:#FFFFFF;
+    --text:#2A2A28;
+    --text-muted:#6B6B63;
+    --border:#E4DDD0;
+    --success:#C99A3E;
+    --error:#B3402E;
+    --stock-ok:#3B8256;
+    --overlay-bg:#F7F3EC;
+  }
+
+html[data-theme="dark"]{
+    --primary:#4FA8AD;
+    --primary-dark:#6FC3C8;
+    --secondary:#C9A98A;
+    --secondary-light:#E0C6A8;
+    --bg:#14181A;
+    --surface:#1E2426;
+    --text:#F2EFE8;
+    --text-muted:#A8A69E;
+    --border:#2C3335;
+    --success:#E0B354;
+    --error:#E06B57;
+    --stock-ok:#7CC99A;
+    --overlay-bg:#14181A;
+  }
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Noto Serif Bengali', serif;
+    font-weight:400;
+    line-height:1.7;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+body.theme-ready, body.theme-ready *{
+    transition:background-color .3s ease, color .3s ease, border-color .3s ease, fill .3s ease, stroke .3s ease, filter .3s ease, box-shadow .3s ease;
+  }
+
+h4, button, .brand-name{font-family:'Noto Serif Bengali', serif; font-weight:600;}
+
+p{font-weight:400;}
+
+.wrap{max-width:1200px; margin:0 auto; padding:0 16px;}
+
+/* ============ লোগো — ডার্ক মোডে অটোমেটিক সাদা (আগের পেজগুলোর সাথে হুবহু) ============ */
+  html[data-theme="dark"] #brand-logo #header,
+  html[data-theme="dark"] #brand-logo #wordmark{
+    filter:brightness(0) invert(1);
+  }
+
+#logo-stage{ width:min(60vw,300px); position:relative; }
+
+#main-content.revealed{opacity:1; transition:opacity .5s ease;}
+
+/* ============ ব্রেডক্রাম্ব ============ */
+  .breadcrumb{padding:22px 0 0; font-size:13px; color:var(--text-muted); display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+
+.breadcrumb a{color:var(--text-muted);}
+
+.breadcrumb a:hover{color:var(--primary);}
+
+.breadcrumb .sep{width:4px; height:4px; border-radius:50%; background:var(--border);}
+
+.breadcrumb .current{color:var(--secondary);}
+
+/* ============ পেজ ইন্ট্রো ============ */
+  .archive-intro{padding:10px 0 8px;}
+
+.archive-intro h1{font-size:40px; letter-spacing:-.2px; margin-bottom:14px; max-width:640px;}
+
+.archive-intro p{font-size:16.5px; color:var(--text-muted); max-width:56ch;}
+
+@media(max-width:640px){
+    .archive-intro h1{font-size:26px;}
+    .archive-intro p{font-size:15px;}
+  }
+
+/* ============ ফিল্টার চিপস (বছর অনুযায়ী) ============ */
+  .archive-filters{
+    display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
+    padding:30px 0 14px; margin-bottom:20px; border-bottom:1px solid var(--border);
+  }
+
+.filter-chips{display:flex; gap:10px; flex-wrap:wrap;}
+
+.filter-chips button{
+    font-size:13.5px; padding:8px 18px; border:1px solid var(--border); color:var(--text-muted); border-radius:999px;
+    transition:background-color .18s ease, color .18s ease, border-color .18s ease;
+  }
+
+.filter-chips button.active{background:var(--primary); color:var(--overlay-bg); border-color:var(--primary);}
+
+html[data-theme="dark"] .filter-chips button.active{color:#0F1415;}
+
+.filter-chips button:hover:not(.active){border-color:var(--secondary); color:var(--secondary);}
+
+.archive-count{font-size:13.5px; color:var(--text-muted); white-space:nowrap;}
+
+.archive-count strong{color:var(--text); font-weight:600;}
+
+@media(max-width:640px){
+    .archive-filters{flex-direction:column; align-items:flex-start; gap:14px;}
+    .filter-chips{flex-wrap:nowrap; width:100%; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch; scrollbar-width:none;}
+    .filter-chips::-webkit-scrollbar{display:none;}
+    .filter-chips button{flex-shrink:0;}
+  }
+
+/* ============ সংখ্যা গ্রিড — ৩:৪ মলাট কার্ড ============ */
+  .issue-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:34px 26px;
+    padding-bottom:64px;
+  }
+
+.issue-card{display:flex; flex-direction:column;}
+
+.issue-cover{
+    position:relative;
+    aspect-ratio:3/4;
+    border-radius:10px;
+    overflow:hidden;
+    background:var(--surface);
+    border:1px solid var(--border);
+    box-shadow:0 2px 4px rgba(0,0,0,.04), 0 18px 34px -22px rgba(0,0,0,.28);
+    transition:transform .35s cubic-bezier(0.2,0.8,0.2,1), box-shadow .35s ease;
+  }
+
+html[data-theme="dark"] .issue-cover{
+    box-shadow:0 2px 4px rgba(0,0,0,.2), 0 18px 34px -20px rgba(0,0,0,.55);
+  }
+
+.issue-card:hover .issue-cover{
+    transform:translateY(-6px) rotate(-0.4deg);
+    box-shadow:0 6px 10px rgba(0,0,0,.08), 0 28px 46px -20px rgba(0,0,0,.34);
+  }
+
+.issue-cover img{width:100%; height:100%; object-fit:cover; transition:transform .5s ease;}
+
+.issue-card:hover .issue-cover img{transform:scale(1.045);}
+
+.issue-cover .spine-edge{
+    position:absolute; left:0; top:0; bottom:0; width:10px;
+    background:linear-gradient(90deg, rgba(0,0,0,.22), rgba(0,0,0,0));
+  }
+
+.issue-badge{
+    position:absolute; top:12px; left:12px; z-index:2;
+    background:var(--secondary); color:#fff;
+    font-size:11px; font-weight:700; letter-spacing:.2px;
+    padding:4px 12px; border-radius:999px;
+    box-shadow:0 3px 8px rgba(0,0,0,.2);
+  }
+
+/* সংখ্যা-নম্বর ব্যাজ — article-page.html-এর cat-badge সিস্টেমের সাথে হুবহু (blur+ট্রান্সপারেন্ট পিল), শুধু পজিশন বাম-নিচ কোণায় */
+  .issue-num-badge{
+    position:absolute; bottom:12px; left:12px; z-index:2;
+    background:rgba(18,58,61,.82); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+    color:#fff; font-size:12px; font-weight:600; letter-spacing:.2px;
+    padding:5px 14px; border-radius:999px; box-shadow:0 3px 10px rgba(0,0,0,.18);
+  }
+
+html[data-theme="dark"] .issue-num-badge{ background:rgba(10,14,15,.75); }
+
+.issue-title{
+    font-family:'Noto Serif Bengali', serif; font-weight:700; font-size:17px; line-height:1.4;
+    color:var(--text); margin-top:14px;
+  }
+
+.issue-meta{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    margin-top:10px; padding-top:12px; border-top:1px solid var(--border);
+  }
+
+.issue-meta .meta-left{font-size:13px; color:var(--text-muted);}
+
+.issue-meta .meta-teaser{font-size:12.5px; color:var(--text-muted); margin-top:4px; line-height:1.5;}
+
+.issue-meta .stock-tag{
+    flex-shrink:0; font-size:11px; font-weight:600; padding:4px 11px; border-radius:999px;
+    background:color-mix(in srgb, var(--stock-ok) 16%, transparent); color:var(--stock-ok);
+    white-space:nowrap;
+  }
+
+.issue-meta .stock-tag.out{
+    background:color-mix(in srgb, var(--error) 14%, transparent); color:var(--error);
+  }
+
+@media(max-width:1080px){
+    .issue-grid{grid-template-columns:repeat(3,1fr);}
+  }
+
+@media(max-width:640px){
+    .issue-grid{grid-template-columns:repeat(2,1fr); gap:22px 14px; padding-bottom:44px;}
+    .issue-title{font-size:14.5px; margin-top:10px;}
+    .issue-num-badge{font-size:10px; padding:4px 11px; bottom:9px; left:9px;}
+    .issue-badge{font-size:9.5px; padding:3px 9px; top:9px; left:9px;}
+    .issue-meta{margin-top:8px; padding-top:9px;}
+    .issue-meta .meta-left{font-size:11.5px;}
+    .issue-meta .meta-teaser{display:none;}
+    .issue-meta .stock-tag{font-size:9.5px; padding:3px 8px;}
+  }
+
+/* ============ ফুটার (আগের পেজগুলোর সাথে হুবহু) ============ */
+  footer{margin-top:0; background:var(--primary-dark); color:#F2EFE8; overflow-x:hidden;}
+
+.free-badge{display:inline-block; background:var(--primary); color:#FFFFFF; font-size:12px; font-weight:700; padding:4px 11px; border-radius:999px; vertical-align:middle;}

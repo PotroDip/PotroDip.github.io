@@ -1,0 +1,555 @@
+/* ============================================================
+   comments.css — মন্তব্য ও রেটিং কম্পোনেন্ট (আর্টিকেল পেজে ব্যবহৃত)
+   ============================================================ */
+
+:root{
+    --primary:#1D5358;
+    --primary-dark:#123A3D;
+    --secondary:#9B7257;
+    --secondary-light:#C9A98A;
+    --bg:#F7F3EC;
+    --surface:#FFFFFF;
+    --text:#2A2A28;
+    --text-muted:#6B6B63;
+    --border:#E4DDD0;
+    --success:#C99A3E;
+    --error:#B3402E;
+    --overlay-bg:#F7F3EC;
+    --field-bg:#FFFFFF;
+  }
+
+html[data-theme="dark"]{
+    --primary:#4FA8AD;
+    --primary-dark:#6FC3C8;
+    --secondary:#C9A98A;
+    --secondary-light:#E0C6A8;
+    --bg:#14181A;
+    --surface:#1E2426;
+    --text:#F2EFE8;
+    --text-muted:#A8A69E;
+    --border:#2C3335;
+    --success:#E0B354;
+    --error:#E06B57;
+    --overlay-bg:#14181A;
+    --field-bg:#1A2022;
+  }
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Noto Serif Bengali', serif;
+    font-weight:400;
+    line-height:1.7;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+body.theme-ready, body.theme-ready *{
+    transition:background-color .3s ease, color .3s ease, border-color .3s ease, fill .3s ease, stroke .3s ease, filter .3s ease, box-shadow .3s ease;
+  }
+
+h4, button, .brand-name{font-family:'Noto Serif Bengali', serif; font-weight:600;}
+
+p{font-weight:400;}
+
+textarea{font-family:inherit;}
+
+.wrap{max-width:1200px; margin:0 auto; padding:0 16px;}
+
+.icon{display:inline-block; line-height:0;}
+
+.icon svg{display:block;}
+
+/* ============ লোগো — ডার্ক মোডে অটোমেটিক সাদা ============ */
+  html[data-theme="dark"] #brand-logo #header,
+  html[data-theme="dark"] #brand-logo #wordmark{
+    filter:brightness(0) invert(1);
+  }
+
+#logo-stage{ width:min(60vw,300px); position:relative; }
+
+#main-content.revealed{opacity:1; transition:opacity .5s ease;}
+
+/* ============ ব্রেডক্রাম্ব ============ */
+  .breadcrumb{padding:22px 0 0; font-size:13px; color:var(--text-muted); display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+
+.breadcrumb a{color:var(--text-muted);}
+
+.breadcrumb a:hover{color:var(--primary);}
+
+.breadcrumb .sep{width:4px; height:4px; border-radius:50%; background:var(--border);}
+
+.breadcrumb .current{color:var(--secondary);}
+
+/* ============ পেজ ইন্ট্রো ============ */
+  .page-intro{padding:10px 0 8px;}
+
+.page-intro .eyebrow-tag{
+    display:inline-block; font-weight:500; font-size:13px; color:var(--secondary);
+    background:color-mix(in srgb, var(--secondary) 12%, transparent);
+    padding:5px 12px; border-radius:100px; margin-bottom:18px;
+  }
+
+.page-intro h1{font-size:38px; letter-spacing:-.2px; margin-bottom:14px; max-width:680px;}
+
+.page-intro p{font-size:16px; color:var(--text-muted); max-width:64ch;}
+
+@media(max-width:640px){
+    .page-intro h1{font-size:25px;}
+    .page-intro p{font-size:14.5px;}
+  }
+
+/* ============ প্রসঙ্গ লেখা কার্ড (কোন লেখার নিচে এই সিস্টেম বসছে তা দেখানোর জন্য) ============ */
+  .context-card{
+    display:flex; align-items:center; gap:16px;
+    background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    padding:16px 18px; margin:28px 0 6px;
+  }
+
+.context-card .cc-thumb{
+    width:64px; height:64px; border-radius:8px; overflow:hidden; flex-shrink:0; background:var(--bg);
+  }
+
+.context-card .cc-thumb img{width:100%; height:100%; object-fit:cover;}
+
+.context-card .cc-info{min-width:0; flex:1;}
+
+.context-card .cc-cat{font-size:11.5px; color:var(--secondary); font-weight:600; margin-bottom:3px;}
+
+.context-card h3{font-size:16.5px; line-height:1.4;}
+
+.context-card .cc-byline{font-size:12.5px; color:var(--text-muted); margin-top:4px;}
+
+@media(max-width:520px){
+    .context-card{padding:13px 14px; gap:12px;}
+    .context-card .cc-thumb{width:50px; height:50px;}
+    .context-card h3{font-size:14.5px;}
+  }
+
+/* ============ সেকশন হেডিং ============ */
+  .section-block{max-width:820px; margin:0 auto; padding:44px 0 0;}
+
+.rmr-heading{display:flex; align-items:center; gap:10px; margin-bottom:24px;}
+
+.rmr-heading .rmr-icon{
+    width:34px; height:34px; border-radius:50%; background:color-mix(in srgb, var(--success) 16%, transparent);
+    color:var(--success); display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+
+.rmr-heading .rmr-icon svg{width:17px; height:17px;}
+
+/* ============ রেটিং সামারি ============ */
+  .rating-summary{
+    display:flex; flex-direction:column; align-items:center; text-align:center; gap:18px;
+    padding:32px 28px; background:var(--surface); border:1px solid var(--border); border-radius:14px;
+    box-shadow:0 1px 2px rgba(0,0,0,.03), 0 12px 28px -18px rgba(0,0,0,.14);
+    margin:0 auto 36px; max-width:460px;
+  }
+
+.rating-avg{text-align:center; flex-shrink:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;}
+
+.rating-avg .num-ring{
+    width:84px; height:84px; border-radius:50%;
+    background:conic-gradient(var(--success) calc(var(--pct,96)*1%), var(--border) 0);
+    display:flex; align-items:center; justify-content:center; position:relative; margin-bottom:10px;
+  }
+
+.rating-avg .num-ring::before{ content:""; position:absolute; inset:6px; border-radius:50%; background:var(--surface); }
+
+.rating-avg .num{position:relative; font-size:26px; font-weight:700; color:var(--text); line-height:1;}
+
+.rating-avg .stars{color:var(--success); display:flex; gap:2px; margin:2px 0 4px; justify-content:center;}
+
+.rating-avg .stars svg{width:13px; height:13px;}
+
+.rating-avg .count{font-size:12px; color:var(--text-muted); white-space:nowrap;}
+
+.rmr-divider{width:60%; height:1px; background:var(--border); flex-shrink:0;}
+
+.rate-cta{display:flex; flex-direction:column; align-items:center; text-align:center;}
+
+.rate-cta p{font-size:14.5px; color:var(--text-muted); margin-bottom:12px; font-weight:600;}
+
+.rate-stars{display:flex; gap:8px; justify-content:center;}
+
+.rate-stars button{position:relative; overflow:visible; transition:transform .1s ease;}
+
+.rate-stars button:hover{transform:scale(1.08);}
+
+/* ---- দুই-স্তরের স্টার আইকন: নিচে আউটলাইন, উপরে ভরাট (fill) — সিলেক্ট হলে পুরোটা রঙে ভরে যাবে ---- */
+  .star-icon-wrap{position:relative; display:block;}
+
+.star-layer{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;}
+
+.star-layer svg{display:block;}
+
+.star-outline{color:var(--border);}
+
+.star-fill{color:var(--success); opacity:0; transform:scale(.5); transition:opacity .2s ease, transform .35s cubic-bezier(.34,1.56,.64,1);}
+
+.rate-stars button:hover .star-outline{color:var(--secondary-light);}
+
+.rate-stars button.hover .star-fill, .rate-stars button.selected .star-fill{opacity:1; transform:scale(1);}
+
+@keyframes starPopBounce{
+    0%{transform:scale(1) rotate(0deg);}
+    35%{transform:scale(1.5) rotate(-8deg);}
+    62%{transform:scale(.85) rotate(5deg);}
+    100%{transform:scale(1) rotate(0deg);}
+  }
+
+.star-icon-wrap.pop .star-fill{animation:starPopBounce .55s cubic-bezier(.34,1.56,.64,1);}
+
+/* ---- ক্লিকে ছোট্ট কনফেটি-বার্স্ট (উদযাপনের অ্যানিমেশন) ---- */
+  .star-particle{
+    position:absolute; top:50%; left:50%; margin:-4px 0 0 -4px;
+    width:6px; height:6px; pointer-events:none; z-index:6;
+    opacity:1; transform:translate(0,0) scale(.4);
+    transition:transform .65s cubic-bezier(.17,.67,.35,1), opacity .65s ease .05s;
+  }
+
+.star-particle.burst{
+    transform:translate(var(--dx), var(--dy)) scale(1) rotate(var(--rot));
+    opacity:0;
+  }
+
+.rate-feedback{
+    font-size:13px; color:var(--success); font-weight:600; min-height:18px; margin-top:2px;
+    opacity:0; transition:opacity .2s ease;
+  }
+
+.rate-feedback.show{opacity:1;}
+
+/* ============ বিতরণ (৫→১ স্টার bar chart) ============ */
+  .dist-block{max-width:460px; margin:0 auto 36px;}
+
+.dist-row{display:flex; align-items:center; gap:10px; margin-bottom:8px; font-size:12.5px; color:var(--text-muted);}
+
+.dist-row .dist-label{width:34px; flex-shrink:0; text-align:right; display:flex; align-items:center; gap:3px; justify-content:flex-end;}
+
+.dist-row .dist-label svg{width:11px; height:11px; color:var(--success); flex-shrink:0;}
+
+.dist-bar-track{flex:1; height:7px; border-radius:999px; background:var(--border); overflow:hidden;}
+
+.dist-bar-fill{height:100%; border-radius:999px; background:var(--success);}
+
+.dist-row .dist-pct{width:34px; flex-shrink:0; text-align:left;}
+
+@media(max-width:560px){
+    .rating-summary{padding:28px 22px; gap:18px; border-radius:12px; max-width:100%;}
+    .rate-stars button svg{width:27px; height:27px;}
+  }
+
+/* ============ সর্ট/ফিল্টার চিপস ============ */
+  .comment-toolbar{
+    display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
+    margin-bottom:20px;
+  }
+
+.comment-count-label{font-size:14px; font-weight:600; color:var(--text);}
+
+.sort-chips{display:flex; gap:8px; flex-wrap:wrap;}
+
+.sort-chips button{
+    font-size:12.5px; padding:7px 15px; border:1px solid var(--border); color:var(--text-muted); border-radius:999px;
+    transition:background-color .18s ease, color .18s ease, border-color .18s ease;
+  }
+
+.sort-chips button.active{background:var(--primary); color:#fff; border-color:var(--primary);}
+
+html[data-theme="dark"] .sort-chips button.active{color:#0F1415;}
+
+.sort-chips button:hover:not(.active){border-color:var(--secondary); color:var(--secondary);}
+
+@media(max-width:520px){
+    .comment-toolbar{flex-direction:column; align-items:flex-start;}
+    .sort-chips{width:100%; overflow-x:auto; flex-wrap:nowrap; padding-bottom:2px; -webkit-overflow-scrolling:touch; scrollbar-width:none;}
+    .sort-chips::-webkit-scrollbar{display:none;}
+    .sort-chips button{flex-shrink:0;}
+  }
+
+/* ============ কমেন্ট ফর্ম ============ */
+  .comment-form{
+    margin-bottom:28px; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px;
+    box-shadow:0 1px 2px rgba(0,0,0,.03);
+  }
+
+.comment-form-head{display:flex; align-items:center; gap:12px; margin-bottom:14px;}
+
+.comment-form-head img{width:38px; height:38px; border-radius:50%; object-fit:cover; flex-shrink:0;}
+
+.comment-form-head-text{min-width:0;}
+
+.comment-form-head-text strong{font-size:14px; font-weight:600; display:block;}
+
+.comment-form-head-text span{font-size:12px; color:var(--text-muted);}
+
+.cf-my-rating{display:flex; align-items:center; gap:8px; margin-bottom:14px; flex-wrap:wrap;}
+
+.cf-my-rating .cf-label{font-size:13px; color:var(--text-muted); font-weight:600;}
+
+.cf-my-rating .cf-stars{display:flex; gap:4px;}
+
+.cf-my-rating .cf-stars button{position:relative; overflow:visible; transition:transform .1s ease;}
+
+.cf-my-rating .cf-stars button:hover{transform:scale(1.1);}
+
+.cf-my-rating .cf-stars button:hover .star-outline{color:var(--secondary-light);}
+
+.cf-my-rating .cf-stars button.hover .star-fill, .cf-my-rating .cf-stars button.selected .star-fill{opacity:1; transform:scale(1);}
+
+.comment-form textarea{
+    width:100%; min-height:90px; resize:vertical; background:transparent; border:none;
+    color:var(--text); font-family:'Noto Serif Bengali', serif; font-size:15px; padding:0; line-height:1.6;
+  }
+
+.comment-form textarea:focus{outline:none;}
+
+.comment-form textarea::placeholder{color:var(--text-muted); opacity:.65;}
+
+.comment-form-foot{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    margin-top:14px; padding-top:14px; border-top:1px solid var(--border);
+  }
+
+.cf-char-hint{font-size:12px; color:var(--text-muted);}
+
+.btn-primary{background:var(--primary); color:#fff; font-size:14.5px; font-weight:600; padding:11px 28px; border-radius:999px; transition:background-color .2s ease, transform .1s ease;}
+
+.btn-primary:hover{background:var(--primary-dark);}
+
+.btn-primary:active{transform:scale(.97);}
+
+.btn-primary:disabled{background:var(--border); color:var(--text-muted); cursor:not-allowed;}
+
+@media(max-width:480px){
+    .comment-form-foot{flex-direction:column-reverse; align-items:stretch; gap:10px;}
+    .comment-form-foot .btn-primary{width:100%; text-align:center;}
+    .cf-char-hint{text-align:center;}
+  }
+
+/* ============ লগইন-প্রম্পট (ফর্মের পাশে বিকল্প, ডেমো টগলের জন্য) ============ */
+  .login-prompt{
+    display:none; align-items:center; gap:14px; flex-wrap:wrap; justify-content:space-between;
+    background:color-mix(in srgb, var(--secondary) 7%, var(--surface));
+    border:1px solid var(--border); border-left:3px solid var(--secondary);
+    border-radius:0 12px 12px 0; padding:16px 18px; margin-bottom:28px;
+  }
+
+.login-prompt.show{display:flex;}
+
+.login-prompt p{font-size:14px; color:var(--text);}
+
+.login-prompt .btn-outline-sm{
+    font-size:13px; font-weight:600; color:var(--primary); border:1px solid var(--primary);
+    padding:8px 18px; border-radius:999px; white-space:nowrap; flex-shrink:0;
+  }
+
+.login-prompt .btn-outline-sm:hover{background:var(--primary); color:#fff;}
+
+.demo-toggle-row{
+    display:flex; align-items:center; justify-content:center; gap:10px; margin:6px 0 30px;
+    font-size:12.5px; color:var(--text-muted);
+  }
+
+.demo-toggle-row button{
+    font-size:12px; font-weight:600; color:var(--primary); border:1px solid var(--border);
+    padding:6px 14px; border-radius:999px;
+  }
+
+.demo-toggle-row button:hover{border-color:var(--primary);}
+
+/* ============ কমেন্ট তালিকা ============ */
+  .comment-list{display:flex; flex-direction:column; gap:14px;}
+
+.comment-item{
+    display:flex; gap:14px; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px 18px;
+    position:relative;
+  }
+
+.comment-item.is-own{border-color:color-mix(in srgb, var(--primary) 30%, var(--border));}
+
+.comment-item img{width:40px; height:40px; border-radius:50%; object-fit:cover; flex-shrink:0; border:2px solid var(--bg);}
+
+.comment-body{flex:1; min-width:0;}
+
+.comment-top{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px;}
+
+.comment-top strong{font-size:15px; font-weight:600;}
+
+.comment-top .own-tag{
+    font-size:10.5px; font-weight:700; color:var(--primary); background:color-mix(in srgb, var(--primary) 12%, transparent);
+    padding:2px 9px; border-radius:999px;
+  }
+
+.comment-stars{display:flex; gap:2px; color:var(--success);}
+
+.comment-stars svg{width:12px; height:12px;}
+
+.comment-date{font-size:12px; color:var(--text-muted);}
+
+.comment-text{font-size:14.5px; color:var(--text); line-height:1.75; word-break:break-word; margin-bottom:10px;}
+
+.comment-text:last-child{margin-bottom:0;}
+
+.comment-actions{display:flex; align-items:center; gap:16px;}
+
+.comment-actions button{
+    display:flex; align-items:center; gap:5px; font-size:12.5px; color:var(--text-muted); font-weight:600;
+  }
+
+.comment-actions button svg{width:14px; height:14px;}
+
+.comment-actions button:hover{color:var(--primary);}
+
+.comment-actions button.helpful.liked{color:var(--secondary);}
+
+.comment-actions .own-actions{margin-left:auto; display:flex; gap:6px;}
+
+.comment-actions .own-actions button{
+    width:28px; height:28px; border-radius:50%; justify-content:center; color:var(--text-muted);
+  }
+
+.comment-actions .own-actions button svg{width:14px; height:14px;}
+
+.comment-actions .own-actions button:hover{background:var(--border); color:var(--primary);}
+
+.comment-actions .own-actions button.delete-btn:hover{color:var(--error);}
+
+/* --- রিপ্লাই থ্রেড --- */
+  .reply-list{margin-top:14px; padding-top:14px; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:12px;}
+
+.reply-item{display:flex; gap:11px;}
+
+.reply-item img{width:32px; height:32px; border-radius:50%; object-fit:cover; flex-shrink:0;}
+
+.reply-item .comment-top strong{font-size:13.5px;}
+
+.reply-item .comment-text{font-size:13.5px;}
+
+.reply-item .author-tag{
+    font-size:10px; font-weight:700; color:#fff; background:var(--secondary);
+    padding:2px 8px; border-radius:999px;
+  }
+
+/* --- রিপ্লাই ইনপুট --- */
+  .reply-form{display:none; margin-top:12px; gap:10px; align-items:flex-start;}
+
+.reply-form.show{display:flex;}
+
+.reply-form img{width:30px; height:30px; border-radius:50%; object-fit:cover; flex-shrink:0;}
+
+.reply-form-inner{flex:1; background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:9px 12px;}
+
+.reply-form-inner textarea{
+    width:100%; min-height:40px; resize:vertical; background:transparent; border:none;
+    color:var(--text); font-family:'Noto Serif Bengali', serif; font-size:13.5px; padding:0; line-height:1.6;
+  }
+
+.reply-form-inner textarea:focus{outline:none;}
+
+.reply-form-foot{display:flex; justify-content:flex-end; gap:8px; margin-top:8px;}
+
+.btn-tiny{font-size:12px; font-weight:600; padding:6px 14px; border-radius:999px;}
+
+.btn-tiny.primary{background:var(--primary); color:#fff;}
+
+html[data-theme="dark"] .btn-tiny.primary{color:#0F1415;}
+
+.btn-tiny.ghost{color:var(--text-muted);}
+
+.btn-tiny.ghost:hover{color:var(--text);}
+
+@media(max-width:520px){
+    .comment-item{padding:13px 14px; gap:10px;}
+    .comment-item img{width:34px; height:34px;}
+    .comment-actions{flex-wrap:wrap; row-gap:8px;}
+  }
+
+/* ============ আরও দেখুন ============ */
+  .load-more-wrap{text-align:center; margin:26px 0 8px;}
+
+.btn-outline-full{
+    font-size:14px; font-weight:600; color:var(--text); border:1px solid var(--border);
+    padding:12px 30px; border-radius:999px; display:inline-flex; align-items:center; gap:8px;
+    transition:border-color .18s ease, color .18s ease;
+  }
+
+.btn-outline-full:hover{border-color:var(--primary); color:var(--primary);}
+
+.btn-outline-full svg{width:15px; height:15px;}
+
+/* ============ খালি অবস্থা (রেফারেন্সের জন্য) ============ */
+  .empty-state-demo{
+    text-align:center; padding:44px 20px; color:var(--text-muted);
+    border:1.5px dashed var(--border); border-radius:14px; margin-top:14px; display:none;
+  }
+
+.empty-state-demo.show{display:block;}
+
+.empty-state-demo .es-icon{width:38px; height:38px; margin:0 auto 14px; color:var(--border);}
+
+.empty-state-demo p{font-size:14px;}
+
+/* ============ নিয়মাবলী নোট (নিচে, শুধু রেফারেন্সের জন্য) ============ */
+  .rules-note{
+    max-width:820px; margin:52px auto 0; padding:22px 24px;
+    background:color-mix(in srgb, var(--secondary) 6%, var(--surface));
+    border:1px solid var(--border); border-left:3px solid var(--secondary);
+    border-radius:0 12px 12px 0;
+  }
+
+.rules-note h4{font-size:14.5px; margin-bottom:10px; color:var(--text);}
+
+.rules-note ul{list-style:none; display:flex; flex-direction:column; gap:8px;}
+
+.rules-note li{display:flex; gap:9px; font-size:13px; color:var(--text-muted); line-height:1.6;}
+
+.rules-note li svg{width:14px; height:14px; color:var(--secondary); flex-shrink:0; margin-top:3px;}
+
+/* ============ কনফার্মেশন পপআপ (মন্তব্য ডিলিটের জন্য) ============ */
+  #confirm-overlay{
+    position:fixed; inset:0; z-index:2000; background:rgba(10,14,15,.5);
+    display:flex; align-items:center; justify-content:center; padding:20px;
+    opacity:0; pointer-events:none; transition:opacity .25s ease;
+  }
+
+#confirm-overlay.show{opacity:1; pointer-events:auto;}
+
+.confirm-card{
+    width:100%; max-width:380px; background:var(--surface); border:1px solid var(--border);
+    border-radius:18px; padding:30px 26px 24px; text-align:center;
+    box-shadow:0 26px 60px -20px rgba(0,0,0,.35);
+    transform:translateY(10px) scale(.97); transition:transform .25s ease;
+  }
+
+#confirm-overlay.show .confirm-card{transform:translateY(0) scale(1);}
+
+.confirm-icon{
+    width:56px; height:56px; margin:0 auto 16px; border-radius:50%;
+    background:color-mix(in srgb, var(--error) 14%, transparent);
+    color:var(--error); display:flex; align-items:center; justify-content:center;
+  }
+
+.confirm-icon svg{width:26px; height:26px;}
+
+.confirm-card h3{font-size:18px; margin-bottom:9px;}
+
+.confirm-card p{font-size:13.5px; color:var(--text-muted); line-height:1.7; margin-bottom:22px;}
+
+.confirm-actions{display:flex; flex-direction:column; gap:10px;}
+
+.confirm-danger{width:100%; text-align:center; background:var(--error); color:#fff; font-size:14.5px; font-weight:600; padding:12px; border-radius:10px;}
+
+.confirm-danger:hover{background:#8f2f21;}
+
+html[data-theme="dark"] .confirm-danger:hover{background:#c65243;}
+
+.confirm-cancel{font-size:13px; color:var(--text-muted); font-weight:600; padding:6px;}
+
+.confirm-cancel:hover{color:var(--text);}
+
+/* ============ ফুটার ============ */
+  footer{margin-top:70px; background:var(--primary-dark); color:#F2EFE8; overflow-x:hidden;}
+
+.free-badge{display:inline-block; background:var(--primary); color:#FFFFFF; font-size:12px; font-weight:700; padding:4px 11px; border-radius:999px; vertical-align:middle;}

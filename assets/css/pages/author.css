@@ -1,0 +1,327 @@
+/* ============================================================
+   author.css — লেখক প্রোফাইল পেজ
+   ============================================================ */
+
+:root{
+    --primary:#1D5358;
+    --primary-dark:#123A3D;
+    --secondary:#9B7257;
+    --secondary-light:#C9A98A;
+    --bg:#F7F3EC;
+    --surface:#FFFFFF;
+    --text:#2A2A28;
+    --text-muted:#6B6B63;
+    --border:#E4DDD0;
+    --success:#C99A3E;
+    --error:#B3402E;
+    --overlay-bg:#F7F3EC;
+    --quote-highlight:#FBF1D6;
+  }
+
+html[data-theme="dark"]{
+    --primary:#4FA8AD;
+    --primary-dark:#6FC3C8;
+    --secondary:#C9A98A;
+    --secondary-light:#E0C6A8;
+    --bg:#14181A;
+    --surface:#1E2426;
+    --text:#F2EFE8;
+    --text-muted:#A8A69E;
+    --border:#2C3335;
+    --success:#E0B354;
+    --error:#E06B57;
+    --overlay-bg:#14181A;
+    --quote-highlight:#2C270F;
+  }
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Noto Serif Bengali', serif;
+    font-weight:400;
+    line-height:1.7;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+body.theme-ready, body.theme-ready *{
+    transition:background-color .3s ease, color .3s ease, border-color .3s ease, fill .3s ease, stroke .3s ease, filter .3s ease;
+  }
+
+h4, button, .brand-name{font-family:'Noto Serif Bengali', serif; font-weight:600;}
+
+p{font-weight:400;}
+
+.wrap{max-width:1200px; margin:0 auto; padding:0 16px;}
+
+/* ============ লোগো — ডার্ক মোডে অটোমেটিক সাদা (আগের পেজগুলোর সাথে হুবহু) ============ */
+  html[data-theme="dark"] #brand-logo #header,
+  html[data-theme="dark"] #brand-logo #wordmark{
+    filter:brightness(0) invert(1);
+  }
+
+#logo-stage{ width:min(60vw,300px); position:relative; }
+
+#main-content.revealed{opacity:1; transition:opacity .5s ease;}
+
+/* ============ ব্রেডক্রাম্ব ============ */
+  .breadcrumb{padding:22px 0 0; font-size:13px; color:var(--text-muted); display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+
+.breadcrumb a{color:var(--text-muted);}
+
+.breadcrumb a:hover{color:var(--primary);}
+
+.breadcrumb .sep{width:4px; height:4px; border-radius:50%; background:var(--border);}
+
+.breadcrumb .current{color:var(--secondary);}
+
+/* ============ কভার + অ্যাভাটার (ওভারল্যাপ বাগ ফিক্সড — অ্যাভাটার সম্পূর্ণ absolute, টেক্সট ব্লক সবসময় তার নিচে থাকে) ============ */
+  .profile-media{ position:relative; margin-top:20px; }
+
+.profile-cover{
+    height:230px; border-radius:14px; overflow:hidden; position:relative; background:var(--primary);
+  }
+
+.profile-cover img{width:100%; height:100%; object-fit:cover;}
+
+.profile-cover .cover-overlay{
+    position:absolute; inset:0;
+    background:linear-gradient(100deg, rgba(18,58,61,.90) 0%, rgba(18,58,61,.62) 45%, rgba(18,58,61,.28) 100%);
+  }
+
+html[data-theme="dark"] .profile-cover .cover-overlay{
+    background:linear-gradient(100deg, rgba(10,14,15,.88) 0%, rgba(10,14,15,.60) 45%, rgba(10,14,15,.24) 100%);
+  }
+
+.cover-eyebrow{
+    position:absolute; left:24px; top:18px; z-index:2;
+    color:rgba(255,255,255,.9); font-size:13px; letter-spacing:.3px; font-weight:600;
+    background:rgba(0,0,0,.22); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+    padding:5px 13px; border-radius:999px;
+  }
+
+.profile-avatar{
+    position:absolute; left:36px; bottom:-58px; z-index:4;
+    width:132px; height:132px; border-radius:50%;
+    border:5px solid var(--bg); overflow:hidden; background:var(--surface);
+    box-shadow:0 8px 20px rgba(0,0,0,.18);
+  }
+
+.profile-avatar img{width:100%; height:100%; object-fit:cover;}
+
+@media(max-width:760px){
+    .profile-cover{height:150px; border-radius:10px;}
+    .cover-eyebrow{left:14px; top:14px; font-size:11px; padding:4px 11px;}
+    .profile-avatar{left:50%; transform:translateX(-50%); width:104px; height:104px; bottom:-44px; border-width:4px;}
+  }
+
+/* ============ প্রোফাইল তথ্য রো — কভারের একদম নিচে, কোনো ওভারল্যাপ নেই ============ */
+  .profile-top{
+    padding:78px 0 32px;
+    border-bottom:1px solid var(--border);
+    display:flex; align-items:flex-start; justify-content:space-between; gap:28px; flex-wrap:wrap;
+  }
+
+@media(max-width:760px){
+    .profile-top{ padding-top:60px; flex-direction:column; align-items:center; text-align:center; gap:22px; }
+  }
+
+.profile-info{flex:1; min-width:230px;}
+
+.profile-info h1{font-size:32px; margin-bottom:8px; letter-spacing:-.2px;}
+
+.profile-role-row{
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+    font-size:14.5px; color:var(--text-muted); margin-bottom:14px;
+  }
+
+@media(max-width:760px){ .profile-role-row{justify-content:center;} }
+
+.profile-role-row .role-badge{color:var(--secondary); font-weight:600;}
+
+.dot-sep{display:inline-block; width:5px; height:5px; border-radius:50%; background:var(--text-muted); vertical-align:middle; position:relative; top:-1px;}
+
+.profile-stats{display:flex; gap:20px; flex-wrap:wrap; font-size:13.5px; color:var(--text-muted); margin-bottom:16px;}
+
+@media(max-width:760px){ .profile-stats{justify-content:center;} }
+
+.profile-stats strong{color:var(--text); font-weight:600;}
+
+.social-row{display:flex; gap:8px;}
+
+@media(max-width:760px){ .social-row{justify-content:center;} }
+
+.social-btn{
+    width:38px; height:38px; border-radius:50%; border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center; color:var(--text-muted); flex-shrink:0;
+  }
+
+.social-btn:hover{border-color:var(--primary); color:var(--primary);}
+
+.social-btn svg{width:16px; height:16px;}
+
+/* ============ রেটিং + ফলো — বক্সড কার্ড (ডেস্কটপ ও মোবাইল দুই জায়গায়ই পরিষ্কার, প্রফেশনাল প্লেসমেন্ট) ============ */
+  .profile-side{
+    flex-shrink:0;
+    display:flex; align-items:center; gap:18px;
+    background:var(--surface); border:1px solid var(--border); border-radius:16px;
+    padding:16px 24px;
+    box-shadow:0 1px 2px rgba(0,0,0,.03), 0 14px 30px -20px rgba(0,0,0,.16);
+  }
+
+.side-divider{width:1px; align-self:stretch; background:var(--border); flex-shrink:0;}
+
+.rating-block{display:flex; flex-direction:column; align-items:center; gap:4px; flex-shrink:0;}
+
+.rating-ring{
+    width:72px; height:72px; border-radius:50%;
+    background:conic-gradient(var(--success) calc(var(--pct,96)*1%), var(--border) 0);
+    display:flex; align-items:center; justify-content:center; position:relative;
+  }
+
+.rating-ring::before{content:""; position:absolute; inset:5px; border-radius:50%; background:var(--bg);}
+
+.rating-ring .num{position:relative; font-size:17px; font-weight:700; color:var(--text); line-height:1;}
+
+.rating-stars{color:var(--success); display:flex; gap:2px; justify-content:center;}
+
+.rating-stars svg{width:11px; height:11px;}
+
+.rating-count{font-size:11px; color:var(--text-muted); white-space:nowrap;}
+
+.follow-btn{
+    font-size:14.5px; font-weight:600; color:#fff; background:var(--primary);
+    padding:12px 30px; border-radius:999px; white-space:nowrap;
+    transition:background-color .2s ease, color .2s ease, border-color .2s ease, transform .1s ease;
+    border:1px solid var(--primary);
+  }
+
+.follow-btn:hover{background:var(--primary-dark); border-color:var(--primary-dark);}
+
+.follow-btn:active{transform:scale(.96);}
+
+.follow-btn.following{background:transparent; color:var(--primary);}
+
+.follow-btn.following:hover{background:var(--primary); color:#fff;}
+
+@media(max-width:420px){
+    .profile-side{
+      flex-direction:column; width:100%; max-width:280px;
+      padding:20px 22px; gap:14px;
+    }
+    .side-divider{width:60%; height:1px; align-self:center;}
+    .follow-btn{width:100%; text-align:center;}
+  }
+
+/* ============ পরিচিতি / জীবনী সেকশন ============ */
+  .section-head{
+    display:flex; align-items:baseline; justify-content:space-between;
+    margin:40px 0 26px; padding-top:32px; border-top:1px solid var(--border);
+    gap:20px; flex-wrap:wrap;
+  }
+
+.section-head h2{font-size:26px; flex-shrink:0;}
+
+.filter-chips{display:flex; gap:10px; flex-wrap:wrap;}
+
+.filter-chips button{
+    font-size:13px; padding:7px 16px; border:1px solid var(--border); color:var(--text-muted); border-radius:999px;
+  }
+
+.filter-chips button.active{background:var(--primary); color:var(--overlay-bg); border-color:var(--primary);}
+
+html[data-theme="dark"] .filter-chips button.active{color:#0F1415;}
+
+.bio-panel{
+    display:grid; grid-template-columns:280px 1fr; gap:40px;
+  }
+
+.bio-facts{
+    background:color-mix(in srgb, var(--secondary) 6%, var(--surface));
+    border:1px solid var(--border); border-left:4px solid var(--secondary);
+    border-radius:10px; padding:26px 26px 22px; height:fit-content;
+  }
+
+.bio-facts dl{display:flex; flex-direction:column; gap:16px;}
+
+.bio-facts .fact{display:flex; flex-direction:column; gap:3px;}
+
+.bio-facts dt{font-size:12px; color:var(--secondary); font-weight:600; letter-spacing:.2px;}
+
+.bio-facts dd{font-size:14.5px; color:var(--text); font-weight:600; line-height:1.5;}
+
+.bio-story p{font-size:16.5px; color:var(--text); line-height:1.85; margin-bottom:20px;}
+
+.bio-story p:last-child{margin-bottom:0;}
+
+.bio-story h4{font-size:15px; color:var(--secondary); font-weight:700; margin-bottom:10px; letter-spacing:.2px;}
+
+.bio-story .bio-block{margin-bottom:26px;}
+
+.bio-story .bio-block:last-child{margin-bottom:0;}
+
+.bio-quote{
+    font-family:'Noto Serif Bengali', serif; font-weight:700; font-size:21px; color:var(--secondary);
+    padding:20px 24px; border-left:3px solid var(--secondary); margin:28px 0; line-height:1.55;
+    background:var(--quote-highlight); border-radius:0 8px 8px 0;
+  }
+
+@media(max-width:900px){
+    .bio-panel{grid-template-columns:1fr;}
+  }
+
+@media(max-width:640px){
+    .section-head{flex-direction:column; align-items:flex-start; gap:14px; margin-top:32px; padding-top:24px;}
+    .section-head h2{font-size:22px;}
+    .bio-facts{padding:22px 20px 18px;}
+    .bio-story p{font-size:15.5px;}
+    .bio-quote{font-size:18px; padding:16px 18px;}
+  }
+
+/* ============ ফিল্টার (লেখার তালিকার জন্য) ============ */
+  @media(max-width:640px){
+    .filter-chips{flex-wrap:nowrap; width:100%; overflow-x:auto; padding-bottom:6px; -webkit-overflow-scrolling:touch; scrollbar-width:none;}
+    .filter-chips::-webkit-scrollbar{display:none;}
+    .filter-chips button{flex-shrink:0;}
+  }
+
+/* ============ আর্টিকেল গ্রিড — ক্যাটাগরি এখন ছবির উপরে ডান কোণে ব্যাজ আকারে (article-page.html-এর সাথে হুবহু) ============ */
+  .article-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:36px 30px; padding-bottom:50px;}
+
+.article-card{display:flex; flex-direction:column;}
+
+.article-card .thumb{position:relative; aspect-ratio:3/2; background:var(--surface); border:1px solid var(--border); overflow:hidden; margin-bottom:16px; border-radius:8px;}
+
+.article-card .thumb img{width:100%; height:100%; object-fit:cover; transition:transform .5s ease;}
+
+.article-card:hover .thumb img{transform:scale(1.04);}
+
+.cat-badge{
+    position:absolute; top:14px; right:14px; z-index:2;
+    background:rgba(18,58,61,.82); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+    color:#fff; font-size:12px; font-weight:600; letter-spacing:.2px;
+    padding:5px 14px; border-radius:999px; box-shadow:0 3px 10px rgba(0,0,0,.18);
+  }
+
+html[data-theme="dark"] .cat-badge{ background:rgba(10,14,15,.75); }
+
+.thumb .cat-badge{ top:12px; right:12px; font-size:11.5px; padding:4px 12px; }
+
+.article-card h3{font-size:19px; margin-bottom:10px; line-height:1.4;}
+
+.article-card p{font-size:14.5px; color:var(--text-muted); margin-bottom:14px;}
+
+.card-meta{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-muted); margin-top:auto;}
+
+.card-meta .stars-mini{color:var(--success); display:flex; gap:1px;}
+
+.card-meta .stars-mini svg{width:11px; height:11px;}
+
+@media(max-width:900px){.article-grid{grid-template-columns:repeat(2,1fr);}}
+
+@media(max-width:600px){.article-grid{grid-template-columns:1fr; gap:28px;}}
+
+/* ============ ফুটার (article-page.html থেকে হুবহু) ============ */
+  footer{margin-top:0; background:var(--primary-dark); color:#F2EFE8; overflow-x:hidden;}
+
+.free-badge{display:inline-block; background:var(--primary); color:#FFFFFF; font-size:12px; font-weight:700; padding:4px 11px; border-radius:999px; vertical-align:middle;}

@@ -1,0 +1,92 @@
+/* ============================================================
+   layout.css — হোমপেজ ও আইনি পেজের সাধারণ কাঠামো (পেজের মূল অংশ, ফুটার ইত্যাদি)
+   ============================================================ */
+
+/* ============ থিম ভ্যারিয়েবল ============ */
+  :root{
+    --primary:#1D5358;
+    --primary-dark:#123A3D;
+    --secondary:#9B7257;
+    --secondary-light:#C9A98A;
+    --bg:#F7F3EC;
+    --surface:#FFFFFF;
+    --text:#2A2A28;
+    --text-muted:#6B6B63;
+    --border:#E4DDD0;
+    --success:#C99A3E;
+    --error:#B3402E;
+    --overlay-bg:#F7F3EC;
+  }
+
+html[data-theme="dark"]{
+    --primary:#4FA8AD;
+    --primary-dark:#6FC3C8;
+    --secondary:#C9A98A;
+    --secondary-light:#E0C6A8;
+    --bg:#14181A;
+    --surface:#1E2426;
+    --text:#F2EFE8;
+    --text-muted:#A8A69E;
+    --border:#2C3335;
+    --success:#E0B354;
+    --error:#E06B57;
+    --overlay-bg:#14181A;
+  }
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Noto Serif Bengali', serif;
+    font-weight:400;
+    line-height:1.7;
+    overflow-x:hidden;
+    text-rendering:optimizeLegibility;
+    font-synthesis:none;
+    -webkit-font-smoothing:antialiased;
+  }
+
+/* SemiBold(600): সাব-হেডিং, ব্র্যান্ড নাম, বাটন টেক্সট, লেখকের নাম */
+  h4, .semibold, button, .brand-name, .byline-info strong{
+    font-family:'Noto Serif Bengali', serif;
+    font-weight:600;
+  }
+
+/* Regular(400): বডি প্যারাগ্রাফ */
+  p{
+    font-weight:400;
+  }
+
+.wrap{max-width:1200px;margin:0 auto;padding:0 16px;}
+
+/* ============ লোগো — ডার্ক মোডে অটোমেটিক সাদা ============ */
+  /* লোগোর ওয়ার্ডমার্ক/কিকার/ট্যাগলাইন ডার্ক মোডে সাদা সিলুয়েটে বদলে যায়,
+     তবে "quill" (প-এর উপরের পাতা/পালক আইকন) সবসময় ব্র্যান্ডের আসল রঙেই থাকে */
+  html[data-theme="dark"] #brand-logo #header,
+  html[data-theme="dark"] #brand-logo #wordmark,
+  html[data-theme="dark"] #brand-logo #tag1,
+  html[data-theme="dark"] #brand-logo #tag2,
+  html[data-theme="dark"] #brand-logo #tag3,
+  html[data-theme="dark"] #brand-logo #tag4,
+  html[data-theme="dark"] #brand-logo #tag5{
+    filter:brightness(0) invert(1);
+  }
+
+#logo-stage{
+    width:min(78vw,420px);
+    position:relative;
+  }
+
+.icon-btn svg, #theme-toggle svg{display:block;}
+
+/* ============ ফুটার ============ */
+  footer{
+    margin-top:70px;
+    background:var(--primary-dark);
+    color:#F2EFE8;
+    overflow-x:hidden;
+  }
+
+#main-content.revealed{
+    opacity:1;
+    transition:opacity .7s ease;
+  }

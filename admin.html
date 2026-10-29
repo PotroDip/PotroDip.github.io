@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="bn">
+<html lang="bn">
+<head>
+<meta charset="utf-8"/><meta content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://pqoszcuhxdavehnxundq.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'" http-equiv="Content-Security-Policy"/>
+<meta content="strict-origin-when-cross-origin" name="referrer"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>এডমিন প্যানেল | পত্রদ্বীপ | Potrodip</title>
+<link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="assets/css/base.css" rel="stylesheet"/>
+<link href="assets/css/pages/admin.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="app" style="display:none">
+<div id="sidebar-scrim"></div>
+<!-- ============ সাইডবার — পরের ধাপে পূর্ণ করা হবে ============ -->
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-brand">
+<span class="logo-mark">
+<svg viewbox="35 235 930 405" xmlns="http://www.w3.org/2000/svg">
+<path d="M226.92,369.51l0.11-0.17l0.11-0.22l0.72-1.45l1.72-3.33l2-4.11l1.83-4.22l1.5-3.61l0.72-1.94l0.72-1.95l1.06-2.83l0.83-2.39l1-3.34l1.11-3.83l0.45-1.83l0.94-3.83l0.56-2.78l0.72-4c0.56-3.06,1-6.06,1.11-9.12l0.28-6.5l-0.17-5.89c-0.06-3-0.56-5.84-1-9l-0.78-0.33l-4.34,3.72c-2.56,2.11-5.34,3.89-8.28,5.5l-3.73,2.06c-0.33,0.17-0.94,0.78-1.06,1l2.45,8.73l0.61,2.56l0.45,2.06l0.55,3.61l0.72,5.45l0.33,3.95l0.22,4.11v6.11l-0.17,4.5l-0.22,2.89l-0.39,4.17l-0.39,2.61l-0.89,5.17l-0.72,3.45l-0.34,1.39c0,0-0.11,1.78-0.5,4.06L226.92,369.51z" fill="#4FA8AD"></path>
+<path d="M168.01,339.05l4.28,1.94l7.89,3.89l3,1.56l2.89,1.56l7.34,4.22l2.83,1.61l10.56,6.84l4.89,3.45l4.45,3.28l3.11,2.39l2.56,2l2.5,2.06l1.06,0.83l0.17-0.78l0.06-0.05l1.72-8l0.28-2.28l0.33-4.61l0.22-4.56v-8.06l-0.06-3.06l-0.11-2.5l-0.28-3.5l-0.39-3.95l-0.17-1.83l-0.61-4l-0.45-2.78l-0.78-3.95c-0.56-3.06-1.28-6-2.28-8.95l-2.11-6.11l-2.28-5.45c-1.17-2.78-2.67-5.22-4.23-8l-0.83-0.06l-2.67,5.06c-1.61,2.89-3.56,5.56-5.72,8.11l-2.73,3.28c-0.28,0.33-0.61,1.06-0.61,1.33l5.45,7.23l1.5,2.22l1.11,1.72l1.89,3.11l2.61,4.84l1.72,3.56l1.72,3.78l2.22,5.67l1.5,4.28l0.83,2.78l1.11,4l0.61,2.56l1.06,5.11l0.61,3.5l0.05,0.39l-0.17-0.22v-0.06l-0.89-3.67l-0.5-1.83l-1.78-5.89l-1.83-5.17l-1.78-4.34l-1.39-3.17l-0.83-1.78l-1.95-3.61c-4.11-7.84-9.06-15.06-15.12-21.57l-2.67-2.89c-2.39-2.5-4.89-4.78-7.67-7l-4.5-3.61c-0.11-0.11-0.78-0.33-0.78-0.17v0.56l-0.11,1.83l-0.11,2.11l-0.11,2.06l-0.11,2.11l-0.28,2.56l-0.39,2.28l-0.61,3.61l3.39,2.89c3.72,3.17,7.34,6.28,10.84,9.78l4.83,4.78l2.84,3.11l1.83,1.94l1.44,1.78l4.06,5c2.11,2.5,4,5.28,5.84,8.11l-5.12-5.17l-4.56-4.17l-1.72-1.5l-1.78-1.44l-2.84-2.28l-2.56-2l-3.39-2.56l-2.67-1.83l-3.22-2.22l-5.89-3.72l-6.5-3.95l-0.94-0.45l-4.33-2.28l-2.95-1.39l-8.39,6.06l5.28,2.39l3.06,1.39l7.78,4l3.17,1.72l5.28,3.11l2,1.11l7.39,4.78l6.45,4.56l-3.72-2.11l-5.89-3.5l-3.73-2.06l-4.28-2.33l-7.67-3.83l-2.89-1.39l-2.11-1l-2.11-0.94l-2.95-1.33l-4.61-2l-2.61-1.06l-3.95,2.56l-3.5,2.34l-0.17,0.5l7.73,2.83L168.01,339.05z" fill="#4FA8AD"></path>
+</svg>
+</span>
+<div class="sidebar-brand-text">
+<span aria-label="পত্রদ্বীপ" class="wordmark-logo">
+<svg fill="currentColor" viewbox="35 235 930 405" xmlns="http://www.w3.org/2000/svg">
+<path d="M666.21,400.44c0.89-0.78,0.61-2.63-0.15-4.69c-0.91-35.03,8.36-77.78-9.86-109.59c-19.09-33.33-71.59-33.98-104.53-28.42c-33.85,5.71-70.95,17.6-95.94,42.04c-2.5,2.45-19.61,18.68-16.62,23.81c3.38,5.82,13.27-3.99,16.39-7.04c11.63-11.37,36.76-16.56,51.85-20.38c16.6-4.2,33.83-6.46,50.97-5.75c35.31,1.46,67.24,14.9,73.47,52.56c0.7,4.22,1.42,11.99,2.12,21.62c-35.33-14.02-71.7-21.39-109.99-18.95c-12.18,0.77-24.28,2.32-36.33,4.19c-2.58,0.36-3.5,0.56-4.71,0.75c-7.31,1.19-14.61,2.45-21.89,3.78c-17.19,3.15-34.36,5.71-49.04,15.57c-11.89-8.21-24.84-13.29-37.27-12.56c-0.94-0.31-1.89-0.57-2.82-0.66c-25.85-2.35-52.01-1.32-77.97-1.32c-12.54-0.05-25.09-0.15-37.58-0.1c-3.62,0-7.19-0.15-10.61,0.2l-1.84,4.79l-0.61,1.48l-0.87,2.14l-1.88,4.34l-1.99,4.23l-1.53,2.96l-0.46,0.92l-4.69,20.65c-0.31-0.31-0.61-0.61-0.97-0.87c-14.58-12.9-30.8-23.76-48.09-32.08c-7.8-3.72-16.17-6.83-24.89-9.13c-17.08-4.49-35.29-5.71-52.07-1.94c-26.77,6.02-41.61,29.48-50.03,53.8c-0.46,0.61-0.66,1.58-0.61,2.81c-0.36,3.98,1.43,8.87,3.77,13.46c5.25,12.34,14.58,26.42,19.99,24.17c13.67-5.81,27.54-9.08,42.48-8.26c6.78,0.41,13.57,1.48,20.09,3.52c5.3,1.68-25.19,48.39-42.12,61.55c-8.01,6.22,17.14,45.03,22.49,40.95c34.52-26.26,71.7-49.21,104.54-77.56c-0.92,37.38,0.97,74.3,7.24,118.72c1.33,9.18,10.15,17.85,16.63,23.81c1.27,1.17,17.29,13.41,16.42,7.04c-8.92-62.98-9.03-110.92-4.85-166.4c0.51-6.22,1.02-12.49,1.58-18.97c0.66-7.14,1.32-14.48,2.09-22.03c4.59-6.43,6.63-15.25,26.06-19.17c12.54,0,25.09,0,37.63,0.05c1.87,0,3.75-0.02,5.62-0.03c-5.1,10.55-8.78,21.92-11.88,31.38c-7.43,22.65,3.15,26.44,17.56,48.07c11.67,17.5,30.37,32.86,50.66,19.5c19.95-13.14,18.2-37.59,7.66-56.06c-3.7-6.49-34.96,25.33-41.13,19.85c2.25-5.65,8.78-23.98,11.59-29.33c6.28-11.97,15.47-26.85,30.01-29.75c3.47-0.69,24.94,12.18,25.22,16.68c1.83,29.36-4.29,53.94-3.16,83.47c0.71,18.59,2.93,38.96,6.06,58.72c-7.66-6.93-15.94-13.61-25.44-17.47c-13.18-5.35-25.92-1.53-38.73,2.8c-14.87,5.02-28.1,13.35-42.69,18.84l-8.45,5.6c-1.41,0.26-7.58,5.13-8.99,5.19c-0.01-1.06,1.38-10.38,1-11.98c0.27-4.31,6.71-33.03,7.99-37.15c2.85-11.54-38.09-15.18-39.79-8.29c-8.32,33.67,16.48,69.8,46.91,84.04c15.42,7.21,30.54,3.89,44.6-4.19c75.36-43.33,56.41-32.54,67.22-16.84c0.94,4.87,1.91,9.68,2.93,14.32c2.12,9.65,13.43,19.81,20.9,25.58c3.61,2.78,14.04,10.33,11.92,0.7c-6.75-30.68-10.45-61.95-10.97-93.36c-0.48-28.7,6.25-58.79,1.83-87.2c-1.37-8.8-6.17-19.48-13.19-30.03c11.39-8.2,24.36-17.42,37.59-22.54c-0.67,25.87-1.35,51.74-2.02,77.6c-0.36,13.12-3.85,30.31,0,43.18c3.27,10.93,14.96,23.69,24.02,30.09c41.52,4.35,76.65-44.72,77.51-45.59c0.11,6.33-0.79,14.74-1.8,23.87c-1.22,1.19-2.34,2.41-3.49,3.81c-0.29,0.36-0.4,0.83-0.4,1.33c-20.17,20.38-37.17,43.07-50.66,67.73c-2.59,4.78,12.04,17.29,16.79,17.51c12.08,0.57,23.62-1.22,35.63,1.22c12.4,2.52,23.87,7.51,34.98,13.09c4.49,2.23,1.47-3.74,0.75-4.89c-2.77-4.31-7.26-8.52-11.83-11.18c5,2.91,3.52-1.01,3.09-4.39c-0.07-0.32-0.11-0.65-0.11-0.97c-0.07-1.62-0.14-3.24-0.21-4.85c-0.11-1.94-0.18-3.88-0.29-5.82c-0.29-4.71-0.75-9.35-1.26-14.02c-3.31-14.67-2.91-30.34-2.19-45.44c0.14-2.7,0.25-5.36,0.4-7.98c1.29-26.71,4.38-53.14,10.46-79.2c2.23-9.63-47.56-28.37-49.07-24.92c-9.85,22.43-2.49,36.86-18.41,55.77c-8.23,9.78-23.91,26.71-36.71,33.33c0.54-12.12,5.5-30.52,5.82-42.32c0.65-25.17,1.29-50.3,1.94-75.46c0.06-2.2-0.61-4.5-1.71-6.79c15.16-0.73,31.31-0.27,44.91-1.14c28.39-1.8,52.35,5.01,77.23,14.65c1.65,29.73,2.91,63.66,3,73.9c0.32,36.31-9.44,93.94-12.38,130.09c-0.53,6.54,48.59,21.34,49.93,20.11c6.18-5.71-6.57-42.18-5.84-51.13C673.63,519.46,667.87,444.85,666.21,400.44z M156.91,473.09c32.74-89.5-22.9-68.69-44.11-73.28c0.1-0.1,0.2-0.15,0.36-0.26c17.85-9.84,40.69-8.67,59.97-4.44c16.01,3.52,30.8,10.25,44.47,19.02C190.46,443,177.82,455.14,156.91,473.09z M565.1,584.71c-4.03-0.93-7.98-1.4-11.94-1.65c7.95-12.44,16.83-24.3,26.64-35.59c1.19-1.4,2.41-2.77,3.67-4.17c0.32,8.05,1.58,16.07,2.19,24.09c0.07,1.11,0.14,2.23,0.22,3.34c0.39,7.59,0,15.24,3.31,22.18C581.45,589.53,573.47,586.65,565.1,584.71z"></path>
+<path d="M943.28,381.25c-4.86-9.48-13.83-18.19-22.54-24.17c-16.47-11.3-53.47-19.06-66.26,1.51c-0.44,0.71-0.59,1.56-0.61,2.46c-1.68,16.27-3.17,31.52-4.41,46.18c-12.69-16.41-30.11-35.02-47.12-43.18c-23.08-11.07-51.61-16.73-76.96-11.03c-26.79,6.02-41.61,29.46-50.03,53.8c-0.45,0.6-0.64,1.55-0.62,2.78c-0.33,3.98,1.47,8.89,3.81,13.49c5.23,12.3,14.59,26.41,19.98,24.12c13.67-5.79,39.44-12.72,54.4-11.88c6.78,0.38,13.98,54.93-33.96,68.72c-8.01,6.23,17.13,45.04,22.5,40.97c34.59-26.28,71.68-49.35,104.56-77.7c-0.91,37.42,0.95,74.4,7.24,118.84c1.3,9.15,10.15,17.82,16.62,23.81c1.25,1.16,17.29,13.39,16.39,7.04c-11.86-83.82-8.05-141.08,0.6-224.86c0.02-0.03,0.09-0.02,0.11-0.06c8.98-14.44,37.09-14.24,50.27-5.2C944.27,391.72,946.84,388.22,943.28,381.25z M787.47,469.89c-1.62-4.35,3.2-17.98-3.53-29.53c-11.8-22.59-30.35-35.96-51.58-40.57c0.12-0.07,0.24-0.15,0.37-0.22c17.84-9.85,31.53-15.39,50.82-11.17c16.01,3.5,33.17,12.86,46.84,21.62C818.83,433.34,802.05,451.11,787.47,469.89z"></path>
+<path d="M594.55,542.54c-1.62-4.15-3.9-8.3-6.22-12.09c-2.35-3.85-4.77-7.78-7.76-11.16c-0.44-0.5-4.07-4.76-4.75-3.7c-10.69,16.48-28.74,27.36-36.8,45.67c-0.8,1.81,0.4,4.31,1.03,5.93c1.62,4.15,3.9,8.3,6.22,12.09c2.35,3.85,4.77,7.78,7.76,11.16c0.38,0.43,4.29,4.74,4.75,3.7c8.06-18.31,26.11-29.18,36.8-45.67C596.56,546.97,595.02,543.73,594.55,542.54z"></path>
+<path d="M226.57,382.83v-0.2c0,0.1,0,0.15-0.05,0.26c0,0,0.05,0.05,0.05,0.1l0.15-0.61C226.67,382.52,226.62,382.68,226.57,382.83z"></path>
+<path d="M226.47,383.03l-0.1-0.1l-0.15,0.82C226.31,383.49,226.42,383.29,226.47,383.03z"></path>
+<path d="M226.52,383.95c0-0.1,0.05-0.41,0.05-0.87v-0.1c0,0-0.05,0-0.05,0.05V383.95z"></path>
+<path d="M226.57,382.17l-0.05,0.05c0.05,0.05,0.05,0.05,0.05,0.1V382.17z"></path>
+</svg>
+</span>
+<div class="sub">এডমিন প্যানেল</div>
+</div>
+</div>
+<nav class="sidebar-nav" id="sidebarNav"></nav>
+<div class="sidebar-foot">
+      মূল সাইটে ফিরুন — <a href="index.html">পত্রদ্বীপ.com</a>
+</div>
+</aside>
+<!-- ============ মূল কনটেন্ট ============ -->
+<div class="main">
+<div class="topbar">
+<div style="display:flex; align-items:center; gap:14px;">
+<button aria-label="মেনু খুলুন" class="hamburger-btn" id="hamburger-btn">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" viewbox="0 0 24 24"><line x1="3" x2="21" y1="6" y2="6"></line><line x1="3" x2="21" y1="12" y2="12"></line><line x1="3" x2="21" y1="18" y2="18"></line></svg>
+</button>
+<div class="topbar-title">
+<h1 id="topbar-heading">ড্যাশবোর্ড</h1>
+<p id="topbar-sub">সাইটের সার্বিক অবস্থা এক নজরে</p>
+</div>
+</div>
+<div class="topbar-actions">
+<button aria-label="থিম বদলান" id="theme-toggle" title="থিম বদলান">
+<svg class="icon-moon" fill="none" height="19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="19"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+<svg class="icon-sun" fill="none" height="19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="19"><circle cx="12" cy="12" r="4"></circle><line x1="12" x2="12" y1="1" y2="3"></line><line x1="12" x2="12" y1="21" y2="23"></line><line x1="4.22" x2="5.64" y1="4.22" y2="5.64"></line><line x1="18.36" x2="19.78" y1="18.36" y2="19.78"></line><line x1="1" x2="3" y1="12" y2="12"></line><line x1="21" x2="23" y1="12" y2="12"></line><line x1="4.22" x2="5.64" y1="19.78" y2="18.36"></line><line x1="18.36" x2="19.78" y1="5.64" y2="4.22"></line></svg>
+</button>
+</div>
+</div>
+<div class="content" id="pagesContainer">
+<!-- ============ পেজ: ড্যাশবোর্ড ============ -->
+<section class="page active" id="page-dashboard">
+<div class="stat-row">
+<div class="stat-card"><div class="stat-label">মোট প্রকাশিত লেখা</div><div class="stat-value" id="dash-total-articles">৫৮</div></div>
+<div class="stat-card"><div class="stat-label">নিবন্ধিত ইউজার</div><div class="stat-value" id="dash-total-users">৯৪২</div></div>
+<div class="stat-card"><div class="stat-label">এই মাসে নতুন অর্ডার</div><div class="stat-value accent" id="dash-total-orders">৮</div></div>
+<div class="stat-card"><div class="stat-label">যাচাই বাকি পেমেন্ট</div><div class="stat-value accent" id="dash-pending-payments">৩</div></div>
+</div>
+<div class="dash-grid">
+<div class="dash-card">
+<h3>সাম্প্রতিক কার্যক্রম</h3>
+<div class="dc-sub">সাইটে সর্বশেষ যা ঘটেছে</div>
+<div class="quick-list" id="recentActivityList"></div>
+</div>
+<div class="dash-card">
+<h3>সবচেয়ে বেশি পঠিত লেখা</h3>
+<div class="dc-sub">এই মাসের শীর্ষ ৫টি</div>
+<div class="top-issues-list" id="topReadList"></div>
+</div>
+</div>
+<div class="dash-card" style="margin-top:22px;">
+<h3>দ্রুত কাজ</h3>
+<div class="dc-sub">প্রায়ই যেসব কাজ করতে হয়</div>
+<div class="quick-actions-row">
+<button class="btn btn-primary" data-goto="articles" data-open-article="">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="12" x2="12" y1="5" y2="19"></line><line x1="5" x2="19" y1="12" y2="12"></line></svg>
+              নতুন লেখা প্রকাশ
+            </button>
+<button class="btn btn-secondary" data-goto="authors" data-open-author="">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+              নতুন লেখক যোগ করুন
+            </button>
+<button class="btn btn-secondary" data-goto="orders">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+              অর্ডার যাচাই করুন
+            </button>
+</div>
+</div>
+</section>
+<!-- ============ পেজ: লেখা প্রকাশ ============ -->
+<section class="page" id="page-articles">
+<div class="page-head">
+<div class="page-head-copy">
+<h2 style="font-size:17px;">সব লেখা</h2>
+<p>নতুন লেখা প্রকাশ করুন অথবা পুরোনো লেখা এডিট, ড্রাফট বা মুছে ফেলুন।</p>
+</div>
+<button class="btn btn-primary" data-open-article="">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="12" x2="12" y1="5" y2="19"></line><line x1="5" x2="19" y1="12" y2="12"></line></svg>
+            নতুন লেখা প্রকাশ করুন
+          </button>
+</div>
+<div class="table-wrap">
+<div class="table-filters">
+<div class="chip-row" id="articleFilters">
+<button class="active" data-filter="all">সব</button>
+<button data-filter="published">প্রকাশিত</button>
+<button data-filter="draft">ড্রাফট</button>
+</div>
+<div class="table-search">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><line x1="21" x2="16.65" y1="21" y2="16.65"></line></svg>
+<input id="articleSearch" placeholder="শিরোনাম বা লেখক খুঁজুন" type="text"/>
+</div>
+</div>
+<div style="overflow-x:auto;">
+<table class="data-table">
+<thead><tr><th></th><th>শিরোনাম</th><th>লেখক</th><th>বিভাগ</th><th>তারিখ</th><th>স্ট্যাটাস</th><th></th></tr></thead>
+<tbody id="articlesTbody"></tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- ============ পেজ: লেখক প্রোফাইল ============ -->
+<section class="page" id="page-authors">
+<div class="page-head">
+<div class="page-head-copy">
+<h2 style="font-size:17px;">সব লেখক</h2>
+<p>লেখক প্রোফাইল তৈরি বা এডিট করুন — নাম, পেশা, ছবি, সোশ্যাল মিডিয়া লিংক।</p>
+</div>
+<button class="btn btn-primary" data-open-author="">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="12" x2="12" y1="5" y2="19"></line><line x1="5" x2="19" y1="12" y2="12"></line></svg>
+            নতুন লেখক যোগ করুন
+          </button>
+</div>
+<div class="card-grid" id="authorsGrid"></div>
+</section>
+<!-- ============ পেজ: আর্কাইভ/সংখ্যা ============ -->
+<section class="page" id="page-archive">
+<div class="page-head">
+<div class="page-head-copy">
+<h2 style="font-size:17px;">আর্কাইভ — সব সংখ্যা</h2>
+<p>প্রতিটা ত্রৈমাসিক সংখ্যা তৈরি করুন এবং তার সাথে কোন কোন লেখা যুক্ত থাকবে তা ঠিক করুন।</p>
+</div>
+<button class="btn btn-primary" data-open-issue-archive="">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="12" x2="12" y1="5" y2="19"></line><line x1="5" x2="19" y1="12" y2="12"></line></svg>
+            নতুন সংখ্যা তৈরি করুন
+          </button>
+</div>
+<div class="card-grid" id="archiveGrid"></div>
+</section>
+<!-- ============ পেজ: প্রিন্ট সংখ্যা (স্টোর) ============ -->
+<section class="page" id="page-issues">
+<div class="stat-row">
+<div class="stat-card"><div class="stat-label">মোট প্রকাশিত সংখ্যা</div><div class="stat-value" id="stat-total-issues">৬</div></div>
+<div class="stat-card"><div class="stat-label">স্টকে আছে</div><div class="stat-value" id="stat-in-stock">২</div></div>
+<div class="stat-card"><div class="stat-label">স্টক শেষ</div><div class="stat-value accent" id="stat-out-stock">৪</div></div>
+<div class="stat-card"><div class="stat-label">গড় মূল্য</div><div class="stat-value">৳২১৭</div></div>
+</div>
+<div class="page-head">
+<div class="page-head-copy">
+<h2 style="font-size:17px;">প্রিন্ট সংখ্যা ব্যবস্থাপনা</h2>
+<p>নতুন সংখ্যা যোগ করুন অথবা পুরোনো কোনোটার নাম, দাম, প্রচ্ছদ, টিজার ও স্টক অবস্থা বদলে দিন।</p>
+</div>
+<button class="btn btn-primary" id="btn-add-issue">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="12" x2="12" y1="5" y2="19"></line><line x1="5" x2="19" y1="12" y2="12"></line></svg>
+            নতুন সংখ্যা যোগ করুন
+          </button>
+</div>
+<div class="card-grid" id="issue-grid"></div>
+</section>
+<!-- ============ পেজ: অর্ডার তালিকা ============ -->
+<section class="page" id="page-orders">
+<div class="stat-row">
+<div class="stat-card"><div class="stat-label">মোট অর্ডার</div><div class="stat-value" id="stat-total-orders">৮</div></div>
+<div class="stat-card"><div class="stat-label">যাচাই বাকি</div><div class="stat-value accent" id="stat-pending-orders">৩</div></div>
+<div class="stat-card"><div class="stat-label">যাচাই হয়েছে</div><div class="stat-value" id="stat-verified-orders">২</div></div>
+<div class="stat-card"><div class="stat-label">ডেলিভারি হয়েছে</div><div class="stat-value" id="stat-delivered-orders">৩</div></div>
+</div>
+<div class="page-head">
+<div class="page-head-copy">
+<h2 style="font-size:17px;">অর্ডারের তালিকা</h2>
+<p>প্রতিটা অর্ডারের পেমেন্ট ট্রানজেকশন যাচাই করে স্ট্যাটাস আপডেট করুন। "যাচাই বাকি" অর্ডারগুলো আগে দেখুন।</p>
+</div>
+</div>
+<div class="table-wrap">
+<div class="table-filters">
+<div class="chip-row" id="order-filters">
+<button class="active" data-filter="all">সব</button>
+<button data-filter="pending">যাচাই বাকি</button>
+<button data-filter="verified">যাচাই হয়েছে</button>
+<button data-filter="delivered">ডেলিভারি হয়েছে</button>
+</div>
+</div>
+<div style="overflow-x:auto;">
+<table class="data-table">
+<thead><tr><th>অর্ডার নম্বর</th><th>ক্রেতা</th><th>সংখ্যা</th><th>পরিমাণ</th><th>মোট (ডেলিভারি)</th><th>ট্রানজেকশন আইডি</th><th>স্ট্যাটাস</th></tr></thead>
+<tbody id="orders-tbody"></tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- ============ পেজ: এড স্লট ============ -->
+<section class="page" id="page-ads">
+<div class="page-head">
+<div class="page-head-copy">
+<h2 style="font-size:17px;">এড স্লট ব্যবস্থাপনা</h2>
+<p>সাইটের নির্দিষ্ট এড স্লটে ছবি/GIF আপলোড ও ম্যানেজ করুন। যেকোনো সাইজের ছবি আপলোড করলে সেটা স্বয়ংক্রিয়ভাবে ঐ স্লটের নির্ধারিত মাপে ফিট হয়ে যাবে।</p>
+</div>
+</div>
+<div class="card-grid" id="adSlotGrid" style="grid-template-columns:repeat(auto-fill, minmax(260px,1fr));"></div>
+</section>
+<!-- ============ পেজ: কমেন্ট মডারেশন ============ -->
+<section class="page" id="page-comments">
+<div class="page-head">
+<div class="page-head-copy">
+<h2 style="font-size:17px;">কমেন্ট মডারেশন</h2>
+<p>আপত্তিকর বা রিপোর্ট হওয়া মন্তব্য এখান থেকে পর্যালোচনা করে ডিলিট করা যাবে।</p>
+</div>
+</div>
+<div class="table-filters" style="background:var(--surface); border:1px solid var(--border); border-radius:12px 12px 0 0; border-bottom:none;">
+<div class="chip-row" id="commentFilters">
+<button class="active" data-filter="all">সব</button>
+<button data-filter="flagged">রিপোর্ট হয়েছে</button>
+</div>
+</div>
+<div class="mod-list" id="modList" style="border:1px solid var(--border); border-top:none; border-radius:0 0 12px 12px; padding:14px; background:var(--surface);"></div>
+</section>
+<!-- ============ পেজ: নিউজলেটার সাবস্ক্রাইবার ============ -->
+<section class="page" id="page-newsletter">
+<div class="page-head">
+<div class="page-head-copy">
+<h2 style="font-size:17px;">নিউজলেটার সাবস্ক্রাইবার</h2>
+<p>সাইন-ইন করা মাত্রই স্বয়ংক্রিয়ভাবে সাবস্ক্রাইব হওয়া এবং ফুটার থেকে সরাসরি সাবস্ক্রাইব করা — দুই ধরনের সাবস্ক্রাইবারের তালিকা এখানে দেখা যাবে।</p>
+</div>
+</div>
+<div class="subscriber-summary">
+<div class="subs-chip"><div class="sc-label">মোট সাবস্ক্রাইবার</div><div class="sc-value" id="subs-total">৯৪২</div></div>
+<div class="subs-chip"><div class="sc-label">সাইন-ইন থেকে</div><div class="sc-value" id="subs-signin">৭৮৬</div></div>
+<div class="subs-chip"><div class="sc-label">শুধু ফুটার থেকে</div><div class="sc-value" id="subs-footer">১৫৬</div></div>
+</div>
+<div class="table-wrap">
+<div class="table-filters">
+<div class="table-search" style="margin-right:auto;">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><line x1="21" x2="16.65" y1="21" y2="16.65"></line></svg>
+<input id="subscriberSearch" placeholder="ইমেইল খুঁজুন" type="text"/>
+</div>
+<button class="btn btn-secondary" id="exportSubsBtn">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>
+              তালিকা এক্সপোর্ট করুন
+            </button>
+</div>
+<div style="overflow-x:auto;">
+<table class="data-table">
+<thead><tr><th>ইমেইল</th><th>উৎস</th><th>সাবস্ক্রাইব তারিখ</th><th></th></tr></thead>
+<tbody id="subscribersTbody"></tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- ============ পেজ: অ্যানালিটিক্স ============ -->
+<section class="page" id="page-analytics">
+<div class="page-head">
+<div class="page-head-copy">
+<h2 style="font-size:17px;">বেসিক অ্যানালিটিক্স</h2>
+<p>কোন লেখা কতবার পড়া হয়েছে এবং কোন বিভাগ সবচেয়ে জনপ্রিয় তার একটা সহজ চিত্র।</p>
+</div>
+</div>
+<div class="stat-row">
+<div class="stat-card"><div class="stat-label">মোট পঠন (এই মাসে)</div><div class="stat-value">৪২,৯১০</div></div>
+<div class="stat-card"><div class="stat-label">গড় রেটিং</div><div class="stat-value">৪.৭</div></div>
+<div class="stat-card"><div class="stat-label">মোট মন্তব্য</div><div class="stat-value">৩৬৪</div></div>
+<div class="stat-card"><div class="stat-label">সক্রিয় ফলোয়ার</div><div class="stat-value accent">১,২০৮</div></div>
+</div>
+<div class="bar-chart-wrap">
+<h3>সবচেয়ে বেশি পঠিত লেখা (এই মাসে)</h3>
+<div id="analyticsArticleBars"></div>
+</div>
+<div class="bar-chart-wrap">
+<h3>বিভাগ অনুযায়ী জনপ্রিয়তা</h3>
+<div id="analyticsCatBars"></div>
+</div>
+</section>
+<!-- ============ পেজ: ডেলিভারি চার্জ ============ -->
+<section class="page" id="page-delivery">
+<div class="page-head">
+<div class="page-head-copy">
+<h2 style="font-size:17px;">ডেলিভারি চার্জ সেটিংস</h2>
+<p>ঢাকার ভিতরে ও বাহিরে সাধারণ এবং বাল্ক অর্ডারের চার্জ এখান থেকে যেকোনো সময় বদলে দিতে পারবেন — সাইটের স্টোর পেজে সাথে সাথে আপডেট হয়ে যাবে।</p>
+</div>
+</div>
+<div class="settings-grid">
+<div class="settings-card">
+<h3>ঢাকার ভিতরে</h3>
+<div class="settings-sub">সাধারণ অর্ডার ও বাল্ক অর্ডারের চার্জ (টাকায়)</div>
+<div class="field-grid-2">
+<div class="field-row"><label>সাধারণ অর্ডার চার্জ</label><div class="field-input-icon"><input id="dhaka-normal" type="number" value="70"/><span class="prefix">৳</span></div></div>
+<div class="field-row"><label>বাল্ক অর্ডার চার্জ</label><div class="field-input-icon"><input id="dhaka-bulk" type="number" value="80"/><span class="prefix">৳</span></div></div>
+</div>
+</div>
+<div class="settings-card">
+<h3>ঢাকার বাহিরে</h3>
+<div class="settings-sub">সাধারণ অর্ডার ও বাল্ক অর্ডারের চার্জ (টাকায়)</div>
+<div class="field-grid-2">
+<div class="field-row"><label>সাধারণ অর্ডার চার্জ</label><div class="field-input-icon"><input id="outside-normal" type="number" value="120"/><span class="prefix">৳</span></div></div>
+<div class="field-row"><label>বাল্ক অর্ডার চার্জ</label><div class="field-input-icon"><input id="outside-bulk" type="number" value="130"/><span class="prefix">৳</span></div></div>
+</div>
+</div>
+<div class="settings-card" style="grid-column:1/-1;">
+<h3>বাল্ক অর্ডারের সীমা</h3>
+<div class="settings-sub">কত কপি বা তার বেশি হলে অর্ডারটাকে "বাল্ক" হিসেবে ধরে বেশি চার্জ নেয়া হবে</div>
+<div class="field-row" style="max-width:220px;"><label>বাল্কের সর্বনিম্ন পরিমাণ</label><div class="field-input-icon"><input id="bulk-threshold" type="number" value="10"/><span class="prefix">কপি+</span></div></div>
+</div>
+</div>
+<div class="settings-foot">
+<button class="btn btn-primary" id="save-delivery">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            পরিবর্তন সংরক্ষণ করুন
+          </button>
+</div>
+</section>
+<!-- ============ পেজ: পেমেন্ট নাম্বার ============ -->
+<section class="page" id="page-payment">
+<div class="page-head">
+<div class="page-head-copy">
+<h2 style="font-size:17px;">পেমেন্ট নাম্বার সেটিংস</h2>
+<p>এই নাম্বারগুলোই ইউজাররা স্টোর পেজে অর্ডারের সময় ডেলিভারি চার্জ পাঠানোর জন্য দেখবে (Send Money)।</p>
+</div>
+</div>
+<div class="settings-grid">
+<div class="settings-card"><h3>বিকাশ</h3><div class="settings-sub">Send Money নাম্বার</div><div class="field-row"><label>বিকাশ নাম্বার</label><input id="pay-bkash" placeholder="01xxxxxxxxx" type="tel" value="017xxxxxxxx"/></div></div>
+<div class="settings-card"><h3>নগদ</h3><div class="settings-sub">Send Money নাম্বার</div><div class="field-row"><label>নগদ নাম্বার</label><input id="pay-nagad" placeholder="01xxxxxxxxx" type="tel" value="018xxxxxxxx"/></div></div>
+<div class="settings-card"><h3>রকেট</h3><div class="settings-sub">Send Money নাম্বার</div><div class="field-row"><label>রকেট নাম্বার</label><input id="pay-rocket" placeholder="01xxxxxxxxx" type="tel" value="019xxxxxxxx"/></div></div>
+</div>
+<div class="settings-foot">
+<button class="btn btn-primary" id="save-payment">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            পরিবর্তন সংরক্ষণ করুন
+          </button>
+</div>
+</section>
+<!-- ============ পেজ: যোগাযোগ তথ্য ============ -->
+<section class="page" id="page-contact">
+<div class="page-head">
+<div class="page-head-copy">
+<h2 style="font-size:17px;">সাইট যোগাযোগ তথ্য</h2>
+<p>এই তথ্যগুলো সাইটের ফুটার ও যোগাযোগ সেকশনে স্বয়ংক্রিয়ভাবে আপডেট হয়ে যাবে।</p>
+</div>
+</div>
+<div class="settings-grid">
+<div class="settings-card">
+<h3>যোগাযোগের মোবাইল নাম্বার</h3><div class="settings-sub">ইউজার সহায়তার জন্য</div>
+<div class="field-row"><label>মোবাইল নাম্বার</label><input id="contact-phone" placeholder="01xxxxxxxxx" type="tel" value="016xxxxxxxx"/></div>
+</div>
+<div class="settings-card">
+<h3>সোশ্যাল মিডিয়া লিংক</h3><div class="settings-sub">ফেসবুক ও ইনস্টাগ্রাম প্রোফাইলের লিংক</div>
+<div class="field-row"><label>ফেসবুক পেজ লিংক</label><input id="contact-fb" placeholder="https://facebook.com/potrodip" type="url"/></div>
+<div class="field-row"><label>ইনস্টাগ্রাম লিংক</label><input id="contact-ig" placeholder="https://instagram.com/potrodip" type="url"/></div>
+</div>
+</div>
+<div class="settings-foot">
+<button class="btn btn-primary" id="save-contact">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            পরিবর্তন সংরক্ষণ করুন
+          </button>
+</div>
+</section>
+</div>
+</div>
+</div>
+<!-- ============ মডাল: লেখা প্রকাশ/এডিট ============ -->
+<div id="modal-scrim"></div>
+<div aria-label="লেখা প্রকাশ বা এডিট করুন" class="modal-box article-box" id="article-modal" role="dialog">
+<div class="modal-head"><h3 id="article-modal-title">নতুন লেখা প্রকাশ করুন</h3>
+<button class="modal-close" data-close-modal="article-modal"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg></button>
+</div>
+<div class="modal-body">
+<div class="art-main">
+<div class="field-row art-main-title"><label>শিরোনাম</label><input id="art-title" placeholder="যেমন: আল্লাহকে চিনার উপায়" type="text"/></div>
+<div class="field-row">
+<label class="rte-field-label">লেখার মূল অংশ</label>
+<div class="rte-toolbar" id="art-toolbar">
+<button data-cmd="undo" title="আনডু" type="button"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M3 7v6h6"></path><path d="M21 17a9 9 0 0 0-15-6.7L3 13"></path></svg></button>
+<button data-cmd="redo" title="রিডু" type="button"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M21 7v6h-6"></path><path d="M3 17a9 9 0 0 1 15-6.7L21 13"></path></svg></button>
+<span class="rte-sep"></span>
+<button data-cmd="bold" title="বোল্ড (Ctrl+B)" type="button"><strong>B</strong></button>
+<button data-cmd="italic" title="ইটালিক (Ctrl+I)" type="button"><em>I</em></button>
+<button data-cmd="underline" title="আন্ডারলাইন (Ctrl+U)" type="button"><span style="text-decoration:underline;">U</span></button>
+<button data-cmd="highlight" title="হাইলাইট করুন (আগে টেক্সট সিলেক্ট করুন)" type="button">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>
+</button>
+<span class="rte-sep"></span>
+<button data-cmd="formatBlock" data-value="h3" title="সাব-হেডিং" type="button">H</button>
+<button data-cmd="formatBlock" data-value="blockquote" title="উদ্ধৃতি/কোট" type="button">
+<svg fill="currentColor" viewbox="0 0 24 24"><path d="M9.5 3C6 3 4 6 4 9.5V16c0 1.66 1.34 3 3 3h.5c1.66 0 3-1.34 3-3v-3c0-1.66-1.34-3-3-3H6.1C6.5 5.5 8 4 9.5 4V3zM19 3c-3.5 0-5.5 3-5.5 6.5V16c0 1.66 1.34 3 3 3h.5c1.66 0 3-1.34 3-3v-3c0-1.66-1.34-3-3-3h-1.4c.4-3.5 1.9-5 3.4-5V3z"></path></svg>
+</button>
+<span class="rte-sep"></span>
+<button data-cmd="insertUnorderedList" title="বুলেট লিস্ট" type="button">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="8" x2="21" y1="6" y2="6"></line><line x1="8" x2="21" y1="12" y2="12"></line><line x1="8" x2="21" y1="18" y2="18"></line><line x1="3" x2="3.01" y1="6" y2="6"></line><line x1="3" x2="3.01" y1="12" y2="12"></line><line x1="3" x2="3.01" y1="18" y2="18"></line></svg>
+</button>
+<button data-cmd="insertOrderedList" title="নাম্বার লিস্ট" type="button">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="10" x2="21" y1="6" y2="6"></line><line x1="10" x2="21" y1="12" y2="12"></line><line x1="10" x2="21" y1="18" y2="18"></line><path d="M4 6h1v4"></path><path d="M4 10h2"></path><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"></path></svg>
+</button>
+<span class="rte-sep"></span>
+<button data-cmd="createLink" title="লিংক যুক্ত করুন" type="button">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.2 1.1"></path><path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.1-1.1"></path></svg>
+</button>
+<button data-cmd="removeFormat" title="ফরম্যাট মুছে ফেলুন" type="button">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M4 7V4h16v3"></path><path d="M9 20h6"></path><path d="M12 4v16"></path><line x1="4" x2="20" y1="4" y2="20"></line></svg>
+</button>
+</div>
+<div class="rte-body" contenteditable="true" data-placeholder="এখানে লেখার মূল অংশ লিখুন..." id="art-body"></div>
+<p class="field-hint">সিলেক্ট করে বোল্ড/ইটালিক/হাইলাইট করতে পারবেন। কোন অপশন এখন চালু আছে তা বাটন গাঢ় রঙে বোঝা যাবে। টুলবারটি স্ক্রল করলেও উপরে আটকে থাকবে।</p>
+</div>
+<div class="field-row">
+<label>অতিরিক্ত ছবি (গ্যালারি)</label>
+<div class="img-upload-row" id="art-gallery-row">
+<div class="img-upload-add" id="art-gallery-add">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="12" x2="12" y1="5" y2="19"></line><line x1="5" x2="19" y1="12" y2="12"></line></svg>
+</div>
+</div>
+<input accept="image/*" id="art-gallery-file" multiple="" style="display:none;" type="file"/>
+</div>
+</div>
+<div class="art-side">
+<div class="field-row"><label>লেখক</label>
+<select id="art-author" style="width:100%; padding:11px 13px; background:var(--field-bg); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:14px;"></select>
+</div>
+<div class="field-row"><label>বিভাগ</label>
+<select id="art-cat" style="width:100%; padding:11px 13px; background:var(--field-bg); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:14px;">
+<option>গল্প</option><option>কবিতা</option><option>ভ্রমণ</option><option>রম্য</option><option>প্রবন্ধ</option>
+</select>
+</div>
+<div class="field-row">
+<label>কভার ছবি</label>
+<label class="cover-upload" id="art-cover-upload">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><rect height="18" rx="2" width="18" x="3" y="3"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
+<span>কভার আপলোড করতে ক্লিক করুন</span>
+<img alt="" id="art-cover-preview"/>
+<input accept="image/*" id="art-cover-file" style="display:none;" type="file"/>
+</label>
+</div>
+<div class="field-row"><label>সংখ্যা (আর্কাইভ)</label><select id="art-issue"></select></div><div class="field-row" style="margin-bottom:0;">
+<div class="stock-toggle-row">
+<span>এখনই প্রকাশ করুন<br/><span style="font-size:11px; color:var(--text-muted); font-weight:400;">(বন্ধ থাকলে ড্রাফট হিসেবে সেভ হবে)</span></span>
+<label class="switch"><input checked="" id="art-published" type="checkbox"/><span class="track"></span></label>
+</div>
+</div>
+</div>
+</div>
+<div class="modal-foot">
+<button class="btn btn-secondary" data-close-modal="article-modal">বাতিল করুন</button>
+<button class="btn btn-primary" id="art-save-btn">লেখা সংরক্ষণ করুন</button>
+</div>
+</div>
+<!-- ============ মডাল: লেখক প্রোফাইল ============ -->
+<div aria-label="লেখক প্রোফাইল" class="modal-box narrow" id="author-modal" role="dialog">
+<div class="modal-head"><h3 id="author-modal-title">নতুন লেখক যোগ করুন</h3>
+<button class="modal-close" data-close-modal="author-modal"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg></button>
+</div>
+<div class="modal-body">
+<label class="cover-upload round" id="author-cover-upload">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><rect height="18" rx="2" width="18" x="3" y="3"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
+<span>ছবি আপলোড</span>
+<img alt="" id="author-cover-preview"/>
+<input accept="image/*" id="author-cover-file" style="display:none;" type="file"/>
+</label>
+<div class="field-row"><label>নাম</label><input id="author-name" placeholder="যেমন: আব্দুল্লাহ" type="text"/></div>
+<div class="field-grid-2" style="margin-bottom:16px;">
+<div class="field-row" style="margin-bottom:0;"><label>পেশা/ধরন</label><input id="author-role" placeholder="যেমন: গল্পকার" type="text"/></div>
+<div class="field-row" style="margin-bottom:0;"><label>শহর</label><input id="author-city" placeholder="যেমন: রাজশাহী" type="text"/></div>
+</div>
+<div class="field-grid-2">
+<div class="field-row"><label>ফেসবুক লিংক</label><input id="author-fb" placeholder="https://facebook.com/..." type="url"/></div>
+<div class="field-row"><label>ইনস্টাগ্রাম লিংক</label><input id="author-ig" placeholder="https://instagram.com/..." type="url"/></div>
+</div><details class="author-more" style="margin-top:6px"><summary style="cursor:pointer;font-weight:600;margin:8px 0">বিস্তারিত পরিচিতি (ঐচ্ছিক — লেখকের পেজে দেখাবে)</summary><div class="field-row"><label>ওয়েবসাইট লিংক</label><input id="author-website" type="url"/></div><div class="field-grid-2"><div class="field-row"><label>পূর্ণ নাম</label><input id="author-fullname" type="text"/></div><div class="field-row"><label>পিতার নাম</label><input id="author-father" type="text"/></div></div><div class="field-grid-2"><div class="field-row"><label>জন্ম তারিখ</label><input id="author-birth" type="date"/></div><div class="field-row"><label>লেখালেখির বয়স</label><input id="author-years" type="text"/></div></div><div class="field-row"><label>বর্তমান ঠিকানা</label><input id="author-address" type="text"/></div><div class="field-grid-2"><div class="field-row"><label>শিক্ষাগত যোগ্যতা</label><input id="author-edu" type="text"/></div><div class="field-row"><label>পেশা</label><input id="author-prof" type="text"/></div></div><div class="field-row"><label>উল্লেখযোগ্য স্বীকৃতি</label><input id="author-recog" type="text"/></div><div class="field-row"><label>প্রোফাইলের কভার ছবি</label><label class="cover-upload" id="author-bg-upload"><span>কভার আপলোড করতে ক্লিক করুন</span><img alt="" id="author-bg-preview"/><input accept="image/*" id="author-bg-file" type="file"/></label></div><div class="field-row"><label>জীবনী</label><textarea id="author-bio" rows="6"></textarea><p class="field-hint">প্রতিটি অনুচ্ছেদ খালি লাইন দিয়ে আলাদা করুন। "# " দিয়ে শুরু করলে শিরোনাম, "&gt; " দিয়ে শুরু করলে উদ্ধৃতি হবে।</p></div></details>
+</div>
+<div class="modal-foot">
+<button class="btn btn-secondary" data-close-modal="author-modal">বাতিল করুন</button>
+<button class="btn btn-primary" id="author-save-btn">লেখক সংরক্ষণ করুন</button>
+</div>
+</div>
+<!-- ============ মডাল: আর্কাইভ সংখ্যা ============ -->
+<div aria-label="আর্কাইভ সংখ্যা" class="modal-box narrow" id="issue-archive-modal" role="dialog">
+<div class="modal-head"><h3 id="issue-archive-modal-title">নতুন সংখ্যা তৈরি করুন</h3>
+<button class="modal-close" data-close-modal="issue-archive-modal"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg></button>
+</div>
+<div class="modal-body">
+<label class="cover-upload" id="issue-archive-cover-upload">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><rect height="18" rx="2" width="18" x="3" y="3"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
+<span>প্রচ্ছদ আপলোড</span>
+<img alt="" id="issue-archive-cover-preview"/>
+<input accept="image/*" id="issue-archive-cover-file" style="display:none;" type="file"/>
+</label>
+<div class="field-row"><label>সংখ্যার নাম</label><input id="issue-archive-name" placeholder="যেমন: শরতের সংখ্যা — সেপ্টেম্বর ২০২৬" type="text"/></div>
+<div class="field-row"><label>সংখ্যা নম্বর</label><input id="issue-archive-number" placeholder="যেমন: সংখ্যা ৫" type="text"/></div>
+
+</div>
+<div class="modal-foot">
+<button class="btn btn-secondary" data-close-modal="issue-archive-modal">বাতিল করুন</button>
+<button class="btn btn-primary" id="issue-archive-save-btn">সংখ্যা সংরক্ষণ করুন</button>
+</div>
+</div>
+<!-- ============ মডাল: প্রিন্ট সংখ্যা (স্টোর) ============ -->
+<div aria-label="সংখ্যা যোগ বা এডিট করুন" class="modal-box narrow" id="issue-modal" role="dialog">
+<div class="modal-head">
+<h3 id="modal-title">নতুন সংখ্যা যোগ করুন</h3>
+<button class="modal-close" data-close-modal="issue-modal"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg></button>
+</div>
+<div class="modal-body">
+<label class="cover-upload" id="cover-upload">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><rect height="18" rx="2" width="18" x="3" y="3"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
+<span>প্রচ্ছদ ছবি আপলোড করতে ক্লিক করুন</span>
+<img alt="" id="cover-preview"/>
+<input accept="image/*" id="cover-file" style="display:none;" type="file"/>
+</label>
+<div class="field-row"><label>সংখ্যার নাম</label><input id="issue-name" placeholder="যেমন: শরতের সংখ্যা — সেপ্টেম্বর ২০২৬" type="text"/></div>
+<div class="field-row"><label>টিজার (আকর্ষণীয় গল্পের অংশ — ২-৩ লাইন)</label><textarea id="issue-teaser" placeholder="যেমন: চিলেকোঠার চিঠি ও আরও নতুন গল্প নিয়ে এই সংখ্যা..."></textarea></div>
+<div class="field-grid-2" style="margin-bottom:16px;">
+<div class="field-row" style="margin-bottom:0;"><label>দাম</label><div class="field-input-icon"><input id="issue-price" placeholder="২৫০" type="number"/><span class="prefix">৳</span></div></div>
+<div class="field-row" style="margin-bottom:0;"><label>সংখ্যা নম্বর</label><input id="issue-number" placeholder="যেমন: সংখ্যা ৫" type="text"/></div>
+</div>
+<div class="stock-toggle-row"><span>স্টকে আছে</span><label class="switch"><input checked="" id="issue-stock" type="checkbox"/><span class="track"></span></label></div>
+<div class="field-row" style="margin-top:16px; margin-bottom:0;">
+<label>নমুনা পিডিএফ (প্রিভিউ)</label>
+<div class="pdf-upload-box" id="issue-pdf-box">
+<input accept="application/pdf" id="issue-pdf-file" style="display:none;" type="file"/>
+<div class="pdf-upload-empty" id="issue-pdf-empty">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+<span>পিডিএফ আপলোড করতে ক্লিক করুন</span>
+</div>
+<div class="pdf-upload-filled" id="issue-pdf-filled" style="display:none;">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+<span class="pdf-filename" id="issue-pdf-name"></span>
+<button aria-label="সরিয়ে ফেলুন" class="pdf-remove-btn" id="issue-pdf-remove" type="button">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg>
+</button>
+</div>
+</div>
+<p class="field-hint">এই পিডিএফ যুক্ত করলে ক্রেতা কেনার আগে প্রচ্ছদে ক্লিক করে কিছু পাতা পড়ে দেখতে পারবে।</p>
+</div>
+</div>
+<div class="modal-foot">
+<button class="btn btn-secondary" data-close-modal="issue-modal">বাতিল করুন</button>
+<button class="btn btn-primary" id="modal-save">সংখ্যা সংরক্ষণ করুন</button>
+</div>
+</div>
+<!-- ============ টোস্ট ============ -->
+<div id="toast">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" viewbox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+<span id="toast-text">সংরক্ষণ হয়েছে</span>
+</div>
+<!-- ============ কনফার্মেশন পপআপ ============ -->
+<div aria-label="নিশ্চিতকরণ" id="confirm-overlay" role="dialog">
+<div class="confirm-card">
+<div class="confirm-icon">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" x2="10" y1="11" y2="17"></line><line x1="14" x2="14" y1="11" y2="17"></line></svg>
+</div>
+<h3 id="confirm-title">আপনি কি নিশ্চিত?</h3>
+<p id="confirm-desc">এই কাজটা করতে চান?</p>
+<div class="confirm-actions">
+<button class="confirm-danger" id="confirm-yes">হ্যাঁ, নিশ্চিত</button>
+<button class="confirm-cancel" id="confirm-no">না, থাক</button>
+</div>
+</div>
+</div>
+<script src="assets/js/core/theme.js"></script>
+
+
+<script src="assets/vendor/supabase.js"></script>
+<script src="assets/js/core/config.js"></script>
+<script src="assets/js/core/app.js"></script>
+<script src="assets/js/core/ui.js"></script>
+<script src="assets/js/pages/admin-shell.js"></script>
+<script src="assets/js/pages/admin-editor.js"></script>
+<script src="assets/js/pages/admin.js"></script>
+<script src="assets/js/pages/admin-forms.js"></script>
+</body>
+</html>

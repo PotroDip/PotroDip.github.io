@@ -1,0 +1,664 @@
+/* ============================================================
+   store.css — ছাপা সংখ্যার স্টোর ও চেকআউট
+   ============================================================ */
+
+:root{
+    --primary:#1D5358;
+    --primary-dark:#123A3D;
+    --secondary:#9B7257;
+    --secondary-light:#C9A98A;
+    --bg:#F7F3EC;
+    --surface:#FFFFFF;
+    --text:#2A2A28;
+    --text-muted:#6B6B63;
+    --border:#E4DDD0;
+    --success:#C99A3E;
+    --error:#B3402E;
+    --stock-ok:#3B8256;
+    --overlay-bg:#F7F3EC;
+    --field-bg:#FFFFFF;
+    --scrim:rgba(20,24,26,.42);
+  }
+
+html[data-theme="dark"]{
+    --primary:#4FA8AD;
+    --primary-dark:#6FC3C8;
+    --secondary:#C9A98A;
+    --secondary-light:#E0C6A8;
+    --bg:#14181A;
+    --surface:#1E2426;
+    --text:#F2EFE8;
+    --text-muted:#A8A69E;
+    --border:#2C3335;
+    --success:#E0B354;
+    --error:#E06B57;
+    --stock-ok:#7CC99A;
+    --overlay-bg:#14181A;
+    --field-bg:#1A2022;
+    --scrim:rgba(4,6,7,.6);
+  }
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Noto Serif Bengali', serif;
+    font-weight:400;
+    line-height:1.7;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+body.theme-ready, body.theme-ready *{
+    transition:background-color .3s ease, color .3s ease, border-color .3s ease, fill .3s ease, stroke .3s ease, filter .3s ease, box-shadow .3s ease;
+  }
+
+h4, button, .brand-name{font-family:'Noto Serif Bengali', serif; font-weight:600;}
+
+p{font-weight:400;}
+
+input, select{font-family:inherit;}
+
+.wrap{max-width:1200px; margin:0 auto; padding:0 16px;}
+
+.icon{display:inline-block; line-height:0;}
+
+.icon svg{display:block;}
+
+/* ============ লোগো — ডার্ক মোডে অটোমেটিক সাদা ============ */
+  html[data-theme="dark"] #brand-logo #header,
+  html[data-theme="dark"] #brand-logo #wordmark{
+    filter:brightness(0) invert(1);
+  }
+
+#logo-stage{ width:min(60vw,300px); position:relative; }
+
+#main-content.revealed{opacity:1; transition:opacity .5s ease;}
+
+/* ============ ব্রেডক্রাম্ব ============ */
+  .breadcrumb{padding:22px 0 0; font-size:13px; color:var(--text-muted); display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+
+.breadcrumb a{color:var(--text-muted);}
+
+.breadcrumb a:hover{color:var(--primary);}
+
+.breadcrumb .sep{width:4px; height:4px; border-radius:50%; background:var(--border);}
+
+.breadcrumb .current{color:var(--secondary);}
+
+/* ============ পেজ ইন্ট্রো ============ */
+  .store-intro{padding:10px 0 8px;}
+
+.store-intro h1{font-size:40px; letter-spacing:-.2px; margin-bottom:14px; max-width:640px;}
+
+.store-intro p{font-size:16.5px; color:var(--text-muted); max-width:60ch;}
+
+@media(max-width:640px){
+    .store-intro h1{font-size:26px;}
+    .store-intro p{font-size:15px;}
+  }
+
+.section-divider{margin:30px 0 26px; border-top:1px solid var(--border);}
+
+/* ============ সংখ্যা গ্রিড ============ */
+  .issue-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:34px 26px;
+    padding-bottom:70px;
+  }
+
+.issue-card{display:flex; flex-direction:column;}
+
+.issue-cover{
+    position:relative;
+    aspect-ratio:3/4;
+    border-radius:10px;
+    overflow:hidden;
+    background:var(--surface);
+    border:1px solid var(--border);
+    box-shadow:0 2px 4px rgba(0,0,0,.04), 0 18px 34px -22px rgba(0,0,0,.28);
+    transition:transform .35s cubic-bezier(0.2,0.8,0.2,1), box-shadow .35s ease;
+    cursor:pointer;
+  }
+
+.preview-hint{
+    position:absolute; inset:0; z-index:2;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
+    background:linear-gradient(180deg, rgba(18,58,61,.05) 0%, rgba(15,20,21,.62) 100%);
+    color:#fff; opacity:0; transition:opacity .22s ease;
+  }
+
+.issue-card:hover .preview-hint{opacity:1;}
+
+.preview-hint .ph-icon{
+    width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,.16);
+    backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px);
+    display:flex; align-items:center; justify-content:center;
+  }
+
+.preview-hint .ph-icon svg{width:18px; height:18px;}
+
+.preview-hint span{font-size:12.5px; font-weight:600; letter-spacing:.2px;}
+
+html[data-theme="dark"] .issue-cover{
+    box-shadow:0 2px 4px rgba(0,0,0,.2), 0 18px 34px -20px rgba(0,0,0,.55);
+  }
+
+.issue-card:not(.sold-out):hover .issue-cover{
+    transform:translateY(-6px) rotate(-0.4deg);
+    box-shadow:0 6px 10px rgba(0,0,0,.08), 0 28px 46px -20px rgba(0,0,0,.34);
+  }
+
+.issue-cover img{width:100%; height:100%; object-fit:cover; transition:transform .5s ease;}
+
+.issue-card:not(.sold-out):hover .issue-cover img{transform:scale(1.045);}
+
+.issue-cover .spine-edge{
+    position:absolute; left:0; top:0; bottom:0; width:10px;
+    background:linear-gradient(90deg, rgba(0,0,0,.22), rgba(0,0,0,0));
+  }
+
+.issue-num-badge{
+    position:absolute; bottom:12px; left:12px; z-index:2;
+    background:rgba(18,58,61,.82); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+    color:#fff; font-size:12px; font-weight:600; letter-spacing:.2px;
+    padding:5px 14px; border-radius:999px; box-shadow:0 3px 10px rgba(0,0,0,.18);
+  }
+
+html[data-theme="dark"] .issue-num-badge{ background:rgba(10,14,15,.75); }
+
+.sold-out-overlay{
+    position:absolute; inset:0; z-index:3; display:flex; align-items:center; justify-content:center;
+    background:rgba(20,20,18,.46); backdrop-filter:blur(1.5px); -webkit-backdrop-filter:blur(1.5px);
+  }
+
+.sold-out-overlay span{
+    background:rgba(0,0,0,.68); color:#fff; font-size:13px; font-weight:700; letter-spacing:.3px;
+    padding:7px 20px; border-radius:999px; border:1px solid rgba(255,255,255,.25);
+  }
+
+.issue-title{
+    font-family:'Noto Serif Bengali', serif; font-weight:700; font-size:17px; line-height:1.4;
+    color:var(--text); margin-top:14px; cursor:pointer;
+  }
+
+.issue-title:hover{color:var(--primary);}
+
+.issue-teaser{
+    font-size:13px; color:var(--text-muted); margin-top:6px; line-height:1.6;
+  }
+
+.preview-link{
+    display:inline-flex; align-items:center; gap:6px; margin-top:9px;
+    font-size:12.5px; font-weight:600; color:var(--secondary); cursor:pointer;
+  }
+
+.preview-link:hover{color:var(--primary);}
+
+.preview-link svg{width:14px; height:14px; flex-shrink:0;}
+
+.issue-meta{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    margin-top:12px; padding-top:12px; border-top:1px solid var(--border);
+  }
+
+.issue-price{font-size:16px; font-weight:700; color:var(--text);}
+
+.issue-price .unit{font-size:12px; font-weight:400; color:var(--text-muted); margin-right:2px;}
+
+.order-btn{
+    display:inline-flex; align-items:center; gap:7px;
+    font-size:13.5px; font-weight:600; color:#fff; background:var(--primary);
+    padding:9px 18px; border-radius:999px; white-space:nowrap;
+    transition:background-color .18s ease, transform .1s ease;
+  }
+
+.order-btn:hover{background:var(--primary-dark);}
+
+.order-btn:active{transform:scale(.96);}
+
+.order-btn svg{width:15px; height:15px;}
+
+.order-btn.added{background:var(--stock-ok);}
+
+.stock-tag-out{
+    font-size:11.5px; font-weight:600; padding:5px 13px; border-radius:999px;
+    background:color-mix(in srgb, var(--error) 14%, transparent); color:var(--error); white-space:nowrap;
+  }
+
+@media(max-width:1080px){
+    .issue-grid{grid-template-columns:repeat(3,1fr);}
+  }
+
+@media(max-width:640px){
+    .issue-grid{grid-template-columns:repeat(2,1fr); gap:22px 14px; padding-bottom:56px;}
+    .issue-title{font-size:14.5px; margin-top:10px;}
+    .issue-teaser{font-size:11.5px; -webkit-line-clamp:2; display:-webkit-box; -webkit-box-orient:vertical; overflow:hidden;}
+    .preview-link{font-size:11px; margin-top:7px;}
+    .preview-link svg{width:12px; height:12px;}
+    .issue-num-badge{font-size:10px; padding:4px 11px; bottom:9px; left:9px;}
+    .issue-meta{margin-top:9px; padding-top:9px; flex-wrap:wrap;}
+    .issue-price{font-size:14.5px;}
+    .order-btn{padding:7px 14px; font-size:12px;}
+    .sold-out-overlay span{font-size:11px; padding:6px 16px;}
+  }
+
+/* ============ ভাসমান কার্ট বাটন ============ */
+  #cart-fab{
+    position:fixed; right:22px; bottom:22px; z-index:600;
+    display:none; align-items:center; gap:10px;
+    background:var(--primary); color:#fff; border-radius:999px;
+    padding:14px 22px 14px 18px;
+    box-shadow:0 10px 26px -8px rgba(0,0,0,.35);
+    transition:transform .15s ease, background-color .2s ease;
+  }
+
+#cart-fab.show{display:inline-flex;}
+
+#cart-fab:hover{background:var(--primary-dark);}
+
+#cart-fab:active{transform:scale(.96);}
+
+#cart-fab .icon{width:19px; height:19px;}
+
+#cart-fab .fab-label{font-size:14px; font-weight:600;}
+
+#cart-fab .fab-count{
+    background:var(--secondary); color:#fff; font-size:12px; font-weight:700;
+    min-width:22px; height:22px; padding:0 6px; border-radius:999px;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+@media(max-width:640px){
+    #cart-fab{right:14px; bottom:14px; padding:12px 18px 12px 15px;}
+    #cart-fab .fab-label{font-size:13px;}
+  }
+
+/* ============ অর্ডার ড্রয়ার ============ */
+  #drawer-scrim{
+    position:fixed; inset:0; background:var(--scrim); z-index:700;
+    opacity:0; pointer-events:none; transition:opacity .28s ease;
+  }
+
+#drawer-scrim.open{opacity:1; pointer-events:auto;}
+
+#order-drawer{
+    position:fixed; top:0; right:0; bottom:0; z-index:701;
+    width:min(460px, 100vw);
+    background:var(--bg);
+    box-shadow:-14px 0 40px rgba(0,0,0,.18);
+    display:flex; flex-direction:column;
+    transform:translateX(100%);
+    transition:transform .32s cubic-bezier(0.2,0.8,0.2,1);
+  }
+
+#order-drawer.open{transform:translateX(0);}
+
+html[data-theme="dark"] #order-drawer{box-shadow:-14px 0 40px rgba(0,0,0,.5);}
+
+.drawer-head{
+    display:flex; align-items:center; gap:10px; padding:20px 22px;
+    border-bottom:1px solid var(--border); flex-shrink:0;
+  }
+
+.drawer-back{
+    width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    color:var(--text-muted); flex-shrink:0;
+  }
+
+.drawer-back:hover{background:var(--border); color:var(--primary);}
+
+.drawer-back svg{width:18px; height:18px;}
+
+.drawer-title{font-size:18px; font-weight:700; flex:1;}
+
+.drawer-close{
+    width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    color:var(--text-muted); flex-shrink:0;
+  }
+
+.drawer-close:hover{background:var(--border); color:var(--error);}
+
+.drawer-close svg{width:17px; height:17px;}
+
+.drawer-body{flex:1; overflow-y:auto; padding:22px;}
+
+.drawer-foot{padding:18px 22px; border-top:1px solid var(--border); flex-shrink:0; background:var(--bg);}
+
+.drawer-step{display:none;}
+
+.drawer-step.active{display:block;}
+
+/* --- কার্ট আইটেম --- */
+  .cart-list{display:flex; flex-direction:column; gap:14px; margin-bottom:24px;}
+
+.cart-item{
+    display:flex; gap:12px; background:var(--surface); border:1px solid var(--border);
+    border-radius:10px; padding:12px;
+  }
+
+.cart-item .ci-cover{
+    width:52px; height:69px; border-radius:5px; overflow:hidden; flex-shrink:0; background:var(--bg);
+  }
+
+.cart-item .ci-cover img{width:100%; height:100%; object-fit:cover;}
+
+.cart-item .ci-info{flex:1; min-width:0; display:flex; flex-direction:column; justify-content:space-between;}
+
+.cart-item .ci-title{font-size:14px; font-weight:700; line-height:1.4;}
+
+.cart-item .ci-price{font-size:12.5px; color:var(--text-muted); margin-top:2px;}
+
+.cart-item .ci-row{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+
+.qty-stepper{
+    display:flex; align-items:center; gap:0; border:1px solid var(--border); border-radius:999px; overflow:hidden;
+  }
+
+.qty-stepper button{
+    width:28px; height:28px; display:flex; align-items:center; justify-content:center; color:var(--text-muted);
+  }
+
+.qty-stepper button:hover{background:var(--border); color:var(--primary);}
+
+.qty-stepper button svg{width:13px; height:13px;}
+
+.qty-stepper .qty-val{font-size:13.5px; font-weight:600; min-width:22px; text-align:center;}
+
+.ci-remove{color:var(--text-muted); width:26px; height:26px; display:flex; align-items:center; justify-content:center; border-radius:50%; flex-shrink:0;}
+
+.ci-remove:hover{color:var(--error); background:color-mix(in srgb, var(--error) 10%, transparent);}
+
+.ci-remove svg{width:15px; height:15px;}
+
+.empty-cart{
+    text-align:center; padding:50px 20px; color:var(--text-muted);
+  }
+
+.empty-cart .icon{width:40px; height:40px; margin:0 auto 14px; color:var(--border);}
+
+.empty-cart p{font-size:14.5px;}
+
+/* --- ফর্ম --- */
+  .form-section-label{
+    font-size:13px; font-weight:600; color:var(--secondary); margin:26px 0 14px; letter-spacing:.2px;
+  }
+
+.form-section-label:first-child{margin-top:0;}
+
+.field-row{margin-bottom:14px;}
+
+.field-row label{display:block; font-size:13px; color:var(--text-muted); margin-bottom:6px;}
+
+.field-row input, .field-row select, .field-row textarea{
+    width:100%; padding:11px 13px; background:var(--field-bg); border:1px solid var(--border);
+    border-radius:8px; color:var(--text); font-size:14.5px;
+  }
+
+.field-row input:focus, .field-row select:focus, .field-row textarea:focus{
+    outline:none; border-color:var(--primary);
+  }
+
+.field-row textarea{resize:vertical; min-height:70px; line-height:1.6;}
+
+.field-grid-2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+
+.field-error{font-size:12px; color:var(--error); margin-top:5px; display:none;}
+
+.field-row.invalid input, .field-row.invalid select, .field-row.invalid textarea{border-color:var(--error);}
+
+.field-row.invalid .field-error{display:block;}
+
+/* --- সামারি বক্স --- */
+  .order-summary{
+    background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px 20px; margin-top:24px;
+  }
+
+.summary-row{display:flex; align-items:center; justify-content:space-between; font-size:14px; color:var(--text-muted); padding:6px 0;}
+
+.summary-row.total{
+    border-top:1px solid var(--border); margin-top:8px; padding-top:14px;
+    font-size:16.5px; font-weight:700; color:var(--text);
+  }
+
+.summary-row .val{font-weight:600; color:var(--text);}
+
+.summary-row.total .val{color:var(--primary); font-weight:700;}
+
+.bulk-note{font-size:12px; color:var(--secondary); margin-top:8px;}
+
+/* --- পেমেন্ট ধাপ --- */
+  .pay-amount-card{
+    text-align:center; background:var(--surface); border:1px solid var(--border); border-radius:14px;
+    padding:26px 20px; margin-bottom:22px;
+  }
+
+.pay-amount-card .pac-label{font-size:13px; color:var(--text-muted); margin-bottom:8px;}
+
+.pay-amount-card .pac-amount{font-size:34px; font-weight:700; color:var(--primary);}
+
+.pay-amount-card .pac-note{font-size:12.5px; color:var(--text-muted); margin-top:10px; line-height:1.6;}
+
+.pay-methods{display:flex; flex-direction:column; gap:10px; margin-bottom:22px;}
+
+.pay-method{
+    display:flex; align-items:center; gap:13px; background:var(--surface); border:1px solid var(--border);
+    border-radius:10px; padding:13px 15px;
+  }
+
+.pay-method .pm-icon{
+    width:38px; height:38px; border-radius:50%; flex-shrink:0;
+    background:color-mix(in srgb, var(--secondary) 14%, transparent); color:var(--secondary);
+    display:flex; align-items:center; justify-content:center;
+  }
+
+.pay-method .pm-icon svg{width:18px; height:18px;}
+
+.pay-method .pm-info{flex:1; min-width:0;}
+
+.pay-method .pm-name{font-size:14px; font-weight:700;}
+
+.pay-method .pm-number{font-size:13.5px; color:var(--text-muted); margin-top:1px; letter-spacing:.3px;}
+
+.pay-method .pm-copy{
+    width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    color:var(--text-muted); flex-shrink:0;
+  }
+
+.pay-method .pm-copy:hover{background:var(--border); color:var(--primary);}
+
+.pay-method .pm-copy svg{width:15px; height:15px;}
+
+.pay-method .pm-copy.copied{color:var(--stock-ok);}
+
+.txn-note{font-size:13px; color:var(--text-muted); margin-bottom:14px; line-height:1.7;}
+
+/* --- সাফল্য স্ক্রিন --- */
+  .success-wrap{text-align:center; padding:20px 4px 8px;}
+
+.success-check{
+    width:76px; height:76px; border-radius:50%; margin:0 auto 22px;
+    background:color-mix(in srgb, var(--stock-ok) 16%, transparent); color:var(--stock-ok);
+    display:flex; align-items:center; justify-content:center;
+  }
+
+.success-check svg{width:38px; height:38px;}
+
+.success-wrap h3{font-size:22px; margin-bottom:12px;}
+
+.success-wrap p{font-size:14.5px; color:var(--text-muted); line-height:1.75; max-width:34ch; margin:0 auto 20px;}
+
+.success-order-id{
+    display:inline-block; background:var(--surface); border:1px solid var(--border); border-radius:999px;
+    padding:9px 20px; font-size:14px; font-weight:700; color:var(--primary); margin-bottom:22px; letter-spacing:.3px;
+  }
+
+.success-wrap .success-sub{font-size:13px; color:var(--text-muted); max-width:36ch;}
+
+/* --- ফুটার বাটন --- */
+  .btn-drawer-primary{
+    width:100%; text-align:center; background:var(--primary); color:#fff; font-size:15px; font-weight:600;
+    padding:14px; border-radius:10px; transition:background-color .2s ease, transform .1s ease;
+  }
+
+.btn-drawer-primary:hover{background:var(--primary-dark);}
+
+.btn-drawer-primary:active{transform:scale(.98);}
+
+.btn-drawer-primary:disabled{background:var(--border); color:var(--text-muted); cursor:not-allowed;}
+
+@media(max-width:520px){
+    #order-drawer{width:100vw;}
+    .field-grid-2{grid-template-columns:1fr;}
+  }
+
+/* ============ অর্ডার সামারি ও ঠিকানা — মোবাইলে যাতে কোনো টেক্সট ভেঙে/উপচে না যায় ============ */
+  @media(max-width:480px){
+    .drawer-head{padding:16px 16px;}
+    .drawer-title{font-size:16px;}
+    .drawer-body{padding:16px;}
+    .drawer-foot{padding:14px 16px;}
+    .cart-item{padding:10px; gap:10px;}
+    .cart-item .ci-cover{width:44px; height:58px;}
+    .cart-item .ci-title{font-size:13px;}
+    .cart-item .ci-price{font-size:11.5px;}
+    .field-row label{font-size:12.5px;}
+    .field-row input, .field-row select, .field-row textarea{font-size:14px; padding:10px 11px;}
+    .order-summary{padding:15px 16px;}
+    .summary-row{font-size:12.5px; gap:8px;}
+    .summary-row .val{text-align:right;}
+    .summary-row.total{font-size:15px;}
+    .btn-drawer-primary{font-size:14px; padding:13px;}
+  }
+
+@media(max-width:340px){
+    .summary-row{font-size:11.5px;}
+    .summary-row.total{font-size:13.5px;}
+  }
+
+/* ============ সংখ্যা প্রিভিউ — পিডিএফ রিডার ওভারলে ============ */
+  #reader-overlay{
+    position:fixed; inset:0; z-index:800; background:var(--bg);
+    display:none; flex-direction:column;
+  }
+
+#reader-overlay.open{display:flex;}
+
+.reader-head{
+    display:flex; align-items:center; gap:12px; padding:14px 18px;
+    border-bottom:1px solid var(--border); flex-shrink:0; background:var(--surface);
+  }
+
+.reader-close{
+    width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    color:var(--text-muted); flex-shrink:0;
+  }
+
+.reader-close:hover{background:var(--border); color:var(--error);}
+
+.reader-close svg{width:18px; height:18px;}
+
+.reader-title-wrap{flex:1; min-width:0;}
+
+.reader-eyebrow{font-size:11.5px; color:var(--secondary); font-weight:600;}
+
+.reader-title{font-size:15.5px; font-weight:700; color:var(--text); line-height:1.35;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+
+.reader-order-btn{
+    display:inline-flex; align-items:center; gap:7px; flex-shrink:0;
+    font-size:13.5px; font-weight:600; color:#fff; background:var(--primary);
+    padding:9px 16px; border-radius:999px; white-space:nowrap;
+  }
+
+.reader-order-btn:hover{background:var(--primary-dark);}
+
+.reader-order-btn svg{width:14px; height:14px;}
+
+.reader-body{
+    flex:1; position:relative; overflow:hidden;
+    background:linear-gradient(180deg, color-mix(in srgb, var(--secondary) 14%, var(--bg)) 0%, color-mix(in srgb, var(--secondary) 22%, var(--bg)) 100%);
+  }
+
+html[data-theme="dark"] .reader-body{
+    background:linear-gradient(180deg, #0e1213 0%, #171d1e 100%);
+  }
+
+.reader-progress{
+    position:absolute; top:14px; left:50%; transform:translateX(-50%); z-index:6;
+    background:rgba(18,58,61,.85); color:#fff; font-size:12px; font-weight:600;
+    padding:6px 15px; border-radius:999px; backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+    pointer-events:none; opacity:0; transition:opacity .25s ease; letter-spacing:.2px;
+  }
+
+.reader-progress.show{opacity:1;}
+
+.reader-scroll{
+    height:100%; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    padding:34px 18px 70px; display:flex; flex-direction:column; align-items:center; gap:26px;
+    scroll-behavior:smooth;
+  }
+
+.page-card{
+    position:relative; width:100%; max-width:640px; background:#fff;
+    border-radius:3px; overflow:hidden;
+    box-shadow:0 14px 34px -10px rgba(0,0,0,.38), 0 3px 10px rgba(0,0,0,.16);
+    flex-shrink:0;
+  }
+
+.page-card canvas{ display:block; width:100%; height:100%; }
+
+.page-skeleton{
+    width:100%; height:100%;
+    background:linear-gradient(100deg, #efe9dc 20%, #f8f4ea 42%, #efe9dc 64%);
+    background-size:200% 100%;
+    animation:shimmer 1.5s ease-in-out infinite;
+  }
+
+@keyframes shimmer{ 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
+
+.page-num-badge{
+    position:absolute; bottom:10px; right:10px; z-index:2;
+    background:rgba(18,58,61,.78); color:#fff; font-size:11px; font-weight:600;
+    padding:4px 11px; border-radius:999px; backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px);
+    opacity:0; transition:opacity .3s ease;
+  }
+
+.page-card.rendered .page-num-badge{opacity:1;}
+
+.reader-loading{
+    position:absolute; inset:0; z-index:4; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:12px; background:var(--bg); color:var(--text-muted); font-size:13.5px; transition:opacity .25s ease;
+  }
+
+.reader-loading .spinner{
+    width:30px; height:30px; border-radius:50%; border:3px solid var(--border); border-top-color:var(--primary);
+    animation:spin .8s linear infinite;
+  }
+
+@keyframes spin{ to{ transform:rotate(360deg); } }
+
+.reader-error{
+    position:absolute; inset:0; z-index:5; display:none; flex-direction:column; align-items:center; justify-content:center;
+    gap:12px; background:var(--bg); color:var(--text-muted); font-size:13.5px; text-align:center; padding:20px;
+  }
+
+.reader-error.show{display:flex;}
+
+.reader-error a{color:var(--primary); font-weight:600; text-decoration:underline; text-underline-offset:2px;}
+
+@media(max-width:640px){
+    .reader-head{padding:12px 14px; gap:8px;}
+    .reader-eyebrow{font-size:10.5px;}
+    .reader-title{font-size:13.5px;}
+    .reader-order-btn{padding:8px 13px; font-size:12.5px;}
+    .reader-order-btn span{display:none;}
+    .reader-scroll{padding:22px 10px 50px; gap:18px;}
+    .page-card{max-width:100%;}
+    .reader-progress{top:10px; font-size:11px; padding:5px 12px;}
+  }
+
+/* ============ ফুটার (আগের পেজগুলোর সাথে হুবহু) ============ */
+  footer{margin-top:0; background:var(--primary-dark); color:#F2EFE8; overflow-x:hidden;}
+
+.free-badge{display:inline-block; background:var(--primary); color:#FFFFFF; font-size:12px; font-weight:700; padding:4px 11px; border-radius:999px; vertical-align:middle;}
