@@ -6,7 +6,7 @@ body.theme-ready, body.theme-ready *{
     transition:background-color .3s ease, color .3s ease, border-color .3s ease, fill .3s ease, stroke .3s ease, filter .3s ease;
   }
 
-.eng{font-family:'Noto Serif Bengali', serif;}
+.eng{font-family:'Gunjoron', serif;}
 
 /* ============ হিরো সেকশন ============ */
   .hero{
@@ -314,3 +314,6 @@ html[data-theme="dark"] .follow-btn:hover{color:#0F1415;}
     padding:4px 11px;border-radius:999px;
     vertical-align:middle;
   }
+
+/* মোবাইল ব্যানার (৩২০×১০০) — মোবাইলে উপরের ব্যানারের জায়গায় */
+.ad-slot.ad-mobile{height:auto;max-width:100%;aspect-ratio:3.2/1;}

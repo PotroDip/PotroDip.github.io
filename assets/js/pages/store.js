@@ -560,7 +560,7 @@
         p_name: name,
         p_phone: phone,
         p_address: document.getElementById('inp-address').value.trim(),
-        p_area: areaSelect.value === 'dhaka' ? 'in' : 'out',
+        p_area: areaSelect.value === 'dhaka' ? 'dhaka' : 'outside',
         p_trx: document.getElementById('inp-txn').value.trim(),
         p_items: cart.map(function(i) {
           return {
@@ -672,7 +672,7 @@
       UI.img(c, '.issue-cover img', UI.cover(p.cover_url), p.title + ' প্রচ্ছদ');
       var nb = c.querySelector('.issue-num-badge'),
         no = nums[p.issue_id];
-      if (no) nb.textContent = 'সংখ্যা ' + no;
+      if (no) nb.textContent = 'সংখ্যা ' + toBn(no);
       else nb.remove();
       UI.set(c, '.issue-title', p.title);
       var tz = c.querySelector('.issue-teaser');

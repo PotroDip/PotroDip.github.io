@@ -30,7 +30,10 @@
     return
   }
   var db = PD.db,
-    R = await Promise.all([db.from('articles').select('id,title,excerpt,category,cover_url,author_id,issue_id,published_at,created_at').order('created_at', {
+    R = await Promise.all([db.from('articles').select('id,title,excerpt,category,cover_url,author_id,issue_id,published_at,created_at').order('published_at', {
+      ascending: false,
+      nullsFirst: false
+    }).order('created_at', {
       ascending: false
     }).limit(30), db.from('authors').select('id,slug,name,role_title,city,image_url,avg_rating').limit(100), db.from('issues').select('id,title'), db.from('ads').select('slot_id,image_url,link_url').eq('is_active', true)]);
   if (R[0].error) {
@@ -48,7 +51,7 @@
     I[x.id] = x
   });
   (R[3].data || []).forEach(function(x) {
-    (/top/i.test(x.slot_id) ? ADS.top = x : /mid/i.test(x.slot_id) ? ADS.mid = x : 0)
+    (/top/i.test(x.slot_id) ? ADS.top = x : /mid/i.test(x.slot_id) ? ADS.mid = x : /mobile/i.test(x.slot_id) ? ADS.mobile = x : 0)
   });
   var au = function(a) {
       return U[a.author_id] || {
@@ -95,11 +98,17 @@
     if (c) location.href = 'article.html?id=' + c.dataset.id
   };
   /* বিজ্ঞাপন */
-  var sl = document.querySelectorAll('.ad-slot');
+  var sl = document.querySelectorAll('.ad-slot'),
+    isMob = window.matchMedia && window.matchMedia('(max-width:760px)').matches;
   ['top', 'mid'].forEach(function(k, i) {
     var s = sl[i];
     if (!s) return;
     var a = ADS[k];
+    /* মোবাইলে "মোবাইল ব্যানার" থাকলে উপরের ব্যানারের জায়গায় সেটা দেখানো হয় */
+    if (k === 'top' && isMob && ADS.mobile && ADS.mobile.image_url) {
+      a = ADS.mobile;
+      s.classList.add('ad-mobile');
+    }
     if (!a || !a.image_url) {
       s.remove();
       return

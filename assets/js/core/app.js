@@ -13,7 +13,7 @@
   function toast(m, bad) {
     var t = document.createElement('div');
     t.textContent = m;
-    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:12px 22px;border-radius:99px;z-index:9999;font:600 15px "Noto Serif Bengali",serif;color:#fff;background:' + (bad ? '#B3402E' : '#1D5358');
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:12px 22px;border-radius:99px;z-index:9999;font:600 15px "Gunjoron",serif;color:#fff;background:' + (bad ? '#B3402E' : '#1D5358');
     document.body.appendChild(t);
     setTimeout(function() {
       t.remove()
@@ -76,7 +76,10 @@
     console.warn('supabase-js লোড হয়নি');
     return
   }
+  /* পাসওয়ার্ড রিসেট লিংক থেকে এলে (#...type=recovery) — ক্লায়েন্ট হ্যাশ মুছে ফেলার আগেই মনে রাখা */
+  PD.recovery = /type=recovery/.test(location.hash) || /type=recovery/.test(location.search);
   var db = PD.db = window.supabase.createClient(C.supabaseUrl, C.anonKey);
+  db.auth.onAuthStateChange(function (ev) { if (ev === 'PASSWORD_RECOVERY') PD.recovery = true; });
   PD.load = function() {
     return db.auth.getSession().then(function(r) {
       PD.user = r.data.session ? r.data.session.user : null;

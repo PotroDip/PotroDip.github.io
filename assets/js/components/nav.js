@@ -25,20 +25,7 @@
     /* ---------- হেডারের বাটন ---------- */
     var searchBtns = [].slice.call(document.querySelectorAll('header button[aria-label="সার্চ"]'));
     var ham = document.querySelector('header .hamburger');
-    var mobSearch = null;
-    if (ham && searchBtns[0]) {
-      mobSearch = searchBtns[0].cloneNode(true);
-      mobSearch.id = 'mobile-search-btn';
-      mobSearch.style.display = 'none';
-      ham.parentNode.insertBefore(mobSearch, ham);
-      searchBtns.push(mobSearch);
-    }
-
-    function syncMobile() {
-      if (mobSearch) mobSearch.style.display = window.innerWidth <= 860 ? 'flex' : 'none';
-    }
-    syncMobile();
-    window.addEventListener('resize', syncMobile);
+    /* হেডারের সার্চ বাটন মোবাইলেও দেখা যায়, তাই আলাদা মোবাইল-সার্চ বাটন লাগে না (আগে দুটো আইকন দেখাত) */
 
     function openSearch() {
       overlay.classList.add('open');

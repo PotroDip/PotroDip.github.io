@@ -39,7 +39,7 @@
 
 .search-field input{
     flex:1; min-width:0; border:none; background:transparent; outline:none;
-    font-size:16px; color:var(--text); font-family:'Noto Serif Bengali', serif;
+    font-size:16px; color:var(--text); font-family:'Gunjoron', serif;
   }
 
 .search-field input::placeholder{color:var(--text-muted); opacity:.65;}
@@ -150,15 +150,17 @@
     position:fixed; top:0; right:0; bottom:0; z-index:901;
     width:min(320px, 82vw);
     background:var(--bg);
-    box-shadow:-14px 0 40px rgba(0,0,0,.18);
+    box-shadow:none;
     display:flex; flex-direction:column;
     transform:translateX(100%);
-    transition:transform .3s cubic-bezier(0.2,0.8,0.2,1);
+    visibility:hidden;
+    transition:transform .3s cubic-bezier(0.2,0.8,0.2,1), box-shadow .3s ease, visibility 0s linear .3s;
   }
 
-#mobile-menu.open{transform:translateX(0);}
+/* ছায়া শুধু মেনু খোলা থাকলে — বন্ধ অবস্থায় পেজের ডান কিনারায় ছায়া দেখা যেত */
+#mobile-menu.open{transform:translateX(0); visibility:visible; box-shadow:-14px 0 40px rgba(0,0,0,.18); transition:transform .3s cubic-bezier(0.2,0.8,0.2,1), box-shadow .3s ease, visibility 0s;}
 
-html[data-theme="dark"] #mobile-menu{box-shadow:-14px 0 40px rgba(0,0,0,.5);}
+html[data-theme="dark"] #mobile-menu.open{box-shadow:-14px 0 40px rgba(0,0,0,.5);}
 
 .mm-head{
     display:flex; align-items:center; justify-content:space-between;

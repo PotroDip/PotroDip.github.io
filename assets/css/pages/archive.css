@@ -37,7 +37,7 @@ html[data-theme="dark"]{
 body{
     background:var(--bg);
     color:var(--text);
-    font-family:'Noto Serif Bengali', serif;
+    font-family:'Gunjoron', serif;
     font-weight:400;
     line-height:1.7;
     overflow-x:hidden;
@@ -48,7 +48,7 @@ body.theme-ready, body.theme-ready *{
     transition:background-color .3s ease, color .3s ease, border-color .3s ease, fill .3s ease, stroke .3s ease, filter .3s ease, box-shadow .3s ease;
   }
 
-h4, button, .brand-name{font-family:'Noto Serif Bengali', serif; font-weight:600;}
+h4, button, .brand-name{font-family:'Gunjoron', serif; font-weight:600;}
 
 p{font-weight:400;}
 
@@ -175,7 +175,7 @@ html[data-theme="dark"] .issue-cover{
 html[data-theme="dark"] .issue-num-badge{ background:rgba(10,14,15,.75); }
 
 .issue-title{
-    font-family:'Noto Serif Bengali', serif; font-weight:700; font-size:17px; line-height:1.4;
+    font-family:'Gunjoron', serif; font-weight:700; font-size:17px; line-height:1.4;
     color:var(--text); margin-top:14px;
   }
 

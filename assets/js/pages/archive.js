@@ -25,7 +25,7 @@
       c.dataset.year = year(i);
       UI.img(c, '.issue-cover img', UI.cover(i.cover_url), i.title + ' প্রচ্ছদ');
       var bd = c.querySelector('.issue-badge'); if (idx !== 0 && bd) bd.remove();
-      UI.set(c, '.issue-num-badge', 'সংখ্যা ' + (i.issue_number || UI.bn(issues.length - idx)));
+      UI.set(c, '.issue-num-badge', 'সংখ্যা ' + UI.bn(i.issue_number || (issues.length - idx)));
       UI.set(c, '.issue-title', i.title);
       UI.set(c, '.meta-left', UI.bn(n) + 'টি লেখা');
       var tz = c.querySelector('.meta-teaser');

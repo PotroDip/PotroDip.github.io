@@ -39,7 +39,7 @@ html[data-theme="dark"]{
 body{
     background:var(--bg);
     color:var(--text);
-    font-family:'Noto Serif Bengali', serif;
+    font-family:'Gunjoron', serif;
     font-weight:400;
     line-height:1.7;
     overflow-x:hidden;
@@ -50,7 +50,7 @@ body.theme-ready, body.theme-ready *{
     transition:background-color .3s ease, color .3s ease, border-color .3s ease, fill .3s ease, stroke .3s ease, filter .3s ease, box-shadow .3s ease;
   }
 
-h4, button, .brand-name{font-family:'Noto Serif Bengali', serif; font-weight:600;}
+h4, button, .brand-name{font-family:'Gunjoron', serif; font-weight:600;}
 
 p{font-weight:400; overflow-wrap:anywhere;}
 

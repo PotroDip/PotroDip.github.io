@@ -16,7 +16,7 @@
   }
   function count(tab, n) { var b = document.querySelector('[data-dtab="' + tab + '"] .count'); if (b) b.textContent = UI.bn(n); }
   function empty(box, text) { var p = document.createElement('p'); p.className = 'pd-empty'; p.style.cssText = 'grid-column:1/-1;text-align:center;color:var(--text-muted);padding:36px 0'; p.textContent = text; box.appendChild(p); }
-  function safeLink(u) { return /^(article|author|issue|store|archive)\.html(\?[\w=&%.-]*)?$/.test(u || '') ? u : ''; }
+  function safeLink(u) { u = String(u || '').replace(/^\//, ''); return /^(article|author|issue|store|archive)\.html(\?[\w=&%.-]*)?$/.test(u) ? u : ''; }
   function fade(card) { card.style.transition = 'opacity .25s ease, transform .25s ease'; card.style.opacity = '0'; card.style.transform = 'scale(.95)'; setTimeout(function () { card.remove(); }, 250); }
 
   /* ---------- প্রোফাইল ---------- */
@@ -151,6 +151,7 @@
       if (r.error) { nl.checked = !on; return UI.toast(PD.msg(r.error), 1); }
       PD.profile = Object.assign({}, PD.profile, { newsletter_subscribed: on });
       if (on && PD.user.email) PD.subscribe(PD.user.email, PD.user.id);
+      if (!on) db.from('newsletter_subscribers').delete().or('user_id.eq.' + PD.user.id + (PD.user.email ? ',email.eq."' + PD.user.email.replace(/"/g, '') + '"' : '')).then(function () {});
       UI.toast(on ? 'নিউজলেটার চালু হয়েছে' : 'নিউজলেটার বন্ধ করা হয়েছে');
     });
   });

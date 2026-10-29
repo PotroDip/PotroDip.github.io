@@ -33,6 +33,7 @@
     │   ├── core/             config.js · app.js · ui.js · theme.js · intro-*.js
     │   ├── components/       nav.js (সার্চ + মোবাইল মেনু) · comments.js
     │   └── pages/            প্রতি পেজের নিজস্ব কোড (home, article, author, store, admin…)
+    ├── fonts/                Gunjoron-Font (Thin/Normal/Bold) — সাইটের একমাত্র ফন্ট, base.css-এ @font-face
     ├── img/                  favicon.svg · brand/ (লোগো)
     └── vendor/               supabase.js · pdfjs/ (নিজেদের সার্ভারেই রাখা বাইরের লাইব্রেরি)
 ```
@@ -44,4 +45,5 @@
 3. সেটিংস (Supabase URL, কী, Turnstile কী, পেজের নাম) শুধু `assets/js/core/config.js`-এ।
 4. ডেটাবেসের লেখা HTML-এ বসাতে `textContent` ব্যবহার করুন (`innerHTML` নয়), না হলে `PDUI.sanitize()`।
 5. `service_role` কী কোথাও রাখা যাবে না।
-6. ডেটাবেসের SQL (`potrodip-database` ফোল্ডার) এই রিপোতে রাখা হয় না।
+6. ফন্ট সবসময় `font-family:'Gunjoron', serif` — বাইরের (Google) ফন্ট যোগ করলে CSP আটকে দেবে।
+7. ডেটাবেসের SQL (`potrodip-database` ফোল্ডার) এই রিপোতে রাখা হয় না।

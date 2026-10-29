@@ -23,7 +23,7 @@
     var buy = pr ? (pr.in_stock ? '<a href="store.html" class="read-cta">এই সংখ্যা কিনুন →</a>' : '<span class="read-cta" style="opacity:.6">স্টক শেষ</span>') : '';
     heroBox.innerHTML = '<div class="hero-media"><img alt=""></div><div class="hero-text"><span class="issue-tag"></span><h1></h1><p class="hero-excerpt"></p>' + buy + '</div>';
     var im = heroBox.querySelector('img'); im.src = UI.cover(is.cover_url); im.alt = is.title + ' প্রচ্ছদ';
-    UI.set(heroBox, '.issue-tag', 'সংখ্যা ' + (is.issue_number || ''));
+    UI.set(heroBox, '.issue-tag', 'সংখ্যা ' + UI.bn(is.issue_number || ''));
     UI.set(heroBox, 'h1', is.title);
     UI.set(heroBox, '.hero-excerpt', (pr && pr.teaser) || (UI.bn(arts.length) + 'টি লেখা নিয়ে এই সংখ্যা।') + (is.published_at ? ' প্রকাশ: ' + UI.date(is.published_at) + '।' : ''));
     grid.innerHTML = '';
