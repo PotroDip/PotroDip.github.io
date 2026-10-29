@@ -66,8 +66,9 @@
         if (t == 'ফেসবুক' && c.facebook) a.href = c.facebook;
         if (t == 'ইনস্টাগ্রাম' && c.instagram) a.href = c.instagram;
         if (t == 'ইমেইল করুন' && c.email) a.href = 'mailto:' + c.email;
+        if (t == 'ফোন করুন' && c.phone) a.href = 'tel:' + String(c.phone).replace(/[^0-9+]/g, '');
         [].forEach.call(['ফেসবুক', 'ইনস্টাগ্রাম'], function() {});
-        if (a.getAttribute('href') == '#' && /ফেসবুক|ইনস্টাগ্রাম|ইমেইল/.test(t)) a.style.display = 'none'
+        if (a.getAttribute('href') == '#' && /ফেসবুক|ইনস্টাগ্রাম|ইমেইল|ফোন/.test(t)) a.style.display = 'none'
       })
     })
   };
@@ -120,6 +121,8 @@
       localStorage.setItem('potrodip-theme', PD.profile.theme_preference);
       document.documentElement.setAttribute('data-theme', PD.profile.theme_preference)
     }
+    var ab = document.querySelector('.account-btn');
+    if (ab && PD.user) { ab.classList.add('logged'); ab.title = 'আমার প্রোফাইল'; }
     if (/admin/.test(location.pathname) && !PD.isAdmin()) {
       location.replace(PD.pages.auth)
     }
