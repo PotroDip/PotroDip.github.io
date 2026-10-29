@@ -25,6 +25,12 @@
     $('dash-name').textContent = 'স্বাগতম, ' + name;
     $('dash-email').textContent = PD.user.email || '';
     $('dash-avatar-img').src = UI.avatar(PD.profile && PD.profile.avatar_url);
+    /* শুধু এডমিনের জন্য: এডমিন প্যানেলে যাওয়ার বাটন */
+    if (PD.isAdmin() && !$('admin-link')) {
+      var a = document.createElement('a'); a.id = 'admin-link'; a.className = 'btn-outline'; a.href = 'admin.html'; a.textContent = 'এডমিন প্যানেল';
+      a.style.textDecoration = 'none'; a.style.display = 'inline-flex'; a.style.alignItems = 'center';
+      document.querySelector('.dash-hero-actions').insertBefore(a, document.querySelector('.dash-hero-actions').firstChild);
+    }
   }
   $('btn-edit-profile').addEventListener('click', function () {
     var cur = (PD.profile && PD.profile.full_name) || '';
