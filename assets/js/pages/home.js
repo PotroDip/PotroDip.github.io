@@ -64,9 +64,34 @@
     im = function(u) {
       return '<img src="' + esc(u.image_url || PH) + '" alt="">'
     };
-  /* হিরো */
+  /* হিরো — ম্যাগাজিন-কভার স্টাইল: বড় প্রধান লেখা (ছবির ওপর লেখা) + পাশে "এই সংখ্যায়" তালিকা */
+  var cut = function(t, n) {
+      t = String(t || '').replace(/\s+/g, ' ').trim();
+      if (t.length <= n) return t;
+      t = t.slice(0, n);
+      var k = t.lastIndexOf(' ');
+      return (k > n * .6 ? t.slice(0, k) : t) + ' …'
+    },
+    num = function(i) {
+      return bn(i < 9 ? '0' + (i + 1) : i + 1)
+    },
+    arrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
   var h = A[0];
-  $('hero-grid').innerHTML = h ? '<div class="hero-media"><img src="' + esc(h.cover_url || PH) + '" alt="' + esc(h.title) + '"></div><div class="hero-text">' + (I[h.issue_id] ? '<span class="issue-tag">' + esc(I[h.issue_id].title) + '</span>' : '') + '<h1>' + esc(h.title) + '</h1><p class="hero-excerpt">' + esc(h.excerpt) + '</p><div class="byline">' + im(au(h)) + '<div class="byline-info"><strong>' + meta(au(h)) + '</strong> ' + dt(h.published_at || h.created_at) + '</div></div><a href="article.html?id=' + h.id + '" class="read-cta">সম্পূর্ণ পড়ুন →</a></div>' : '<p class="pd-empty" style="grid-column:1/-1">এখনো কোনো লেখা প্রকাশিত হয়নি। খুব শীঘ্রই আসছে!</p>';
+  if (!h) {
+    $('hero-grid').innerHTML = '<p class="pd-empty" style="grid-column:1/-1">এখনো কোনো লেখা প্রকাশিত হয়নি। খুব শীঘ্রই আসছে!</p>';
+  } else {
+    var iss = I[h.issue_id],
+      same = A.slice(1).filter(function(a) {
+        return h.issue_id && a.issue_id === h.issue_id
+      }),
+      rail = (same.length >= 2 ? same : A.slice(1)).slice(0, 4);
+    var feat = '<a class="hf" href="article.html?id=' + h.id + '"><div class="hf-media"><img src="' + esc(h.cover_url || PH) + '" alt="' + esc(h.title) + '" fetchpriority="high"></div><div class="hf-shade"></div><div class="hf-body"><div class="hf-kicker">' + (h.category ? '<span class="hf-cat">' + esc(h.category) + '</span>' : '') + (iss ? '<span class="hf-issue">' + esc(iss.title) + '</span>' : '') + '</div><h1>' + esc(h.title) + '</h1><p class="hf-excerpt">' + esc(cut(h.excerpt, 150)) + '</p><div class="hf-foot"><div class="hf-by">' + im(au(h)) + '<div><strong>' + esc(au(h).name) + '</strong><span>' + dt(h.published_at || h.created_at) + '</span></div></div><span class="hf-cta">সম্পূর্ণ পড়ুন ' + arrow + '</span></div></div></a>';
+    var side = rail.length ? '<aside class="hero-rail"><div class="rail-head"><span class="rail-title">' + (same.length >= 2 ? 'এই সংখ্যায়' : 'আরও পড়ুন') + '</span>' + (iss && same.length >= 2 ? '<span class="rail-issue">' + esc(iss.title) + '</span>' : '') + '</div><ol class="rail-list">' + rail.map(function(a, i) {
+      return '<li><a href="article.html?id=' + a.id + '"><span class="rail-num">' + num(i) + '</span><div class="rail-text">' + (a.category ? '<span class="rail-cat">' + esc(a.category) + '</span>' : '') + '<h3>' + esc(a.title) + '</h3><span class="rail-author">' + esc(au(a).name) + '</span></div><div class="rail-thumb"><img src="' + esc(a.cover_url || PH) + '" alt="" loading="lazy"></div></a></li>'
+    }).join('') + '</ol><a class="rail-more" href="archive.html">সব সংখ্যা দেখুন ' + arrow + '</a></aside>' : '';
+    $('hero-grid').innerHTML = feat + side;
+    $('hero-grid').classList.toggle('no-rail', !rail.length);
+  }
   /* লেখার গ্রিড ও ফিল্টার */
   function grid(tag) {
     var l = A.filter(function(a) {

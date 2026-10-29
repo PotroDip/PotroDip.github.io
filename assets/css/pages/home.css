@@ -8,80 +8,182 @@ body.theme-ready, body.theme-ready *{
 
 .eng{font-family:'Gunjoron', serif;}
 
-/* ============ হিরো সেকশন ============ */
-  .hero{
-    padding:56px 0 48px;
-  }
+/* ============ হিরো — ম্যাগাজিন-কভার স্টাইল ============ */
+  .hero{padding:40px 0 8px;}
 
 .hero-grid{
     display:grid;
-    grid-template-columns:1.15fr 1fr;
-    gap:56px;
-    align-items:center;
+    grid-template-columns:minmax(0,1.85fr) minmax(0,1fr);
+    gap:40px;
+    align-items:stretch;
   }
 
-.hero-media{
-    aspect-ratio:4/5;
-    background:var(--surface);
-    border:1px solid var(--border);
-    overflow:hidden;
-    position:relative;
+.hero-grid.no-rail{grid-template-columns:1fr;}
+
+/* --- প্রধান লেখা: ছবির ওপর লেখা --- */
+.hf{
+    position:relative;display:block;overflow:hidden;
+    min-height:560px;height:100%;
+    border-radius:4px;
+    background:var(--primary-dark);
+    color:#fff;
+    isolation:isolate;
   }
 
-.hero-media img{width:100%;height:100%;object-fit:cover;}
+.hf-media{position:absolute;inset:0;z-index:-2;}
 
-.issue-tag{
-    display:inline-block;
-    font-size:14px;
-    font-weight:600;
-    color:var(--secondary);
-    border-bottom:1px solid var(--secondary-light);
-    padding-bottom:6px;
-    margin-bottom:22px;
+.hf-media img{
+    width:100%;height:100%;object-fit:cover;
+    transform:scale(1.02);
+    transition:transform 1.4s cubic-bezier(0.2,0.8,0.2,1);
   }
 
-.hero-text h1{
-    font-size:48px;
-    margin-bottom:20px;
-    letter-spacing:.2px;
+.hf:hover .hf-media img{transform:scale(1.07);}
+
+.hf-shade{
+    position:absolute;inset:0;z-index:-1;
+    background:
+      linear-gradient(180deg, rgba(10,24,26,0) 30%, rgba(10,24,26,.55) 60%, rgba(10,24,26,.92) 100%),
+      linear-gradient(90deg, rgba(18,58,61,.35) 0%, rgba(18,58,61,0) 55%);
   }
 
-.hero-excerpt{
-    font-size:17px;
-    color:var(--text-muted);
+.hf-body{
+    position:absolute;left:0;right:0;bottom:0;
+    padding:44px 48px 40px;
+  }
+
+.hf-kicker{display:flex;align-items:center;flex-wrap:wrap;gap:10px 14px;margin-bottom:18px;}
+
+.hf-cat{
+    font-size:12.5px;font-weight:700;letter-spacing:.3px;
+    background:var(--secondary);color:#fff;
+    padding:4px 12px;border-radius:2px;
+  }
+
+.hf-issue{
+    font-size:13.5px;color:rgba(255,255,255,.85);
+    padding-left:14px;border-left:1px solid rgba(255,255,255,.4);
+  }
+
+.hf h1{
+    color:#fff;
+    font-size:clamp(30px,3.6vw,50px);
+    line-height:1.22;
+    max-width:18ch;
+    margin-bottom:14px;
+    text-shadow:0 2px 24px rgba(0,0,0,.25);
+  }
+
+.hf-excerpt{
+    font-size:16.5px;line-height:1.75;
+    color:rgba(255,255,255,.86);
+    max-width:56ch;
     margin-bottom:26px;
-    max-width:52ch;
   }
 
-.byline{
-    display:flex;align-items:center;gap:12px;
-    margin-bottom:28px;
+.hf-foot{
+    display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;
+    padding-top:20px;border-top:1px solid rgba(255,255,255,.22);
   }
 
-.byline img{
-    width:42px;height:42px;border-radius:50%;object-fit:cover;
-  }
+.hf-by{display:flex;align-items:center;gap:12px;}
 
-.byline-info{font-size:14px;color:var(--text-muted);}
+.hf-by img{width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.7);}
 
-.byline-info strong{color:var(--text);font-weight:600;display:block;}
+.hf-by strong{display:block;font-size:15px;font-weight:600;color:#fff;line-height:1.35;}
 
-.byline-info .city{font-weight:400;color:var(--text-muted);}
+.hf-by span{font-size:13px;color:rgba(255,255,255,.72);}
 
-.read-cta{
+.hf-cta{
     display:inline-flex;align-items:center;gap:8px;
-    font-size:15px;font-weight:600;color:var(--primary);
-    border-bottom:1px solid var(--primary);
-    padding-bottom:5px;
+    font-size:14.5px;font-weight:600;
+    background:#fff;color:#123A3D;
+    padding:10px 20px;border-radius:999px;
+    transition:gap .25s ease, background .25s ease;
   }
 
-.read-cta:hover{gap:14px;}
+.hf-cta svg{width:16px;height:16px;}
 
-.read-cta svg{transition:transform .25s ease;}
+.hf:hover .hf-cta{gap:13px;background:#F7F3EC;}
 
-@media(max-width:900px) {
-  .hero-grid{grid-template-columns:1fr;gap:28px;}
-  .hero-text h1{font-size:28px;}
+/* --- পাশের তালিকা: এই সংখ্যায় --- */
+.hero-rail{display:flex;flex-direction:column;}
+
+.rail-head{
+    display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+    padding-bottom:14px;margin-bottom:6px;
+    border-bottom:2px solid var(--text);
+  }
+
+.rail-title{font-size:22px;font-weight:700;color:var(--text);}
+
+.rail-issue{font-size:13px;color:var(--secondary);text-align:right;}
+
+.rail-list{list-style:none;flex:1;display:flex;flex-direction:column;}
+
+.rail-list li{border-bottom:1px solid var(--border);flex:1;}
+
+.rail-list li:last-child{border-bottom:none;}
+
+.rail-list a{
+    display:grid;grid-template-columns:auto 1fr 84px;gap:16px;align-items:center;
+    padding:18px 0;height:100%;
+  }
+
+.rail-num{
+    font-size:30px;font-weight:700;line-height:1;
+    color:var(--secondary-light);
+    min-width:40px;
+  }
+
+.rail-cat{display:block;font-size:12px;color:var(--secondary);margin-bottom:4px;}
+
+.rail-text h3{
+    font-size:17px;line-height:1.45;margin-bottom:4px;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+    transition:color .2s ease;
+  }
+
+.rail-list a:hover h3{color:var(--primary);}
+
+.rail-author{font-size:13px;color:var(--text-muted);}
+
+.rail-thumb{width:84px;height:84px;overflow:hidden;border-radius:3px;background:var(--surface);}
+
+.rail-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease;}
+
+.rail-list a:hover .rail-thumb img{transform:scale(1.08);}
+
+.rail-more{
+    display:inline-flex;align-items:center;gap:8px;align-self:flex-start;
+    margin-top:14px;font-size:14px;font-weight:600;color:var(--primary);
+    border-bottom:1px solid currentColor;padding-bottom:3px;
+  }
+
+.rail-more svg{width:15px;height:15px;transition:transform .25s ease;}
+
+.rail-more:hover svg{transform:translateX(4px);}
+
+@media(max-width:1024px){
+  .hero-grid{grid-template-columns:1fr;gap:34px;}
+  .hf{min-height:0;height:auto;aspect-ratio:16/10;}
+}
+
+@media(max-width:640px){
+  .hero{padding:20px 0 4px;}
+  .hf{aspect-ratio:auto;display:flex;flex-direction:column;justify-content:flex-end;min-height:min(130vw,560px);border-radius:3px;}
+  .hf-body{position:relative;padding:22px 20px;}
+  .hf-kicker{margin-bottom:12px;}
+  .hf h1{font-size:27px;line-height:1.28;}
+  .hf-excerpt{font-size:15px;margin-bottom:18px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+  .hf-foot{padding-top:16px;}
+  .hf-by img{width:36px;height:36px;}
+  .hf-cta{padding:8px 16px;font-size:13.5px;}
+  .rail-title{font-size:19px;}
+  .rail-list a{grid-template-columns:auto 1fr 68px;gap:12px;}
+  .rail-num{font-size:24px;min-width:30px;}
+  .rail-thumb{width:68px;height:68px;}
+  .rail-text h3{font-size:15.5px;}
 }
 
 /* ============ এড স্লট ============ */
