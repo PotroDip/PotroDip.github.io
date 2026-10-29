@@ -404,31 +404,54 @@ html[data-theme="dark"] .filter-chips button.active{color:#0F1415;}
 }
 
 /* ============ জনপ্রিয় লেখক ============ */
-  .authors-row{
+  .see-all{font-size:14.5px;font-weight:600;color:var(--primary);white-space:nowrap;border-bottom:1px solid currentColor;padding-bottom:2px;}
+
+.authors-row{
     display:grid;
     grid-template-columns:repeat(4,1fr);
     gap:24px;
+    padding-bottom:20px;
   }
 
 .author-card{
+    display:flex;flex-direction:column;
     text-align:center;
-    padding:26px 14px;
-    border:1px solid var(--border);
+    padding:30px 18px 20px;
     background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:6px;
+    transition:transform .3s ease, box-shadow .3s ease, border-color .3s ease;
   }
 
-.author-card img{
-    width:76px;height:76px;border-radius:50%;object-fit:cover;
-    margin:0 auto 14px;
+.author-card:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(29,83,88,.10);border-color:transparent;}
+
+.au-link{display:block;flex:1;}
+
+.au-ava{
+    display:block;width:92px;height:92px;margin:0 auto 16px;
+    padding:4px;border-radius:50%;
+    background:conic-gradient(from 210deg, var(--secondary-light), var(--primary), var(--secondary-light));
   }
 
-.author-card h4{font-size:17px;margin-bottom:4px;}
+.author-card .au-ava img{
+    width:100%;height:100%;border-radius:50%;object-fit:cover;
+    border:3px solid var(--surface);margin:0;
+  }
 
-.author-role{font-size:13px;color:var(--text-muted);margin-bottom:8px;}
+.author-card h4{font-size:18px;margin-bottom:4px;transition:color .2s ease;}
+
+.au-link:hover h4{color:var(--primary);}
+
+.author-role{font-size:13px;color:var(--text-muted);margin-bottom:16px;}
+
+.au-foot{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding-top:14px;border-top:1px solid var(--border);
+  }
 
 .author-rating{
-    display:flex;align-items:center;justify-content:center;gap:5px;
-    font-size:13px;color:var(--success);margin-bottom:14px;
+    display:flex;align-items:center;gap:5px;
+    font-size:13.5px;font-weight:600;color:var(--success);
   }
 
 .author-rating svg{flex-shrink:0;}
@@ -436,15 +459,105 @@ html[data-theme="dark"] .filter-chips button.active{color:#0F1415;}
 .follow-btn{
     font-size:13px;color:var(--primary);
     border:1px solid var(--primary);
-    padding:6px 20px;border-radius:999px;
+    padding:6px 16px;border-radius:999px;
+    transition:background .2s ease,color .2s ease;
   }
 
-.follow-btn:hover{background:var(--primary);color:var(--overlay-bg);}
+.follow-btn:hover,.follow-btn.following{background:var(--primary);color:var(--overlay-bg);}
 
-html[data-theme="dark"] .follow-btn:hover{color:#0F1415;}
+html[data-theme="dark"] .follow-btn:hover,html[data-theme="dark"] .follow-btn.following{color:#0F1415;}
 
 @media(max-width:900px) {
-  .authors-row{grid-template-columns:repeat(2,1fr);}
+  .authors-row{grid-template-columns:repeat(2,1fr);gap:16px;}
+}
+
+@media(max-width:600px) {
+  .authors-row{
+    display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;
+    margin:0 -16px;padding:4px 16px 20px;scroll-padding:0 16px;scrollbar-width:none;
+  }
+  .authors-row::-webkit-scrollbar{display:none;}
+  .author-card{flex:0 0 72%;scroll-snap-align:start;}
+  .section-head .see-all{align-self:flex-start;}
+}
+
+/* ============ চলতি সংখ্যা ============ */
+  .issue-band{
+    position:relative;
+    margin:70px calc(50% - 50vw) 10px;
+    background:var(--primary-dark);
+    color:#F2EFE8;
+    overflow:hidden;
+  }
+
+.issue-band::before{
+    content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(circle at 85% 20%, rgba(201,169,138,.22), transparent 45%),
+      radial-gradient(circle at 10% 90%, rgba(79,168,173,.18), transparent 40%);
+    pointer-events:none;
+  }
+
+html[data-theme="dark"] .issue-band{background:#0F2628;}
+
+.ib-inner{
+    position:relative;
+    max-width:1200px;margin:0 auto;padding:76px 16px;
+    display:grid;grid-template-columns:minmax(0,360px) 1fr;gap:72px;align-items:center;
+  }
+
+.ib-cover{
+    display:block;position:relative;
+    aspect-ratio:3/4;
+    transform:rotate(-2.5deg);
+    box-shadow:24px 30px 60px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.08);
+    transition:transform .5s cubic-bezier(0.2,0.8,0.2,1);
+  }
+
+.ib-cover::after{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:14px;
+    background:linear-gradient(90deg, rgba(0,0,0,.35), rgba(255,255,255,.12) 40%, rgba(0,0,0,0));
+  }
+
+.ib-cover:hover{transform:rotate(0deg) translateY(-6px);}
+
+.ib-cover img{width:100%;height:100%;object-fit:cover;}
+
+.ib-kicker{display:flex;align-items:center;gap:14px;margin-bottom:14px;font-size:14px;color:var(--secondary-light);font-weight:600;}
+
+.ib-no{padding-left:14px;border-left:1px solid rgba(242,239,232,.35);color:rgba(242,239,232,.8);font-weight:400;}
+
+.ib-text h2{font-size:clamp(32px,4vw,52px);color:#fff;line-height:1.2;margin-bottom:18px;}
+
+.ib-teaser{font-size:17px;line-height:1.8;color:rgba(242,239,232,.82);max-width:58ch;margin-bottom:30px;}
+
+.ib-stats{display:flex;gap:40px;margin-bottom:34px;padding:20px 0;border-top:1px solid rgba(242,239,232,.18);border-bottom:1px solid rgba(242,239,232,.18);max-width:520px;}
+
+.ib-stats strong{display:block;font-size:26px;color:#fff;line-height:1.2;}
+
+.ib-stats span{font-size:13px;color:rgba(242,239,232,.65);}
+
+.ib-actions{display:flex;flex-wrap:wrap;gap:14px;}
+
+.ib-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:999px;font-size:15px;font-weight:600;transition:gap .25s ease, background .25s ease, color .25s ease;}
+
+.ib-btn svg{width:16px;height:16px;}
+
+.ib-btn.primary{background:#F2EFE8;color:#123A3D;}
+
+.ib-btn.primary:hover{gap:13px;background:#fff;}
+
+.ib-btn.ghost{border:1px solid rgba(242,239,232,.5);color:#F2EFE8;}
+
+.ib-btn.ghost:hover{background:rgba(242,239,232,.1);}
+
+@media(max-width:860px){
+  .ib-inner{grid-template-columns:1fr;gap:40px;padding:56px 20px;}
+  .ib-cover{max-width:250px;margin:0 auto;}
+  .ib-text{text-align:center;}
+  .ib-kicker,.ib-actions{justify-content:center;}
+  .ib-stats{justify-content:center;margin-left:auto;margin-right:auto;gap:28px;}
+  .ib-teaser{margin-left:auto;margin-right:auto;font-size:15.5px;}
 }
 
 .free-badge{

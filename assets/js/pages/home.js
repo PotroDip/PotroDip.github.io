@@ -35,7 +35,7 @@
       nullsFirst: false
     }).order('created_at', {
       ascending: false
-    }).limit(30), db.from('authors').select('id,slug,name,role_title,city,image_url,avg_rating').limit(100), db.from('issues').select('id,title'), db.from('ads').select('slot_id,image_url,link_url').eq('is_active', true)]);
+    }).limit(30), db.from('authors').select('id,slug,name,role_title,city,image_url,avg_rating').limit(100), db.from('issues').select('id,title,issue_number,cover_url,published_at,created_at'), db.from('ads').select('slot_id,image_url,link_url').eq('is_active', true), db.from('print_issues').select('id,issue_id,teaser,price,in_stock,cover_url').limit(50)]);
   if (R[0].error) {
     $('article-grid').innerHTML = '<p class="pd-empty">লেখা লোড করা যায়নি: ' + esc(R[0].error.message) + '</p>';
     return
@@ -122,6 +122,29 @@
     var c = e.target.closest('.article-card');
     if (c) location.href = 'article.html?id=' + c.dataset.id
   };
+  /* চলতি সংখ্যা — সর্বশেষ সংখ্যার প্রচ্ছদ, বিবরণ, পড়া ও কেনার বাটন */
+  (function() {
+    var box = $('issue-band');
+    if (!box) return;
+    var list = (R[2].data || []).slice().sort(function(a, b) {
+      return new Date(b.published_at || b.created_at) - new Date(a.published_at || a.created_at)
+    });
+    var cur = list[0];
+    if (!cur) return box.remove();
+    var pr = (R[4] && R[4].data || []).filter(function(p) {
+        return p.issue_id === cur.id
+      })[0],
+      arts = A.filter(function(a) {
+        return a.issue_id === cur.id
+      }),
+      wr = {};
+    arts.forEach(function(a) {
+      if (a.author_id) wr[a.author_id] = 1
+    });
+    var cover = cur.cover_url || (pr && pr.cover_url) || PH,
+      teaser = (pr && pr.teaser) || (arts[0] && arts[0].excerpt) || '';
+    box.innerHTML = '<div class="ib-inner"><a class="ib-cover" href="issue.html?id=' + cur.id + '"><img src="' + esc(cover) + '" alt="' + esc(cur.title) + ' প্রচ্ছদ" loading="lazy"></a><div class="ib-text"><div class="ib-kicker"><span>চলতি সংখ্যা</span>' + (cur.issue_number ? '<span class="ib-no">সংখ্যা ' + bn(cur.issue_number) + '</span>' : '') + '</div><h2>' + esc(cur.title) + '</h2>' + (teaser ? '<p class="ib-teaser">' + esc(cut(teaser, 190)) + '</p>' : '') + '<div class="ib-stats"><div><strong>' + bn(arts.length) + '</strong><span>টি লেখা</span></div><div><strong>' + bn(Object.keys(wr).length) + '</strong><span>জন লেখক</span></div>' + (cur.published_at ? '<div><strong>' + M[new Date(cur.published_at).getMonth()] + '</strong><span>' + bn(new Date(cur.published_at).getFullYear()) + '</span></div>' : '') + '</div><div class="ib-actions"><a class="ib-btn primary" href="issue.html?id=' + cur.id + '">সংখ্যাটি পড়ুন ' + arrow + '</a>' + (pr && pr.in_stock ? '<a class="ib-btn ghost" href="store.html">ছাপা কপি · ৳' + bn(Number(pr.price)) + '</a>' : '') + '</div></div></div>';
+  })();
   /* বিজ্ঞাপন */
   var sl = document.querySelectorAll('.ad-slot'),
     isMob = window.matchMedia && window.matchMedia('(max-width:760px)').matches;
@@ -164,7 +187,7 @@
     return (b.avg_rating || 0) - (a.avg_rating || 0)
   }).slice(0, 4);
   $('authors-row').innerHTML = L.length ? L.map(function(u) {
-    return '<div class="author-card"><a href="author.html?slug=' + encodeURIComponent(u.slug) + '">' + im(u) + '<h4>' + esc(u.name) + '</h4></a><div class="author-role">' + esc(u.role_title) + (u.city ? '<span class="dot-sep"></span>' + esc(u.city) : '') + '</div><div class="author-rating">★ ' + bn(Number(u.avg_rating || 0).toFixed(1)) + '</div><button class="follow-btn' + (F[u.id] ? ' following' : '') + '" data-id="' + u.id + '">' + (F[u.id] ? 'ফলো করছেন ✓' : 'ফলো করুন') + '</button></div>'
+    return '<div class="author-card"><a class="au-link" href="author.html?slug=' + encodeURIComponent(u.slug) + '"><span class="au-ava">' + im(u) + '</span><h4>' + esc(u.name) + '</h4><div class="author-role">' + esc(u.role_title) + (u.city ? '<span class="dot-sep"></span>' + esc(u.city) : '') + '</div></a><div class="au-foot"><div class="author-rating">★ ' + bn(Number(u.avg_rating || 0).toFixed(1)) + '</div><button class="follow-btn' + (F[u.id] ? ' following' : '') + '" data-id="' + u.id + '">' + (F[u.id] ? 'ফলো করছেন ✓' : 'ফলো করুন') + '</button></div></div>'
   }).join('') : '<p class="pd-empty">লেখক তালিকা শীঘ্রই আসছে।</p>';
   $('authors-row').onclick = async function(e) {
     var b = e.target.closest('.follow-btn');
