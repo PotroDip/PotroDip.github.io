@@ -4,16 +4,18 @@ window.PD_CONFIG = {
   anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxb3N6Y3VoeGRhdmVobnh1bmRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1ODIzMDUsImV4cCI6MjEwNjE1ODMwNX0.UqZYaUMsH29NmMTZpFHDmoX9qyTG-U7APOWsalQS2JQ',
   turnstileSiteKey: '0x4AAAAAAFnlme_tpslbtttw',
 
-  /* Firebase — ইমেইল ও গুগল লগইন এবং ছবি রাখার জায়গা।
-     Firebase কনসোল → Project settings → Your apps → Web app-এর firebaseConfig থেকে apiKey ও appId বসান।
-     এ দুটো খালি থাকলে সাইট আগের মতো শুধু Supabase দিয়েই চলবে (কিছু ভাঙবে না)। */
+  /* Firebase — ইমেইল ও গুগল লগইন এবং ছবি/PDF রাখার জায়গা (Web app-এর firebaseConfig থেকে)। */
   firebase: {
-    apiKey: '',
+    apiKey: 'AIzaSyBog8mJSDrkE0OumCXvMFKezt8TS2FUL58',
     authDomain: 'potrodip-99ad4.firebaseapp.com',
     projectId: 'potrodip-99ad4',
     storageBucket: 'potrodip-99ad4.firebasestorage.app',
-    appId: ''
+    messagingSenderId: '398592223434',
+    appId: '1:398592223434:web:45e24e67b1489e846eec33'
   },
+  /* Firebase কনসোলে Email/Password ও Google লগইন চালু এবং potrodip.github.io অনুমোদিত হওয়ার পরই true করুন।
+     false থাকলে সাইট আগের মতো শুধু Supabase দিয়ে চলে (কিছু ভাঙবে না)। */
+  firebaseAuth: false,
   /* Firebase Storage চালু (Blaze প্ল্যান) ও storage.rules বসানোর পর true করুন — তখন ছবি ও PDF Firebase-এ যাবে,
      কোনো কারণে সেখানে না গেলে Supabase-এ। একটা ফাইল কখনো দুই জায়গায় রাখা হয় না। */
   firebaseStorage: false,

@@ -1,12 +1,12 @@
 /* firebase.js — Firebase সংযোগ (ইমেইল/গুগল লগইন ও ছবি আপলোড)। app.js-এর পরে লোড হয়।
-   config.js-এ apiKey ও appId না থাকলে কিছুই চালু হয় না — সাইট তখন আগের মতো শুধু Supabase দিয়ে চলে। */
+   config.js-এ firebaseAuth: false থাকলে বা apiKey/appId না থাকলে কিছুই চালু হয় না — সাইট তখন আগের মতো শুধু Supabase দিয়ে চলে। */
 (function() {
   'use strict';
   var PD = window.PD;
   if (!PD || !PD.db) return;
   var F = PD.config.firebase || {};
   PD.fbOn = false;
-  if (!F.apiKey || !F.appId || !window.firebase || !firebase.initializeApp) return;
+  if (!PD.config.firebaseAuth || !F.apiKey || !F.appId || !window.firebase || !firebase.initializeApp) return;
 
   var app;
   try {
