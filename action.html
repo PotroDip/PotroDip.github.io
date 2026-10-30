@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html lang="bn">
+<head>
+<meta content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com; object-src 'none'; base-uri 'self'; form-action 'self'" http-equiv="Content-Security-Policy"/>
+<meta content="strict-origin-when-cross-origin" name="referrer"/>
+<meta name="robots" content="noindex"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>অ্যাকাউন্ট যাচাই | পত্রদ্বীপ</title>
+<link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+<link href="assets/css/base.css" rel="stylesheet"/>
+<link href="assets/css/pages/auth.css" rel="stylesheet"/>
+<script src="assets/js/core/theme.js"></script>
+</head>
+<body class="auth-mode act-page">
+<div class="glass-bg" aria-hidden="true"><i class="orb o1"></i><i class="orb o2"></i><i class="orb o3"></i><span class="stars"></span></div>
+<main class="act-wrap">
+<div class="auth-card act-card" id="act-card" aria-live="polite">
+<a class="act-logo" href="index.html" aria-label="পত্রদ্বীপ — হোম"><img src="assets/img/brand/logo.svg" alt="পত্রদ্বীপ" width="150" height="65"></a>
+
+<!-- যাচাই চলছে -->
+<div class="act-state" id="act-loading">
+<div class="act-spin" aria-hidden="true"></div>
+<h2>একটু অপেক্ষা করুন…</h2>
+<p class="auth-sub">আপনার লিংকটি যাচাই করা হচ্ছে।</p>
+</div>
+
+<!-- ইমেইল যাচাই সম্পন্ন -->
+<div class="act-state" id="act-verified" hidden>
+<div class="act-badge ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+<h2>ইমেইল যাচাই সম্পন্ন!</h2>
+<p class="auth-sub" id="act-verified-text">আপনার অ্যাকাউন্ট এখন চালু। লগইন করে পত্রদ্বীপে ঢুকে পড়ুন।</p>
+<a class="btn-primary-full act-btn" href="auth.html?verified=1">লগইন করুন</a>
+</div>
+
+<!-- নতুন পাসওয়ার্ড -->
+<div class="act-state" id="act-reset" hidden>
+<div class="act-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="10.5" rx="3"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/><circle cx="12" cy="15.7" r="1.3"/></svg></div>
+<h2>নতুন পাসওয়ার্ড দিন</h2>
+<p class="auth-sub" id="act-reset-for">কমপক্ষে ৬ অক্ষরের একটা পাসওয়ার্ড বেছে নিন।</p>
+<form id="act-form" novalidate>
+<div class="field-row">
+<label for="act-pass">নতুন পাসওয়ার্ড</label>
+<div class="pw-wrap">
+<input id="act-pass" type="password" placeholder="••••••••" autocomplete="new-password"/>
+<button aria-label="পাসওয়ার্ড দেখান" class="pw-toggle" id="act-eye" type="button">
+<svg class="eye-open" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+<svg class="eye-closed" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a19.66 19.66 0 0 1 5.06-6.06M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a19.5 19.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" x2="23" y1="1" y2="23"></line></svg>
+</button>
+</div>
+<p class="id-hint" id="act-hint" role="status" aria-live="polite"></p>
+</div>
+<button class="btn-primary-full" id="act-save" type="submit">পাসওয়ার্ড বদলান</button>
+</form>
+</div>
+
+<!-- পাসওয়ার্ড বদলানো হয়েছে -->
+<div class="act-state" id="act-done" hidden>
+<div class="act-badge ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+<h2>পাসওয়ার্ড বদলানো হয়েছে</h2>
+<p class="auth-sub">নতুন পাসওয়ার্ড দিয়ে এখন লগইন করতে পারবেন।</p>
+<a class="btn-primary-full act-btn" href="auth.html">লগইন করুন</a>
+</div>
+
+<!-- সমস্যা (মেয়াদ শেষ/আগেই ব্যবহার করা লিংক) -->
+<div class="act-state" id="act-error" hidden>
+<div class="act-badge bad" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="7" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/><circle cx="12" cy="12" r="9.5"/></svg></div>
+<h2 id="act-error-title">লিংকটি কাজ করছে না</h2>
+<p class="auth-sub" id="act-error-text">লিংকটির মেয়াদ শেষ হয়ে গেছে বা আগেই ব্যবহার করা হয়েছে।</p>
+<a class="btn-primary-full act-btn" href="auth.html">লগইন পাতায় যান</a>
+</div>
+</div>
+</main>
+<script src="assets/vendor/firebase/firebase-app-compat.js"></script>
+<script src="assets/vendor/firebase/firebase-auth-compat.js"></script>
+<script src="assets/js/core/config.js"></script>
+<script src="assets/js/pages/auth-action.js"></script>
+</body>
+</html>

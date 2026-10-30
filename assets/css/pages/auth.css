@@ -1435,3 +1435,24 @@ html[data-theme="dark"] .btn-primary-full.fbc-go{color:#fff;}
 .fp-inline{display:inline; padding:0; margin:0; font:inherit; font-weight:700; color:var(--primary); text-decoration:underline; text-underline-offset:3px; cursor:pointer; background:none; border:0;}
 .fp-inline:hover{color:var(--primary-dark);}
 .fp-inline.loading{opacity:.6; pointer-events:none;}
+
+/* ================================================================
+   ============ v19 — ইমেইলের লিংক-পাতা (action.html) ============
+   ================================================================= */
+.act-wrap{position:relative; z-index:1; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:32px 16px;}
+.act-card{text-align:center; padding-top:34px;}
+.act-logo{display:block; width:150px; margin:0 auto 18px;}
+.act-logo img{width:100%; height:auto;}
+.act-state{animation:panelFade .35s ease both;}
+.act-state[hidden]{display:none;}
+.act-state h2{font-size:23px; margin:14px 0 8px;}
+.act-state .auth-sub{margin-bottom:22px;}
+.act-state form{text-align:left;}
+.act-btn{display:block; text-decoration:none; text-align:center;}
+.act-badge{width:74px; height:74px; margin:6px auto 0; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; background:var(--grad-btn); box-shadow:0 14px 30px -10px rgba(29,83,88,.7), 0 0 0 8px var(--glass-field), inset 0 1px 0 rgba(255,255,255,.35);}
+html[data-theme="dark"] .act-badge{color:#0B1517;}
+.act-badge svg{width:32px; height:32px;}
+.act-badge.ok{background:linear-gradient(135deg,#4DA874,#2F7F55); color:#fff; box-shadow:0 14px 30px -10px rgba(47,127,85,.7), 0 0 0 8px var(--glass-field), inset 0 1px 0 rgba(255,255,255,.35);}
+.act-badge.bad{background:linear-gradient(135deg,#D9715E,#B3402E); color:#fff; box-shadow:0 14px 30px -10px rgba(179,64,46,.6), 0 0 0 8px var(--glass-field), inset 0 1px 0 rgba(255,255,255,.3);}
+.act-spin{width:46px; height:46px; margin:14px auto 0; border-radius:50%; border:3.5px solid var(--glass-brd); border-top-color:var(--primary); animation:spin .8s linear infinite;}
+@media (prefers-reduced-motion:reduce){ .act-spin{animation-duration:2s;} }

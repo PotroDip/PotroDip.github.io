@@ -546,7 +546,22 @@
 
   function start() {
     wire();
-    forms()
+    forms();
+    /* ইমেইল যাচাইয়ের পর এখানে ফিরলে */
+    var qs = new URLSearchParams(location.search);
+    if (qs.get('verified') === '1') {
+      setTimeout(function() { toast('ইমেইল যাচাই হয়েছে — এখন লগইন করুন') }, 700);
+      if (history.replaceState) history.replaceState(null, '', location.pathname)
+    }
+    /* ফেসবুক/গুগল (Supabase) লগইন ব্যর্থ হয়ে ফিরলে — কারিগরি লেখা নয়, সহজ বার্তা */
+    var hs = new URLSearchParams((location.hash || '').replace(/^#/, ''));
+    var oerr = [qs.get('error'), qs.get('error_description'), hs.get('error'), hs.get('error_description')].filter(Boolean).join(' ');
+    if (oerr) {
+      setTimeout(function() {
+        toast(/access_denied|cancel|denied/i.test(oerr) ? 'লগইন বাতিল করা হয়েছে' : 'এই পদ্ধতিতে এখন লগইন করা যাচ্ছে না — ইমেইল দিয়ে লগইন করুন বা একটু পরে চেষ্টা করুন', 1)
+      }, 700);
+      if (history.replaceState) history.replaceState(null, '', location.pathname)
+    }
   }
   if (document.readyState !== 'loading') start();
   else document.addEventListener('DOMContentLoaded', start);
