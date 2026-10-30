@@ -14,7 +14,7 @@ window.PD_CONFIG = {
     storageBucket: 'potrodip-99ad4.firebasestorage.app',
     appId: ''
   },
-  /* Firebase Storage চালু (Blaze প্ল্যান) ও storage.rules বসানোর পর true করুন — তখন ছবি Firebase-এ যাবে,
+  /* Firebase Storage চালু (Blaze প্ল্যান) ও storage.rules বসানোর পর true করুন — তখন ছবি ও PDF Firebase-এ যাবে,
      কোনো কারণে সেখানে না গেলে Supabase-এ। একটা ফাইল কখনো দুই জায়গায় রাখা হয় না। */
   firebaseStorage: false,
 

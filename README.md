@@ -57,8 +57,7 @@
 | ইমেইল ও গুগল লগইন | Firebase Auth → `firebase-bridge` (Supabase Edge Function) → একই ইমেইলের Supabase অ্যাকাউন্ট |
 | ফেসবুক লগইন | Supabase Auth (আগের মতো) |
 | লেখা, মন্তব্য, প্রোফাইল, অর্ডার — সব ডেটা | শুধু Supabase (দুই জায়গায় রাখা হয় না) |
-| ছবি | Firebase Storage (`firebaseStorage: true` হলে), ব্যর্থ হলে Supabase `media` — একটা ফাইল একটাই জায়গায় |
-| PDF | Supabase `media` |
+| ছবি ও PDF | Firebase Storage (`firebaseStorage: true` হলে), ব্যর্থ হলে Supabase `media` — একটা ফাইল একটাই জায়গায় |
 
 - ইউজার মেলানো হয় **ইমেইল দিয়ে**, তাই পুরোনো Supabase ইউজার Firebase-এ একই ইমেইলে সাইনআপ করলে আগের সব তথ্য পান।
 - ইমেইল যাচাই না হলে (`email_verified`) সেতু-ফাংশন ঢুকতে দেয় না।

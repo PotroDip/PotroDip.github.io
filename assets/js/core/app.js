@@ -99,7 +99,7 @@
       location.href = PD.pages.auth
     })
   };
-  /* ছবি আপলোড: Firebase Storage চালু থাকলে আগে সেখানে (firebase.js), না হলে বা ব্যর্থ হলে Supabase-এর 'media'-তে।
+  /* ছবি ও PDF আপলোড: Firebase Storage চালু থাকলে আগে সেখানে (firebase.js), না হলে বা ব্যর্থ হলে Supabase-এর 'media'-তে।
      একটা ফাইল শুধু একটা জায়গাতেই থাকে। ফেরত দেয় ছবির পাবলিক লিংক। */
   function sbUpload(blob, path, type) {
     return db.storage.from('media').upload(path, blob, { contentType: type, cacheControl: '31536000', upsert: false }).then(function(r) {
@@ -109,7 +109,7 @@
   }
   PD.upload = function(blob, path, type) {
     type = type || blob.type || 'application/octet-stream';
-    if (!PD.fbUpload || !/^image\//.test(type)) return sbUpload(blob, path, type);
+    if (!PD.fbUpload || !/^(image\/|application\/pdf$)/.test(type)) return sbUpload(blob, path, type);
     return PD.fbUpload(blob, path, type).catch(function(e) {
       if (e && e.message !== 'firebase-no-user') console.warn('Firebase আপলোড হয়নি, Supabase-এ রাখা হচ্ছে', e);
       return sbUpload(blob, path, type)
