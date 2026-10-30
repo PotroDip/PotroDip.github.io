@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; connect-src 'self' https://pqoszcuhxdavehnxundq.supabase.co; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex,nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ডিজাইন স্টুডিও | পত্রদ্বীপ এডমিন</title>
+<link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+<link rel="stylesheet" href="assets/css/pages/studio.css">
+</head>
+<body class="booting">
+<div id="loading"><div class="spin"></div><p>ডিজাইন স্টুডিও চালু হচ্ছে…</p></div>
+<div id="small-screen">ডিজাইন স্টুডিও কম্পিউটার বা বড় ট্যাবলেটের স্ক্রিনে সবচেয়ে ভালো চলে। (মোবাইল ডিজাইন দেখতে ওপরের "মোবাইল" বাটন ব্যবহার করুন)</div>
+
+<div id="app">
+  <!-- ============ টপবার ============ -->
+  <header id="topbar">
+    <div class="tb-l">
+      <a class="back" href="admin.html" title="এডমিন প্যানেলে ফিরুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg><span>এডমিন</span></a>
+      <div class="brand"><b>ডিজাইন স্টুডিও</b></div>
+      <select id="page-select" class="sel-page" title="কোন পেজ সাজাবেন"></select>
+    </div>
+    <div class="tb-c">
+      <div class="grp" id="dev-switch">
+        <button data-dev="pc" title="কম্পিউটার"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><span>কম্পিউটার</span></button>
+        <button data-dev="tab" title="ট্যাবলেট"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg><span>ট্যাবলেট</span></button>
+        <button data-dev="mob" title="মোবাইল"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg><span>মোবাইল</span></button>
+      </div>
+      <label class="wbox" title="ক্যানভাসের প্রস্থ (px)"><input id="dev-w" type="number" min="280" max="1920" value="1280"><span>px</span></label>
+      <div class="grp zoom">
+        <button id="zoom-out" title="ছোট (Ctrl −)">−</button>
+        <button id="zoom-val" title="১০০%-এ আনুন">100%</button>
+        <button id="zoom-in" title="বড় (Ctrl +)">+</button>
+        <button id="zoom-fit" title="স্ক্রিনে ফিট (Ctrl 0)">ফিট</button>
+      </div>
+    </div>
+    <div class="tb-r">
+      <button class="ib" id="btn-undo" title="আনডু (Ctrl+Z)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></svg></button>
+      <button class="ib" id="btn-redo" title="রিডু (Ctrl+Shift+Z)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/></svg></button>
+      <span class="vsep"></span>
+      <button class="tbtn" id="btn-split" title="এডিটের পাশে অন্য ডিভাইসের প্রিভিউ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/></svg><span>পাশাপাশি প্রিভিউ</span></button>
+      <button class="tbtn" id="btn-preview" title="লিংক/বাটনসহ আসল সাইটের মতো দেখুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><span>লাইভ প্রিভিউ</span></button>
+      <button class="ib" id="btn-theme" title="আলো / অন্ধকার থিমে দেখুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+      <div class="more">
+        <button class="ib" id="btn-more" title="আরও"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
+        <div id="more-menu">
+          <button data-act="view">↗ সাইটে এই পেজ খুলুন</button>
+          <button data-act="prev">⟲ আগের সংস্করণ এডিটরে আনুন</button>
+          <button data-act="discard">✕ ড্রাফট বাদ — প্রকাশিত সংস্করণে ফিরুন</button>
+          <button data-act="reset">⚠ সব মুছে আসল সাইটে ফিরুন</button>
+          <hr>
+          <button data-act="export">⬇ ব্যাকআপ ফাইল নামান</button>
+          <button data-act="import">⬆ ব্যাকআপ ফাইল থেকে আনুন</button>
+          <button data-act="fallback">⬇ site-design.json (বিকল্প ফাইল)</button>
+          <hr>
+          <button data-act="help">? শর্টকাট ও সাহায্য</button>
+        </div>
+      </div>
+      <span id="save-state" class="save-state ok">✓ সব প্রকাশিত</span>
+      <button id="btn-publish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>পাবলিশ</button>
+    </div>
+  </header>
+
+  <div id="draft-bar" style="display:none"><span>⚠ আগের একটি অপ্রকাশিত ড্রাফট পাওয়া গেছে।</span><button id="draft-keep">ড্রাফট ফিরিয়ে আনুন</button><button id="draft-drop">বাদ দিন</button></div>
+
+  <div id="work">
+    <!-- ============ বাম প্যানেল ============ -->
+    <aside id="left">
+      <div id="left-tabs">
+        <button class="on" data-pane="layers">লেয়ার</button>
+        <button data-pane="add">যোগ করুন</button>
+        <button data-pane="theme">থিম-রং</button>
+        <button data-pane="pages">পেজ</button>
+      </div>
+      <div class="left-pane on" id="pane-layers"><p class="pane-hint">পেজের সব অংশ। ক্লিক করে বাছুন, 👁 দিয়ে এই ডিভাইসে লুকান।</p><div id="layers-tree"></div></div>
+      <div class="left-pane" id="pane-add"><p class="pane-hint">ক্লিক করলে বাছা এলিমেন্টের ভেতরে/পরে বসবে। বসানোর পর টেনে যেখানে খুশি সরান।</p><div id="lib-grid"></div></div>
+      <div class="left-pane" id="pane-theme"><div id="theme-list"></div></div>
+      <div class="left-pane" id="pane-pages"><div id="pages-list"></div><button class="btn-s primary" id="btn-newpage" type="button">＋ নতুন পেজ বানান</button></div>
+    </aside>
+
+    <!-- ============ ক্যানভাস ============ -->
+    <main id="board"><div id="stage"></div></main>
+
+    <!-- ============ ডান প্যানেল ============ -->
+    <aside id="right"><div class="insp-head">প্রপার্টি</div><div id="insp-body"></div></aside>
+  </div>
+
+  <footer id="statusbar"><div id="crumbs"></div><div class="hints">Space+টান = প্যান · Ctrl+স্ক্রল = জুম · ডাবল-ক্লিক = লেখা এডিট · তীর কী = সরান</div></footer>
+</div>
+
+<div id="st-toast"></div>
+
+<!-- নতুন পেজ -->
+<div class="modal" id="modal-newpage"><div class="mbox">
+  <h3>নতুন পেজ বানান</h3>
+  <p class="muted">ফাঁকা পেজ তৈরি হবে — হেডার, ফুটার ও থিম সাইটের মতোই থাকবে। ভেতরে যা খুশি সাজান।</p>
+  <label>পেজের নাম</label><input class="in wide" id="np-title" type="text" placeholder="যেমন: আমাদের সম্পর্কে">
+  <label>ঠিকানা (ইংরেজি অক্ষরে)</label><div class="slugrow"><span>page.html?p=</span><input class="in" id="np-slug" type="text" placeholder="about"></div>
+  <div class="mact"><button class="btn-s ghost" id="np-cancel" type="button">বাতিল</button><button class="btn-s primary" id="np-ok" type="button">পেজ বানান</button></div>
+</div></div>
+
+<!-- পাবলিশ -->
+<div class="modal" id="modal-publish"><div class="mbox">
+  <div id="pub-pre"><h3>সাইটে পাবলিশ করবেন?</h3><div id="pub-body"></div>
+    <div class="mact"><button class="btn-s ghost" id="pub-cancel" type="button">এখনো না</button><button class="btn-s primary big" id="pub-ok" type="button">হ্যাঁ, পাবলিশ করুন</button></div></div>
+  <div id="pub-done" style="display:none"><div id="pub-done-msg"></div><div class="mact"><button class="btn-s primary" id="pub-close" type="button">ঠিক আছে</button></div></div>
+</div></div>
+
+<!-- সাহায্য -->
+<div class="modal" id="modal-help"><div class="mbox wide">
+  <h3>শর্টকাট ও ব্যবহার</h3>
+  <div class="helpgrid">
+    <div><b>ক্লিক</b>এলিমেন্ট বাছুন</div><div><b>টান</b>সরান (গাইডে আটকায়, Alt = আটকাবে না)</div>
+    <div><b>কোণা/ধার ধরে টান</b>ছোট-বড় (Shift = অনুপাত ঠিক)</div><div><b>ওপরের গোল হাতল</b>ঘোরান (Shift = ১৫°)</div>
+    <div><b>ডাবল-ক্লিক</b>লেখা এডিট / ছবি বদল</div><div><b>Shift + ক্লিক</b>একাধিক বাছাই</div>
+    <div><b>তীর কী</b>১px সরান (Shift = ১০px)</div><div><b>Delete</b>মুছুন</div>
+    <div><b>Ctrl + D</b>ডুপ্লিকেট</div><div><b>Ctrl + Z / Shift+Z</b>আনডু / রিডু</div>
+    <div><b>Alt + ↑ / ↓</b>প্যারেন্ট / ভেতরের এলিমেন্ট</div><div><b>Space + টান</b>ক্যানভাস সরান</div>
+    <div><b>Ctrl + স্ক্রল</b>জুম</div><div><b>Ctrl + S</b>ড্রাফট সেভ</div>
+  </div>
+  <p class="muted">কম্পিউটারের মোডে করা পরিবর্তন ট্যাবলেট/মোবাইলেও যায়। মোবাইল বা ট্যাবলেট মোডে গিয়ে বদলালে শুধু ঐ আকারের জন্য আলাদা হয়, বাকিটা অক্ষত থাকে। "পাবলিশ" না চাপা পর্যন্ত সাইটে কিছুই বদলায় না।</p>
+  <div class="mact"><button class="btn-s primary" id="help-ok" type="button">বুঝেছি</button></div>
+</div></div>
+
+<script src="assets/js/core/theme.js"></script>
+<script src="assets/vendor/supabase.js"></script>
+<script src="assets/js/core/config.js"></script>
+<script src="assets/js/core/app.js"></script>
+<script src="assets/js/pages/studio-core.js"></script>
+<script src="assets/js/pages/studio-canvas.js"></script>
+<script src="assets/js/pages/studio-panels.js"></script>
+<script src="assets/js/pages/studio-side.js"></script>
+<script src="assets/js/pages/studio-main.js"></script>
+</body>
+</html>

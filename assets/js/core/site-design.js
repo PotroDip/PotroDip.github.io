@@ -1,316 +1,389 @@
-/* site-design.js — "সাইট ডিজাইনার"-এ সাজানো ডিজাইন সব পেজে প্রয়োগ করে।
-   - প্রকাশিত ডিজাইন Supabase-এর site_settings টেবিলে (key = design_live) থাকে।
-   - দ্রুত দেখানোর জন্য শেষ ডিজাইন ব্রাউজারে জমা (cache) রাখা হয়, তারপর নতুনটা এনে মিলিয়ে নেওয়া হয়।
-   - ডিজাইনারের প্রিভিউতে (?pdpreview=1) নিজে থেকে কিছু প্রয়োগ হয় না; ডিজাইনার PDDesign.apply() ডাকে।
-   - কোনো ইনলাইন স্ক্রিপ্ট নেই, তাই CSP-এর সাথে সমস্যা নেই। এডমিন পেজে এটি চলে না। */
+/* site-design.js — "ডিজাইন স্টুডিও"-তে পাবলিশ করা ডিজাইন সাইটে বসানোর ইঞ্জিন (সব পেজে লোড হয়)।
+   ▸ সাধারণ ভিজিটর: কিছুই টের পায় না — পাবলিশ করা ডিজাইন নিঃশব্দে সাইটের অংশ হয়ে বসে।
+   ▸ ডিজাইন না থাকলে (বা পাবলিশ না করলে) এই ফাইল সাইটের কিছুই বদলায় না।
+   ▸ ডিজাইনের ডেটা থাকে Supabase-এর site_settings টেবিলে (key = site_design)। না পেলে assets/data/site-design.json।
+   ▸ স্টুডিওর ভেতরের আইফ্রেমে (?pdstudio=1) এটি নিজে কিছু আনে না; স্টুডিও নিজে ডিজাইন ঢুকিয়ে দেয়। */
 (function () {
   'use strict';
-  var CACHE_KEY = 'pd-design-cache';
-  var PREVIEW = /[?&]pdpreview=1/.test(location.search) || window.name === 'pdd-preview';
-  var PAGE = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
-  if (PAGE === 'admin.html') return;
+  var KEY = 'site_design';
+  var CACHE = 'pd-design-cache-v1';
+  var STUDIO = /[?&]pdstudio=1/.test(location.search);
 
-  var cfg = null;          // বর্তমানে প্রয়োগ করা কনফিগ
-  var styleEl = null;
-  var textChanged = [];    // [{el, orig}] — লেখা বদলানো এলিমেন্ট (ফেরত আনার জন্য)
-  var attrChanged = [];    // [{el, name, orig}]
-  var observer = null;
-  var timer = null;
-  var movedDone = {};      // এই ডকুমেন্টে যে স্থান-বদলগুলো আগেই হয়ে গেছে (id ধরে)
+  /* ---------- অনুমোদিত CSS প্রপার্টি (বাইরে কিছু বসবে না) ---------- */
+  var OK = {};
+  ('translate rotate scale transform-origin width height min-width min-height max-width max-height ' +
+    'margin margin-top margin-right margin-bottom margin-left padding padding-top padding-right padding-bottom padding-left ' +
+    'display flex-direction flex-wrap justify-content align-items align-self align-content gap row-gap column-gap flex flex-grow flex-shrink flex-basis grid-template-columns order ' +
+    'position top left right bottom z-index overflow overflow-x overflow-y ' +
+    'font-family font-size font-weight font-style line-height letter-spacing word-spacing text-align text-decoration text-transform text-shadow white-space text-indent ' +
+    'color -webkit-text-fill-color -webkit-background-clip background-clip ' +
+    'background background-color background-image background-size background-position background-repeat background-attachment ' +
+    'border border-width border-style border-color border-radius border-top border-right border-bottom border-left ' +
+    'border-top-left-radius border-top-right-radius border-bottom-left-radius border-bottom-right-radius ' +
+    'box-shadow opacity filter backdrop-filter mix-blend-mode object-fit object-position aspect-ratio cursor pointer-events visibility transition ' +
+    'outline outline-offset list-style').split(' ').forEach(function (k) { OK[k] = 1; });
 
-  /* ---------- নিরাপত্তা সহায়ক ---------- */
+  var BPQ = { t: '(max-width:1023px)', m: '(max-width:767px)' };
+  var HIDEQ = { d: '(min-width:1024px)', t: '(min-width:768px) and (max-width:1023px)', m: '(max-width:767px)' };
+
+  /* ---------- ছোট সহায়ক ---------- */
   function safeUrl(u) {
-    u = String(u == null ? '' : u).trim();
-    if (!u) return '';
-    if (/^(https?:|mailto:|tel:|#|\/|\.\/|\.\.\/)/i.test(u)) return u;
-    if (/^[a-z0-9_\-\/.]+(\?[^\s]*)?(#[^\s]*)?$/i.test(u)) return u;   // নিজের সাইটের আপেক্ষিক লিংক
-    return '';
+    u = String(u || '').trim();
+    if (!u) return false;
+    if (/^(javascript|data|vbscript|file):/i.test(u)) return false;
+    return /^(https:\/\/|\/|\.\/|\.\.\/|assets\/|[a-z0-9_\-.\/%]+$)/i.test(u);
   }
-  function safeImg(u) {
-    u = String(u == null ? '' : u).trim();
-    if (/^https:\/\//i.test(u)) return u;
-    if (/^data:image\/(png|jpe?g|gif|webp|svg\+xml);/i.test(u)) return u;
-    if (/^[a-z0-9_\-\/.]+$/i.test(u)) return u;
-    return '';
+  function safeHref(u) {
+    u = String(u || '').trim();
+    if (!u) return false;
+    if (/^(javascript|data|vbscript|file):/i.test(u)) return false;
+    return /^(https?:\/\/|mailto:|tel:|#|\/|\.\/|\.\.\/|[a-z0-9_\-.\/%?=&#]+$)/i.test(u);
   }
-  function cssVal(v) {   // CSS মানে ক্ষতিকর অংশ আটকানো
-    v = String(v == null ? '' : v);
-    if (/[{};<>]|url\s*\(\s*['"]?\s*javascript|expression\s*\(|@import/i.test(v.replace(/url\(\s*['"]?https:\/\/[^)'"]+['"]?\s*\)/ig, ''))) return '';
+  function cv(v) {
+    v = String(v == null ? '' : v).replace(/[\r\n{}<>\\;]/g, '').trim();
+    if (!v) return '';
+    if (/expression\s*\(|@import|javascript:|behavior\s*:|-moz-binding/i.test(v)) return '';
+    v = v.replace(/url\(\s*(['"]?)([^)'"]*)\1\s*\)/gi, function (m, q, u) { return safeUrl(u) ? 'url("' + u + '")' : 'none'; });
     return v;
   }
-  var PROP_MAP = {
-    color: 'color', background: 'background', bgImage: 'background-image', bgSize: 'background-size', bgPos: 'background-position',
-    fontSize: 'font-size', fontWeight: 'font-weight', textAlign: 'text-align', lineHeight: 'line-height',
-    letterSpacing: 'letter-spacing', textTransform: 'text-transform', fontStyle: 'font-style', textDecoration: 'text-decoration',
-    padding: 'padding', paddingTop: 'padding-top', paddingBottom: 'padding-bottom', paddingLeft: 'padding-left', paddingRight: 'padding-right',
-    margin: 'margin', marginTop: 'margin-top', marginBottom: 'margin-bottom', marginLeft: 'margin-left', marginRight: 'margin-right',
-    width: 'width', maxWidth: 'max-width', height: 'height', minHeight: 'min-height',
-    borderRadius: 'border-radius', border: 'border', borderTop: 'border-top', borderBottom: 'border-bottom',
-    boxShadow: 'box-shadow', opacity: 'opacity', fill: 'fill', stroke: 'stroke', display: 'display',
-    gap: 'gap', flexDirection: 'flex-direction', justifyContent: 'justify-content', alignItems: 'align-items',
-    position: 'position', zIndex: 'z-index', objectFit: 'object-fit', transform: 'transform', filter: 'filter'
-  };
-  function decls(p) {
-    var out = '';
-    for (var k in p) {
-      if (!PROP_MAP[k]) continue;
-      var v = p[k];
-      if (v === '' || v == null) continue;
-      v = cssVal(v);
+  function okSel(s) { return typeof s === 'string' && s.length < 600 && /^[^{};@<>\\]+$/.test(s); }
+  function decls(css) {
+    var o = '';
+    for (var k in css) {
+      if (!OK[k]) continue;
+      var v = cv(css[k]);
       if (v === '') continue;
-      out += PROP_MAP[k] + ':' + v + ' !important;';
+      o += k + ':' + v + ' !important;';
     }
-    return out;
+    return o;
   }
-  function validSel(sel) {
-    if (!sel || typeof sel !== 'string' || sel.length > 600) return false;
-    if (/[{};<]/.test(sel)) return false;
-    try { document.querySelector(sel); return true; } catch (e) { return false; }
-  }
-  function onPage(r) { return !r.page || r.page === '*' || String(r.page).toLowerCase() === PAGE; }
-
-  /* ---------- CSS তৈরি ---------- */
-  var GLOBAL_TYPO = { h1: 'h1', h2: 'h2', h3: 'h3', p: 'p', btn: 'button, .btn, a.btn' };
-  function buildCss(c) {
-    var css = '';
-    var g = c.g || {};
-    // রং (লাইট/ডার্ক)
-    var cl = g.colors && g.colors.light, cd = g.colors && g.colors.dark, k, s;
-    if (cl) { s = ''; for (k in cl) if (/^--[a-z-]+$/.test(k) && cssVal(cl[k])) s += k + ':' + cssVal(cl[k]) + ';'; if (s) css += ':root{' + s + '}\n'; }
-    if (cd) { s = ''; for (k in cd) if (/^--[a-z-]+$/.test(k) && cssVal(cd[k])) s += k + ':' + cssVal(cd[k]) + ';'; if (s) css += 'html[data-theme="dark"]{' + s + '}\n'; }
-    // সাইট-জুড়ে জুম, প্রস্থ, হেডার
-    if (g.zoom && +g.zoom !== 100) css += 'body{zoom:' + (Math.max(60, Math.min(160, +g.zoom)) / 100) + ' !important;}\n';
-    if (g.maxWidth) css += '.wrap,.header-inner,.footer-inner{max-width:' + (Math.max(700, Math.min(2000, +g.maxWidth))) + 'px !important;}\n';
-    if (g.headerStatic) css += 'header{position:static !important;}\n';
-    if (g.bodyBg) css += 'body{background:' + cssVal(g.bodyBg) + ' !important;}\n';
-    // লেখার ধরন
-    var ty = g.typo || {};
-    for (k in GLOBAL_TYPO) {
-      if (!ty[k]) continue;
-      var d = decls(ty[k]);
-      if (d) css += GLOBAL_TYPO[k] + '{' + d + '}\n';
+  function pageKey() {
+    var p = location.pathname.split('/').pop() || 'index';
+    p = p.replace(/\.html$/i, '') || 'index';
+    if (p === 'page') {
+      var s = new URLSearchParams(location.search).get('p');
+      return 'page:' + (s || '');
     }
-    // এলিমেন্ট-ভিত্তিক নিয়ম
-    (c.rules || []).forEach(function (r) {
-      if (!onPage(r) || !validSel(r.sel)) return;
-      if (r.hide) { css += r.sel + '{display:none !important;}\n'; return; }
-      var d = decls(r.p || {});
-      if (d) css += r.sel + '{' + d + '}\n';
-      var dd = decls(r.d || {});
-      if (dd) css += 'html[data-theme="dark"] ' + r.sel + '{' + dd + '}\n';
-    });
-    // অ্যাডভান্সড CSS
-    if (g.customCss) css += String(g.customCss).replace(/<\/style/ig, '').replace(/@import[^;]*;?/ig, '') + '\n';
-    return css;
+    return p;
   }
 
-  /* ---------- এলিমেন্টের "ছাপ" (signature): স্থান-বদল/যোগ করার সময় সঠিক এলিমেন্টেই কাজ হচ্ছে কিনা মিলিয়ে দেখতে ---------- */
-  function origOf(node) {
-    for (var i = 0; i < textChanged.length; i++) if (textChanged[i].node === node) return textChanged[i].orig;
-    return node.nodeValue;
-  }
-  function collectText(el, out) {
-    for (var n = el.firstChild; n; n = n.nextSibling) {
-      if (n.nodeType === 3) out.push(origOf(n));
-      else if (n.nodeType === 1 && !/^(script|style|svg|noscript)$/i.test(n.tagName)) collectText(n, out);
-    }
-  }
-  function sigOf(el) {
-    var h = el.matches && el.matches('h1,h2,h3') ? el : (el.querySelector && el.querySelector('h1,h2,h3'));
-    var parts = [];
-    collectText(h || el, parts);
-    return parts.join(' ').replace(/\s+/g, ' ').trim().slice(0, 40);
-  }
-  function sigOK(el, sig) { return !sig || sigOf(el) === sig; }
+  /* ---------- HTML ছেঁকে নেওয়া (শুধু নিরাপদ ট্যাগ/অ্যাট্রিবিউট) ---------- */
+  var TAGS = 'div section span p h1 h2 h3 h4 h5 h6 a button img ul ol li strong em b i u mark br hr blockquote figure figcaption small label input form svg path circle rect line polyline polygon ellipse g defs lineargradient stop cite time'.split(' ');
+  var TAGOK = {}; TAGS.forEach(function (t) { TAGOK[t] = 1; });
+  var ATTR_OK = /^(class|alt|title|target|rel|role|type|placeholder|name|value|for|width|height|viewbox|d|fill|stroke|stroke-width|stroke-linecap|stroke-linejoin|stroke-opacity|fill-opacity|fill-rule|clip-rule|cx|cy|r|rx|ry|x|y|x1|x2|y1|y2|points|transform|opacity|offset|stop-color|stop-opacity|gradientunits|gradienttransform|id|xmlns|aria-[a-z-]+|data-pd-[a-z-]+)$/i;
 
-  /* ---------- DOM কাজ: লেখা, লিংক, যোগ করা এলিমেন্ট, সরানো ---------- */
-  function firstTextNode(el) {
-    for (var n = el.firstChild; n; n = n.nextSibling) if (n.nodeType === 3 && n.nodeValue.trim()) return n;
-    return null;
-  }
-  function restore() {
-    textChanged.forEach(function (t) { try { t.node.nodeValue = t.orig; } catch (e) {} });
-    textChanged = [];
-    attrChanged.forEach(function (a) { try { if (a.orig === null) a.el.removeAttribute(a.name); else a.el.setAttribute(a.name, a.orig); } catch (e) {} });
-    attrChanged = [];
-  }
-  var ICONS = {
-    star: '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/>',
-    heart: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
-    book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
-    pen: '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>',
-    mail: '<rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2 7 12 13 22 7"/>',
-    phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/>',
-    map: '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
-    bell: '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',
-    cart: '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>',
-    user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
-    globe: '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
-    check: '<polyline points="20 6 9 17 4 12"/>',
-    camera: '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>'
-  };
-  function mkIcon(name) {
-    var ns = 'http://www.w3.org/2000/svg';
-    var s = document.createElementNS(ns, 'svg');
-    s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('fill', 'none'); s.setAttribute('stroke', 'currentColor');
-    s.setAttribute('stroke-width', '1.8'); s.setAttribute('stroke-linecap', 'round'); s.setAttribute('stroke-linejoin', 'round');
-    s.setAttribute('width', '28'); s.setAttribute('height', '28');
-    var tmp = document.createElementNS(ns, 'g');
-    // শুধু আমাদের নিজের বানানো আইকন-তালিকা থেকেই বসানো হয়
-    var parser = new DOMParser();
-    var doc = parser.parseFromString('<svg xmlns="' + ns + '">' + (ICONS[name] || ICONS.star) + '</svg>', 'image/svg+xml');
-    var kids = doc.documentElement.childNodes;
-    for (var i = 0; i < kids.length; i++) tmp.appendChild(document.importNode(kids[i], true));
-    while (tmp.firstChild) s.appendChild(tmp.firstChild);
-    return s;
-  }
-  function buildAdded(a) {
-    var el, c = a.content || {}, k = a.kind;
-    if (k === 'heading') { el = document.createElement('h2'); el.textContent = c.text || ''; }
-    else if (k === 'text') { el = document.createElement('p'); el.textContent = c.text || ''; }
-    else if (k === 'button') {
-      el = document.createElement('a'); el.className = 'btn'; el.textContent = c.text || '';
-      var h = safeUrl(c.href); if (h) el.setAttribute('href', h);
-      el.style.cssText = 'display:inline-block;padding:11px 26px;border-radius:99px;background:var(--primary);color:#fff;font-weight:600;';
-    }
-    else if (k === 'image') {
-      el = document.createElement('img'); var s = safeImg(c.src); if (s) el.setAttribute('src', s);
-      el.setAttribute('alt', c.alt || ''); el.style.cssText = 'max-width:100%;height:auto;border-radius:10px;';
-    }
-    else if (k === 'divider') { el = document.createElement('hr'); el.style.cssText = 'border:0;border-top:1px solid var(--border);margin:24px 0;'; }
-    else if (k === 'spacer') { el = document.createElement('div'); el.style.cssText = 'height:' + (parseInt(c.h, 10) || 40) + 'px;'; el.setAttribute('aria-hidden', 'true'); }
-    else if (k === 'box') {
-      el = document.createElement('div'); el.style.cssText = 'padding:22px 26px;border-radius:14px;background:var(--surface);border:1px solid var(--border);';
-      var t = document.createElement('p'); t.textContent = c.text || ''; el.appendChild(t);
-    }
-    else if (k === 'icon') { el = document.createElement('div'); el.style.cssText = 'color:var(--primary);line-height:0;'; el.appendChild(mkIcon(c.icon)); }
-    else return null;
-    el.setAttribute('data-pd-add', a.id);
-    return el;
-  }
-  function insertAt(anchor, el, pos) {
-    if (pos === 'before') anchor.parentNode.insertBefore(el, anchor);
-    else if (pos === 'inside-start') anchor.insertBefore(el, anchor.firstChild);
-    else if (pos === 'inside-end') anchor.appendChild(el);
-    else anchor.parentNode.insertBefore(el, anchor.nextSibling);
-  }
-  function applyStructure(c) {
-    // সরানো (একবারই)
-    (c.moves || []).forEach(function (m) {
-      if (!onPage(m) || !validSel(m.sel)) return;
-      if (movedDone[m.id]) return;
-      var el = document.querySelector(m.sel);
-      if (!el || !sigOK(el, m.sig)) return;
-      var sib = m.dir < 0 ? el.previousElementSibling : el.nextElementSibling;
-      while (sib && sib.hasAttribute('data-pd-add')) sib = m.dir < 0 ? sib.previousElementSibling : sib.nextElementSibling;
-      if (!sib) return;
-      if (m.dir < 0) el.parentNode.insertBefore(el, sib); else el.parentNode.insertBefore(el, sib.nextSibling);
-      el.setAttribute('data-pd-moved', m.id);
-      movedDone[m.id] = 1;
+  function cleanInto(src, dst, doc) {
+    [].slice.call(src.childNodes).forEach(function (n) {
+      if (n.nodeType === 3) { dst.appendChild(doc.createTextNode(n.nodeValue)); return; }
+      if (n.nodeType !== 1) return;
+      var tag = n.nodeName.toLowerCase();
+      if (!TAGOK[tag]) { cleanInto(n, dst, doc); return; }
+      var isSvg = n.namespaceURI === 'http://www.w3.org/2000/svg';
+      var el = isSvg ? doc.createElementNS('http://www.w3.org/2000/svg', n.nodeName.replace(/lineargradient/i, 'linearGradient')) : doc.createElement(tag);
+      [].slice.call(n.attributes).forEach(function (a) {
+        var name = a.name.toLowerCase();
+        if (name === 'href' || name === 'xlink:href') {
+          if (tag === 'a' && safeHref(a.value)) el.setAttribute('href', a.value);
+          return;
+        }
+        if (name === 'src') { if (tag === 'img' && safeUrl(a.value)) el.setAttribute('src', a.value); return; }
+        if (name === 'id') { if (/^[a-z][\w-]{0,40}$/i.test(a.value) && !/^(intro|main-content|brand|theme)/.test(a.value)) el.setAttribute('id', a.value); return; }
+        if (name.indexOf('on') === 0 || name === 'style') return;
+        if (ATTR_OK.test(name)) el.setAttribute(a.name, a.value);
+      });
+      if (tag === 'a' && el.getAttribute('target') === '_blank') el.setAttribute('rel', 'noopener noreferrer');
+      cleanInto(n, el, doc);
+      dst.appendChild(el);
     });
-    // নতুন এলিমেন্ট
-    var wanted = {};
-    (c.adds || []).forEach(function (a) {
-      if (!onPage(a)) return;
-      wanted[a.id] = 1;
-      var old = document.querySelector('[data-pd-add="' + a.id + '"]');
-      if (old) { var fresh = buildAdded(a); if (fresh && old.getAttribute('data-pd-sig') !== JSON.stringify(a.content)) { old.parentNode.replaceChild(fresh, old); fresh.setAttribute('data-pd-sig', JSON.stringify(a.content)); } return; }
-      if (!validSel(a.anchor)) return;
-      var anchor = document.querySelector(a.anchor);
-      if (!anchor || !sigOK(anchor, a.asig)) return;
-      var el = buildAdded(a);
-      if (!el) return;
-      el.setAttribute('data-pd-sig', JSON.stringify(a.content));
-      insertAt(anchor, el, a.pos);
-    });
-    [].forEach.call(document.querySelectorAll('[data-pd-add]'), function (n) { if (!wanted[n.getAttribute('data-pd-add')]) n.remove(); });
   }
-  function applyTexts(c) {
-    restore();
-    (c.rules || []).forEach(function (r) {
-      if (!onPage(r) || !validSel(r.sel)) return;
-      var els;
-      try { els = document.querySelectorAll(r.sel); } catch (e) { return; }
-      [].forEach.call(els, function (el) {
-        if (el.hasAttribute('data-pd-add')) return;
-        if (typeof r.text === 'string') {
-          var n = firstTextNode(el);
-          if (n) { textChanged.push({ node: n, orig: n.nodeValue }); n.nodeValue = r.text; }
-        }
-        if (typeof r.href === 'string' && el.tagName === 'A') {
-          var h = safeUrl(r.href);
-          if (h) { attrChanged.push({ el: el, name: 'href', orig: el.getAttribute('href') }); el.setAttribute('href', h); }
-        }
-        if (typeof r.src === 'string' && el.tagName === 'IMG') {
-          var s = safeImg(r.src);
-          if (s) { attrChanged.push({ el: el, name: 'src', orig: el.getAttribute('src') }); el.setAttribute('src', s); }
-        }
+  function sanitizeFrag(html, doc) {
+    var p = new DOMParser().parseFromString('<body>' + String(html || ''), 'text/html');
+    var box = doc.createElement('div');
+    cleanInto(p.body, box, doc);
+    return box;
+  }
+  function sanitizeHtml(html, doc) { return sanitizeFrag(html, doc || document).innerHTML; }
+
+  /* ---------- ডিজাইন-ব্লকের ডিফল্ট স্টাইল (শুধু নতুন এলিমেন্ট যোগ হলেই বসে) ---------- */
+  var BLOCK_CSS =
+    '.pd-box{padding:28px;border-radius:14px;background:var(--surface);border:1px solid var(--border);}' +
+    '.pd-h{font-family:"Gunjoron",serif;font-weight:700;line-height:1.3;color:var(--text);font-size:30px;margin:0;}' +
+    '.pd-p{font-family:"Gunjoron",serif;font-size:17px;line-height:1.75;color:var(--text);margin:0;}' +
+    '.pd-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 26px;border-radius:999px;background:var(--primary);color:#fff;font-family:"Gunjoron",serif;font-weight:600;font-size:16px;text-decoration:none;cursor:pointer;border:0;}' +
+    '.pd-btn:hover{filter:brightness(1.1);}' +
+    '.pd-img{display:block;width:100%;max-width:100%;height:auto;border-radius:12px;object-fit:cover;background:var(--secondary-light);}' +
+    '.pd-divider{height:2px;border:0;background:var(--border);margin:24px 0;width:100%;}' +
+    '.pd-spacer{height:48px;width:100%;}' +
+    '.pd-icon{display:inline-block;width:48px;height:48px;color:var(--primary);}' +
+    '.pd-icon svg{width:100%;height:100%;display:block;}' +
+    '.pd-badge{display:inline-block;padding:5px 14px;border-radius:999px;background:var(--secondary);color:#fff;font-size:13px;font-weight:600;letter-spacing:.3px;}' +
+    '.pd-hero{padding:72px 32px;border-radius:20px;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);color:#fff;text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px;}' +
+    '.pd-hero .pd-h,.pd-hero .pd-p{color:#fff;}.pd-hero .pd-h{font-size:42px;}.pd-hero .pd-btn{background:#fff;color:var(--primary);}' +
+    '.pd-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;}' +
+    '.pd-card{padding:24px;border-radius:14px;background:var(--surface);border:1px solid var(--border);display:flex;flex-direction:column;gap:10px;}' +
+    '.pd-card .pd-h{font-size:22px;}' +
+    '.pd-quote{padding:28px 32px;border-left:5px solid var(--secondary);background:var(--surface);border-radius:0 14px 14px 0;font-family:"Gunjoron",serif;font-size:22px;line-height:1.6;color:var(--text);}' +
+    '.pd-quote cite{display:block;margin-top:12px;font-size:15px;color:var(--text-muted);font-style:normal;}' +
+    '.pd-cta{padding:36px;border-radius:18px;background:var(--secondary-light);display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between;}' +
+    '.pd-cta .pd-h{font-size:26px;color:#2A2A28;}' +
+    '.pd-wrap{max-width:1200px;margin:0 auto;padding:24px 16px;width:100%;}';
+
+  /* ---------- কম্পাইল: ডিজাইন → CSS লেখা ---------- */
+  function scopesFor(design, pk) {
+    var o = [];
+    if (design && design.global) o.push(design.global);
+    if (design && design.pages && design.pages[pk]) o.push(design.pages[pk]);
+    return o;
+  }
+  function compile(design, pk) {
+    var base = '', t = '', m = '', hide = '', hasAdded = false;
+    if (!design) return { css: '', added: false };
+    /* থিমের রং */
+    var th = design.theme || {};
+    function vars(obj) { var o = ''; for (var k in obj) { if (/^--[a-z0-9-]+$/i.test(k)) { var v = cv(obj[k]); if (v) o += k + ':' + v + ' !important;'; } } return o; }
+    var lv = vars(th.light), dv = vars(th.dark);
+    if (lv) base += 'html:not([data-theme="dark"]){' + lv + '}';
+    if (dv) base += 'html[data-theme="dark"]{' + dv + '}';
+    scopesFor(design, pk).forEach(function (sc) {
+      if (sc.added && sc.added.length) hasAdded = true;
+      var ed = sc.edits || {};
+      Object.keys(ed).forEach(function (sel) {
+        if (!okSel(sel)) return;
+        var e = ed[sel] || {}, c = e.css || {};
+        var b = decls(c.b), tt = decls(c.t), mm = decls(c.m);
+        if (e.del) b += 'display:none !important;';
+        if (b) base += sel + '{' + b + '}';
+        if (tt) t += sel + '{' + tt + '}';
+        if (mm) m += sel + '{' + mm + '}';
+        if (e.hide) ['d', 't', 'm'].forEach(function (k) {
+          if (e.hide[k]) hide += '@media ' + HIDEQ[k] + '{' + sel + '{display:none !important;}}';
+        });
       });
     });
+    var css = (hasAdded ? BLOCK_CSS : '') + base + (t ? '@media ' + BPQ.t + '{' + t + '}' : '') + (m ? '@media ' + BPQ.m + '{' + m + '}' : '') + hide;
+    return { css: css, added: hasAdded };
   }
 
-  /* ---------- মূল প্রয়োগ ---------- */
-  function run() {
-    if (!cfg) return;
-    if (observer) observer.disconnect();
+  /* ---------- DOM-এ বসানো: নতুন এলিমেন্ট, লেখা, লিংক, ছবি ---------- */
+  var ALLOWED_ATTR = { href: 1, src: 1, alt: 1, title: 1, target: 1, 'aria-label': 1, placeholder: 1 };
+  function q1(doc, sel) { try { return doc.querySelector(sel); } catch (e) { return null; } }
+  function qa(doc, sel) { try { return doc.querySelectorAll(sel); } catch (e) { return []; } }
+
+  function makeAdded(doc, a) {
+    var el;
+    if (a.clone) {
+      var src = q1(doc, a.clone);
+      if (!src) return null;
+      el = src.cloneNode(true);
+      [].forEach.call(el.querySelectorAll('[id]'), function (x) { x.removeAttribute('id'); });
+      el.removeAttribute('id');
+      [].forEach.call(el.querySelectorAll('[data-pd-id]'), function (x) { x.removeAttribute('data-pd-id'); });
+    } else {
+      var tag = TAGOK[a.tag] ? a.tag : 'div';
+      el = doc.createElement(tag);
+      if (a.html) { var f = sanitizeFrag(a.html, doc); while (f.firstChild) el.appendChild(f.firstChild); }
+    }
+    el.setAttribute('data-pd-id', a.id);
+    if (a.cls) a.cls.split(/\s+/).forEach(function (c) { if (/^[\w-]+$/.test(c)) el.classList.add(c); });
+    return el;
+  }
+
+  function placeAdded(doc, a, el) {
+    var parent = q1(doc, a.parent) || q1(doc, '#pd-page-main') || q1(doc, 'main') || q1(doc, '#main-content') || doc.body;
+    var ref = a.ref ? q1(doc, a.ref) : null;
+    if (a.where === 'before' && ref && ref.parentNode) { if (el.parentNode !== ref.parentNode || el.nextSibling !== ref) ref.parentNode.insertBefore(el, ref); return; }
+    if (a.where === 'after' && ref && ref.parentNode) { if (el.parentNode !== ref.parentNode || el.previousSibling !== ref) ref.parentNode.insertBefore(el, ref.nextSibling); return; }
+    if (el.parentNode !== parent) parent.appendChild(el);
+  }
+
+  var touched = new Map(); /* এলিমেন্ট -> আসল মান (পরিবর্তন ফেরত নেওয়ার জন্য) */
+
+  function restore(el, o) {
+    if (o.text != null) { if (el.textContent !== o.text) el.textContent = o.text; }
+    if (o.html != null) { if (el.innerHTML !== o.html) el.innerHTML = o.html; }
+    if (o.attrs) for (var k in o.attrs) { if (o.attrs[k] == null) el.removeAttribute(k); else el.setAttribute(k, o.attrs[k]); }
+  }
+
+  function applyDom(doc, design, pk) {
+    if (!design) design = {};
+    var scopes = scopesFor(design, pk);
+    /* ১) নতুন এলিমেন্ট (যেগুলো আর নেই সেগুলো সরানো হয়) */
+    var ids = {};
+    scopes.forEach(function (sc) {
+      (sc.added || []).forEach(function (a) {
+        if (!a || !/^[\w-]+$/.test(a.id || '')) return;
+        ids[a.id] = 1;
+        var el = q1(doc, '[data-pd-id="' + a.id + '"]');
+        if (!el) { el = makeAdded(doc, a); if (el) el.setAttribute('data-pd-gen', '1'); }
+        if (el) placeAdded(doc, a, el);
+      });
+    });
+    [].forEach.call(qa(doc, '[data-pd-gen]'), function (el) {
+      if (!ids[el.getAttribute('data-pd-id')] && el.parentNode) el.parentNode.removeChild(el);
+    });
+    /* ২) লেখা / লিংক / ছবি — আগে কী চাওয়া হচ্ছে তা জমা করা */
+    var want = new Map();
+    scopes.forEach(function (sc) {
+      var ed = sc.edits || {};
+      Object.keys(ed).forEach(function (sel) {
+        var e = ed[sel]; if (!e || !okSel(sel)) return;
+        if (e.text == null && e.html == null && !e.attrs) return;
+        [].forEach.call(qa(doc, sel), function (el) {
+          var w = want.get(el) || {};
+          if (e.text != null) { w.text = e.text; delete w.html; }
+          else if (e.html != null) { w.html = e.html; delete w.text; }
+          if (e.attrs) { w.attrs = w.attrs || {}; for (var k in e.attrs) w.attrs[k] = e.attrs[k]; }
+          want.set(el, w);
+        });
+      });
+    });
+    /* যেগুলোর পরিবর্তন তুলে নেওয়া হয়েছে সেগুলো আগের অবস্থায় ফেরানো */
+    touched.forEach(function (orig, el) {
+      if (el.hasAttribute && el.hasAttribute('data-pd-editing')) return;
+      if (!want.has(el) || !doc.contains(el)) { if (doc.contains(el)) restore(el, orig); touched.delete(el); }
+    });
+    want.forEach(function (w, el) {
+      if (el.hasAttribute && el.hasAttribute('data-pd-editing')) return; /* স্টুডিওতে লেখা এডিট চলছে */
+      var orig = touched.get(el);
+      if (!orig) { orig = {}; touched.set(el, orig); }
+      if (w.text != null) {
+        if (orig.text == null && orig.html == null) orig.text = el.textContent;
+        if (el.textContent !== w.text) el.textContent = w.text;
+      } else if (w.html != null) {
+        if (orig.text == null && orig.html == null) orig.html = el.innerHTML;
+        var h = sanitizeHtml(w.html, doc);
+        if (el.innerHTML !== h) el.innerHTML = h;
+      } else if (orig.text != null || orig.html != null) { restore(el, orig); delete orig.text; delete orig.html; }
+      if (w.attrs) for (var k in w.attrs) {
+        if (!ALLOWED_ATTR[k]) continue;
+        var v = w.attrs[k];
+        if (v == null || v === '') continue;
+        if (k === 'href' && !safeHref(v)) continue;
+        if (k === 'src' && !safeUrl(v)) continue;
+        orig.attrs = orig.attrs || {};
+        if (!(k in orig.attrs)) orig.attrs[k] = el.getAttribute(k);
+        if (el.getAttribute(k) !== v) el.setAttribute(k, v);
+        if (k === 'src' && el.hasAttribute('srcset')) el.removeAttribute('srcset');
+        if (k === 'target' && v === '_blank') el.setAttribute('rel', 'noopener noreferrer');
+      }
+    });
+    /* ৩) পেজের শিরোনাম / বর্ণনা */
+    scopes.forEach(function (sc) {
+      var mt = sc.meta; if (!mt) return;
+      if (mt.title && doc.title !== mt.title) doc.title = mt.title;
+      if (mt.desc) {
+        var d = q1(doc, 'meta[name="description"]');
+        if (!d) { d = doc.createElement('meta'); d.setAttribute('name', 'description'); doc.head.appendChild(d); }
+        if (d.getAttribute('content') !== mt.desc) d.setAttribute('content', mt.desc);
+      }
+    });
+    /* কাস্টম পেজ: শিরোনাম */
+    if (pk.indexOf('page:') === 0 && design.custom && design.custom[pk.slice(5)]) {
+      var cp = design.custom[pk.slice(5)];
+      if (cp.title && !(scopes.some(function (s) { return s.meta && s.meta.title; }))) doc.title = cp.title + ' | পত্রদ্বীপ';
+    }
+  }
+
+  /* ---------- ইঞ্জিন ---------- */
+  var styleEl = null, cur = null, observer = null, timer = 0, busy = false;
+
+  function ensureStyle() {
     if (!styleEl) {
       styleEl = document.createElement('style');
       styleEl.id = 'pd-design-style';
       (document.head || document.documentElement).appendChild(styleEl);
     }
-    var css = '';
-    try { css = buildCss(cfg); } catch (e) { css = ''; }
-    if (PREVIEW) css = '#intro-overlay{display:none !important;}#main-content{opacity:1 !important;}\n' + css;
-    if (styleEl.textContent !== css) styleEl.textContent = css;
-    if (document.body) {
-      try { applyStructure(cfg); } catch (e) {}
-      try { applyTexts(cfg); } catch (e) {}
-      watch();
-    }
+    return styleEl;
+  }
+  function renderCss() {
+    var c = compile(cur, pageKey());
+    if (!c.css && !styleEl) return;
+    var s = ensureStyle();
+    if (s.textContent !== c.css) s.textContent = c.css;
+  }
+  function renderDom() {
+    if (!document.body) return;
+    if (!cur && !touched.size && !document.querySelector('[data-pd-gen]')) return;
+    busy = true;
+    try { applyDom(document, cur, pageKey()); } catch (e) { if (window.console) console.warn('site-design:', e); }
+    if (observer) observer.takeRecords();
+    busy = false;
+  }
+  function schedule() {
+    if (busy || timer) return;
+    timer = setTimeout(function () { timer = 0; renderDom(); }, 40);
   }
   function watch() {
-    if (!window.MutationObserver || !document.body) return;
-    if (!observer) observer = new MutationObserver(function () { clearTimeout(timer); timer = setTimeout(run, 180); });
+    if (observer || !document.body || !window.MutationObserver) return;
+    observer = new MutationObserver(function () { if (!busy) schedule(); });
     observer.observe(document.body, { childList: true, subtree: true });
   }
-  function apply(c) {
-    cfg = c && typeof c === 'object' ? c : { rules: [] };
-    run();
+  function empty(d) {
+    if (!d || typeof d !== 'object') return true;
+    var has = false;
+    if (d.theme && ((d.theme.light && Object.keys(d.theme.light).length) || (d.theme.dark && Object.keys(d.theme.dark).length))) has = true;
+    ['global'].forEach(function () { if (d.global && ((d.global.edits && Object.keys(d.global.edits).length) || (d.global.added && d.global.added.length) || d.global.meta)) has = true; });
+    if (d.pages) for (var k in d.pages) { var p = d.pages[k]; if (p && ((p.edits && Object.keys(p.edits).length) || (p.added && p.added.length) || p.meta)) has = true; }
+    if (d.custom && Object.keys(d.custom).length) has = true;
+    return !has;
   }
-  function reset() {
-    cfg = { rules: [] };
-    run();
+  function set(design) {
+    cur = design || null;
+    renderCss();
+    var go = function () { renderDom(); watch(); };
+    if (document.body) go(); else document.addEventListener('DOMContentLoaded', go);
   }
-  function stamp(c) { return c ? (c.updatedAt || '') + '|' + (c.rules || []).length : ''; }
 
-  window.PDDesign = { sig: sigOf, markMoved: function (id) { movedDone[id] = 1; }, apply: apply, reset: reset, page: PAGE, buildCss: buildCss, icons: ICONS, safeUrl: safeUrl, safeImg: safeImg, preview: PREVIEW };
+  window.PDDesign = {
+    studio: STUDIO, key: KEY, cacheKey: CACHE,
+    set: set, render: function () { renderCss(); renderDom(); },
+    compile: compile, pageKey: pageKey, sanitizeHtml: sanitizeHtml, sanitizeFrag: sanitizeFrag,
+    safeUrl: safeUrl, safeHref: safeHref, cv: cv, okSel: okSel, isEmpty: empty,
+    get current() { return cur; }
+  };
 
-  if (PREVIEW) {
-    // প্রিভিউ: শুরুতে পরিষ্কার; ডিজাইনার নিজে apply() ডাকবে
-    if (document.readyState !== 'loading') run(); else document.addEventListener('DOMContentLoaded', run);
-    cfg = { rules: [] };
+  /* ---------- স্টুডিও মোড: ইন্ট্রো বাদ, কনটেন্ট সঙ্গে সঙ্গে দৃশ্যমান ---------- */
+  if (STUDIO) {
+    document.documentElement.classList.add('pd-studio');
+    var ss = document.createElement('style');
+    ss.textContent = '#intro-overlay{display:none!important}#main-content{opacity:1!important;transform:none!important}html{scroll-behavior:auto!important}*,*::before,*::after{caret-color:auto}';
+    (document.head || document.documentElement).appendChild(ss);
+    var mo = new MutationObserver(function () {
+      if (document.body) { document.body.setAttribute('data-intro', 'instant'); mo.disconnect(); }
+    });
+    if (document.body) document.body.setAttribute('data-intro', 'instant');
+    else mo.observe(document.documentElement, { childList: true });
     return;
   }
 
-  /* ---------- সাধারণ দর্শক: জমা থেকে দ্রুত, তারপর ডেটাবেস থেকে নতুনটা ---------- */
+  /* ---------- পাবলিক পেজ: ক্যাশ থেকে সঙ্গে সঙ্গে, তারপর নতুন ডেটা এনে মিলিয়ে নেওয়া ---------- */
   var cached = null;
-  try { cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); } catch (e) {}
-  if (cached) { cfg = cached; run(); }
-  function boot() {
-    if (cfg) run();
-    var PD = window.PD;
-    if (!PD || !PD.db) return;
-    PD.db.from('site_settings').select('value').eq('key', 'design_live').then(function (r) {
-      var v = r && r.data && r.data[0] && r.data[0].value;
-      if (!v || typeof v !== 'object') {
-        if (cached) { try { localStorage.removeItem(CACHE_KEY); } catch (e) {} cfg = { rules: [] }; run(); restore(); }
-        return;
-      }
-      if (stamp(v) === stamp(cached) && cached) return;
-      try { localStorage.setItem(CACHE_KEY, JSON.stringify(v)); } catch (e) {}
-      cached = v;
-      apply(v);
-    }, function () {});
+  try { cached = JSON.parse(localStorage.getItem(CACHE) || 'null'); } catch (e) {}
+  if (cached && !empty(cached)) set(cached);
+
+  function done(d) {
+    var a = JSON.stringify(d || null), b = JSON.stringify(cached || null);
+    if (a === b) return;
+    cached = d;
+    try { if (d && !empty(d)) localStorage.setItem(CACHE, a); else localStorage.removeItem(CACHE); } catch (e) {}
+    set(d && !empty(d) ? d : null);
   }
-  if (document.readyState !== 'loading') boot(); else document.addEventListener('DOMContentLoaded', boot);
+  function fromStatic(cb) {
+    var u;
+    try { u = new URL('assets/data/site-design.json', document.baseURI).href; } catch (e) { return cb(null); }
+    fetch(u, { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : null; }).then(cb, function () { cb(null); });
+  }
+  function load() {
+    var C = window.PD_CONFIG;
+    if (!C || !window.fetch) return;
+    fetch(C.supabaseUrl + '/rest/v1/site_settings?key=eq.' + KEY + '&select=value', {
+      headers: { apikey: C.anonKey, Authorization: 'Bearer ' + C.anonKey }
+    }).then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+      .then(function (rows) {
+        if (rows && rows[0] && rows[0].value) return done(rows[0].value);
+        fromStatic(done);
+      })
+      .catch(function () { fromStatic(function (d) { if (d) done(d); }); });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', load); else load();
 })();
