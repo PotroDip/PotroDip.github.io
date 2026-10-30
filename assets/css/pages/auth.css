@@ -1183,3 +1183,9 @@ body footer.site-footer::before{background:none !important; display:none;}
 .dash-del-link:hover,.dash-del-link:active{background:color-mix(in srgb, var(--error) 10%, transparent);}
 .dash-del-link svg{width:14px; height:14px;}
 .dash-mob-del{padding:12px 14px 18px; text-align:center;}
+
+/* v13: শুধু পিসি/ট্যাবলেটে — ইনফো আইকনের নিচের শেপ (ব্যাকগ্রাউন্ড বক্স) নেই, শুধু আইকন; আইকন ও লেখার মাঝে একটু বেশি ফাঁক */
+@media(min-width:641px){
+  .di-item dt svg{width:24px; height:24px; padding:0; border-radius:0; background:transparent;}
+  .di-item{gap:14px;}
+}

@@ -116,6 +116,25 @@
       }, 400)
     })
   }
+  /* v13: লগইন থাকলে হেডারের অ্যাকাউন্ট আইকনে ইউজারের নিজের ছবি দেখাও (ছবি না থাকলে আগের আইকনই থাকে) */
+  PD.setHeaderAvatar = function(url) {
+    var ab = document.querySelector('.site-header .account-btn');
+    if (!ab || !PD.user) return;
+    var src = url || (PD.profile && PD.profile.avatar_url);
+    var img = ab.querySelector('img.account-avatar');
+    if (!src) { if (img) img.remove(); ab.classList.remove('has-avatar'); return; }
+    if (!img) {
+      img = document.createElement('img');
+      img.className = 'account-avatar';
+      img.alt = '';
+      img.width = 40; img.height = 40;
+      img.onerror = function () { img.remove(); ab.classList.remove('has-avatar'); };
+      ab.appendChild(img);
+    }
+    img.src = src;
+    ab.classList.add('has-avatar');
+  };
+  document.addEventListener('pd:profile', function () { PD.setHeaderAvatar(); });
   PD.ready = PD.load().then(function() {
     if (PD.profile && PD.profile.theme_preference && !localStorage.getItem('potrodip-theme')) {
       localStorage.setItem('potrodip-theme', PD.profile.theme_preference);
@@ -123,6 +142,7 @@
     }
     var ab = document.querySelector('.account-btn');
     if (ab && PD.user) { ab.classList.add('logged'); ab.title = 'আমার প্রোফাইল'; }
+    PD.setHeaderAvatar();
     if (/admin/.test(location.pathname) && !PD.isAdmin()) {
       location.replace(PD.pages.auth)
     }
