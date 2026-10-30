@@ -658,9 +658,7 @@ html[data-theme="dark"] .order-shop{color:#0F1415;}
    ================================================================= */
 .dash-hero{
   display:block; padding:0; overflow:hidden; border-radius:18px;
-  background:
-    radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--primary) 16%, transparent) 0%, transparent 60%),
-    var(--surface);
+  background:var(--surface);
   box-shadow:0 1px 0 rgba(0,0,0,.02), 0 12px 32px -22px rgba(18,58,61,.45);
 }
 .dash-top{
@@ -670,7 +668,7 @@ html[data-theme="dark"] .order-shop{color:#0F1415;}
 .dash-hero-left{display:flex; align-items:center; gap:18px; min-width:0; flex:1 1 320px;}
 .dash-avatar{
   width:84px; height:84px; border-radius:50%; padding:3px;
-  background:linear-gradient(135deg,var(--primary),var(--secondary-light));
+  background:var(--primary);
   border:none; box-shadow:0 8px 20px -10px rgba(18,58,61,.6);
 }
 .dash-avatar img{border-radius:50%; background:var(--bg); border:3px solid var(--surface);}
@@ -783,7 +781,7 @@ html[data-theme="dark"] .dash-del-link{color:#F08A80;}
 .pe-photo{display:flex; align-items:center; gap:18px; margin-bottom:22px; flex-wrap:wrap;}
 .pe-photo-img{
   width:88px; height:88px; border-radius:50%; padding:3px; flex:none;
-  background:linear-gradient(135deg,var(--primary),var(--secondary-light));
+  background:var(--primary);
 }
 .pe-photo-img img{width:100%; height:100%; border-radius:50%; object-fit:cover; border:3px solid var(--surface); background:var(--bg);}
 .pe-photo-btns{display:flex; flex-direction:column; align-items:flex-start; gap:6px; min-width:0;}
@@ -879,3 +877,209 @@ body.pe-lock{overflow:hidden;}
 #demo-logout-btn:hover{background:rgba(192,57,43,.16); border-color:#C0392B; color:#A93226;}
 html[data-theme="dark"] #demo-logout-btn{background:rgba(229,115,104,.12); color:#F08A80; border-color:rgba(229,115,104,.4);}
 html[data-theme="dark"] #demo-logout-btn:hover{background:rgba(229,115,104,.2); color:#F8B1A9;}
+
+
+/* ================================================================
+   ড্যাশবোর্ড v6 — প্রফেশনাল গ্লাস ডিজাইন (গ্রেডিয়েন্ট ছাড়া, শুধু ব্র্যান্ড কালার)
+   ================================================================= */
+:root{
+  --glass-bg:rgba(255,255,255,.72);
+  --glass-bd:rgba(255,255,255,.75);
+  --glass-line:rgba(29,83,88,.14);
+  --glass-shadow:0 10px 30px -14px rgba(18,58,61,.35), 0 2px 6px -2px rgba(18,58,61,.08);
+  --tint:color-mix(in srgb, var(--primary) 9%, transparent);
+}
+html[data-theme="dark"]{
+  --glass-bg:rgba(30,36,38,.62);
+  --glass-bd:rgba(255,255,255,.09);
+  --glass-line:rgba(255,255,255,.1);
+  --glass-shadow:0 12px 32px -14px rgba(0,0,0,.7);
+  --tint:color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+.dash-wrap{padding-top:22px; padding-bottom:64px; position:relative;}
+
+/* ---------- হিরো কার্ড ---------- */
+.dash-hero{
+  position:relative; border-radius:24px; overflow:hidden; margin-bottom:22px;
+  background:var(--glass-bg); border:1px solid var(--glass-bd);
+  -webkit-backdrop-filter:blur(18px) saturate(1.5); backdrop-filter:blur(18px) saturate(1.5);
+  box-shadow:var(--glass-shadow);
+}
+.dash-top{position:relative; padding:64px 20px 18px; }
+.dash-top::before{ /* একরঙা ব্র্যান্ড কভার */
+  content:""; position:absolute; left:0; right:0; top:0; height:92px; background:var(--primary);
+}
+.dash-top::after{ /* কভারের উপর হালকা গ্লাস রিং (একরঙা) */
+  content:""; position:absolute; right:-34px; top:-46px; width:150px; height:150px; border-radius:50%;
+  background:rgba(255,255,255,.09); border:1px solid rgba(255,255,255,.14);
+}
+.dash-hero-left,.dash-hero-actions{position:relative; z-index:1;}
+.dash-avatar{
+  width:96px; height:96px; padding:0; background:var(--surface); border:4px solid var(--surface);
+  box-shadow:0 10px 24px -10px rgba(18,58,61,.55); border-radius:50%;
+}
+.dash-avatar img{border:0; border-radius:50%;}
+.dash-hero-text h1{font-size:21px; letter-spacing:.1px;}
+
+.dash-hero-actions{gap:10px;}
+.dash-hero-actions .btn-outline{
+  height:46px; padding:0 16px; border-radius:14px; font-size:13.5px; gap:8px;
+  background:var(--surface); border:1px solid var(--glass-line); box-shadow:0 1px 2px rgba(0,0,0,.04);
+}
+#btn-edit-profile{background:var(--primary); border-color:var(--primary); color:#fff;}
+html[data-theme="dark"] #btn-edit-profile{color:#0F1415;}
+#demo-logout-btn{border-radius:14px;}
+#admin-link{background:var(--tint); color:var(--primary); border-color:transparent;}
+
+/* তথ্য তালিকা */
+.dash-info{background:transparent; border-top:0; gap:0; padding:4px 14px 6px;}
+.di-item{
+  background:transparent; border-top:1px solid var(--glass-line); padding:13px 4px;
+}
+.di-item:first-child{border-top:1px solid var(--glass-line);}
+.di-item dt{font-size:12.5px; gap:10px; color:var(--text-muted);}
+.di-item dt svg{
+  width:34px; height:34px; padding:8px; border-radius:11px; background:var(--tint); color:var(--primary);
+}
+.di-item dd{font-size:14px; font-weight:500;}
+.dash-mob-del{background:transparent; border-top:1px solid var(--glass-line); padding:8px 14px 14px;}
+.dash-del-link{
+  width:100%; justify-content:center; height:44px; border-radius:14px; font-size:13.5px;
+  background:color-mix(in srgb, var(--error) 8%, transparent);
+}
+
+/* ---------- ট্যাব বার (গ্লাস) ---------- */
+.dash-tabs{
+  position:sticky; top:84px; z-index:40;
+  display:flex; flex-wrap:nowrap; gap:6px; padding:6px; margin:0 0 22px;
+  overflow-x:auto; overflow-y:hidden; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
+  scrollbar-width:none; border:1px solid var(--glass-bd); border-radius:18px;
+  background:var(--glass-bg); box-shadow:var(--glass-shadow);
+  -webkit-backdrop-filter:blur(18px) saturate(1.5); backdrop-filter:blur(18px) saturate(1.5);
+}
+.dash-tabs::-webkit-scrollbar{display:none;}
+.dash-tab-btn,
+.dash-tab-btn.active{
+  flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  height:44px; padding:0 15px; margin:0; border-radius:13px; white-space:nowrap; scroll-snap-align:center;
+  font-size:13.5px; font-weight:600; color:var(--text-muted); background:transparent;
+  transition:background .2s ease, color .2s ease, transform .1s ease;
+}
+.dash-tab-btn:active{transform:scale(.97);}
+.dash-tab-btn:hover{color:var(--primary); background:var(--tint);}
+.dash-tab-btn svg{width:17px; height:17px; flex:none;}
+.dash-tab-btn::after,.dash-tab-btn.active::after{display:none;}
+.dash-tab-btn .count{
+  min-width:22px; height:22px; padding:0 7px; display:inline-flex; align-items:center; justify-content:center;
+  border-radius:999px; font-size:11.5px; line-height:1; background:var(--tint); color:var(--primary);
+}
+.dash-tab-btn.active{background:var(--primary); color:#fff; box-shadow:0 6px 14px -8px rgba(18,58,61,.7);}
+.dash-tab-btn.active .count{background:rgba(255,255,255,.22); color:#fff;}
+html[data-theme="dark"] .dash-tab-btn.active{color:#0F1415;}
+html[data-theme="dark"] .dash-tab-btn.active .count{background:rgba(15,20,21,.2); color:#0F1415;}
+
+/* ---------- ফলো করা লেখক ---------- */
+.following-grid{grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px;}
+.following-card{
+  padding:20px 12px 16px; border-radius:20px; background:var(--glass-bg); border:1px solid var(--glass-bd);
+  box-shadow:var(--glass-shadow); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+  display:flex; flex-direction:column; align-items:center; transition:transform .2s ease;
+}
+.following-card:hover{transform:translateY(-2px);}
+.following-card img{
+  width:68px; height:68px; margin:0 0 12px; padding:3px; background:var(--surface);
+  border:2px solid var(--primary); box-sizing:border-box;
+}
+.following-card h4{font-size:15px; line-height:1.4;}
+.following-role{margin-bottom:14px;}
+.unfollow-btn{
+  width:100%; justify-content:center; height:38px; padding:0 12px; border-radius:12px; font-size:12.5px;
+  background:var(--tint); border-color:transparent; color:var(--primary);
+}
+.unfollow-btn:hover{background:color-mix(in srgb, var(--error) 10%, transparent); color:var(--error); border-color:transparent;}
+
+/* ---------- সেভ করা লেখা ---------- */
+.saved-grid{grid-template-columns:1fr; gap:14px;}
+.saved-card{
+  padding:10px 10px 16px; border-radius:20px; background:var(--glass-bg); border:1px solid var(--glass-bd);
+  box-shadow:var(--glass-shadow); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+}
+.saved-card .thumb{border-radius:14px; border:0; margin-bottom:12px;}
+.saved-card .cat-label{
+  align-self:flex-start; margin:0 6px 8px; padding:3px 11px; border-radius:999px; font-size:11.5px; font-weight:600;
+  background:var(--tint); color:var(--primary);
+}
+.saved-card h3{margin:0 6px 10px; font-size:17px;}
+.saved-card .card-meta{margin:0 6px;}
+.remove-bookmark{top:10px; right:10px; width:34px; height:34px; background:rgba(18,58,61,.55); border:1px solid rgba(255,255,255,.25);}
+
+/* ---------- নোটিফিকেশন ---------- */
+.notif-list{max-width:none; gap:10px;}
+.notif-item,.notif-item.unread{
+  padding:14px 14px; border-radius:18px; background:var(--glass-bg); border:1px solid var(--glass-bd);
+  box-shadow:var(--glass-shadow); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); overflow:hidden;
+}
+.notif-item + .notif-item{border-top:1px solid var(--glass-bd);}
+.notif-item.unread::before{content:""; position:absolute; left:0; top:14px; bottom:14px; width:3px; border-radius:0 3px 3px 0; background:var(--primary);}
+.notif-icon{width:40px; height:40px; border-radius:13px;}
+.notif-dot{margin-top:6px;}
+
+/* ---------- সেটিংস ---------- */
+.settings-heading{font-size:18px; margin:2px 4px 14px;}
+.settings-block{
+  max-width:680px; padding:6px 18px; border-radius:20px; margin-top:0;
+  background:var(--glass-bg); border:1px solid var(--glass-bd); box-shadow:var(--glass-shadow);
+  -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+}
+.settings-row,.settings-row:first-child,.settings-row:last-child{padding:16px 0; border-bottom:1px solid var(--glass-line);}
+.settings-row:last-child{border-bottom:0;}
+.switch{width:48px; height:28px;}
+.switch .track::before{width:22px; height:22px; top:3px; left:3px;}
+.switch input:checked + .track::before{transform:translateX(20px);}
+
+/* ---------- খালি অবস্থা ---------- */
+.pd-empty,.order-empty{
+  padding:40px 20px !important; border-radius:20px; background:var(--glass-bg); border:1.5px dashed var(--glass-line);
+  color:var(--text-muted) !important; font-size:14px;
+}
+
+/* ---------- ফুটারের গ্রেডিয়েন্ট বাদ ---------- */
+body footer.site-footer::before{background:none !important; display:none;}
+
+/* ---------- বড় স্ক্রিন ---------- */
+@media(min-width:641px){
+  .dash-wrap{padding-top:34px;}
+  .dash-top{padding:72px 30px 20px;}
+  .dash-top::before{height:104px;}
+  .dash-avatar{width:112px; height:112px;}
+  .dash-hero-text h1{font-size:26px;}
+  .dash-hero-actions .btn-outline{height:48px; padding:0 26px;}
+  .dash-info{padding:6px 20px 8px;}
+  .di-item{border-top:0 !important; border-left:1px solid var(--glass-line); padding:18px 12px;}
+  .di-item:first-child{border-left:0;}
+  .dash-info{border-top:1px solid var(--glass-line);}
+  .dash-tabs{justify-content:center; top:92px; width:max-content; max-width:100%; margin-left:auto; margin-right:auto;}
+  .following-grid{grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px;}
+  .saved-grid{grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px;}
+  .settings-block{padding:8px 26px;}
+}
+@media(min-width:641px) and (max-width:900px){
+  .following-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+}
+@media(min-width:1000px){
+  .saved-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+}
+
+/* মোবাইলে অ্যাকাউন্ট ট্যাব স্ক্রলবার */
+@media(max-width:640px){
+  .di-item,.di-item:nth-child(3){padding:13px 4px;}
+  .dash-wrap{padding-left:14px; padding-right:14px;}
+  .dash-hero-actions{grid-template-columns:1fr 1fr;}
+  .di-item dd{font-size:13px;}
+}
+@media(max-width:360px){
+  .dash-hero-actions .btn-outline svg{display:inline-block; width:14px; height:14px;}
+  .dash-hero-actions .btn-outline{font-size:12px; padding:0 8px;}
+}
+@media(prefers-reduced-motion:reduce){.following-card,.dash-tab-btn{transition:none;}}

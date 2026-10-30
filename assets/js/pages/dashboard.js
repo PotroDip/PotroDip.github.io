@@ -184,3 +184,10 @@
   window.pdShowDashboard = function () { if (orig) orig.apply(this, arguments); load(); };
   PD.ready.then(load);
 })();
+
+/* ট্যাব বারে সক্রিয় ট্যাব মাঝখানে আনা (মোবাইল) */
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('#dash-tabs .dash-tab-btn');
+  if (!b) return;
+  setTimeout(function () { try { b.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); } catch (x) { } }, 30);
+});

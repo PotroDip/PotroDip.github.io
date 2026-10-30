@@ -139,3 +139,31 @@ footer.site-footer::before{
 @media(max-width:860px){ .site-header .hamburger{display:flex;} }
 .site-footer .newsletter-block > *{min-width:0;}
 .site-footer .newsletter-copy{min-width:0;}
+
+/* ================= v7: হেডার সমন্বয় ================= */
+/* ডেস্কটপ হেডার: লোগোর নিচে ট্যাগলাইন */
+.site-header .brand{flex-direction:column;align-items:flex-start;gap:4px;}
+.brand-tag{font-size:12px;color:var(--text-muted);white-space:nowrap;line-height:1.1;letter-spacing:.2px;}
+@media(max-width:860px){ .brand-tag{display:none;} .site-header .brand{flex-direction:row;align-items:center;gap:10px;} }
+
+/* নেভ লিংক একটু কাছাকাছি (শুধু ডেস্কটপ) */
+.site-header nav.main-nav{gap:18px;}
+.site-header .nav-links{gap:2px;}
+.site-header .nav-links a{padding:8px 10px;}
+
+/* মোবাইল: হ্যামবার্গার আইকনের পাশে (সার্চ/থিম/প্রোফাইলের সাথে) */
+@media(max-width:860px){
+  .site-header .header-inner{justify-content:flex-start;}
+  .site-header .brand{margin-right:auto;}
+  .site-header nav.main-nav{gap:4px;}
+  .site-header .hamburger{margin-left:2px;}
+}
+@media(max-width:430px){
+  .site-header nav.main-nav{gap:2px;}
+}
+
+/* মোবাইল মেনু: পূর্ণ মূল লোগো (logo.svg) — ডার্ক মোডে সাদা */
+#mobile-menu .mm-head{padding:6px 20px;}
+#mobile-menu .mm-logo{flex:1;min-width:0;display:flex;align-items:center;}
+#mobile-menu .mm-logo img{width:150px;height:150px;max-width:none;margin:-18px 0 -26px -10px;object-fit:contain;}
+html[data-theme="dark"] #mobile-menu .mm-logo img{filter:brightness(0) invert(1);}
