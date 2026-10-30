@@ -31,9 +31,9 @@
     $('dash-name').textContent = name;
     $('dash-email').textContent = PD.user.email || '';
     $('dash-avatar-img').src = UI.avatar(P.avatar_url);
-    setInfo('di-phone', P.phone ? UI.bn(P.phone) : '');
+    setInfo('di-phone', P.phone ? UI.bn(P.phone) : (viaPhone ? UI.bn(PD.user.email.split('@')[0]) : ''));
     setInfo('di-address', P.address || '');
-    setInfo('di-email', PD.user.email || '');
+    setInfo('di-email', em);
     setInfo('di-joined', PD.user.created_at ? UI.date(PD.user.created_at) : '');
     /* শুধু এডমিনের জন্য: এডমিন প্যানেলে যাওয়ার বাটন */
     if (PD.isAdmin() && !$('admin-link')) {
@@ -217,4 +217,19 @@ document.addEventListener('click', function (e) {
     io.observe(bar);
   }
   sync();
+})();
+
+
+/* v14: প্রোফাইলের ফোন/ইমেইল/তারিখ/ঠিকানা ও "অ্যাকাউন্ট মুছুন" ডিফল্টে লুকানো — বাটনে দেখায়/লুকায় */
+(function () {
+  var btn = document.getElementById('dash-toggle-btn'), box = document.getElementById('dash-more-wrap');
+  if (!btn || !box) return;
+  var txt = btn.querySelector('.dtb-text');
+  btn.addEventListener('click', function () {
+    var open = box.hasAttribute('hidden');
+    if (open) box.removeAttribute('hidden'); else box.setAttribute('hidden', '');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    btn.classList.toggle('is-open', open);
+    txt.textContent = open ? 'লুকান' : 'বিস্তারিত দেখুন';
+  });
 })();

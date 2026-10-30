@@ -15,7 +15,8 @@
 <link rel="stylesheet" href="assets/css/components/chrome.css">
 <script src="assets/js/core/site-design.js"></script>
 </head>
-<body>
+<body class="auth-mode">
+<div class="glass-bg" aria-hidden="true"><i class="orb o1"></i><i class="orb o2"></i><i class="orb o3"></i><span class="stars"></span></div>
 <!-- ============ পেজ-লোডিং ওভারলে ============ -->
 <div id="intro-overlay">
 <div id="logo-stage">
@@ -235,7 +236,7 @@
 <main>
 <div class="wrap">
 <div class="breadcrumb" id="breadcrumb-el">
-<a href="#">হোম</a><span class="sep"></span>
+<a href="index.html">হোম</a><span class="sep"></span>
 <span class="current">লগইন / সাইনআপ</span>
 </div>
 </div>
@@ -244,6 +245,7 @@
     ================================================================= -->
 <section class="auth-wrap wrap" id="auth-section">
 <div class="auth-card">
+<div class="auth-logo" aria-hidden="true"><div id="auth-logo-slot"></div></div>
 <div class="auth-tabs">
 <button class="active" data-tab="login">লগইন</button>
 <button data-tab="signup">সাইনআপ</button>
@@ -252,16 +254,17 @@
 <div class="tab-panel active" id="panel-login">
 <h2>পত্রদ্বীপে আপনাকে স্বাগতম</h2>
 <p class="auth-sub">আপনার পত্রদ্বীপ একাউন্টে লগইন করুন</p>
-<button class="google-btn" id="btn-facebook-login">
-<svg viewbox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.413c0-3.026 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.971H15.83c-1.491 0-1.956.93-1.956 1.886v2.264h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z" fill="#1877F2"></path></svg>
-          
-            ফেসবুক দিয়ে লগইন করুন
-          </button>
+<div class="social-row" role="group" aria-label="লগইনের মাধ্যম">
+<button type="button" class="soc-btn" id="btn-google-login" aria-label="গুগল দিয়ে"><span class="soc-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#EA4335" d="M12 10.2v3.9h5.5c-.24 1.4-1.7 4.1-5.5 4.1-3.3 0-6-2.7-6-6.1s2.7-6.1 6-6.1c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.7 3.5 14.6 2.6 12 2.6 6.9 2.6 2.8 6.7 2.8 12s4.1 9.4 9.2 9.4c5.3 0 8.8-3.7 8.8-9 0-.6-.1-1.1-.2-1.6H12z"/></svg></span><span class="soc-txt">গুগল</span></button>
+<button type="button" class="soc-btn" id="btn-facebook-login" aria-label="ফেসবুক দিয়ে"><span class="soc-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.413c0-3.026 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.971H15.83c-1.491 0-1.956.93-1.956 1.886v2.264h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z" fill="#1877F2"/></svg></span><span class="soc-txt">ফেসবুক</span></button>
+<button type="button" class="soc-btn" id="btn-email-login" aria-label="ইমেইল দিয়ে"><span class="soc-ico soc-mail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><polyline points="3.5 7 12 13 20.5 7"/></svg></span><span class="soc-txt">ইমেইল</span></button>
+</div>
 <div class="divider"><span>অথবা</span></div>
 <form>
 <div class="field-row">
-<label for="li-email">ইমেইল ঠিকানা</label>
-<input id="li-email" placeholder="potrodip@gmail.com" required="" type="email"/>
+<label for="li-email">মোবাইল/ইমেইল</label>
+<input id="li-email" class="id-input" placeholder="০১XXXXXXXXXXX" required="" type="text" inputmode="text" autocomplete="username" autocapitalize="none" spellcheck="false"/>
+<p class="id-hint" id="li-email-hint" role="status" aria-live="polite"></p>
 </div>
 <div class="field-row">
 <label for="li-pass">পাসওয়ার্ড</label>
@@ -283,11 +286,11 @@
 <div class="tab-panel" id="panel-signup">
 <h2>নতুন একাউন্ট খুলুন</h2>
 <p class="auth-sub">লেখা পড়ুন, লেখক ফলো করুন, পছন্দের লেখা সংগ্রহে রাখুন — সব এক জায়গায়</p>
-<button class="google-btn" id="btn-facebook-signup">
-<svg viewbox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.413c0-3.026 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.971H15.83c-1.491 0-1.956.93-1.956 1.886v2.264h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z" fill="#1877F2"></path></svg>
-          
-            ফেসবুক দিয়ে সাইনআপ করুন
-          </button>
+<div class="social-row" role="group" aria-label="লগইনের মাধ্যম">
+<button type="button" class="soc-btn" id="btn-google-signup" aria-label="গুগল দিয়ে"><span class="soc-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#EA4335" d="M12 10.2v3.9h5.5c-.24 1.4-1.7 4.1-5.5 4.1-3.3 0-6-2.7-6-6.1s2.7-6.1 6-6.1c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.7 3.5 14.6 2.6 12 2.6 6.9 2.6 2.8 6.7 2.8 12s4.1 9.4 9.2 9.4c5.3 0 8.8-3.7 8.8-9 0-.6-.1-1.1-.2-1.6H12z"/></svg></span><span class="soc-txt">গুগল</span></button>
+<button type="button" class="soc-btn" id="btn-facebook-signup" aria-label="ফেসবুক দিয়ে"><span class="soc-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.413c0-3.026 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.971H15.83c-1.491 0-1.956.93-1.956 1.886v2.264h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z" fill="#1877F2"/></svg></span><span class="soc-txt">ফেসবুক</span></button>
+<button type="button" class="soc-btn" id="btn-email-signup" aria-label="ইমেইল দিয়ে"><span class="soc-ico soc-mail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><polyline points="3.5 7 12 13 20.5 7"/></svg></span><span class="soc-txt">ইমেইল</span></button>
+</div>
 <div class="divider"><span>অথবা</span></div>
 <form>
 <div class="field-row">
@@ -295,13 +298,14 @@
 <input id="su-name" placeholder="যেমন: রুবাইয়াত হোসেন" required="" type="text"/>
 </div>
 <div class="field-row">
-<label for="su-email">ইমেইল ঠিকানা</label>
-<input id="su-email" placeholder="potrodip@gmail.com" required="" type="email"/>
+<label for="su-email">মোবাইল/ইমেইল</label>
+<input id="su-email" class="id-input" placeholder="০১XXXXXXXXXXX" required="" type="text" inputmode="text" autocomplete="username" autocapitalize="none" spellcheck="false"/>
+<p class="id-hint" id="su-email-hint" role="status" aria-live="polite"></p>
 </div>
 <div class="field-row">
 <label for="su-pass">পাসওয়ার্ড</label>
 <div class="pw-wrap">
-<input id="su-pass" placeholder="কমপক্ষে ৮ ক্যারেক্টার" required="" type="password"/>
+<input id="su-pass" placeholder="কমপক্ষে ৬ ক্যারেক্টার" required="" type="password"/>
 <button aria-label="পাসওয়ার্ড দেখান" class="pw-toggle" data-target="su-pass" type="button">
 <svg class="eye-open" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
 <svg class="eye-closed" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a19.66 19.66 0 0 1 5.06-6.06M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a19.5 19.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" x2="23" y1="1" y2="23"></line></svg>
@@ -323,7 +327,6 @@
 <p class="auth-switch">আগে থেকেই একাউন্ট আছে? <a data-switch="login" href="#">লগইন করুন</a></p>
 </div>
 </div>
-<p class="auth-quote">কাগজের বুকে নক্ষত্র হওয়ার ক্ষুদ্র প্রয়াস</p>
 </section>
 <!-- ================================================================
          ============ ২. ড্যাশবোর্ড সেকশন (লগইনের পর) ============
@@ -351,6 +354,7 @@
           </button>
 </div>
 </div>
+<div class="dash-more-wrap" id="dash-more-wrap" hidden>
 <dl class="dash-info" id="dash-info">
 <div class="di-item"><dt><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2"></rect><line x1="12" x2="12.01" y1="18" y2="18"></line></svg></dt><dd id="di-phone" aria-label="মোবাইল">—</dd></div>
 <div class="di-item"><dt><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"></rect><polyline points="22 6 12 13 2 6"></polyline></svg></dt><dd id="di-email" aria-label="ইমেইল">—</dd></div>
@@ -358,6 +362,8 @@
 <div class="di-item di-wide"><dt><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></dt><dd id="di-address" aria-label="ঠিকানা">—</dd></div>
 </dl>
 <div class="dash-mob-del"><button type="button" class="dash-del-link" id="btn-delete-account-m"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2m-9 0 1 14h8l1-14"/></svg>অ্যাকাউন্ট মুছুন</button></div>
+</div>
+<div class="dash-toggle-row"><button type="button" class="dash-toggle-btn" id="dash-toggle-btn" aria-expanded="false" aria-controls="dash-more-wrap"><span class="dtb-text">বিস্তারিত দেখুন</span><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></button></div>
 </div>
 <div class="dash-tabs-wrap">
 <div class="dash-tabs" id="dash-tabs">
@@ -564,6 +570,43 @@
 <div class="npo-actions">
 <button class="btn-primary-full" id="npo-allow">অনুমতি দিন</button>
 <button class="npo-skip" id="npo-skip">এখন না, পরে ঠিক করবো</button>
+</div>
+</div>
+</div>
+<!-- ============ পাসওয়ার্ড রিসেট পপআপ ============ -->
+<div id="fp-overlay" class="fp-overlay" role="dialog" aria-modal="true" aria-labelledby="fp-title" aria-hidden="true">
+<div class="fp-card">
+<button type="button" class="fp-x" id="fp-close" aria-label="বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+<div class="fp-badge" id="fp-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="10.5" rx="3"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/><circle cx="12" cy="15.7" r="1.3"/></svg></div>
+<div class="fp-step" id="fp-step-ask">
+<h3 id="fp-title">পাসওয়ার্ড ভুলে গেছেন?</h3>
+<p class="fp-sub">চিন্তা নেই। আপনার অ্যাকাউন্টের ইমেইল ঠিকানা দিন — নতুন পাসওয়ার্ড বানানোর লিংক সেখানে পাঠিয়ে দেব।</p>
+<form id="fp-form" novalidate>
+<div class="field-row">
+<label for="fp-email">ইমেইল ঠিকানা</label>
+<input id="fp-email" type="email" placeholder="potrodip@gmail.com" autocomplete="email" autocapitalize="none" spellcheck="false"/>
+<p class="id-hint" id="fp-hint" role="status" aria-live="polite"></p>
+</div>
+<button class="btn-primary-full" id="fp-send" type="submit">রিসেট লিংক পাঠান</button>
+</form>
+<button type="button" class="fp-back" id="fp-cancel">← লগইনে ফিরে যান</button>
+</div>
+<div class="fp-step" id="fp-step-sent" hidden>
+<h3>ইমেইল পাঠানো হয়েছে</h3>
+<p class="fp-sub" id="fp-sent-text">আপনার ইমেইলে রিসেট লিংক গেছে। ইনবক্স না পেলে স্প্যাম ফোল্ডারটাও দেখুন।</p>
+<button class="btn-primary-full" id="fp-done" type="button">ঠিক আছে</button>
+</div>
+<div class="fp-step" id="fp-step-new" hidden>
+<h3>নতুন পাসওয়ার্ড দিন</h3>
+<p class="fp-sub">কমপক্ষে ৬ অক্ষরের একটা পাসওয়ার্ড বেছে নিন।</p>
+<form id="np-form" novalidate>
+<div class="field-row">
+<label for="np-pass">নতুন পাসওয়ার্ড</label>
+<input id="np-pass" type="password" placeholder="••••••••" autocomplete="new-password"/>
+<p class="id-hint" id="np-hint" role="status" aria-live="polite"></p>
+</div>
+<button class="btn-primary-full" id="np-save" type="submit">পাসওয়ার্ড বদলান</button>
+</form>
 </div>
 </div>
 </div>

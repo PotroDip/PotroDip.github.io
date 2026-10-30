@@ -67,12 +67,14 @@
   function setPreview(src) { $('pe-avatar').src = src; }
 
   /* ---------- খোলা / বন্ধ ---------- */
+  /* মোবাইল দিয়ে খোলা অ্যাকাউন্টের ভেতরের ইমেইল (01XXXXXXXXX@…) ইউজারকে দেখানো হয় না */
+  function isPhoneAcct() { var d = '@' + ((PD.config && PD.config.phoneEmailDomain) || 'phone.potrodip.app'), e = String(PD.user.email || ''); return e.slice(-d.length) === d; }
   function fill() {
     var P = PD.profile || {};
     $('pe-name').value = P.full_name || '';
     $('pe-phone').value = P.phone || '';
     $('pe-address').value = P.address || '';
-    $('pe-email').value = PD.user.email || '';
+    $('pe-email').value = isPhoneAcct() ? '' : (PD.user.email || '');
     $('pe-count').textContent = UI.bn(($('pe-address').value || '').length);
     file = null; photo = undefined;
     if (previewUrl) { URL.revokeObjectURL(previewUrl); previewUrl = null; }
@@ -146,10 +148,10 @@
     if (!name || name.length > 60) { setErr('pe-name', 'নাম ১ থেকে ৬০ অক্ষরের মধ্যে লিখুন'); ok = false; }
     if (phone === null) { setErr('pe-phone', 'সঠিক মোবাইল নম্বর দিন (যেমন 01XXXXXXXXX)'); ok = false; }
     if (addr && addr.length < 5) { setErr('pe-address', 'ঠিকানাটি একটু বিস্তারিত লিখুন'); ok = false; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setErr('pe-email', 'সঠিক ইমেইল ঠিকানা দিন'); ok = false; }
+    if (!(isPhoneAcct() && !email) && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setErr('pe-email', 'সঠিক ইমেইল ঠিকানা দিন'); ok = false; }
     if (!ok) { var bad = $('pe-modal').querySelector('.pe-field.bad input,.pe-field.bad textarea'); if (bad) bad.focus(); return; }
 
-    var emailChanged = email.toLowerCase() !== String(PD.user.email || '').toLowerCase();
+    var emailChanged = !(isPhoneAcct() && !email) && email.toLowerCase() !== String(PD.user.email || '').toLowerCase();
     var btn = $('pe-save'); busy = true; btn.disabled = true; btn.textContent = 'সংরক্ষণ হচ্ছে…';
     var P = PD.profile || {};
     var avatarP = file ? shrink(file).then(uploadAvatar) : Promise.resolve(photo === undefined ? P.avatar_url : photo);

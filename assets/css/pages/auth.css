@@ -1189,3 +1189,215 @@ body footer.site-footer::before{background:none !important; display:none;}
   .di-item dt svg{width:24px; height:24px; padding:0; border-radius:0; background:transparent;}
   .di-item{gap:14px;}
 }
+
+/* v14: "বিস্তারিত দেখুন / লুকান" বাটন (পিসি ও মোবাইল দুটোতেই) */
+.dash-more-wrap[hidden]{display:none;}
+.dash-toggle-row{display:flex; justify-content:center; padding:14px 16px 18px; background:transparent;}
+.dash-more-wrap:not([hidden]) + .dash-toggle-row{border-top:1px solid var(--glass-line); padding-top:16px;}
+.dash-toggle-btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  height:42px; padding:0 22px; border:0; border-radius:999px; cursor:pointer;
+  font:inherit; font-size:14px; font-weight:600;
+  background:color-mix(in srgb, var(--primary) 12%, transparent); color:var(--primary);
+  transition:background-color .2s ease;
+}
+.dash-toggle-btn:hover{background:color-mix(in srgb, var(--primary) 20%, transparent);}
+.dash-toggle-btn:focus-visible{outline:2px solid var(--primary); outline-offset:2px;}
+.dash-toggle-btn svg{width:16px; height:16px; transition:transform .2s ease;}
+.dash-toggle-btn.is-open svg{transform:rotate(180deg);}
+@media(max-width:640px){.dash-toggle-btn{width:100%;}}
+@media(prefers-reduced-motion:reduce){.dash-toggle-btn,.dash-toggle-btn svg{transition:none;}}
+
+
+/* ================================================================
+   ============ v15 — গ্লাস ডিজাইন (লগইন/সাইনআপ + ড্যাশবোর্ড) ============
+   লগইন/সাইনআপ মোডে (body.auth-mode) টপবার, হেডার ও ফুটার থাকে না।
+   ================================================================= */
+:root{
+  --glass-bg:rgba(255,255,255,.46);
+  --glass-bg-strong:rgba(255,255,255,.66);
+  --glass-brd:rgba(255,255,255,.7);
+  --glass-hi:rgba(255,255,255,.85);
+  --glass-shadow:0 1px 2px rgba(18,58,61,.05), 0 24px 60px -24px rgba(18,58,61,.35);
+  --glass-field:rgba(255,255,255,.55);
+  --glass-blur:blur(22px) saturate(165%);
+  --grad-btn:linear-gradient(135deg,#2A747A 0%,#1D5358 55%,#143F43 100%);
+  --ring:0 0 0 4px rgba(29,83,88,.16);
+}
+html[data-theme="dark"]{
+  --glass-bg:rgba(30,38,41,.5);
+  --glass-bg-strong:rgba(34,44,47,.72);
+  --glass-brd:rgba(255,255,255,.1);
+  --glass-hi:rgba(255,255,255,.12);
+  --glass-shadow:0 1px 2px rgba(0,0,0,.3), 0 28px 64px -24px rgba(0,0,0,.7);
+  --glass-field:rgba(255,255,255,.06);
+  --grad-btn:linear-gradient(135deg,#5BB8BD 0%,#3F9499 55%,#2E7377 100%);
+  --ring:0 0 0 4px rgba(79,168,173,.22);
+}
+
+/* --- পেছনের ঝাপসা আলো + নক্ষত্র --- */
+.glass-bg{position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none;}
+.glass-bg .orb{position:absolute; border-radius:50%; filter:blur(70px); opacity:.55; will-change:transform;}
+.glass-bg .o1{width:520px; height:520px; left:-140px; top:-120px; background:radial-gradient(circle,#2F8A90 0%,transparent 68%); animation:orbA 22s ease-in-out infinite alternate;}
+.glass-bg .o2{width:460px; height:460px; right:-120px; top:22%; background:radial-gradient(circle,#C9A98A 0%,transparent 68%); animation:orbB 26s ease-in-out infinite alternate;}
+.glass-bg .o3{width:420px; height:420px; left:28%; bottom:-180px; background:radial-gradient(circle,#E0B354 0%,transparent 70%); opacity:.38; animation:orbA 30s ease-in-out infinite alternate-reverse;}
+html[data-theme="dark"] .glass-bg .orb{opacity:.34;}
+html[data-theme="dark"] .glass-bg .o3{opacity:.18;}
+.glass-bg .stars{position:absolute; inset:0;
+  background-image:
+    radial-gradient(1.6px 1.6px at 12% 22%, var(--secondary) 50%, transparent 52%),
+    radial-gradient(1.2px 1.2px at 78% 14%, var(--primary) 50%, transparent 52%),
+    radial-gradient(1.8px 1.8px at 90% 66%, var(--secondary) 50%, transparent 52%),
+    radial-gradient(1.2px 1.2px at 24% 80%, var(--primary) 50%, transparent 52%),
+    radial-gradient(1.4px 1.4px at 58% 90%, var(--secondary) 50%, transparent 52%),
+    radial-gradient(1px 1px at 44% 8%, var(--primary) 50%, transparent 52%);
+  opacity:.5; animation:twinkle 5s ease-in-out infinite alternate;}
+@keyframes orbA{to{transform:translate(70px,50px) scale(1.12);}}
+@keyframes orbB{to{transform:translate(-60px,70px) scale(1.1);}}
+@keyframes twinkle{from{opacity:.25;} to{opacity:.7;}}
+@media (prefers-reduced-motion:reduce){ .glass-bg .orb,.glass-bg .stars{animation:none;} }
+
+#main-content,.site-footer{position:relative; z-index:1;}
+main{position:relative; z-index:1;}
+
+/* --- লগইন/সাইনআপ মোডে হেডার-ফুটার বাদ; শুধু ছোট থিম-বাটন --- */
+body.auth-mode .topbar,
+body.auth-mode .site-footer,
+body.auth-mode .site-header .brand,
+body.auth-mode .site-header .nav-links,
+body.auth-mode .site-header .header-actions > :not(#theme-toggle),
+body.auth-mode .site-header .hamburger{display:none !important;}
+body.auth-mode header.site-header{position:fixed; top:16px; right:16px; left:auto; width:auto; background:none; border:0; box-shadow:none; -webkit-backdrop-filter:none; backdrop-filter:none; z-index:600;}
+body.auth-mode .site-header .header-inner,
+body.auth-mode .site-header .main-nav{height:auto; padding:0; display:block; width:auto;}
+body.auth-mode .site-header .header-actions{display:block; border-left:0; padding-left:0;}
+body.auth-mode #theme-toggle{width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--glass-bg); border:1px solid var(--glass-brd); -webkit-backdrop-filter:var(--glass-blur); backdrop-filter:var(--glass-blur); box-shadow:var(--glass-shadow), inset 0 1px 0 var(--glass-hi); color:var(--text);}
+body.auth-mode #theme-toggle:hover{transform:translateY(-1px); color:var(--primary);}
+
+/* --- ব্রেডক্রাম্ব --- */
+.breadcrumb{padding-top:28px; justify-content:center;}
+body.auth-mode .breadcrumb{width:fit-content; margin:28px auto 0; padding:8px 18px; border-radius:999px; background:var(--glass-bg); border:1px solid var(--glass-brd); -webkit-backdrop-filter:var(--glass-blur); backdrop-filter:var(--glass-blur); box-shadow:inset 0 1px 0 var(--glass-hi), 0 8px 24px -14px rgba(18,58,61,.3);}
+body.auth-mode main > .wrap{display:flex; justify-content:center;}
+
+/* --- মূল কার্ড --- */
+.auth-wrap{padding-top:26px; padding-bottom:70px;}
+.auth-card{
+  position:relative; max-width:460px; padding:30px 34px 30px; border-radius:28px;
+  background:var(--glass-bg); border:1px solid var(--glass-brd);
+  -webkit-backdrop-filter:var(--glass-blur); backdrop-filter:var(--glass-blur);
+  box-shadow:var(--glass-shadow), inset 0 1px 0 var(--glass-hi), inset 0 -1px 0 rgba(255,255,255,.12);
+  overflow:hidden; isolation:isolate;
+}
+html[data-theme="dark"] .auth-card{box-shadow:var(--glass-shadow), inset 0 1px 0 var(--glass-hi);}
+.auth-card::before{content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+  background:linear-gradient(135deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,0) 38%), radial-gradient(120% 60% at 100% 0%,rgba(201,169,138,.22),transparent 60%);}
+html[data-theme="dark"] .auth-card::before{background:linear-gradient(135deg,rgba(255,255,255,.08) 0%,rgba(255,255,255,0) 38%), radial-gradient(120% 60% at 100% 0%,rgba(79,168,173,.14),transparent 60%);}
+.auth-card::after{content:""; position:absolute; left:50%; top:0; width:46%; height:2px; transform:translateX(-50%); background:linear-gradient(90deg,transparent,var(--secondary),transparent); opacity:.8;}
+
+.auth-logo{display:flex; justify-content:center; margin:0 auto 20px;}
+#auth-logo-slot{width:150px; height:65px;}
+#auth-logo-slot svg{width:100%; height:100%; display:block; filter:drop-shadow(0 6px 14px rgba(18,58,61,.18));}
+
+/* --- ট্যাব --- */
+.auth-tabs{background:var(--glass-field); border:1px solid var(--glass-brd); box-shadow:inset 0 1px 3px rgba(18,58,61,.08); padding:5px; margin-bottom:26px;}
+.auth-tabs button{padding:11px 0; transition:all .25s ease;}
+.auth-tabs button.active{background:var(--grad-btn); color:#fff; box-shadow:0 6px 16px -6px rgba(29,83,88,.6), inset 0 1px 0 rgba(255,255,255,.25);}
+html[data-theme="dark"] .auth-tabs button.active{color:#0B1517;}
+.tab-panel h2{font-size:24px; text-align:center; letter-spacing:.2px;}
+.auth-sub{text-align:center; margin-bottom:22px;}
+
+/* --- সোশ্যাল (গুগল · ফেসবুক · ইমেইল) --- */
+.social-row{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+.soc-btn{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; padding:14px 6px 11px; border-radius:16px;
+  background:var(--glass-field); border:1px solid var(--glass-brd); color:var(--text); font-size:12.5px; font-weight:600; cursor:pointer;
+  box-shadow:inset 0 1px 0 var(--glass-hi), 0 6px 16px -12px rgba(18,58,61,.4); transition:transform .2s ease, box-shadow .2s ease, background-color .2s ease, border-color .2s ease;}
+.soc-btn:hover{transform:translateY(-3px); background:var(--glass-bg-strong); border-color:var(--secondary); box-shadow:inset 0 1px 0 var(--glass-hi), 0 14px 24px -14px rgba(18,58,61,.5);}
+.soc-btn:active{transform:translateY(0) scale(.97);}
+.soc-btn:focus-visible,.btn-primary-full:focus-visible,.auth-tabs button:focus-visible{outline:2px solid var(--primary); outline-offset:2px;}
+.soc-ico{width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--glass-bg-strong); box-shadow:inset 0 1px 0 var(--glass-hi), 0 2px 6px rgba(0,0,0,.08);}
+.soc-ico svg{width:19px; height:19px; display:block;}
+.soc-mail{color:var(--secondary);}
+.divider{margin:20px 0 18px;}
+.divider::before,.divider::after{background:linear-gradient(90deg,transparent,var(--border),transparent);}
+
+/* --- ইনপুট --- */
+.field-row label{font-weight:600; letter-spacing:.2px;}
+.field-row input{background:var(--glass-field); border:1px solid var(--glass-brd); border-radius:14px; padding:13px 16px; box-shadow:inset 0 1px 3px rgba(18,58,61,.07); transition:border-color .2s ease, box-shadow .2s ease, background-color .2s ease;}
+.field-row input:focus{border-color:var(--primary); box-shadow:var(--ring), inset 0 1px 3px rgba(18,58,61,.06); background:var(--glass-bg-strong);}
+.field-row input.is-bad{border-color:var(--error); box-shadow:0 0 0 4px rgba(179,64,46,.12);}
+.field-row input.pulse{animation:fieldPulse .9s ease;}
+@keyframes fieldPulse{0%{box-shadow:0 0 0 0 rgba(29,83,88,.45);} 100%{box-shadow:0 0 0 14px rgba(29,83,88,0);}}
+.pw-wrap input{padding-right:46px;}
+.id-hint{min-height:0; margin:0; font-size:12px; line-height:1.5; color:var(--text-muted); max-height:0; overflow:hidden; opacity:0; transition:max-height .25s ease, opacity .25s ease, margin .25s ease;}
+.id-hint.show{max-height:60px; opacity:1; margin-top:6px;}
+.id-hint.bad{color:var(--error);}
+
+.forgot-link{text-align:right; margin:-4px 2px 18px; font-size:13px;}
+
+/* --- মূল বাটন --- */
+.btn-primary-full{position:relative; background:var(--grad-btn); color:#fff; border-radius:16px; padding:14px; letter-spacing:.3px;
+  box-shadow:0 12px 24px -12px rgba(29,83,88,.75), inset 0 1px 0 rgba(255,255,255,.28); overflow:hidden; transition:transform .15s ease, box-shadow .25s ease, filter .25s ease;}
+html[data-theme="dark"] .btn-primary-full{color:#0B1517;}
+.btn-primary-full::after{content:""; position:absolute; inset:0; background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.28) 50%,transparent 70%); transform:translateX(-120%); transition:transform .7s ease;}
+.btn-primary-full:hover{background:var(--grad-btn); filter:brightness(1.06); box-shadow:0 16px 30px -12px rgba(29,83,88,.85), inset 0 1px 0 rgba(255,255,255,.3);}
+.btn-primary-full:hover::after{transform:translateX(120%);}
+.btn-primary-full:disabled{opacity:.7; cursor:progress;}
+.btn-primary-full.loading{color:transparent;}
+.btn-primary-full.loading::before{content:""; position:absolute; left:50%; top:50%; width:20px; height:20px; margin:-10px 0 0 -10px; border-radius:50%; border:2.5px solid rgba(255,255,255,.4); border-top-color:#fff; animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.auth-switch{margin-top:20px;}
+.newsletter-note{border-radius:16px; border:1px solid var(--glass-brd); border-left:3px solid var(--primary); background:var(--glass-field); box-shadow:inset 0 1px 0 var(--glass-hi);}
+.free-badge{background:var(--grad-btn);}
+
+/* --- পাসওয়ার্ড রিসেট পপআপ --- */
+body.fp-lock{overflow:hidden;}
+.fp-overlay{position:fixed; inset:0; z-index:2000; display:flex; align-items:center; justify-content:center; padding:20px;
+  background:rgba(12,28,30,.38); -webkit-backdrop-filter:blur(10px) saturate(130%); backdrop-filter:blur(10px) saturate(130%);
+  opacity:0; visibility:hidden; transition:opacity .28s ease, visibility .28s ease;}
+.fp-overlay.open{opacity:1; visibility:visible;}
+.fp-card{position:relative; width:100%; max-width:410px; padding:56px 30px 26px; text-align:center; border-radius:28px; isolation:isolate;
+  background:var(--glass-bg-strong); border:1px solid var(--glass-brd); -webkit-backdrop-filter:var(--glass-blur); backdrop-filter:var(--glass-blur);
+  box-shadow:0 40px 90px -30px rgba(0,0,0,.55), inset 0 1px 0 var(--glass-hi);
+  transform:translateY(24px) scale(.94); opacity:0; transition:transform .38s cubic-bezier(.2,.9,.25,1.15), opacity .3s ease;}
+.fp-card::before{content:""; position:absolute; inset:0; z-index:-1; border-radius:inherit; background:radial-gradient(90% 55% at 50% 0%,rgba(47,138,144,.28),transparent 70%), linear-gradient(160deg,rgba(255,255,255,.4),transparent 40%);}
+html[data-theme="dark"] .fp-card::before{background:radial-gradient(90% 55% at 50% 0%,rgba(79,168,173,.25),transparent 70%), linear-gradient(160deg,rgba(255,255,255,.06),transparent 40%);}
+.fp-overlay.open .fp-card{transform:none; opacity:1;}
+.fp-badge{position:absolute; left:50%; top:0; transform:translate(-50%,-38%); width:74px; height:74px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  background:var(--grad-btn); color:#fff; box-shadow:0 14px 30px -10px rgba(29,83,88,.7), 0 0 0 8px var(--glass-field), inset 0 1px 0 rgba(255,255,255,.35);}
+html[data-theme="dark"] .fp-badge{color:#0B1517;}
+.fp-badge svg{width:32px; height:32px;}
+.fp-badge.ok{background:linear-gradient(135deg,#4DA874,#2F7F55);}
+.fp-card h3{font-size:21px; margin:6px 0 8px;}
+.fp-sub{font-size:13.5px; color:var(--text-muted); line-height:1.7; margin:0 0 20px;}
+.fp-card .field-row{text-align:left;}
+.fp-step[hidden]{display:none;}
+.fp-step{animation:panelFade .3s ease both;}
+.fp-back{display:inline-block; margin-top:16px; font-size:13px; font-weight:600; color:var(--text-muted); padding:6px 10px; border-radius:10px;}
+.fp-back:hover{color:var(--primary);}
+.fp-x{position:absolute; right:14px; top:14px; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text-muted);
+  background:var(--glass-field); border:1px solid var(--glass-brd); transition:transform .2s ease, color .2s ease;}
+.fp-x:hover{color:var(--text); transform:rotate(90deg);}
+.fp-x svg{width:15px; height:15px;}
+
+/* --- ড্যাশবোর্ডেও একই গ্লাস ভাষা --- */
+.dash-hero,.dash-tabs,.following-card,.saved-card,.order-card,.dash-empty,.dash-info,.settings-card,.notif-item,.pe-modal,.npo-card{
+  background:var(--glass-bg) !important; border-color:var(--glass-brd) !important;
+  -webkit-backdrop-filter:var(--glass-blur); backdrop-filter:var(--glass-blur);
+  box-shadow:var(--glass-shadow), inset 0 1px 0 var(--glass-hi);}
+.dash-hero{border-radius:24px !important;}
+.pe-modal,.npo-card{background:var(--glass-bg-strong) !important; border-radius:26px;}
+.dash-tab-btn.active{background:var(--grad-btn) !important; color:#fff !important; box-shadow:0 8px 18px -8px rgba(29,83,88,.6);}
+html[data-theme="dark"] .dash-tab-btn.active{color:#0B1517 !important;}
+.btn-outline{background:var(--glass-field); border-color:var(--glass-brd); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);}
+
+@media(max-width:520px){
+  .auth-card{padding:24px 18px 24px; border-radius:24px;}
+  .soc-btn{padding:12px 4px 9px; font-size:12px;}
+  .tab-panel h2{font-size:21px;}
+  body.auth-mode header.site-header{top:12px; right:12px;}
+  body.auth-mode .breadcrumb{margin-top:20px;}
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .auth-card,.fp-card,.soc-btn{background:var(--surface);}
+}

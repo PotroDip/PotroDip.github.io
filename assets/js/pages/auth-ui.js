@@ -30,7 +30,14 @@
   var demoLogoutBtn = document.getElementById('demo-logout-btn');
   var profileIconBtn = document.getElementById('profile-icon-btn');
 
+  function moveLogo(toCard){
+    var svg = document.getElementById('brand-logo');
+    var slot = document.getElementById(toCard ? 'auth-logo-slot' : 'header-logo-slot');
+    if(svg && slot && svg.parentNode !== slot) slot.appendChild(svg);
+  }
   function showDashboard(){
+    document.body.classList.remove('auth-mode');
+    moveLogo(false);
     authSection.style.display = 'none';
     dashSection.style.display = 'block';
     breadcrumb.querySelector('.current').textContent = 'আমার ড্যাশবোর্ড';
@@ -38,6 +45,8 @@
     setTimeout(maybeShowNotifPopup, 500);
   }
   function showAuth(){
+    document.body.classList.add('auth-mode');
+    moveLogo(true);
     dashSection.style.display = 'none';
     authSection.style.display = 'flex';
     breadcrumb.querySelector('.current').textContent = 'লগইন / সাইনআপ';

@@ -5,6 +5,9 @@
   var stage = document.getElementById('logo-stage');
   var mainContent = document.getElementById('main-content');
   var headerSlot = document.getElementById('header-logo-slot');
+  /* লগইন/সাইনআপ মোডে হেডার লুকানো — লোগো কার্ডের ভেতরের জায়গায় বসে */
+  var cardSlot = document.getElementById('auth-logo-slot');
+  if(cardSlot && document.body.classList.contains('auth-mode')) headerSlot = cardSlot;
   var svgEl = stage.querySelector('svg');
 
   function revealInstant(){

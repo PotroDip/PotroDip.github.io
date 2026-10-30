@@ -2,6 +2,8 @@
 window.PD_CONFIG = {
   supabaseUrl: 'https://pqoszcuhxdavehnxundq.supabase.co',
   anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxb3N6Y3VoeGRhdmVobnh1bmRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1ODIzMDUsImV4cCI6MjEwNjE1ODMwNX0.UqZYaUMsH29NmMTZpFHDmoX9qyTG-U7APOWsalQS2JQ',
+  /* মোবাইল নম্বর দিয়ে অ্যাকাউন্ট: নম্বরটাই ভেতরে 01XXXXXXXXX@এই-ডোমেইন ইমেইল হিসেবে সেভ হয় (ওটিপি লাগে না) */
+  phoneEmailDomain: 'phone.potrodip.app',
   turnstileSiteKey: '0x4AAAAAAFnlme_tpslbtttw',
   pages: {
     home: 'index.html',
