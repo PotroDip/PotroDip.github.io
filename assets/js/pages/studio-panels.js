@@ -221,10 +221,7 @@
       if (file.size > 8 * 1024 * 1024) return reject(new Error('ছবি ৮ MB-এর বেশি হতে পারবে না'));
       function send(blob, ext, type) {
         var path = 'design/' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6) + '.' + ext;
-        PD.db.storage.from('media').upload(path, blob, { contentType: type, cacheControl: '31536000', upsert: false }).then(function (r) {
-          if (r.error) return reject(r.error);
-          resolve(PD.db.storage.from('media').getPublicUrl(path).data.publicUrl);
-        });
+        PD.upload(blob, path, type).then(resolve, reject);
       }
       if (/svg|gif/.test(file.type)) return send(file, file.type.indexOf('svg') > -1 ? 'svg' : 'gif', file.type);
       var img = new Image(), u = URL.createObjectURL(file);

@@ -49,3 +49,20 @@
 5. `service_role` কী কোথাও রাখা যাবে না।
 6. ফন্ট সবসময় `font-family:'Gunjoron', serif` — বাইরের (Google) ফন্ট যোগ করলে CSP আটকে দেবে।
 7. ডেটাবেসের SQL (`potrodip-database` ফোল্ডার) এই রিপোতে রাখা হয় না।
+
+## লগইন ও ফাইল রাখার ব্যবস্থা (Supabase + Firebase)
+
+| কাজ | কোথায় |
+|---|---|
+| ইমেইল ও গুগল লগইন | Firebase Auth → `firebase-bridge` (Supabase Edge Function) → একই ইমেইলের Supabase অ্যাকাউন্ট |
+| ফেসবুক লগইন | Supabase Auth (আগের মতো) |
+| লেখা, মন্তব্য, প্রোফাইল, অর্ডার — সব ডেটা | শুধু Supabase (দুই জায়গায় রাখা হয় না) |
+| ছবি | Firebase Storage (`firebaseStorage: true` হলে), ব্যর্থ হলে Supabase `media` — একটা ফাইল একটাই জায়গায় |
+| PDF | Supabase `media` |
+
+- ইউজার মেলানো হয় **ইমেইল দিয়ে**, তাই পুরোনো Supabase ইউজার Firebase-এ একই ইমেইলে সাইনআপ করলে আগের সব তথ্য পান।
+- ইমেইল যাচাই না হলে (`email_verified`) সেতু-ফাংশন ঢুকতে দেয় না।
+- অচেনা ইমেইল-প্রোভাইডার আটকানো হয় তিন জায়গায়: সাইটে (`config.js` → `allowedEmailDomains`), সেতু-ফাংশনে, আর ডেটাবেসে (`auth.users`-এর `pd_guard_new_user_email` ট্রিগার, তালিকা `public.pd_email_domain_ok`)।
+- `assets/js/core/config.js`-এ Firebase-এর `apiKey` ও `appId` খালি থাকলে সাইট আগের মতো শুধু Supabase দিয়ে চলে।
+- সেতু-ফাংশনের কোড: `supabase/functions/firebase-bridge/index.ts` · Storage নিয়ম: `firebase/storage.rules`
+- Firebase SDK (v10.14.1, compat) নিজেদের সার্ভারে: `assets/vendor/firebase/`

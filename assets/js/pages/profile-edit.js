@@ -58,29 +58,24 @@
   }
   function uploadAvatar(blob) {
     var path = 'avatars/' + PD.user.id + '/' + Date.now().toString(36) + '.webp';
-    return db.storage.from('media').upload(path, blob, { contentType: blob.type || 'image/webp', cacheControl: '31536000', upsert: false })
-      .then(function (r) {
-        if (r.error) throw r.error;
-        return db.storage.from('media').getPublicUrl(path).data.publicUrl;
-      });
+    return PD.upload(blob, path, blob.type || 'image/webp');
   }
   function setPreview(src) { $('pe-avatar').src = src; }
 
   /* ---------- খোলা / বন্ধ ---------- */
-  /* মোবাইল দিয়ে খোলা অ্যাকাউন্টের ভেতরের ইমেইল (01XXXXXXXXX@…) ইউজারকে দেখানো হয় না */
-  function isPhoneAcct() { var d = '@' + ((PD.config && PD.config.phoneEmailDomain) || 'phone.potrodip.app'), e = String(PD.user.email || ''); return e.slice(-d.length) === d; }
   function fill() {
     var P = PD.profile || {};
     $('pe-name').value = P.full_name || '';
     $('pe-phone').value = P.phone || '';
     $('pe-address').value = P.address || '';
-    $('pe-email').value = isPhoneAcct() ? '' : (PD.user.email || '');
+    $('pe-email').value = PD.user.email || '';
+    $('pe-email').readOnly = !!PD.fbOn;
     $('pe-count').textContent = UI.bn(($('pe-address').value || '').length);
     file = null; photo = undefined;
     if (previewUrl) { URL.revokeObjectURL(previewUrl); previewUrl = null; }
     setPreview(UI.avatar(P.avatar_url));
     $('pe-remove-photo').style.display = P.avatar_url ? '' : 'none';
-    $('pe-email-note').textContent = 'ইমেইল বদলালে নতুন ঠিকানায় নিশ্চিতকরণ লিংক যাবে।';
+    $('pe-email-note').textContent = PD.fbOn ? 'লগইনের ইমেইল এখান থেকে বদলানো যায় না।' : 'ইমেইল বদলালে নতুন ঠিকানায় নিশ্চিতকরণ লিংক যাবে।';
     $('pe-file').value = '';
     clearErrs();
   }
@@ -148,10 +143,10 @@
     if (!name || name.length > 60) { setErr('pe-name', 'নাম ১ থেকে ৬০ অক্ষরের মধ্যে লিখুন'); ok = false; }
     if (phone === null) { setErr('pe-phone', 'সঠিক মোবাইল নম্বর দিন (যেমন 01XXXXXXXXX)'); ok = false; }
     if (addr && addr.length < 5) { setErr('pe-address', 'ঠিকানাটি একটু বিস্তারিত লিখুন'); ok = false; }
-    if (!(isPhoneAcct() && !email) && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setErr('pe-email', 'সঠিক ইমেইল ঠিকানা দিন'); ok = false; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setErr('pe-email', 'সঠিক ইমেইল ঠিকানা দিন'); ok = false; }
     if (!ok) { var bad = $('pe-modal').querySelector('.pe-field.bad input,.pe-field.bad textarea'); if (bad) bad.focus(); return; }
 
-    var emailChanged = !(isPhoneAcct() && !email) && email.toLowerCase() !== String(PD.user.email || '').toLowerCase();
+    var emailChanged = !PD.fbOn && email.toLowerCase() !== String(PD.user.email || '').toLowerCase();
     var btn = $('pe-save'); busy = true; btn.disabled = true; btn.textContent = 'সংরক্ষণ হচ্ছে…';
     var P = PD.profile || {};
     var avatarP = file ? shrink(file).then(uploadAvatar) : Promise.resolve(photo === undefined ? P.avatar_url : photo);

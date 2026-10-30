@@ -31,9 +31,9 @@
     $('dash-name').textContent = name;
     $('dash-email').textContent = PD.user.email || '';
     $('dash-avatar-img').src = UI.avatar(P.avatar_url);
-    setInfo('di-phone', P.phone ? UI.bn(P.phone) : (viaPhone ? UI.bn(PD.user.email.split('@')[0]) : ''));
+    setInfo('di-phone', P.phone ? UI.bn(P.phone) : '');
     setInfo('di-address', P.address || '');
-    setInfo('di-email', em);
+    setInfo('di-email', PD.user.email || '');
     setInfo('di-joined', PD.user.created_at ? UI.date(PD.user.created_at) : '');
     /* শুধু এডমিনের জন্য: এডমিন প্যানেলে যাওয়ার বাটন */
     if (PD.isAdmin() && !$('admin-link')) {

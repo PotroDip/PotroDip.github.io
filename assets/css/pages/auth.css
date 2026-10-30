@@ -1401,3 +1401,34 @@ html[data-theme="dark"] .dash-tab-btn.active{color:#0B1517 !important;}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
   .auth-card,.fp-card,.soc-btn{background:var(--surface);}
 }
+
+/* ================================================================
+   ============ v17 — গুগল + ফেসবুক (দুই বাটন), ফেসবুক-পপআপ ============
+   ================================================================= */
+.social-row.two{grid-template-columns:repeat(2,1fr);}
+.social-row.two .soc-btn{flex-direction:row; gap:10px; padding:11px 10px; font-size:14px;}
+.social-row.two .soc-ico{width:30px; height:30px;}
+.social-row.two .soc-ico svg{width:18px; height:18px;}
+.fp-note{font-size:12.5px; color:var(--text-muted); line-height:1.65; margin:-8px 0 18px; padding:10px 12px; border-radius:12px; background:var(--glass-field); border:1px solid var(--glass-brd);}
+.fp-note[hidden]{display:none;}
+
+.fbc-badge{background:linear-gradient(135deg,#3B8BF6,#1877F2 60%,#0E5FCC); color:#fff; box-shadow:0 14px 30px -10px rgba(24,119,242,.65), 0 0 0 8px var(--glass-field), inset 0 1px 0 rgba(255,255,255,.35);}
+html[data-theme="dark"] .fbc-badge{color:#fff;}
+.fbc-badge svg{width:34px; height:34px;}
+.fbc-card::before{background:radial-gradient(90% 55% at 50% 0%,rgba(24,119,242,.2),transparent 70%), linear-gradient(160deg,rgba(255,255,255,.4),transparent 40%);}
+html[data-theme="dark"] .fbc-card::before{background:radial-gradient(90% 55% at 50% 0%,rgba(24,119,242,.22),transparent 70%), linear-gradient(160deg,rgba(255,255,255,.06),transparent 40%);}
+.fbc-list{list-style:none; margin:0 0 20px; padding:0; display:flex; flex-direction:column; gap:10px; text-align:left;}
+.fbc-list li{display:flex; align-items:flex-start; gap:12px; padding:11px 13px; border-radius:14px; background:var(--glass-field); border:1px solid var(--glass-brd); font-size:13.5px; line-height:1.6; color:var(--text);}
+.fbc-list li b{font-weight:700;}
+.fbc-ico{flex-shrink:0; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--glass-bg-strong); color:var(--primary); box-shadow:inset 0 1px 0 var(--glass-hi);}
+.fbc-ico svg{width:16px; height:16px;}
+.fbc-list li.fbc-no{background:color-mix(in srgb, var(--stock-ok) 9%, transparent); border-color:color-mix(in srgb, var(--stock-ok) 28%, transparent);}
+.fbc-list li.fbc-no .fbc-ico{color:var(--stock-ok);}
+.btn-primary-full.fbc-go{display:flex; align-items:center; justify-content:center; gap:10px; background:linear-gradient(135deg,#3B8BF6,#1877F2 60%,#0E5FCC); color:#fff; box-shadow:0 12px 24px -12px rgba(24,119,242,.8), inset 0 1px 0 rgba(255,255,255,.28);}
+.btn-primary-full.fbc-go:hover{background:linear-gradient(135deg,#3B8BF6,#1877F2 60%,#0E5FCC);}
+.btn-primary-full.fbc-go svg{width:20px; height:20px;}
+html[data-theme="dark"] .btn-primary-full.fbc-go{color:#fff;}
+/* লম্বা পপআপ ছোট স্ক্রিনে স্ক্রল হয়; ওপরের গোল ব্যাজ যাতে কাটা না পড়ে */
+.fp-overlay{overflow-y:auto; align-items:flex-start; padding-top:56px;}
+.fp-overlay .fp-card{margin:auto 0;}
+.pe-field input[readonly]{opacity:.7; cursor:not-allowed;}

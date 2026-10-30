@@ -2,7 +2,7 @@
 <html lang="bn">
 <html lang="bn">
 <head>
-<meta charset="utf-8"/><meta content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; connect-src 'self' https://pqoszcuhxdavehnxundq.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'" http-equiv="Content-Security-Policy"/>
+<meta charset="utf-8"/><meta content="default-src 'self'; script-src 'self' https://apis.google.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; connect-src 'self' https://pqoszcuhxdavehnxundq.supabase.co https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebasestorage.googleapis.com https://www.googleapis.com; frame-src https://potrodip-99ad4.firebaseapp.com https://accounts.google.com; object-src 'none'; base-uri 'self'; form-action 'self'" http-equiv="Content-Security-Policy"/>
 <meta content="strict-origin-when-cross-origin" name="referrer"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>এডমিন প্যানেল | পত্রদ্বীপ | Potrodip</title>
@@ -618,6 +618,10 @@
 <script src="assets/vendor/supabase.js"></script>
 <script src="assets/js/core/config.js"></script>
 <script src="assets/js/core/app.js"></script>
+<script src="assets/vendor/firebase/firebase-app-compat.js"></script>
+<script src="assets/vendor/firebase/firebase-auth-compat.js"></script>
+<script src="assets/vendor/firebase/firebase-storage-compat.js"></script>
+<script src="assets/js/core/firebase.js"></script>
 <script src="assets/js/core/ui.js"></script>
 <script src="assets/js/pages/admin-shell.js"></script>
 <script src="assets/js/pages/admin-editor.js"></script>

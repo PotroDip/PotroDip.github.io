@@ -16,10 +16,7 @@
     if (pdf && file.size > MAX_PDF) return Promise.reject(new Error('PDF ১০ MB-এর বেশি হওয়া চলবে না'));
     var ext = ({ 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif', 'application/pdf': 'pdf' })[file.type];
     var path = folder + '/' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8) + '.' + ext;
-    return db.storage.from('media').upload(path, file, { contentType: file.type, cacheControl: '31536000', upsert: false }).then(function (r) {
-      if (r.error) throw r.error;
-      return db.storage.from('media').getPublicUrl(path).data.publicUrl;
-    });
+    return PD.upload(file, path, file.type);
   }
   function fail(e) { A.showToast((e && e.message) || 'কাজটি সম্পন্ন হয়নি'); }
   function busy(btn, on, label) { btn.disabled = on; if (label) btn.dataset.l = btn.dataset.l || btn.textContent; btn.textContent = on ? 'সংরক্ষণ হচ্ছে…' : (btn.dataset.l || btn.textContent); }
