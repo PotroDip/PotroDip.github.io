@@ -52,6 +52,18 @@
     };
   }
 
+  /* Firebase Storage-এ রাখা নিজের ছবি মোছা (শুধু media/<নিজের uid>/avatars/...) */
+  if (storage) {
+    PD.fbRemove = function(url) {
+      var u = auth.currentUser;
+      if (!u || String(url || '').indexOf('firebasestorage.googleapis.com') < 0) return Promise.resolve();
+      var name = '';
+      try { name = decodeURIComponent((String(url).match(/\/o\/([^?]+)/) || [])[1] || '') } catch (e) {}
+      if (name.indexOf('media/' + u.uid + '/avatars/') !== 0) return Promise.resolve();
+      return storage.ref(name).delete().then(function() {}, function() {})
+    };
+  }
+
   /* লগ-আউট হলে Firebase থেকেও বের হওয়া */
   var so = PD.signOut;
   PD.signOut = function() {

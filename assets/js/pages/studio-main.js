@@ -197,10 +197,10 @@
       $('pub-pre').style.display = 'none'; $('pub-done').style.display = '';
       var msg = $('pub-done-msg');
       if (visible) { msg.className = 'pub-ok'; msg.innerHTML = '<b>✓ পাবলিশ সম্পন্ন!</b><br>এখন থেকে সবাই নতুন ডিজাইন দেখবেন। (কারও ব্রাউজারে ক্যাশ থাকলে পরের লোডে বদলে যাবে)'; }
-      else { msg.className = 'pub-warn'; msg.innerHTML = '<b>সংরক্ষণ হয়েছে, কিন্তু সাধারণ ভিজিটর এখনো পড়তে পারছেন না।</b><br>সম্ভবত Supabase-এর <code>site_settings</code> টেবিলে সবার জন্য পড়ার (SELECT) অনুমতি নেই। অনুমতি দিন (README-তে নিয়ম আছে), অথবা "⋯ → ফাইল ডাউনলোড (বিকল্প)" দিয়ে <code>site-design.json</code> নামিয়ে রিপোর <code>assets/data/</code> ফোল্ডারে রাখুন।'; }
+      else { msg.className = 'pub-warn'; msg.innerHTML = '<b>ডিজাইন সংরক্ষণ হয়েছে, কিন্তু সাধারণ ভিজিটর এখনো নতুন ডিজাইন দেখতে পাচ্ছেন না।</b><br>একটু পরে পেজ রিফ্রেশ করে আবার দেখুন। তবুও না বদলালে "⋯ → ফাইল ডাউনলোড (বিকল্প)" দিয়ে <code>site-design.json</code> নামিয়ে রিপোর <code>assets/data/</code> ফোল্ডারে রাখুন।'; }
     }).catch(function (e) {
       btn.disabled = false; btn.textContent = 'আবার চেষ্টা করুন';
-      P.toast('পাবলিশ ব্যর্থ: ' + (e && e.message ? e.message : e) + ' — এডমিন হিসেবে লগইন আছে তো?', true);
+      P.toast('পাবলিশ হয়নি — ' + PD.msg(e || {}), true);
     });
   }
 
@@ -222,7 +222,7 @@
         P.pubRev = (pub && pub.rev) || 0;
         P.published = P.snapshot();
         P.sample = { article: r[1].data && r[1].data[0] && r[1].data[0].id, issue: r[2].data && r[2].data[0] && r[2].data[0].id, author: r[3].data && r[3].data[0] && r[3].data[0].slug };
-        if (r[0].error) P.toast('ডিজাইনের ডেটা পড়া যায়নি: ' + r[0].error.message, true);
+        if (r[0].error) P.toast('ডিজাইনের তথ্য আনা যায়নি — ' + PD.msg(r[0].error), true);
         /* অসমাপ্ত ড্রাফট */
         var draft = null; try { draft = JSON.parse(localStorage.getItem('pd-studio-draft') || 'null'); } catch (e) {}
         if (draft && draft.d && JSON.stringify(P.normalize(draft.d)) !== P.published) {
@@ -239,7 +239,7 @@
         if (P.snapshot() !== P.published) P.emit('dirty');
         $('loading').style.display = 'none';
       });
-    }).catch(function (e) { console.error(e); P.toast('স্টুডিও চালু করতে সমস্যা: ' + (e && e.message || e), true); $('loading').style.display = 'none'; });
+    }).catch(function (e) { console.error(e); P.toast('স্টুডিও চালু হয়নি — ' + PD.msg(e || {}), true); $('loading').style.display = 'none'; });
   }
   document.addEventListener('DOMContentLoaded', boot);
 })();

@@ -37,7 +37,7 @@
       ascending: false
     }).limit(30), db.from('authors').select('id,slug,name,role_title,city,image_url,avg_rating').limit(100), db.from('issues').select('id,title,issue_number,cover_url,published_at,created_at'), db.from('ads').select('slot_id,image_url,link_url').eq('is_active', true), db.from('print_issues').select('id,issue_id,teaser,price,in_stock,cover_url').limit(50)]);
   if (R[0].error) {
-    $('article-grid').innerHTML = '<p class="pd-empty">লেখা লোড করা যায়নি: ' + esc(R[0].error.message) + '</p>';
+    $('article-grid').innerHTML = '<p class="pd-empty">লেখাগুলো এখন আনা যাচ্ছে না। ইন্টারনেট যাচাই করে পেজটা আবার খুলুন।</p>';
     return
   }
   var A = R[0].data || [],
@@ -205,7 +205,7 @@
         author_id: b.dataset.id
       }),
       r = await q;
-    if (r.error) return PD.toast('সমস্যা: ' + r.error.message, 1);
+    if (r.error) return PD.toast(PD.msg(r.error), 1);
     b.classList.toggle('following');
     b.textContent = on ? 'ফলো করুন' : 'ফলো করছেন ✓'
   };

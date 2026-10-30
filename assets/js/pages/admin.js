@@ -35,7 +35,7 @@
     { id: 'square', re: /square|side/i, name: 'সাইডবার/স্কোয়ার', size: '৩০০ × ৩০০ px', where: 'আর্টিকেল পেজে, লেখার শেষে', ratio: '1/1' },
     { id: 'mobile', re: /mobile/i, name: 'মোবাইল ব্যানার', size: '৩২০ × ১০০ px', where: 'মোবাইলে হোমপেজের উপরের ব্যানারের জায়গায়', ratio: '3.2/1' }
   ];
-  function ok(r) { if (r && r.error) { A.showToast('সমস্যা: ' + PD.msg(r.error)); return false; } return true; }
+  function ok(r) { if (r && r.error) { A.showToast(PD.msg(r.error)); return false; } return true; }
   function byId(list, id) { return list.filter(function (x) { return x.id === id; })[0]; }
   function authorName(id) { var a = byId(S.authors, id); return a ? a.name : '—'; }
   function ostatus(o) { return o.payment_status === 'verified' || o.payment_status === 'delivered' ? o.payment_status : 'pending'; }
@@ -69,7 +69,7 @@
       S.set = {}; (r[9].data || []).forEach(function (x) { S.set[x.key] = x.value || {}; });
       S.users = r[10].count || 0; S.follows = r[11].count || 0;
       var bad = r.filter(function (x) { return x.error; })[0];
-      if (bad) A.showToast('কিছু ডেটা লোড হয়নি: ' + PD.msg(bad.error));
+      if (bad) A.showToast('কিছু তথ্য আনা যায়নি — ' + PD.msg(bad.error));
     });
   }
 

@@ -70,3 +70,9 @@
 - Authentication: Email/Password ও Google চালু, `potrodip.github.io` অনুমোদিত, ইমেইল-এনুমারেশন সুরক্ষা চালু, বেনামি লগইন বন্ধ।
 - Storage: **এখনো চালু নয়** — প্রজেক্টে বিলিং-অ্যাকাউন্ট (Blaze) নেই। চালু হলে বাকেট বানিয়ে `firebase/storage.rules` ও `firebase/cors.json` বসিয়ে `firebaseStorage: true` করুন। তার আগে ছবি/PDF Supabase `media`-তেই যায়।
 - পুরোনো (Firebase-এর আগের) Supabase অ্যাকাউন্ট আগের পাসওয়ার্ডেই লগইন করতে পারে: Firebase-এ না পেলে লগইন Supabase-এ চেষ্টা হয় (নিরাপত্তা-জাল)।
+
+### নিরাপত্তা ও ত্রুটির বার্তা (v18)
+- ডেটাবেসের নিয়ম: `supabase/migrations/`-এ সারসংক্ষেপ (আসল মাইগ্রেশন Supabase-এ প্রয়োগ করা)। সব টেবিলে RLS চালু।
+- ইউজারকে দেখানো সব ত্রুটি `PD.msg()` (app.js) দিয়ে সহজ বাংলায় যায় — "ফাংশন/কলাম/স্টোরেজ/Supabase" জাতীয় কারিগরি কথা কখনো নয়। আসল কারণ শুধু ব্রাউজার-কনসোলে।
+- ছবি আপলোডের ত্রুটির জন্য `PD.uploadMsg()`।
+- Supabase ড্যাশবোর্ডে হাতে করার বাকি: Authentication → Providers → Email → **Confirm email চালু**, আর (Pro প্ল্যানে) **Leaked password protection** চালু।

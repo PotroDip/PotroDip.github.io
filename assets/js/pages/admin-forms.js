@@ -18,7 +18,7 @@
     var path = folder + '/' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8) + '.' + ext;
     return PD.upload(file, path, file.type);
   }
-  function fail(e) { A.showToast((e && e.message) || 'কাজটি সম্পন্ন হয়নি'); }
+  function fail(e) { A.showToast(PD.msg(e || {}, e && /^[^\u0980-\u09FF]*$/.test(String(e.message || '')) && /storage|bucket|upload|object|size|mime/i.test(String(e.message || '')) ? 'upload' : undefined)); }
   function busy(btn, on, label) { btn.disabled = on; if (label) btn.dataset.l = btn.dataset.l || btn.textContent; btn.textContent = on ? 'সংরক্ষণ হচ্ছে…' : (btn.dataset.l || btn.textContent); }
   function slug(p) { return p + '-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
   function pickFile(input, preview, labelSel, cb) {

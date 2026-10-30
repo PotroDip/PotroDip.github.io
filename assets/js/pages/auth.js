@@ -212,7 +212,7 @@
         busy(b, 0);
         /* Firebase-এ এই ইমেইলে অ্যাকাউন্ট নেই বা পাসওয়ার্ড মেলেনি → হয়তো আগের (Supabase) অ্যাকাউন্ট */
         if (err && err.code && /invalid-credential|user-not-found|wrong-password/.test(err.code)) return supabaseLogin(b, e, p, true);
-        toast(err && err.code ? fbMsg(err) : (err && err.message) || 'সমস্যা হয়েছে', 1)
+        toast(err && err.code ? fbMsg(err) : msg(err), 1)
       });
       return
     }
@@ -290,7 +290,7 @@
         try { sessionStorage.setItem('pd-g-redirect', '1') } catch (e) {}
         return FB.auth.signInWithRedirect(pv)
       }
-      toast(err.code ? fbMsg(err) : err.message, 1)
+      toast(err.code ? fbMsg(err) : msg(err), 1)
     })
   }
 
@@ -515,7 +515,7 @@
     if (FB && red) FB.auth.getRedirectResult().then(function(r) {
       if (r && r.user && !PD.user) return afterGoogle(r.user)
     }).catch(function(err) {
-      if (err) toast(err.code ? fbMsg(err) : err.message, 1)
+      if (err) toast(err.code ? fbMsg(err) : msg(err), 1)
     })
   }
 

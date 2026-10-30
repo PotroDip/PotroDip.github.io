@@ -1,0 +1,2 @@
+-- (Supabase-এ প্রয়োগ করা আছে) site_settings-এর পাবলিক পাঠ: payment, delivery, contact, site_design
+-- site_design = ডিজাইন-স্টুডিওর পাবলিশ-করা ডিজাইন (আগে ভিজিটর পড়তে পারত না)। site_design_prev ও বাকি সব বন্ধ।

@@ -1,0 +1,8 @@
+-- (Supabase-এ প্রয়োগ করা আছে) নিরাপত্তা-কড়াকড়ি, v18
+-- ১. delete_my_account শুধু লগইন-করা ইউজার ডাকতে পারে; ট্রিগার-ফাংশন সরাসরি ডাকা যায় না
+-- ২. comment_likes-এ anon/authenticated-এর বাড়তি অধিকার (TRUNCATE/TRIGGER/REFERENCES) বাতিল;
+--    যেসব টেবিলে anon-এর পাঠ-নিয়ম নেই সেখানে anon-এর SELECT অধিকারও বাতিল
+-- ৩. profiles: ছবির লিংক শুধু https, নাম ≤৬০, ফোন ≤২০, ঠিকানা ≤৩০০
+-- ৪. storage 'media': সাধারণ ইউজার শুধু নিজের avatars/<uid>/ ফোল্ডারে ছবি (webp/jpg/png, সর্বোচ্চ ৩০টা) রাখতে ও মুছতে পারে;
+--    বাকেটে শুধু ছবি ও PDF চলে
+-- বিস্তারিত SQL: Supabase → Database → Migrations (security_hardening_v18)

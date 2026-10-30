@@ -39,18 +39,21 @@
     if (!matches()) { $('del-err').textContent = 'নিশ্চিত করতে "' + WORD + '" লিখুন'; return; }
     busy = true;
     var btn = $('del-ok'); btn.disabled = true; btn.textContent = 'মুছে ফেলা হচ্ছে…';
-    db.rpc('delete_my_account').then(function (r) {
+    var av = PD.profile && PD.profile.avatar_url;
+    (av ? PD.removeFile(av) : Promise.resolve()).then(function () {
+      return db.rpc('delete_my_account');
+    }).then(function (r) {
       if (r.error) throw r.error;
-      return db.auth.signOut();
+      /* Firebase-এও একই অ্যাকাউন্ট থাকলে সেটাও মোছা (না পারলে অন্তত বের করে দেওয়া) */
+      var fu = PD.fbOn && PD.fb && PD.fb.auth.currentUser;
+      return (fu ? fu.delete().catch(function () {}) : Promise.resolve()).then(function () { return db.auth.signOut(); });
     }).then(function () {
       busy = false;
       UI.toast('আপনার অ্যাকাউন্ট মুছে ফেলা হয়েছে');
       setTimeout(function () { location.href = 'index.html'; }, 900);
     }).catch(function (err) {
       busy = false; btn.disabled = false; btn.textContent = 'অ্যাকাউন্ট মুছুন';
-      var m = String((err && err.message) || '');
-      if (/function .*delete_my_account|Could not find the function/i.test(m)) UI.toast('ডেটাবেসে delete_my_account ফাংশন নেই — DESIGN-STUDIO.md-এর নির্দেশনা দেখুন', 1);
-      else $('del-err').textContent = 'মুছতে সমস্যা হয়েছে: ' + (PD.msg(err || {}).replace(/^সমস্যা: /, ''));
+      $('del-err').textContent = 'অ্যাকাউন্ট মোছা যায়নি — ' + PD.msg(err || {});
     });
   });
 })();

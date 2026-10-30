@@ -156,6 +156,7 @@
       return db.from('profiles').update(row).eq('id', PD.user.id).then(function (r) {
         if (r.error) throw r.error;
         PD.profile = Object.assign({}, P, row);
+        if (P.avatar_url && P.avatar_url !== row.avatar_url) PD.removeFile(P.avatar_url);
         return emailChanged ? db.auth.updateUser({ email: email }).then(function (er) { if (er.error) throw er.error; return true; }) : false;
       });
     }).then(function (sentMail) {
@@ -166,9 +167,8 @@
     }).catch(function (err) {
       busy = false; btn.disabled = false; btn.textContent = 'সংরক্ষণ করুন';
       var m = String((err && err.message) || '');
-      if (/column .* does not exist|could not find .* column|schema cache/i.test(m)) UI.toast('ডেটাবেসে phone/address কলাম নেই — README-এর SQL চালান', 1);
-      else if (/already (registered|exists)|duplicate/i.test(m)) setErr('pe-email', 'এই ইমেইল অন্য অ্যাকাউন্টে ব্যবহৃত হচ্ছে');
-      else if (/bucket|storage|policy/i.test(m)) UI.toast('ছবি আপলোড হয়নি — স্টোরেজ অনুমতি দেখুন', 1);
+      if (/already (registered|exists)|duplicate/i.test(m)) setErr('pe-email', 'এই ইমেইল অন্য অ্যাকাউন্টে ব্যবহৃত হচ্ছে');
+      else if (file && /bucket|storage|policy|object|payload|size|mime|row-level/i.test(m)) UI.toast(PD.uploadMsg(err), 1);
       else UI.toast(PD.msg(err || {}), 1);
     });
   });

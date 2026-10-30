@@ -241,7 +241,7 @@
     f.addEventListener('change', function () {
       if (!f.files[0]) return;
       P.toast('ছবি আপলোড হচ্ছে…');
-      P.uploadImage(f.files[0]).then(function (u) { cb(u); P.toast('ছবি যোগ হয়েছে'); }).catch(function (e) { P.toast('আপলোড ব্যর্থ: ' + (e.message || e), true); });
+      P.uploadImage(f.files[0]).then(function (u) { cb(u); P.toast('ছবি যোগ হয়েছে'); }).catch(function (e) { P.toast(PD.uploadMsg(e), true); });
     });
     f.click();
   }

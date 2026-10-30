@@ -1,0 +1,3 @@
+-- (Supabase-এ প্রয়োগ করা আছে) শুধু পরিচিত ইমেইল-প্রোভাইডারে অ্যাকাউন্ট খোলা যাবে — ডেটাবেস-স্তরের পাহারা
+-- তালিকা বদলাতে হলে assets/js/core/config.js-এর allowedEmailDomains-ও একই রাখুন
+-- (ফাংশন ও ট্রিগার Supabase-এ আছে: public.pd_email_domain_ok, auth.users-এ pd_guard_new_user_email)

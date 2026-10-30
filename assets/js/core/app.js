@@ -25,14 +25,42 @@
     'User already registered': 'এই ইমেইলে আগেই অ্যাকাউন্ট আছে',
     'Email not confirmed': 'আগে ইমেইল ভেরিফাই করুন'
   };
-  var msg = PD.msg = function(e) {
-    var m = e.message || '';
+  /* সব ত্রুটি ইউজারকে সহজ বাংলায়: ডেটাবেস/সার্ভার/স্টোরেজের কারিগরি লেখা কখনো দেখানো হয় না।
+     আসল ত্রুটি শুধু ডেভেলপার-কনসোলে যায়। আমাদের নিজেদের বাংলা বার্তা (যেমন "এলাকা সঠিক নয়") হুবহু দেখানো হয়। */
+  var BN_RE = /[\u0980-\u09FF]/;
+  var msg = PD.msg = function(e, what) {
+    e = e || {};
+    var m = String(e.message || e.error_description || e.msg || (typeof e === 'string' ? e : '') || ''),
+      c = String(e.code || e.error_code || ''),
+      st = e.status || e.statusCode;
+    if (typeof console !== 'undefined' && m) console.warn('[পত্রদ্বীপ]', m, c || '');
     if (ERR[m]) return ERR[m];
-    if (/rate limit/i.test(m)) return 'অল্প সময়ে অনেকবার চেষ্টা হয়েছে, কিছুক্ষণ পরে আবার চেষ্টা করুন';
+    /* আমাদের নিজের লেখা বাংলা বার্তা */
+    if (BN_RE.test(m) && !/[A-Za-z]{4,}.*[A-Za-z]{4,}.*[A-Za-z]{4,}/.test(m)) return m;
+    if (/failed to fetch|networkerror|network request|load failed|fetch failed|timeout|timed out|err_internet|offline/i.test(m) || st === 0)
+      return 'ইন্টারনেট সংযোগ নেই বা খুব দুর্বল — সংযোগ দেখে আবার চেষ্টা করুন';
+    if (/rate limit|too many|429/i.test(m) || st === 429) return 'অল্প সময়ে অনেকবার চেষ্টা হয়েছে, কিছুক্ষণ পরে আবার চেষ্টা করুন';
     if (/captcha/i.test(m)) return 'নিরাপত্তা যাচাই ব্যর্থ — পেজ রিফ্রেশ করে আবার চেষ্টা করুন';
-    if (/password/i.test(m) && /6|8|short|least/i.test(m)) return 'পাসওয়ার্ড আরও বড় ও শক্ত দিন';
-    return 'সমস্যা: ' + m
+    /* ছবি/ফাইল আপলোড */
+    if (what === 'upload' || /bucket not found|payload too large|maximum allowed size|entity too large|mime type/i.test(m) || st === 413) {
+      if (/too large|maximum allowed size|413|exceeded/i.test(m + st)) return 'ফাইলটা অনেক বড় — ছোট করে আবার দিন';
+      if (/mime|not supported|invalid.*type|unsupported/i.test(m)) return 'এই ধরনের ফাইল দেওয়া যাবে না — ছবি (JPG/PNG/WebP) বা PDF দিন';
+      if (/row-level security|permission denied|not allowed|forbidden|policy|42501|insufficient_privilege/i.test(m + c) || st === 401 || st === 403)
+        return 'ছবি আপলোড হয়নি — লগইন করা আছে কিনা দেখে আবার চেষ্টা করুন';
+      return 'ছবি আপলোড হয়নি — একটু পরে আবার চেষ্টা করুন';
+    }
+    if (/jwt|token.*expired|expired.*token|refresh_token|not authenticated|auth session missing|invalid claim/i.test(m)) return 'আপনার লগইনের মেয়াদ শেষ হয়েছে — আবার লগইন করুন';
+    if (/email_domain_not_allowed|database error saving new user/i.test(m)) return 'শুধু পরিচিত ইমেইল (Gmail, Yahoo, Outlook ইত্যাদি) দিয়ে অ্যাকাউন্ট খোলা যায়';
+    if (/password/i.test(m) && /6|8|short|least|weak|strength|pwned|compromised/i.test(m)) return 'পাসওয়ার্ড আরও বড় ও শক্ত দিন';
+    if (/same.*password|new password should be different/i.test(m)) return 'নতুন পাসওয়ার্ড আগেরটার থেকে আলাদা দিন';
+    if (/already (registered|exists)|duplicate key|unique constraint|23505/i.test(m + c)) return 'এটা আগেই আছে';
+    if (/row-level security|permission denied|not allowed|forbidden|policy|42501|insufficient_privilege/i.test(m + c) || st === 401 || st === 403)
+      return 'এই কাজটা করার অনুমতি নেই — লগইন করা আছে কিনা দেখুন';
+    if (/violates check constraint|value too long|invalid input|23514|22001|22P02/i.test(m + c)) return 'দেওয়া তথ্যে ভুল আছে — একবার দেখে আবার চেষ্টা করুন';
+    /* ফাংশন/টেবিল/কলাম নেই — ভেতরের ব্যাপার, ইউজারকে শুধু আবার চেষ্টা করতে বলা */
+    return 'কাজটা এই মুহূর্তে সম্পন্ন হয়নি — একটু পরে আবার চেষ্টা করুন'
   };
+  PD.uploadMsg = function(e) { return msg(e, 'upload') };
   PD.fixLinks = function() {
     var M = [
       [/^হোম$/, 'index.html'],
@@ -114,6 +142,16 @@
       if (e && e.message !== 'firebase-no-user') console.warn('Firebase আপলোড হয়নি, Supabase-এ রাখা হচ্ছে', e);
       return sbUpload(blob, path, type)
     })
+  };
+  /* পুরোনো প্রোফাইল-ছবি মুছে ফেলা (শুধু নিজের avatars/ ফোল্ডারের ছবি) — জমে থাকা অপ্রয়োজনীয় ফাইল ঠেকাতে। ব্যর্থ হলেও কিছু ভাঙে না। */
+  PD.removeFile = function(url) {
+    try {
+      var m = String(url || '').match(/\/storage\/v1\/object\/public\/media\/(avatars\/[^?#]+)/);
+      if (m && PD.user && m[1].indexOf('avatars/' + PD.user.id + '/') === 0)
+        return db.storage.from('media').remove([decodeURIComponent(m[1])]).then(function() {}, function() {});
+      if (PD.fbRemove) return PD.fbRemove(url)
+    } catch (e) {}
+    return Promise.resolve()
   };
   PD.subscribe = function(email, uid) {
     return db.from('newsletter_subscribers').insert({
