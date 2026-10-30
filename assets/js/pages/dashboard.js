@@ -191,3 +191,30 @@ document.addEventListener('click', function (e) {
   if (!b) return;
   setTimeout(function () { try { b.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); } catch (x) { } }, 30);
 });
+
+/* মোবাইল ট্যাব বার: প্রথমবার দেখালে একটু সরিয়ে দেখানো + শেষে পৌঁছালে চেভরন লুকানো */
+(function () {
+  var wrap = document.querySelector('.dash-tabs-wrap');
+  var bar = document.getElementById('dash-tabs');
+  if (!wrap || !bar) return;
+  function sync() {
+    var atEnd = bar.scrollLeft + bar.clientWidth >= bar.scrollWidth - 4;
+    wrap.classList.toggle('at-end', atEnd || bar.scrollWidth <= bar.clientWidth + 2);
+  }
+  bar.addEventListener('scroll', sync, { passive: true });
+  window.addEventListener('resize', sync);
+  var nudged = false;
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      if (!es[0].isIntersecting || nudged) return;
+      nudged = true; io.disconnect();
+      sync();
+      if (window.innerWidth <= 640 && bar.scrollWidth > bar.clientWidth) {
+        wrap.classList.add('nudge');
+        setTimeout(function () { wrap.classList.remove('nudge'); }, 2600);
+      }
+    });
+    io.observe(bar);
+  }
+  sync();
+})();
