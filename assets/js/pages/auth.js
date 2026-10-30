@@ -73,7 +73,7 @@
     })
   }
 
-  /* ---------- Cloudflare Turnstile (শুধু Supabase-মোডে লাগে) ---------- */
+  /* ---------- Cloudflare Turnstile (Supabase-এ সরাসরি লগইন/রিসেটে লাগে — Firebase-মোডেও পুরোনো অ্যাকাউন্টের জন্য) ---------- */
   function tok(i) {
     return TK[i] || ''
   }
@@ -86,7 +86,6 @@
   }
 
   function initTS(n) {
-    if (FB) return;
     n = n || 0;
     var ids = ['ts-login', 'ts-signup'].filter(function(i) {
       return $(i)
@@ -118,9 +117,7 @@
   var WAIT = 'আগে "Verify you are human" বক্সে টিক দিন (বা ২-৩ সেকেন্ড অপেক্ষা করুন), তারপর আবার চাপুন';
 
   /* ---------- Firebase ত্রুটির সহজ বাংলা ---------- */
-  var OLD_NOTE = 'আগের লগইন-ব্যবস্থায় অ্যাকাউন্ট খুলেছিলেন? একই ইমেইলে একবার নতুন করে সাইনআপ করুন — আগের সব তথ্য থাকবে।';
-
-  function fbMsg(e) {
+    function fbMsg(e) {
     var c = (e && e.code) || '';
     return ({
       'auth/invalid-credential': 'ইমেইল বা পাসওয়ার্ড ভুল',
@@ -181,6 +178,22 @@
   }
 
   /* ---------- ইমেইল দিয়ে লগইন ---------- */
+  /* Supabase-এ সরাসরি লগইন — Firebase চালু হওয়ার আগে খোলা পুরোনো অ্যাকাউন্টের জন্য (নিরাপত্তা-জাল) */
+  function supabaseLogin(b, e, p, fromFb) {
+    var ct = tok('ts-login');
+    if (!ct) { busy(b, 0); return toast(WAIT, 1); }
+    busy(b, 1);
+    db.auth.signInWithPassword({ email: e, password: p, options: { captchaToken: ct } }).then(function(r) {
+      busy(b, 0);
+      rs('ts-login');
+      if (r.error) return toast(fromFb && /Invalid login/i.test(r.error.message || '') ? 'ইমেইল বা পাসওয়ার্ড ভুল' : msg(r.error), 1);
+      PD.load().then(function() {
+        toast('স্বাগতম!');
+        setTimeout(go, 700)
+      })
+    })
+  }
+
   function loginSubmit(b) {
     var inp = $('li-email'),
       e = inp.value.trim().toLowerCase(),
@@ -197,23 +210,13 @@
         return bridgeIn(c.user).then(function() { busy(b, 0) })
       }).catch(function(err) {
         busy(b, 0);
-        if (err && err.code && /invalid-credential|user-not-found|wrong-password/.test(err.code)) hint(inp, OLD_NOTE, 0);
+        /* Firebase-এ এই ইমেইলে অ্যাকাউন্ট নেই বা পাসওয়ার্ড মেলেনি → হয়তো আগের (Supabase) অ্যাকাউন্ট */
+        if (err && err.code && /invalid-credential|user-not-found|wrong-password/.test(err.code)) return supabaseLogin(b, e, p, true);
         toast(err && err.code ? fbMsg(err) : (err && err.message) || 'সমস্যা হয়েছে', 1)
       });
       return
     }
-    var ct = tok('ts-login');
-    if (!ct) return toast(WAIT, 1);
-    busy(b, 1);
-    db.auth.signInWithPassword({ email: e, password: p, options: { captchaToken: ct } }).then(function(r) {
-      busy(b, 0);
-      rs('ts-login');
-      if (r.error) return toast(msg(r.error), 1);
-      PD.load().then(function() {
-        toast('স্বাগতম!');
-        setTimeout(go, 700)
-      })
-    })
+    supabaseLogin(b, e, p, false)
   }
 
   /* ---------- ইমেইল দিয়ে সাইনআপ ---------- */
@@ -435,7 +438,7 @@
       var sent = function() {
         busy(btn, 0);
         $('fp-sent-text').textContent = e + ' ঠিকানায় অ্যাকাউন্ট থাকলে সেখানে পাসওয়ার্ড বদলানোর লিংক পাঠানো হয়েছে। ইনবক্সে না পেলে স্প্যাম ফোল্ডারটাও দেখুন।';
-        $('fp-old-note').hidden = !FB;
+        $('fp-old-box').hidden = !FB;
         step('sent')
       };
       if (FB) {
@@ -476,6 +479,20 @@
       })
     });
 
+    /* পুরোনো (Firebase-এর আগের) অ্যাকাউন্টের পাসওয়ার্ড রিসেট — Supabase দিয়ে */
+    on('fp-old-reset', function(b) {
+      var e = ($('fp-email').value || '').trim().toLowerCase(),
+        ct = tok('ts-login');
+      if (!e) return;
+      if (!ct) return toast(WAIT, 1);
+      busy(b, 1);
+      db.auth.resetPasswordForEmail(e, { redirectTo: location.origin + '/' + PD.pages.auth, captchaToken: ct }).then(function(r) {
+        busy(b, 0);
+        rs('ts-login');
+        if (r.error) return toast(msg(r.error), 1);
+        toast('আগের অ্যাকাউন্ট থাকলে ' + e + ' ঠিকানায় রিসেট লিংক পাঠানো হয়েছে')
+      })
+    });
     on('fbc-go', facebookGo)
   }
 

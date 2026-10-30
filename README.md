@@ -65,3 +65,8 @@
 - `assets/js/core/config.js`-এ Firebase-এর `apiKey` ও `appId` খালি থাকলে সাইট আগের মতো শুধু Supabase দিয়ে চলে।
 - সেতু-ফাংশনের কোড: `supabase/functions/firebase-bridge/index.ts` · Storage নিয়ম: `firebase/storage.rules`
 - Firebase SDK (v10.14.1, compat) নিজেদের সার্ভারে: `assets/vendor/firebase/`
+
+### Firebase-এর বর্তমান অবস্থা (প্রজেক্ট `potrodip-99ad4`)
+- Authentication: Email/Password ও Google চালু, `potrodip.github.io` অনুমোদিত, ইমেইল-এনুমারেশন সুরক্ষা চালু, বেনামি লগইন বন্ধ।
+- Storage: **এখনো চালু নয়** — প্রজেক্টে বিলিং-অ্যাকাউন্ট (Blaze) নেই। চালু হলে বাকেট বানিয়ে `firebase/storage.rules` ও `firebase/cors.json` বসিয়ে `firebaseStorage: true` করুন। তার আগে ছবি/PDF Supabase `media`-তেই যায়।
+- পুরোনো (Firebase-এর আগের) Supabase অ্যাকাউন্ট আগের পাসওয়ার্ডেই লগইন করতে পারে: Firebase-এ না পেলে লগইন Supabase-এ চেষ্টা হয় (নিরাপত্তা-জাল)।

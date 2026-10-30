@@ -13,9 +13,9 @@ window.PD_CONFIG = {
     messagingSenderId: '398592223434',
     appId: '1:398592223434:web:45e24e67b1489e846eec33'
   },
-  /* Firebase কনসোলে Email/Password ও Google লগইন চালু এবং potrodip.github.io অনুমোদিত হওয়ার পরই true করুন।
-     false থাকলে সাইট আগের মতো শুধু Supabase দিয়ে চলে (কিছু ভাঙবে না)। */
-  firebaseAuth: false,
+  /* Firebase কনসোলে Email/Password ও Google লগইন চালু এবং potrodip.github.io অনুমোদিত (সবই যাচাই করা, চালু আছে)।
+     কিছু ভাঙলে false করলেই সাইট আগের মতো শুধু Supabase দিয়ে চলবে। */
+  firebaseAuth: true,
   /* Firebase Storage চালু (Blaze প্ল্যান) ও storage.rules বসানোর পর true করুন — তখন ছবি ও PDF Firebase-এ যাবে,
      কোনো কারণে সেখানে না গেলে Supabase-এ। একটা ফাইল কখনো দুই জায়গায় রাখা হয় না। */
   firebaseStorage: false,

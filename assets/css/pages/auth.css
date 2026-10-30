@@ -1432,3 +1432,6 @@ html[data-theme="dark"] .btn-primary-full.fbc-go{color:#fff;}
 .fp-overlay{overflow-y:auto; align-items:flex-start; padding-top:56px;}
 .fp-overlay .fp-card{margin:auto 0;}
 .pe-field input[readonly]{opacity:.7; cursor:not-allowed;}
+.fp-inline{display:inline; padding:0; margin:0; font:inherit; font-weight:700; color:var(--primary); text-decoration:underline; text-underline-offset:3px; cursor:pointer; background:none; border:0;}
+.fp-inline:hover{color:var(--primary-dark);}
+.fp-inline.loading{opacity:.6; pointer-events:none;}
