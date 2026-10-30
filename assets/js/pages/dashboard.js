@@ -20,29 +20,32 @@
   function fade(card) { card.style.transition = 'opacity .25s ease, transform .25s ease'; card.style.opacity = '0'; card.style.transform = 'scale(.95)'; setTimeout(function () { card.remove(); }, 250); }
 
   /* ---------- প্রোফাইল ---------- */
+  function setInfo(id, text) {
+    var d = $(id); if (!d) return;
+    d.textContent = text || 'যোগ করা হয়নি';
+    d.classList.toggle('is-empty', !text);
+  }
   function hero() {
-    var name = (PD.profile && PD.profile.full_name) || (PD.user.email || '').split('@')[0] || 'পাঠক';
-    $('dash-name').textContent = 'স্বাগতম, ' + name;
+    var P = PD.profile || {};
+    var name = P.full_name || (PD.user.email || '').split('@')[0] || 'পাঠক';
+    $('dash-name').textContent = name;
     $('dash-email').textContent = PD.user.email || '';
-    $('dash-avatar-img').src = UI.avatar(PD.profile && PD.profile.avatar_url);
+    $('dash-avatar-img').src = UI.avatar(P.avatar_url);
+    setInfo('di-phone', P.phone ? UI.bn(P.phone) : '');
+    setInfo('di-address', P.address || '');
+    setInfo('di-email', PD.user.email || '');
+    setInfo('di-joined', PD.user.created_at ? UI.date(PD.user.created_at) : '');
     /* শুধু এডমিনের জন্য: এডমিন প্যানেলে যাওয়ার বাটন */
     if (PD.isAdmin() && !$('admin-link')) {
       var a = document.createElement('a'); a.id = 'admin-link'; a.className = 'btn-outline'; a.href = 'admin.html'; a.textContent = 'এডমিন প্যানেল';
       a.style.textDecoration = 'none'; a.style.display = 'inline-flex'; a.style.alignItems = 'center';
-      document.querySelector('.dash-hero-actions').insertBefore(a, document.querySelector('.dash-hero-actions').firstChild);
+      var host = document.querySelector('.dash-hero-actions');
+      host.insertBefore(a, host.firstChild);
     }
   }
-  $('btn-edit-profile').addEventListener('click', function () {
-    var cur = (PD.profile && PD.profile.full_name) || '';
-    var n = prompt('আপনার নাম লিখুন:', cur);
-    if (n === null) return;
-    n = n.trim();
-    if (!n || n.length > 60) return UI.toast('নাম ১ থেকে ৬০ অক্ষরের মধ্যে হতে হবে', 1);
-    db.from('profiles').update({ full_name: n }).eq('id', PD.user.id).then(function (r) {
-      if (r.error) return UI.toast(PD.msg(r.error), 1);
-      PD.profile = Object.assign({}, PD.profile, { full_name: n }); hero(); UI.toast('নাম হালনাগাদ হয়েছে');
-    });
-  });
+  $('btn-edit-profile').addEventListener('click', function () { if (window.PDProfile) window.PDProfile.open(); });
+  $('dash-avatar-img').parentNode.addEventListener('click', function () { if (window.PDProfile) window.PDProfile.open(); });
+  document.addEventListener('pd:profile', hero);
 
   /* ---------- ফলো করা লেখক ---------- */
   function following() {
