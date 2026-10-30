@@ -23,6 +23,7 @@
   function matches() { return $('del-input').value.trim() === WORD; }
 
   $('btn-delete-account').addEventListener('click', open);
+  var m=$('btn-delete-account-m'); if(m) m.addEventListener('click', open);
   $('del-close').addEventListener('click', close);
   $('del-cancel').addEventListener('click', close);
   $('del-scrim').addEventListener('mousedown', function (e) { if (e.target === this) close(); });

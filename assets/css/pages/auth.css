@@ -705,20 +705,52 @@ html[data-theme="dark"] .order-shop{color:#0F1415;}
 .di-item dd.is-empty{color:var(--text-muted); font-size:13px;}
 .di-wide{grid-column:1 / -1;}
 
+.dash-mob-del{display:none;}
+/* পিসি/ট্যাবলেট: মোবাইলের মতোই মাঝখানে সাজানো কার্ড */
+@media(min-width:641px){
+  .dash-top{flex-direction:column; align-items:center; text-align:center; padding:34px 30px 26px; gap:18px;}
+  .dash-hero-left{flex-direction:column; align-items:center; gap:14px; flex:none; width:100%;}
+  .dash-avatar{width:108px; height:108px;}
+  .dash-hero-text{width:100%;}
+  .dash-hero-text h1{font-size:26px; margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .dash-hero-text p{display:none;}
+  .dash-hero-actions{justify-content:center; gap:12px;}
+  .dash-hero-actions .btn-outline{padding:11px 24px; white-space:nowrap;}
+  .dash-info{grid-template-columns:repeat(4,minmax(0,1fr));}
+  .di-item,.di-wide{grid-column:auto; display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px; padding:20px 16px;}
+  .di-item dt{margin:0; justify-content:center; white-space:nowrap;}
+  .di-item dd{margin:0; font-size:14.5px; max-width:100%; min-width:0; overflow-wrap:anywhere;}
+  .dash-mob-del{display:block; padding:12px 18px 16px; text-align:center; background:var(--surface); border-top:1px solid var(--border);}
+  .dash-del-link{display:inline-flex; align-items:center; gap:6px; background:none; border:0; font:inherit; font-size:13px; font-weight:600; color:#C0392B; padding:8px 16px; border-radius:999px; cursor:pointer;}
+  .dash-del-link svg{width:15px; height:15px;}
+  .dash-del-link:hover{background:rgba(192,57,43,.1);}
+}
+@media(min-width:641px) and (max-width:900px){
+  .dash-info{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+html[data-theme="dark"] .dash-del-link{color:#F08A80;}
 @media(max-width:640px){
-  .dash-top{padding:20px 18px 16px; gap:16px;}
-  .dash-avatar{width:68px; height:68px;}
-  .dash-hero-left{gap:14px;}
-  .dash-hero-text h1{font-size:19px;}
+  .dash-top{flex-direction:column; align-items:center; text-align:center; padding:24px 18px 18px; gap:16px;}
+  .dash-hero-left{flex-direction:column; align-items:center; gap:12px; flex:none; width:100%;}
+  .dash-avatar{width:96px; height:96px;}
+  .dash-hero-text{width:100%;}
+  .dash-hero-text h1{font-size:19px; line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .dash-hero-text p{display:none;}
   .dash-hero-actions{display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%;}
-  .dash-hero-actions .btn-outline{justify-content:center; padding:10px 8px; font-size:12.5px; min-width:0;}
-  .dash-info{grid-template-columns:1fr 1fr;}
-  .di-item{padding:13px 16px;}
-  .di-item:nth-child(3){grid-column:1 / -1;}
-  .di-item dd{font-size:13.5px;}
+  #admin-link{grid-column:1 / -1;}
+  .dash-hero-actions .btn-outline{justify-content:center; padding:10px 8px; font-size:12.5px; min-width:0; white-space:nowrap;}
+  .dash-info{grid-template-columns:1fr;}
+  .di-item,.di-item:nth-child(3){grid-column:auto; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:13px 18px;}
+  .di-item dt{margin:0; flex:none; white-space:nowrap;}
+  .di-item dd{margin:0; font-size:13px; text-align:right; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .dash-mob-del{display:block; padding:12px 18px 16px; text-align:center; background:var(--surface); border-top:1px solid var(--border);}
+  .dash-del-link{display:inline-flex; align-items:center; gap:6px; background:none; border:0; font:inherit; font-size:13px; font-weight:600; color:#C0392B; padding:8px 14px; border-radius:999px; cursor:pointer;}
+  .dash-del-link svg{width:15px; height:15px;}
+  .dash-del-link:active{background:rgba(192,57,43,.1);}
 }
 @media(max-width:360px){
   .dash-hero-actions .btn-outline svg{display:none;}
+  .di-item dd{font-size:12.5px;}
 }
 
 /* ---------- পপআপ ---------- */
@@ -833,5 +865,17 @@ body.pe-lock{overflow:hidden;}
 
 /* ---------- ফুটার: শুধু নিউজলেটার বক্স ---------- */
 .site-footer .pd-nl-only{padding-bottom:40px;}
-.site-footer .pd-nl-only .newsletter-block{border-bottom:none; margin-bottom:0; padding-bottom:0;}
+.site-footer .pd-nl-only .newsletter-block{
+  border-bottom:1px solid rgba(242,239,232,.14); margin-bottom:0; padding:40px 44px;
+  align-items:center; box-sizing:border-box;
+}
+.site-footer .pd-nl-only .newsletter-form{align-self:center;}
+@media(max-width:900px){ .site-footer .pd-nl-only .newsletter-block{padding:30px 26px;} }
+@media(max-width:600px){ .site-footer .pd-nl-only .newsletter-block{padding:26px 18px;} }
 #btn-delete-account{white-space:nowrap; flex:none;}
+
+/* লগ-আউট বোতাম: হালকা লাল */
+#demo-logout-btn{background:rgba(192,57,43,.09); color:#C0392B; border-color:rgba(192,57,43,.35);}
+#demo-logout-btn:hover{background:rgba(192,57,43,.16); border-color:#C0392B; color:#A93226;}
+html[data-theme="dark"] #demo-logout-btn{background:rgba(229,115,104,.12); color:#F08A80; border-color:rgba(229,115,104,.4);}
+html[data-theme="dark"] #demo-logout-btn:hover{background:rgba(229,115,104,.2); color:#F8B1A9;}
