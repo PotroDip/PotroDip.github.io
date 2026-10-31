@@ -56,7 +56,12 @@ p{font-weight:400;}
 
 /* ============ লোগো — ডার্ক মোডে অটোমেটিক সাদা (আগের পেজগুলোর সাথে হুবহু) ============ */
   html[data-theme="dark"] #brand-logo #header,
-  html[data-theme="dark"] #brand-logo #wordmark{
+  html[data-theme="dark"] #brand-logo #wordmark,
+  html[data-theme="dark"] #brand-logo #tag1,
+  html[data-theme="dark"] #brand-logo #tag2,
+  html[data-theme="dark"] #brand-logo #tag3,
+  html[data-theme="dark"] #brand-logo #tag4,
+  html[data-theme="dark"] #brand-logo #tag5{
     filter:brightness(0) invert(1);
   }
 

@@ -1,18 +1,6 @@
 /* ============================================================
-   chrome.css — সব পেজের হেডার, টপবার ও ফুটার (সবশেষে লোড হয়, তাই পেজের পুরোনো স্টাইলের ওপর বসে)
+   chrome.css — সব পেজের হেডার ও ফুটার (সবশেষে লোড হয়, তাই পেজের পুরোনো স্টাইলের ওপর বসে)
    ============================================================ */
-
-/* ============ টপবার (শুধু বড় স্ক্রিনে) ============ */
-.topbar{background:var(--primary-dark);color:rgba(242,239,232,.82);font-size:12.5px;}
-html[data-theme="dark"] .topbar{background:#0B1112;}
-.topbar-inner{max-width:1200px;margin:0 auto;padding:0 16px;height:36px;display:flex;align-items:center;justify-content:space-between;gap:20px;}
-.tb-tag{position:absolute;left:50%;transform:translateX(-50%);letter-spacing:.2px;opacity:.75;white-space:nowrap;}
-.topbar-inner{position:relative;}
-.tb-link{color:#F2EFE8;font-weight:600;display:inline-flex;gap:6px;align-items:center;}
-.tb-link span{transition:transform .25s ease;}
-.tb-link:hover span{transform:translateX(3px);}
-@media(max-width:860px){ .topbar{display:none;} }
-@media(max-width:1060px){ .tb-tag{display:none;} }
 
 /* ============ হেডার ============ */
 header.site-header{
@@ -24,10 +12,10 @@ header.site-header{
 }
 header.site-header.scrolled{box-shadow:0 8px 28px -14px rgba(18,58,61,.28);}
 html[data-theme="dark"] header.site-header.scrolled{box-shadow:0 8px 28px -12px rgba(0,0,0,.6);}
-.site-header .header-inner{height:76px;transition:height .3s ease;}
-.site-header.scrolled .header-inner{height:64px;}
-.site-header #header-logo-slot{width:110px;height:44px;transition:width .3s ease,height .3s ease;}
-.site-header.scrolled #header-logo-slot{width:96px;height:38px;}
+.site-header .header-inner{height:94px;transition:height .3s ease;}
+.site-header.scrolled .header-inner{height:78px;}
+.site-header #header-logo-slot{width:152px;height:83px;transition:width .3s ease,height .3s ease;}
+.site-header.scrolled #header-logo-slot{width:130px;height:71px;}
 
 .site-header nav.main-nav{gap:30px;}
 .site-header .nav-links{gap:6px;}
@@ -53,10 +41,11 @@ html[data-theme="dark"] .site-header .account-btn.logged{color:#0F1415;}
 .site-header .account-btn.has-avatar:hover{background:var(--surface);}
 
 @media(max-width:860px){
-  .site-header .header-inner{height:64px;}
+  .site-header .header-inner{height:74px;}
   .site-header .header-actions{border-left:none;padding-left:0;gap:2px;}
-  .site-header #header-logo-slot{width:92px;height:37px;}
-  .site-header.scrolled .header-inner{height:58px;}
+  .site-header #header-logo-slot{width:118px;height:65px;}
+  .site-header.scrolled .header-inner{height:68px;}
+  .site-header.scrolled #header-logo-slot{width:106px;height:58px;}
 }
 @media(max-width:430px){
   .site-header .icon-btn, .site-header #theme-toggle{width:38px;height:38px;}
@@ -82,10 +71,18 @@ footer.site-footer::before{
   background:rgba(255,255,255,.05);border:1px solid rgba(242,239,232,.14);border-radius:8px;
 }
 .nl-kicker{display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--secondary-light);margin-bottom:8px;}
-.nl-kicker::before{content:"";width:24px;height:2px;background:var(--secondary-light);}
+.nl-ico{width:22px;height:22px;flex-shrink:0;overflow:visible;}
+.nl-flap{stroke-dasharray:20;stroke-dashoffset:0;animation:nlFlap 5s cubic-bezier(.65,0,.35,1) infinite;}
+.nl-dot,.nl-dot-ring{transform-box:fill-box;transform-origin:center;}
+.nl-dot{animation:nlDot 5s ease-out infinite;}
+.nl-dot-ring{opacity:0;animation:nlRing 5s ease-out infinite;}
+@keyframes nlFlap{0%{stroke-dashoffset:20}22%,88%{stroke-dashoffset:0}94%,100%{stroke-dashoffset:20}}
+@keyframes nlDot{0%,20%{transform:scale(0)}30%{transform:scale(1.25)}38%,100%{transform:scale(1)}}
+@keyframes nlRing{0%,28%{opacity:0;transform:scale(1)}32%{opacity:.45}60%,100%{opacity:0;transform:scale(2.6)}}
+@media(prefers-reduced-motion:reduce){.nl-flap,.nl-dot,.nl-dot-ring{animation:none}.nl-dot-ring{display:none}}
 .site-footer .newsletter-copy h3{color:#fff;font-size:28px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
 .site-footer .newsletter-copy p{color:rgba(242,239,232,.72);font-size:15px;max-width:48ch;}
-.site-footer .free-badge{background:var(--secondary);color:#fff;font-size:11.5px;padding:3px 10px;border-radius:999px;}
+.site-footer .free-badge{display:inline-flex;align-items:center;justify-content:center;height:22px;box-sizing:border-box;background:var(--secondary);color:#fff;font-size:11.5px;line-height:1;padding:2px 10px 0;border-radius:999px;vertical-align:middle;}
 .site-footer .newsletter-form{display:flex;max-width:none;width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(242,239,232,.25);border-radius:999px;padding:5px;}
 .site-footer .newsletter-form input{flex:1;min-width:0;background:none;border:none;padding:10px 16px;color:#F2EFE8;font-size:14.5px;font-family:inherit;outline:none;}
 .site-footer .newsletter-form input::placeholder{color:rgba(242,239,232,.5);}
@@ -93,16 +90,23 @@ footer.site-footer::before{
 .site-footer .newsletter-form button:hover{background:#fff;}
 .site-footer .newsletter-form:focus-within{border-color:var(--secondary-light);}
 
-/* কলাম */
-.site-footer .footer-cols{display:grid;grid-template-columns:1.7fr 1fr 1fr 1fr;gap:40px;margin-bottom:56px;}
-.site-footer .footer-cols h5{display:block;font-size:13px;font-weight:700;letter-spacing:.3px;color:var(--secondary-light);padding:0;margin-bottom:18px;border:none;}
+/* ব্র্যান্ড + যোগাযোগ (v11: লিংক কলাম বাদ — হেডারেই আছে) */
 .site-footer .footer-logo-mark{display:block;height:46px;width:fit-content;margin-bottom:16px;line-height:0;}
 .site-footer .footer-logo-mark svg{height:100%;width:auto;display:block;filter:brightness(0) invert(1) opacity(.95);}
-.site-footer .fc-brand p{font-size:14.5px;line-height:1.75;color:rgba(242,239,232,.72);max-width:36ch;margin-bottom:20px;}
-.site-footer .footer-cols ul{list-style:none;}
-.site-footer .footer-cols li{margin-bottom:12px;}
-.site-footer .footer-cols li a{font-size:15px;color:rgba(242,239,232,.82);transition:color .2s ease, padding-left .2s ease;}
-.site-footer .footer-cols li a:hover{color:#fff;padding-left:4px;}
+
+.site-footer .footer-main{display:flex;align-items:center;justify-content:space-between;gap:28px 48px;margin-bottom:44px;}
+.site-footer .fm-brand{min-width:0;}
+.site-footer .fm-brand p{font-size:15px;line-height:1.8;color:rgba(242,239,232,.72);max-width:46ch;margin:0;}
+.site-footer .fm-connect{display:flex;align-items:center;gap:16px;flex-shrink:0;}
+.site-footer .fm-label{font-size:13px;font-weight:700;letter-spacing:.3px;color:var(--secondary-light);}
+.site-footer .fm-connect .footer-social{flex-wrap:nowrap;}
+@media(max-width:760px){
+  .site-footer .footer-main{flex-direction:column;align-items:center;text-align:center;gap:26px;margin-bottom:34px;}
+  .site-footer .footer-logo-mark{margin-left:auto;margin-right:auto;}
+  .site-footer .fm-brand p{margin:0 auto;}
+  .site-footer .fm-connect{flex-direction:column;gap:12px;}
+  .site-footer .footer-social{justify-content:center;}
+}
 .footer-social{display:flex;gap:10px;flex-wrap:wrap;}
 .footer-social .soc{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(242,239,232,.25);color:#F2EFE8;transition:background-color .2s ease,border-color .2s ease,transform .2s ease;}
 .footer-social .soc:hover{background:#F2EFE8;color:#123A3D;border-color:#F2EFE8;transform:translateY(-2px);}
@@ -126,15 +130,11 @@ footer.site-footer::before{
   .site-footer .newsletter-copy h3{justify-content:center;font-size:24px;}
   .site-footer .newsletter-copy p{margin:0 auto;}
   .nl-kicker{justify-content:center;}
-  .site-footer .footer-cols{grid-template-columns:1fr 1fr 1fr;gap:32px 24px;}
-  .site-footer .fc-brand{grid-column:1 / -1;}
 }
 @media(max-width:600px){
   .site-footer .footer-inner{padding:52px 16px 26px;}
   .site-footer .newsletter-block{margin-bottom:44px;padding:24px 18px;}
   .site-footer .newsletter-form button{padding:10px 16px;font-size:13px;}
-  .site-footer .footer-cols{grid-template-columns:1fr 1fr;margin-bottom:40px;}
-  .site-footer .footer-cols > div:last-child{grid-column:1 / -1;}
   .site-footer .footer-bottom{flex-direction:column;text-align:center;justify-content:center;}
   .site-footer .legal-links{justify-content:center;gap:8px 18px;}
 }
@@ -146,10 +146,8 @@ footer.site-footer::before{
 .site-footer .newsletter-copy{min-width:0;}
 
 /* ================= v7: হেডার সমন্বয় ================= */
-/* ডেস্কটপ হেডার: লোগোর নিচে ট্যাগলাইন */
-.site-header .brand{flex-direction:column;align-items:flex-start;gap:4px;}
-.brand-tag{font-size:12px;color:var(--text-muted);white-space:nowrap;line-height:1.1;letter-spacing:.2px;}
-@media(max-width:860px){ .brand-tag{display:none;} .site-header .brand{flex-direction:row;align-items:center;gap:10px;} }
+/* হেডারে পুরো লোগো (ট্যাগলাইনসহ) — আলাদা লেখা নেই */
+.site-header .brand{flex-direction:row;align-items:center;gap:10px;}
 
 /* নেভ লিংক একটু কাছাকাছি (শুধু ডেস্কটপ) */
 .site-header nav.main-nav{gap:18px;}

@@ -52,7 +52,7 @@
     var T = function (t, c, o) { return PD.db.from(t).select(c || '*', o); };
     return Promise.all([
       T('authors').order('created_at', { ascending: false }).limit(500),
-      T('articles', 'id,slug,title,body,category,author_id,issue_id,cover_url,status,view_count,published_at,created_at').order('created_at', { ascending: false }).limit(1000),
+      T('articles', 'id,slug,title,body,category,author_id,issue_id,cover_url,status,view_count,published_at,created_at,home_order,home_hidden,home_featured').order('created_at', { ascending: false }).limit(1000),
       T('issues').order('created_at', { ascending: false }).limit(300),
       T('print_issues').order('sort_order', { ascending: true }).limit(300),
       T('orders', 'id,order_number,customer_name,phone,area,subtotal,delivery_charge,transaction_id,payment_status,created_at').order('created_at', { ascending: false }).limit(500),
@@ -206,6 +206,15 @@
       var a = adFor(s), img = a && a.image_url;
       return H`<div class="item-card"><div class="item-cover" style="aspect-ratio:${s.ratio}; cursor:pointer;" data-slot-trigger="${s.id}">${raw(img ? H`<img src="${img}" alt="">` : '<div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; color:var(--text-muted); font-size:12px; text-align:center; padding:10px;">' + ICON.up + '<span>ক্লিক করে আপলোড করুন</span></div>')}</div><input type="file" accept="image/*" style="display:none;" data-slot-file="${s.id}"><div class="item-body left-align"><div class="item-name">${s.name}</div><div style="font-size:12px; color:var(--secondary); font-weight:600; margin-bottom:4px;">${s.size}</div><div class="item-sub-line">${s.where}</div><div class="item-foot"><label class="switch"><input type="checkbox" data-slot-active="${s.id}"${raw(a && a.is_active ? ' checked' : '')}><span class="track"></span></label><div style="display:flex; gap:6px;">${raw(img ? H`<button class="icon-btn-sm danger" data-slot-remove="${s.id}" title="সরিয়ে ফেলুন">${raw(ICON.del)}</button>` : '')}</div></div></div></div>`;
     }).join('');
+    /* ছবি লোড না হলে (যেমন পুরোনো /ads/ লিংক AdBlock আটকালে) ফাঁকা না রেখে কারণ দেখানো */
+    [].forEach.call($('adSlotGrid').querySelectorAll('.item-cover img'), function (im) {
+      im.addEventListener('error', function () {
+        var d = document.createElement('div');
+        d.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;font-size:12px;line-height:1.6;color:var(--text-muted);';
+        d.textContent = 'ছবি লোড হচ্ছে না — ছবিটা আবার আপলোড করুন (বা AdBlock বন্ধ করে দেখুন)';
+        im.replaceWith(d);
+      });
+    });
   }
   $('adSlotGrid').addEventListener('click', function (e) {
     var t = e.target.closest('[data-slot-trigger]'); if (t) { this.querySelector('[data-slot-file="' + t.dataset.slotTrigger + '"]').click(); return; }
@@ -221,7 +230,7 @@
     var f = e.target.closest('[data-slot-file]'), tg = e.target.closest('[data-slot-active]');
     if (f && f.files[0]) {
       var s = SLOTS.filter(function (x) { return x.id === f.dataset.slotFile; })[0], a = adFor(s), file = f.files[0];
-      window.AdminForms.upload(file, 'ads').then(function (url) {
+      window.AdminForms.upload(file, 'banners').then(function (url) {
         var link = a && a.link_url ? a.link_url : (prompt('বিজ্ঞাপনে ক্লিক করলে কোথায় যাবে? লিংক দিন (https://...) বা খালি রাখুন', '') || '').trim();
         if (link && !/^https?:\/\//i.test(link)) { A.showToast('লিংক https:// দিয়ে শুরু হতে হবে, তাই লিংক ছাড়া সেভ হলো'); link = ''; }
         var row = { image_url: url, is_active: true, link_url: link || null };

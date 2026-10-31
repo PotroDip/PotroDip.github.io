@@ -7,12 +7,18 @@
   var headerSlot = document.getElementById('header-logo-slot');
   /* লগইন/সাইনআপ মোডে হেডার লুকানো — লোগো কার্ডের ভেতরের জায়গায় বসে */
   var cardSlot = document.getElementById('auth-logo-slot');
-  if(cardSlot && document.body.classList.contains('auth-mode')) headerSlot = cardSlot;
+  /* লোগো কোথায় বসবে তা বসানোর মুহূর্তেই ঠিক হয় (লগইন ডেটা আগে এসে গেলে লোগো যেন লুকানো কার্ডে আটকে না যায়) */
+  function pickSlot(){
+    return (cardSlot && document.body.classList.contains('auth-mode')) ? cardSlot : document.getElementById('header-logo-slot');
+  }
+  headerSlot = pickSlot();
   var svgEl = stage.querySelector('svg');
 
   function revealInstant(){
     overlay.style.display = 'none';
+    headerSlot = pickSlot();
     headerSlot.appendChild(svgEl);
+    svgEl.setAttribute('viewBox','35 235 930 510');
     svgEl.style.width = '100%';
     svgEl.style.height = '100%';
     try{
@@ -37,9 +43,13 @@
   });
 
   function startFlip(){
+    /* ট্যাগলাইনসহ পুরো লোগো যেন হেডারে বসার আগেই সম্পূর্ণ দেখায় */
+    try{ if(typeof svgEl.setCurrentTime === 'function') svgEl.setCurrentTime(3); }catch(e){}
     var firstRect = svgEl.getBoundingClientRect();
 
+    headerSlot = pickSlot();
     headerSlot.appendChild(svgEl);
+    svgEl.setAttribute('viewBox','35 235 930 510');
     var lastRect = svgEl.getBoundingClientRect();
 
     var dx = firstRect.left - lastRect.left + (firstRect.width - lastRect.width)/2;

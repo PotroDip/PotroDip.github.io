@@ -66,7 +66,12 @@ h1,h2,h3,h4{overflow-wrap:anywhere;}
 
 /* ============ লোগো — ডার্ক মোডে অটোমেটিক সাদা ============ */
   html[data-theme="dark"] #brand-logo #header,
-  html[data-theme="dark"] #brand-logo #wordmark{
+  html[data-theme="dark"] #brand-logo #wordmark,
+  html[data-theme="dark"] #brand-logo #tag1,
+  html[data-theme="dark"] #brand-logo #tag2,
+  html[data-theme="dark"] #brand-logo #tag3,
+  html[data-theme="dark"] #brand-logo #tag4,
+  html[data-theme="dark"] #brand-logo #tag5{
     filter:brightness(0) invert(1);
   }
 
@@ -861,6 +866,27 @@ body.pe-lock{overflow:hidden;}
 .pe-btn.danger:hover{filter:brightness(1.08);}
 .pe-btn.danger:disabled{background:var(--border); color:var(--text-muted); opacity:1;}
 
+/* অ্যাকাউন্ট মুছুন পপআপ: ফুটার ও বাটনের পেশাদার স্পেসিং */
+.del-modal{display:flex; flex-direction:column; overflow:hidden;}
+.del-modal .pe-head{padding:24px 28px 18px; flex:none;}
+.del-modal .del-body{padding:22px 28px 26px; overflow-y:auto; min-height:0;}
+.del-modal #del-input{padding:13px 16px; margin-top:2px;}
+.del-modal .pe-foot{
+  flex:none; margin:0; padding:18px 28px 22px; gap:12px; align-items:center;
+  border-top:1px solid var(--border); background:transparent;
+}
+.del-modal .pe-foot .pe-btn{min-width:130px; padding:12px 26px; line-height:1.4; white-space:nowrap;}
+@media(max-width:600px){
+  .del-modal{max-height:92vh; border-radius:22px 22px 0 0;}
+  .del-modal .pe-head{padding:20px 20px 14px;}
+  .del-modal .del-body{padding:18px 20px 18px;}
+  .del-modal .pe-foot{
+    position:static; margin:0; gap:10px;
+    padding:14px 20px calc(18px + env(safe-area-inset-bottom));
+  }
+  .del-modal .pe-foot .pe-btn{flex:1; min-width:0; padding:13px 12px;}
+}
+
 /* ---------- ফুটার: শুধু নিউজলেটার বক্স ---------- */
 .site-footer .pd-nl-only{padding-bottom:40px;}
 .site-footer .pd-nl-only .newsletter-block{
@@ -1295,7 +1321,7 @@ html[data-theme="dark"] .auth-card::before{background:linear-gradient(135deg,rgb
 .auth-card::after{content:""; position:absolute; left:50%; top:0; width:46%; height:2px; transform:translateX(-50%); background:linear-gradient(90deg,transparent,var(--secondary),transparent); opacity:.8;}
 
 .auth-logo{display:flex; justify-content:center; margin:0 auto 20px;}
-#auth-logo-slot{width:150px; height:65px;}
+#auth-logo-slot{width:170px; height:93px;}
 #auth-logo-slot svg{width:100%; height:100%; display:block; filter:drop-shadow(0 6px 14px rgba(18,58,61,.18));}
 
 /* --- ট্যাব --- */

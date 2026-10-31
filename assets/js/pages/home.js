@@ -30,12 +30,16 @@
     return
   }
   var db = PD.db,
-    R = await Promise.all([db.from('articles').select('id,title,excerpt,category,cover_url,author_id,issue_id,published_at,created_at').order('published_at', {
+    R = await Promise.all([db.from('articles').select('id,title,excerpt,category,cover_url,author_id,issue_id,published_at,created_at,home_order,home_hidden').order('published_at', {
       ascending: false,
       nullsFirst: false
     }).order('created_at', {
       ascending: false
-    }).limit(30), db.from('authors').select('id,slug,name,role_title,city,image_url,avg_rating').limit(100), db.from('issues').select('id,title,issue_number,cover_url,published_at,created_at'), db.from('ads').select('slot_id,image_url,link_url').eq('is_active', true), db.from('print_issues').select('id,issue_id,teaser,price,in_stock,cover_url').limit(50)]);
+    }).limit(30), db.from('authors').select('id,slug,name,role_title,city,image_url,avg_rating').limit(100), db.from('issues').select('id,title,issue_number,cover_url,published_at,created_at'), db.from('ads').select('slot_id,image_url,link_url').eq('is_active', true), db.from('print_issues').select('id,issue_id,teaser,price,in_stock,cover_url').limit(50), db.from('articles').select('id,title,excerpt,category,cover_url,author_id,issue_id,published_at,created_at,home_order,home_hidden').not('home_order', 'is', null).order('home_order', { ascending: true }).limit(20), db.from('articles').select('id,title,excerpt,category,cover_url,author_id,issue_id,published_at,created_at,home_order,home_hidden').eq('home_featured', true).eq('status', 'published').order('created_at', { ascending: false }).limit(1)]);
+  if (R[0].error) { /* নতুন কলাম (home_order) এখনো ডাটাবেসে না থাকলে আগের মতো চালু থাকুক */
+    var fb = await db.from('articles').select('id,title,excerpt,category,cover_url,author_id,issue_id,published_at,created_at').order('published_at', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false }).limit(30);
+    if (!fb.error) R[0] = fb
+  }
   if (R[0].error) {
     $('article-grid').innerHTML = '<p class="pd-empty">লেখাগুলো এখন আনা যাচ্ছে না। ইন্টারনেট যাচাই করে পেজটা আবার খুলুন।</p>';
     return
@@ -76,18 +80,30 @@
       return bn(i < 9 ? '0' + (i + 1) : i + 1)
     },
     arrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
-  var h = A[0];
+  /* হিরো: অ্যাডমিন যে লেখাকে "হোমের শুরুতে" দিয়েছে সেটা (পুরোনো/নতুন যাই হোক); না থাকলে সবচেয়ে নতুন লেখা */
+  var FT = (R[6] && !R[6].error && R[6].data && R[6].data[0]) || null,
+    AH = FT ? [FT].concat(A.filter(function(a) { return a.id !== FT.id })) : A;
+  var h = AH[0];
   if (!h) {
     $('hero-grid').innerHTML = '<p class="pd-empty" style="grid-column:1/-1">এখনো কোনো লেখা প্রকাশিত হয়নি। খুব শীঘ্রই আসছে!</p>';
   } else {
     var iss = I[h.issue_id],
-      same = A.slice(1).filter(function(a) {
+      same = AH.slice(1).filter(function(a) {
         return h.issue_id && a.issue_id === h.issue_id
       }),
-      rail = (same.length >= 2 ? same : A.slice(1)).slice(0, 4);
+      rail = (function() {
+        /* অ্যাডমিন যে লেখায় ক্রম দিয়েছে সেগুলো ক্রম অনুযায়ী আগে, বাকিগুলো তারপর (আগের নিয়মে); "দেখাবে না" চিহ্নিতগুলো বাদ */
+        var base = (same.length >= 2 ? same : AH.slice(1)).filter(function(a) { return !a.home_hidden }),
+          pinned = ((R[5] && !R[5].error && R[5].data) || []).filter(function(a) { return a.id !== h.id && !a.home_hidden && a.home_order != null }),
+          seen = {};
+        pinned.sort(function(a, b) { return a.home_order - b.home_order });
+        return pinned.concat(base.filter(function(a) { return a.home_order == null })).filter(function(a) {
+          return seen[a.id] ? false : (seen[a.id] = 1)
+        }).slice(0, 4)
+      })();
     var feat = '<a class="hf" href="article.html?id=' + h.id + '"><div class="hf-media"><img src="' + esc(h.cover_url || PH) + '" alt="' + esc(h.title) + '" fetchpriority="high"></div><div class="hf-shade"></div><div class="hf-body"><div class="hf-kicker">' + (h.category ? '<span class="hf-cat">' + esc(h.category) + '</span>' : '') + (iss ? '<span class="hf-issue">' + esc(iss.title) + '</span>' : '') + '</div><h1>' + esc(h.title) + '</h1><p class="hf-excerpt">' + esc(cut(h.excerpt, 150)) + '</p><div class="hf-foot"><div class="hf-by">' + im(au(h)) + '<div><strong>' + esc(au(h).name) + '</strong><span>' + dt(h.published_at || h.created_at) + '</span></div></div><span class="hf-cta">সম্পূর্ণ পড়ুন ' + arrow + '</span></div></div></a>';
     var side = rail.length ? '<aside class="hero-rail"><div class="rail-head"><span class="rail-title">' + (same.length >= 2 ? 'এই সংখ্যায়' : 'আরও পড়ুন') + '</span>' + (iss && same.length >= 2 ? '<span class="rail-issue">' + esc(iss.title) + '</span>' : '') + '</div><ol class="rail-list">' + rail.map(function(a, i) {
-      return '<li><a href="article.html?id=' + a.id + '"><span class="rail-num">' + num(i) + '</span><div class="rail-text">' + (a.category ? '<span class="rail-cat">' + esc(a.category) + '</span>' : '') + '<h3>' + esc(a.title) + '</h3><span class="rail-author">' + esc(au(a).name) + '</span></div><div class="rail-thumb"><img src="' + esc(a.cover_url || PH) + '" alt="" loading="lazy"></div></a></li>'
+      return '<li><a href="article.html?id=' + a.id + '"><div class="rail-text">' + (a.category ? '<span class="rail-cat">' + esc(a.category) + '</span>' : '') + '<h3>' + esc(a.title) + '</h3><span class="rail-author">' + esc(au(a).name) + '</span></div><div class="rail-thumb"><img src="' + esc(a.cover_url || PH) + '" alt="" loading="lazy"></div></a></li>'
     }).join('') + '</ol><a class="rail-more" href="archive.html">সব সংখ্যা দেখুন ' + arrow + '</a></aside>' : '';
     $('hero-grid').innerHTML = feat + side;
     $('hero-grid').classList.toggle('no-rail', !rail.length);

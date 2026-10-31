@@ -71,6 +71,7 @@
     if (a && a.category && ![].some.call(cat.options, function (o) { return o.value === a.category; })) { var o = document.createElement('option'); o.textContent = a.category; cat.appendChild(o); }
     if (a) { $('art-author').value = a.author_id || ''; $('art-issue').value = a.issue_id || ''; cat.value = a.category || cat.value; }
     $('art-published').checked = a ? a.status === 'published' : true;
+    $('art-home-order').value = a && a.home_order != null ? a.home_order : ''; $('art-home-hidden').checked = !!(a && a.home_hidden); $('art-home-featured').checked = !!(a && a.home_featured);
     setPreview($('art-cover-preview'), a ? a.cover_url : null); $('art-cover-file').value = '';
     [].slice.call(gal.querySelectorAll('.img-upload-thumb')).forEach(function (t) { t.remove(); });
     if (a) db.from('article_images').select('id,image_url').eq('article_id', a.id).order('sort_order', { ascending: true }).then(function (r) { (r.data || []).forEach(function (g) { thumb(g.image_url, g.id); }); });
@@ -83,7 +84,7 @@
     if (!$('art-author').value) return A.showToast('লেখক বেছে নিন (আগে লেখক যোগ করুন)');
     busy(btn, true, 1);
     var old = art.id ? C.byId(S.articles, art.id) : null;
-    var row = { title: title, body: box.innerHTML, excerpt: text.slice(0, 160), category: $('art-cat').value, author_id: $('art-author').value, issue_id: $('art-issue').value || null, status: $('art-published').checked ? 'published' : 'draft' };
+    var row = { title: title, body: box.innerHTML, excerpt: text.slice(0, 160), category: $('art-cat').value, author_id: $('art-author').value, issue_id: $('art-issue').value || null, home_order: (function (v) { v = parseInt(v, 10); return isNaN(v) || v < 1 ? null : v; })($('art-home-order').value), home_hidden: $('art-home-hidden').checked, home_featured: $('art-home-featured').checked, status: $('art-published').checked ? 'published' : 'draft' };
     if (row.status === 'published' && !(old && old.published_at)) row.published_at = new Date().toISOString();
     upload(art.cover, 'covers').then(function (url) {
       if (url) row.cover_url = url;
@@ -92,6 +93,7 @@
     }).then(function (r) {
       if (r.error) throw r.error;
       var aid = r.data.id, jobs = [];
+      if (row.home_featured) jobs.push(db.from('articles').update({ home_featured: false }).eq('home_featured', true).neq('id', aid)); /* আগের শুরুর লেখাটা সরিয়ে দেওয়া */
       if (art.removed.length) jobs.push(db.from('article_images').delete().in('id', art.removed));
       art.newImgs.forEach(function (f, i) { jobs.push(upload(f, 'gallery').then(function (u) { return db.from('article_images').insert({ article_id: aid, image_url: u, caption: '', sort_order: i + 1 }); })); });
       return Promise.all(jobs);

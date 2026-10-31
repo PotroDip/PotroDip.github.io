@@ -19,12 +19,7 @@
         svgEl.pauseAnimations();
       }
     }catch(e){}
-    // ট্যাগলাইন ও অলংকরণ অংশ হেডারে দরকার নেই, তাই সরাসরি লুকিয়ে দেওয়া হচ্ছে
-    ['tag1','tag2','tag3','tag4','tag5'].forEach(function(id){
-      var g = svgEl.querySelector('#'+id);
-      if(g) g.style.display = 'none';
-    });
-    svgEl.setAttribute('viewBox','35 235 930 405');
+    svgEl.setAttribute('viewBox','35 235 930 510');
     mainContent.classList.add('revealed');
   }
 
@@ -45,14 +40,8 @@
     // FLIP কৌশল: প্রথমে বর্তমান অবস্থান, তারপর টার্গেট অবস্থান মেপে ট্রানজিশন করা হচ্ছে
     var firstRect = svgEl.getBoundingClientRect();
 
-    // ট্যাগলাইন দ্রুত মিলিয়ে দেওয়া হচ্ছে, কারণ কমপ্যাক্ট হেডার-লোগোতে জায়গা নেই
-    ['tag1','tag2','tag3','tag4','tag5'].forEach(function(id){
-      var g = svgEl.querySelector('#'+id);
-      if(g){ g.style.transition = 'opacity .25s ease'; g.style.opacity = '0'; }
-    });
-
     // মূল আর্টওয়ার্ক (কলম+ওয়ার্ডমার্ক) অংশটুকু ফোকাস করার জন্য viewBox বদলে দেওয়া হচ্ছে
-    svgEl.setAttribute('viewBox','35 235 930 405');
+    svgEl.setAttribute('viewBox','35 235 930 510');
 
     headerSlot.appendChild(svgEl);
     var lastRect = svgEl.getBoundingClientRect();

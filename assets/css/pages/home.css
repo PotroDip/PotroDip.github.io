@@ -126,14 +126,8 @@ body.theme-ready, body.theme-ready *{
 .rail-list li:last-child{border-bottom:none;}
 
 .rail-list a{
-    display:grid;grid-template-columns:auto 1fr 84px;gap:16px;align-items:center;
+    display:grid;grid-template-columns:1fr 84px;gap:18px;align-items:center;
     padding:18px 0;height:100%;
-  }
-
-.rail-num{
-    font-size:30px;font-weight:700;line-height:1;
-    color:var(--secondary-light);
-    min-width:40px;
   }
 
 .rail-cat{display:block;font-size:12px;color:var(--secondary);margin-bottom:4px;}
@@ -180,8 +174,7 @@ body.theme-ready, body.theme-ready *{
   .hf-by img{width:36px;height:36px;}
   .hf-cta{padding:8px 16px;font-size:13.5px;}
   .rail-title{font-size:19px;}
-  .rail-list a{grid-template-columns:auto 1fr 68px;gap:12px;}
-  .rail-num{font-size:24px;min-width:30px;}
+  .rail-list a{grid-template-columns:1fr 68px;gap:14px;}
   .rail-thumb{width:68px;height:68px;}
   .rail-text h3{font-size:15.5px;}
 }
