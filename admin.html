@@ -39,9 +39,6 @@
 </div>
 </div>
 <nav class="sidebar-nav" id="sidebarNav"></nav>
-<div class="sidebar-foot">
-      মূল সাইটে ফিরুন — <a href="index.html">পত্রদ্বীপ.com</a>
-</div>
 </aside>
 <!-- ============ মূল কনটেন্ট ============ -->
 <div class="main">
@@ -56,6 +53,9 @@
 </div>
 </div>
 <div class="topbar-actions">
+<a aria-label="মূল সাইটে যান" class="site-link-btn" href="index.html" id="site-link" title="মূল সাইটে যান">
+<svg fill="none" height="19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="19"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18z"></path></svg>
+</a>
 <button aria-label="থিম বদলান" id="theme-toggle" title="থিম বদলান">
 <svg class="icon-moon" fill="none" height="19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="19"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
 <svg class="icon-sun" fill="none" height="19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="19"><circle cx="12" cy="12" r="4"></circle><line x1="12" x2="12" y1="1" y2="3"></line><line x1="12" x2="12" y1="21" y2="23"></line><line x1="4.22" x2="5.64" y1="4.22" y2="5.64"></line><line x1="18.36" x2="19.78" y1="18.36" y2="19.78"></line><line x1="1" x2="3" y1="12" y2="12"></line><line x1="21" x2="23" y1="12" y2="12"></line><line x1="4.22" x2="5.64" y1="19.78" y2="18.36"></line><line x1="18.36" x2="19.78" y1="5.64" y2="4.22"></line></svg>
@@ -518,37 +518,62 @@
 </div>
 </div>
 <!-- ============ মডাল: আর্কাইভ সংখ্যা ============ -->
-<div aria-label="আর্কাইভ সংখ্যা" class="modal-box narrow" id="issue-archive-modal" role="dialog">
-<div class="modal-head"><h3 id="issue-archive-modal-title">নতুন সংখ্যা তৈরি করুন</h3>
-<button class="modal-close" data-close-sub="issue-archive-modal"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg></button>
+<div aria-label="আর্কাইভ সংখ্যা" class="modal-box print-box archive-box" id="issue-archive-modal" role="dialog">
+<div class="modal-head">
+<div><h3 id="issue-archive-modal-title">নতুন সংখ্যা তৈরি করুন</h3><p class="pm-sub">হোমের "চলতি সংখ্যা" ও আর্কাইভে যে সংখ্যা দেখাবে তার তথ্য দিন</p></div>
+<button class="modal-close" data-close-sub="issue-archive-modal" type="button"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg></button>
 </div>
 <div class="modal-body">
-<label class="cover-upload" id="issue-archive-cover-upload">
+<div class="pm-grid">
+<div class="pm-left">
+<div class="pm-label">প্রচ্ছদ</div>
+<label class="cover-upload pm-cover" id="issue-archive-cover-upload">
 <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><rect height="18" rx="2" width="18" x="3" y="3"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
-<span>প্রচ্ছদ আপলোড</span>
+<b>প্রচ্ছদ আপলোড করুন</b>
+<span>ক্লিক করুন বা ছবি টেনে এনে ছাড়ুন</span>
 <img alt="" id="issue-archive-cover-preview"/>
+<em class="pm-swap">ছবি বদলান</em>
 <input accept="image/*" id="issue-archive-cover-file" style="display:none;" type="file"/>
 </label>
-<div class="ia-note">এই ঘরগুলোই হোমের "চলতি সংখ্যা" অংশে হুবহু দেখানো হবে। যে ঘর খালি রাখবেন, সেটা হোমে দেখাবে না।</div>
-<div class="field-row"><label>সংখ্যার নাম *</label><input id="issue-archive-name" placeholder="যেমন: শরতের সংখ্যা — সেপ্টেম্বর ২০২৬" type="text"/></div>
-<div class="field-row"><label>সংখ্যা নম্বর *</label><input id="issue-archive-number" placeholder="যেমন: ৫" type="text"/></div>
-<div class="field-row"><label>ছোট বিবরণ <small>(ঐচ্ছিক)</small></label><textarea id="issue-archive-tagline" maxlength="260" placeholder="এই সংখ্যা সম্পর্কে এক-দুই লাইন"></textarea></div>
-<div class="ia-sub">পরিসংখ্যান <small>(ঐচ্ছিক — যেটা লিখবেন শুধু সেটাই দেখাবে)</small></div>
+<p class="field-hint" style="text-align:center;">৩:৪ অনুপাতের ছবি সবচেয়ে ভালো দেখায় · সর্বোচ্চ ৫ MB</p>
+<div class="ia-note"><b>খেয়াল রাখুন:</b> এই ঘরগুলোই হোমের "চলতি সংখ্যা" অংশে হুবহু দেখানো হবে। যে ঘর খালি রাখবেন, সেটা হোমে দেখাবে না।</div>
+</div>
+<div class="pm-right">
+<div class="pm-sec">
+<div class="pm-h"><span class="art-ico"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></span><span>মূল তথ্য</span></div>
+<div class="field-row"><label>সংখ্যার নাম <em class="req">*</em></label><input id="issue-archive-name" placeholder="যেমন: শরতের সংখ্যা — সেপ্টেম্বর ২০২৬" type="text"/></div>
+<div class="field-grid-2" style="margin-bottom:0;">
+<div class="field-row" style="margin-bottom:0;"><label>সংখ্যা নম্বর <em class="req">*</em></label><input id="issue-archive-number" placeholder="যেমন: ৫" type="text"/></div>
+<div class="field-row" style="margin-bottom:0;"><label>&nbsp;</label><p class="field-hint" style="margin:0;padding-top:2px;">প্রিন্ট সংখ্যার নম্বরের সাথে মিললে দুটো যুক্ত হয়ে যায়।</p></div>
+</div>
+</div>
+<div class="pm-sec">
+<div class="field-row" style="margin-bottom:0;"><label>ছোট বিবরণ <small>(ঐচ্ছিক — ১-২ লাইন)</small></label><textarea id="issue-archive-tagline" maxlength="260" placeholder="এই সংখ্যা সম্পর্কে এক-দুই লাইন"></textarea><div class="pm-count"><span id="issue-archive-tagline-count">০</span>/২৬০</div></div>
+</div>
+<div class="pm-sec">
+<div class="pm-h"><span class="art-ico"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></span><span>পরিসংখ্যান <small>(ঐচ্ছিক — যেটা লিখবেন শুধু সেটাই দেখাবে)</small></span></div>
 <div class="field-grid-2">
 <div class="field-row"><label>লেখার সংখ্যা</label><input id="issue-archive-articles" inputmode="numeric" placeholder="যেমন: ১২" type="text"/></div>
 <div class="field-row"><label>লেখকের সংখ্যা</label><input id="issue-archive-authors" inputmode="numeric" placeholder="যেমন: ৮" type="text"/></div>
-<div class="field-row"><label>মাস</label><input id="issue-archive-month" placeholder="যেমন: অক্টোবর" type="text"/></div>
-<div class="field-row"><label>বছর</label><input id="issue-archive-year" inputmode="numeric" placeholder="যেমন: ২০২৬" type="text"/></div>
+<div class="field-row" style="margin-bottom:0;"><label>মাস</label><input id="issue-archive-month" placeholder="যেমন: অক্টোবর" type="text"/></div>
+<div class="field-row" style="margin-bottom:0;"><label>বছর</label><input id="issue-archive-year" inputmode="numeric" placeholder="যেমন: ২০২৬" type="text"/></div>
 </div>
-<div class="ia-sub">বাটন</div>
+</div>
+<div class="pm-sec">
+<div class="pm-h"><span class="art-ico"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg></span><span>বাটন</span></div>
 <div class="field-row"><label>"পড়ুন" বাটনের লেখা <small>(খালি রাখলে বাটন থাকবে না)</small></label><input id="issue-archive-readlabel" placeholder="সংখ্যাটি পড়ুন" type="text"/></div>
-<label class="ia-check"><input checked="" id="issue-archive-printbtn" type="checkbox"/><span>ছাপা কপির বাটন দেখান <small>(স্টোরে এই সংখ্যার ছাপা কপি থাকলে)</small></span></label>
-<div class="ia-sub">হোমে যেমন দেখাবে</div>
+<div class="stock-toggle-row pm-toggle"><span>ছাপা কপির বাটন দেখান<small>স্টোরে এই সংখ্যার ছাপা কপি থাকলে</small></span><label class="switch"><input checked="" id="issue-archive-printbtn" type="checkbox"/><span class="track"></span></label></div>
+</div>
+<div class="pm-sec">
+<div class="pm-h"><span class="art-ico"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></span><span>হোমে যেমন দেখাবে</span></div>
 <div class="ia-preview" id="issue-archive-preview"></div>
 </div>
+</div>
+</div>
+</div>
 <div class="modal-foot">
-<button class="btn btn-secondary" data-close-sub="issue-archive-modal">বাতিল করুন</button>
-<button class="btn btn-primary" id="issue-archive-save-btn">সংখ্যা সংরক্ষণ করুন</button>
+<button class="btn btn-secondary" data-close-sub="issue-archive-modal" type="button">বাতিল করুন</button>
+<button class="btn btn-primary" id="issue-archive-save-btn" type="button">সংখ্যা সংরক্ষণ করুন</button>
 </div>
 </div>
 <!-- ============ মডাল: প্রিন্ট সংখ্যা (স্টোর) ============ -->
