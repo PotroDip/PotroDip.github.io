@@ -186,6 +186,7 @@
     db.auth.signInWithPassword({ email: e, password: p, options: { captchaToken: ct } }).then(function(r) {
       busy(b, 0);
       rs('ts-login');
+      if (r.error && /email not confirmed/i.test(r.error.message || '')) return openVerify(null, 'login', e);
       if (r.error) return toast(fromFb && /Invalid login/i.test(r.error.message || '') ? 'ইমেইল বা পাসওয়ার্ড ভুল' : msg(r.error), 1);
       PD.load().then(function() {
         toast('স্বাগতম!');
@@ -376,9 +377,11 @@
     $('fp-verify-text').textContent = (from === 'login' ?
       'আপনার ইমেইল এখনো যাচাই হয়নি। ' + em + ' ঠিকানায় পাঠানো লিংকে ক্লিক করুন, তারপর আবার লগইন করুন।' :
       'অ্যাকাউন্ট তৈরি হয়েছে! ' + em + ' ঠিকানায় একটা যাচাই-লিংক পাঠানো হয়েছে। লিংকে ক্লিক করলেই অ্যাকাউন্ট চালু হবে, তারপর এখানে লগইন করুন।');
-    $('fp-resend').hidden = !(FB && user);
+    $('fp-resend').hidden = user ? !FB : !em;
+    var rn = $('fp-resend-note');
+    if (rn) rn.hidden = true;
     openOv('fp-overlay', 'fp-verify-ok');
-    pending = { user: user };
+    pending = { user: user, email: em };
     if (from === 'signup') {
       var t = document.querySelector('.auth-tabs button[data-tab="login"]');
       if (t) t.click();
@@ -416,14 +419,29 @@
     });
 
     on('fp-resend', function(b) {
-      if (!pending || !pending.user) return;
+      if (!pending) return;
+      var rn = $('fp-resend-note');
+      var ok = function() {
+        busy(b, 0);
+        if (rn) rn.hidden = false
+      };
+      var bad = function(m) {
+        busy(b, 0);
+        if (rn) rn.hidden = true;
+        toast(m, 1)
+      };
+      if (pending.user) {
+        busy(b, 1);
+        pending.user.sendEmailVerification({ url: location.origin + location.pathname }).then(ok).catch(function(err) { bad(fbMsg(err)) });
+        return
+      }
+      var ct = tok('ts-login');
+      if (!ct) return toast(WAIT, 1);
       busy(b, 1);
-      pending.user.sendEmailVerification({ url: location.origin + location.pathname }).then(function() {
-        busy(b, 0);
-        toast('যাচাই-লিংক আবার পাঠানো হয়েছে')
-      }).catch(function(err) {
-        busy(b, 0);
-        toast(fbMsg(err), 1)
+      db.auth.resend({ type: 'signup', email: pending.email, options: { captchaToken: ct, emailRedirectTo: location.origin + '/' + PD.pages.auth } }).then(function(r) {
+        rs('ts-login');
+        if (r.error) return bad(msg(r.error));
+        ok()
       })
     });
 
@@ -490,7 +508,8 @@
         busy(b, 0);
         rs('ts-login');
         if (r.error) return toast(msg(r.error), 1);
-        toast('আগের অ্যাকাউন্ট থাকলে ' + e + ' ঠিকানায় রিসেট লিংক পাঠানো হয়েছে')
+        $('fp-sent-text').textContent = 'আগের অ্যাকাউন্ট থাকলে ' + e + ' ঠিকানায় পাসওয়ার্ড বদলানোর লিংক পাঠানো হয়েছে। ইনবক্সে না পেলে স্প্যাম ফোল্ডারটাও দেখুন।';
+        $('fp-old-box').hidden = true
       })
     });
     on('fbc-go', facebookGo)
@@ -545,6 +564,20 @@
   }
 
   function start() {
+    if (!PD.config.facebookLogin) {
+      ['btn-facebook-login', 'btn-facebook-signup'].forEach(function(i) {
+        var b = $(i);
+        if (b && b.parentNode) b.parentNode.removeChild(b)
+      });
+      [].forEach.call(document.querySelectorAll('.social-row'), function(r) {
+        r.classList.remove('two');
+        r.classList.add('one')
+      });
+      ['btn-google-login', 'btn-google-signup'].forEach(function(i) {
+        var t = $(i) && $(i).querySelector('.soc-txt');
+        if (t) t.textContent = 'গুগল দিয়ে চালিয়ে যান'
+      })
+    }
     wire();
     forms();
     /* ইমেইল যাচাইয়ের পর এখানে ফিরলে */

@@ -234,10 +234,38 @@
         var q = has ? db.from('comment_likes').delete().eq('comment_id', c.id).eq('user_id', PD.user.id) : db.from('comment_likes').insert({ comment_id: c.id, user_id: PD.user.id });
         q.then(function (r) { if (!fail(r)) refresh(); });
       }
+      /* মন্তব্য এডিট — ব্রাউজারের সাধারণ prompt বক্স নয়, সাইটের নিজস্ব গ্লাস পপআপ */
+      var editOv = null, editFor = null;
+      function buildEdit() {
+        editOv = document.createElement('div');
+        editOv.className = 'pd-edit-ov';
+        editOv.setAttribute('role', 'dialog'); editOv.setAttribute('aria-modal', 'true'); editOv.setAttribute('aria-labelledby', 'pd-edit-title');
+        editOv.innerHTML = '<div class="pd-edit-card"><h3 id="pd-edit-title">মন্তব্য এডিট করুন</h3>' +
+          '<textarea id="pd-edit-text" maxlength="600" rows="5" aria-label="মন্তব্য"></textarea>' +
+          '<div class="pd-edit-foot"><span id="pd-edit-count"></span><span class="pd-edit-btns"><button type="button" class="pd-edit-no" id="pd-edit-no">বাতিল</button><button type="button" class="pd-edit-yes" id="pd-edit-yes">সংরক্ষণ করুন</button></span></div></div>';
+        document.body.appendChild(editOv);
+        var ta = editOv.querySelector('#pd-edit-text');
+        ta.addEventListener('input', function () { editOv.querySelector('#pd-edit-count').textContent = UI.bn(ta.value.length) + '/৬০০'; });
+        function close() { editOv.classList.remove('show'); editFor = null; }
+        editOv.querySelector('#pd-edit-no').addEventListener('click', close);
+        editOv.addEventListener('mousedown', function (e) { if (e.target === editOv) close(); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && editOv.classList.contains('show')) close(); });
+        editOv.querySelector('#pd-edit-yes').addEventListener('click', function () {
+          var t = ta.value.trim();
+          if (!editFor) return;
+          if (!t) { UI.toast('মন্তব্য খালি রাখা যাবে না', 1); return; }
+          var id = editFor.id; close();
+          db.from('comments').update({ body: t }).eq('id', id).then(function (r) { if (!fail(r)) { UI.toast('মন্তব্য বদলানো হয়েছে'); refresh(); } });
+        });
+      }
       function edit(c) {
-        var t = prompt('মন্তব্য এডিট করুন:', c.body);
-        if (t === null || !t.trim()) return;
-        db.from('comments').update({ body: t.trim() }).eq('id', c.id).then(function (r) { if (!fail(r)) refresh(); });
+        if (!editOv) buildEdit();
+        editFor = c;
+        var ta = editOv.querySelector('#pd-edit-text');
+        ta.value = c.body || '';
+        editOv.querySelector('#pd-edit-count').textContent = UI.bn(ta.value.length) + '/৬০০';
+        editOv.classList.add('show');
+        setTimeout(function () { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }, 80);
       }
       var pending = null, overlay = $('confirm-overlay');
       function askDelete(c) { pending = c; overlay.classList.add('show'); }

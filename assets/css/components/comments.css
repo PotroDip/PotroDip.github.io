@@ -556,3 +556,20 @@ html[data-theme="dark"] .confirm-danger:hover{background:#c65243;}
   footer{margin-top:70px; background:var(--primary-dark); color:#F2EFE8; overflow-x:hidden;}
 
 .free-badge{display:inline-block; background:var(--primary); color:#FFFFFF; font-size:12px; font-weight:700; padding:4px 11px; border-radius:999px; vertical-align:middle;}
+
+/* ============ v20 — মন্তব্য এডিট পপআপ (গ্লাস) ============ */
+.pd-edit-ov{position:fixed; inset:0; z-index:2000; display:flex; align-items:center; justify-content:center; padding:20px; background:rgba(12,28,30,.4); -webkit-backdrop-filter:blur(10px) saturate(130%); backdrop-filter:blur(10px) saturate(130%); opacity:0; visibility:hidden; transition:opacity .25s ease, visibility .25s ease;}
+.pd-edit-ov.show{opacity:1; visibility:visible;}
+.pd-edit-card{width:100%; max-width:470px; padding:24px 24px 20px; border-radius:24px; border:1px solid rgba(255,255,255,.6); background:color-mix(in srgb, var(--surface) 72%, transparent); -webkit-backdrop-filter:blur(22px) saturate(165%); backdrop-filter:blur(22px) saturate(165%); box-shadow:0 40px 90px -30px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.7); transform:translateY(20px) scale(.96); transition:transform .3s cubic-bezier(.2,.9,.25,1.15);}
+html[data-theme="dark"] .pd-edit-card{border-color:rgba(255,255,255,.1); box-shadow:0 40px 90px -30px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.1);}
+.pd-edit-ov.show .pd-edit-card{transform:none;}
+.pd-edit-card h3{margin:0 0 12px; font-size:19px;}
+.pd-edit-card textarea{width:100%; box-sizing:border-box; resize:vertical; min-height:110px; padding:12px 14px; border-radius:14px; border:1px solid var(--border); background:color-mix(in srgb, var(--surface) 80%, transparent); color:var(--text); font:inherit; font-size:15px; line-height:1.7;}
+.pd-edit-card textarea:focus{outline:none; border-color:var(--primary); box-shadow:0 0 0 4px color-mix(in srgb, var(--primary) 18%, transparent);}
+.pd-edit-foot{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px; flex-wrap:wrap;}
+#pd-edit-count{font-size:12.5px; color:var(--text-muted);}
+.pd-edit-btns{display:flex; gap:10px;}
+.pd-edit-no{padding:10px 18px; border-radius:12px; font-weight:600; color:var(--text-muted);}
+.pd-edit-no:hover{color:var(--text);}
+.pd-edit-yes{padding:10px 22px; border-radius:12px; font-weight:700; color:#fff; background:linear-gradient(135deg,#2A747A,#1D5358 60%,#143F43); box-shadow:0 10px 20px -10px rgba(29,83,88,.8);}
+html[data-theme="dark"] .pd-edit-yes{color:#0B1517; background:linear-gradient(135deg,#5BB8BD,#3F9499 60%,#2E7377);}
