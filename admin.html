@@ -218,10 +218,11 @@
 <div class="page-head">
 <div class="page-head-copy">
 <h2 style="font-size:17px;">এড স্লট ব্যবস্থাপনা</h2>
-<p>সাইটের নির্দিষ্ট এড স্লটে ছবি/GIF আপলোড ও ম্যানেজ করুন। যেকোনো সাইজের ছবি আপলোড করলে সেটা স্বয়ংক্রিয়ভাবে ঐ স্লটের নির্ধারিত মাপে ফিট হয়ে যাবে।</p>
+<p>প্রতিটা স্লটে ছবি বা GIF দিন, ক্লিকের লিংক বসান, আর এক ক্লিকে চালু/বন্ধ করুন। যেকোনো মাপের ছবি দিলে স্লটের মাপে নিজে থেকেই ফিট হয়ে যাবে।</p>
 </div>
 </div>
-<div class="card-grid" id="adSlotGrid" style="grid-template-columns:repeat(auto-fill, minmax(260px,1fr));"></div>
+<div class="ad-stats" id="adStats"></div>
+<div class="ad-grid" id="adSlotGrid"></div>
 </section>
 <!-- ============ পেজ: কমেন্ট মডারেশন ============ -->
 <section class="page" id="page-comments">
@@ -418,93 +419,81 @@
 </div>
 <!-- ============ মডাল: লেখা প্রকাশ/এডিট ============ -->
 <div id="modal-scrim"></div>
+<div id="modal-scrim-2"></div>
 <div aria-label="লেখা প্রকাশ বা এডিট করুন" class="modal-box article-box" id="article-modal" role="dialog">
-<div class="modal-head"><h3 id="article-modal-title">নতুন লেখা প্রকাশ করুন</h3>
-<button class="modal-close" data-close-modal="article-modal"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg></button>
+<div class="modal-head art-head">
+<div class="art-head-text"><h3 id="article-modal-title">নতুন লেখা প্রকাশ করুন</h3><p class="art-head-sub">লেখা, ছবি ও প্রকাশের সব কিছু এক জায়গা থেকে</p></div>
+<span class="art-state" id="art-state">প্রকাশিত হবে</span>
+<button class="modal-close" data-close-modal="article-modal" type="button"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg></button>
 </div>
 <div class="modal-body">
 <div class="art-main">
-<div class="field-row art-main-title"><label>শিরোনাম</label><input id="art-title" placeholder="যেমন: আল্লাহকে চিনার উপায়" type="text"/></div>
-<div class="field-row">
-<label class="rte-field-label">লেখার মূল অংশ</label>
-<div class="rte-toolbar" id="art-toolbar">
-<button data-cmd="undo" title="আনডু" type="button"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M3 7v6h6"></path><path d="M21 17a9 9 0 0 0-15-6.7L3 13"></path></svg></button>
-<button data-cmd="redo" title="রিডু" type="button"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M21 7v6h-6"></path><path d="M3 17a9 9 0 0 1 15-6.7L21 13"></path></svg></button>
-<span class="rte-sep"></span>
-<button data-cmd="bold" title="বোল্ড (Ctrl+B)" type="button"><strong>B</strong></button>
-<button data-cmd="italic" title="ইটালিক (Ctrl+I)" type="button"><em>I</em></button>
-<button data-cmd="underline" title="আন্ডারলাইন (Ctrl+U)" type="button"><span style="text-decoration:underline;">U</span></button>
-<button data-cmd="highlight" title="হাইলাইট করুন (আগে টেক্সট সিলেক্ট করুন)" type="button">
-<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>
-</button>
-<span class="rte-sep"></span>
-<button data-cmd="formatBlock" data-value="h3" title="সাব-হেডিং" type="button">H</button>
-<button data-cmd="formatBlock" data-value="blockquote" title="উদ্ধৃতি/কোট" type="button">
-<svg fill="currentColor" viewbox="0 0 24 24"><path d="M9.5 3C6 3 4 6 4 9.5V16c0 1.66 1.34 3 3 3h.5c1.66 0 3-1.34 3-3v-3c0-1.66-1.34-3-3-3H6.1C6.5 5.5 8 4 9.5 4V3zM19 3c-3.5 0-5.5 3-5.5 6.5V16c0 1.66 1.34 3 3 3h.5c1.66 0 3-1.34 3-3v-3c0-1.66-1.34-3-3-3h-1.4c.4-3.5 1.9-5 3.4-5V3z"></path></svg>
-</button>
-<span class="rte-sep"></span>
-<button data-cmd="insertUnorderedList" title="বুলেট লিস্ট" type="button">
-<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="8" x2="21" y1="6" y2="6"></line><line x1="8" x2="21" y1="12" y2="12"></line><line x1="8" x2="21" y1="18" y2="18"></line><line x1="3" x2="3.01" y1="6" y2="6"></line><line x1="3" x2="3.01" y1="12" y2="12"></line><line x1="3" x2="3.01" y1="18" y2="18"></line></svg>
-</button>
-<button data-cmd="insertOrderedList" title="নাম্বার লিস্ট" type="button">
-<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="10" x2="21" y1="6" y2="6"></line><line x1="10" x2="21" y1="12" y2="12"></line><line x1="10" x2="21" y1="18" y2="18"></line><path d="M4 6h1v4"></path><path d="M4 10h2"></path><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"></path></svg>
-</button>
-<span class="rte-sep"></span>
-<button data-cmd="createLink" title="লিংক যুক্ত করুন" type="button">
-<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.2 1.1"></path><path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.1-1.1"></path></svg>
-</button>
-<button data-cmd="removeFormat" title="ফরম্যাট মুছে ফেলুন" type="button">
-<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M4 7V4h16v3"></path><path d="M9 20h6"></path><path d="M12 4v16"></path><line x1="4" x2="20" y1="4" y2="20"></line></svg>
-</button>
+<div class="art-block" id="fr-title">
+<label class="art-label" for="art-title">শিরোনাম <em class="req">*</em></label>
+<input class="art-title-input" id="art-title" maxlength="160" placeholder="যেমন: আল্লাহকে চিনার উপায়" type="text"/>
 </div>
-<div class="rte-body" contenteditable="true" data-placeholder="এখানে লেখার মূল অংশ লিখুন..." id="art-body"></div>
-<p class="field-hint">সিলেক্ট করে বোল্ড/ইটালিক/হাইলাইট করতে পারবেন। কোন অপশন এখন চালু আছে তা বাটন গাঢ় রঙে বোঝা যাবে। টুলবারটি স্ক্রল করলেও উপরে আটকে থাকবে।</p>
+<div class="art-block" id="fr-body">
+<label class="art-label">লেখার মূল অংশ <em class="req">*</em></label>
+<div class="rte-toolbar" id="art-toolbar"></div>
+<div class="rte-body" contenteditable="true" data-placeholder="এখানে লেখার মূল অংশ লিখুন…" spellcheck="true" id="art-body"></div>
+<div class="rte-meta"><span id="art-wc">০ শব্দ</span><i></i><span id="art-rt">পড়তে ০ মিনিট</span><span class="rte-tip">লেখা সিলেক্ট করে ফন্ট, সাইজ, রং ও ফরম্যাট বদলান — টুলবার সবসময় উপরে থাকবে</span></div>
 </div>
-<div class="field-row">
-<label>অতিরিক্ত ছবি (গ্যালারি)</label>
+<div class="art-block">
+<label class="art-label">অতিরিক্ত ছবি (গ্যালারি) <small>ঐচ্ছিক</small></label>
 <div class="img-upload-row" id="art-gallery-row">
-<div class="img-upload-add" id="art-gallery-add">
-<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="12" x2="12" y1="5" y2="19"></line><line x1="5" x2="19" y1="12" y2="12"></line></svg>
-</div>
+<div class="img-upload-add" id="art-gallery-add" title="ছবি যোগ করুন"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.4" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
 </div>
 <input accept="image/*" id="art-gallery-file" multiple="" style="display:none;" type="file"/>
 </div>
 </div>
 <div class="art-side">
-<div class="field-row"><label>লেখক</label>
-<select id="art-author" style="width:100%; padding:11px 13px; background:var(--field-bg); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:14px;"></select>
+<section class="art-card art-publish">
+<div class="stock-toggle-row"><span>এখনই প্রকাশ করুন<small>বন্ধ থাকলে ড্রাফট হিসেবে সেভ হবে</small></span><label class="switch"><input checked="" id="art-published" type="checkbox"/><span class="track"></span></label></div>
+</section>
+<section class="art-card" id="fr-author">
+<div class="art-card-head"><span class="art-ico"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><h4>লেখক <em class="req">*</em></h4><button class="mini-add" id="art-author-new" type="button"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.4" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>নতুন লেখক</button></div>
+<select class="art-select" id="art-author"></select>
+</section>
+<section class="art-card" id="fr-cat">
+<div class="art-card-head"><span class="art-ico"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8z"/><circle cx="7" cy="7" r="1.2"/></svg></span><h4>বিভাগ</h4><button class="mini-add" id="art-cat-new-btn" type="button"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.4" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>নতুন বিভাগ</button></div>
+<select hidden="" id="art-cat"></select>
+<div class="cat-chips" id="art-cat-chips"></div>
+<div class="inline-new" hidden="" id="art-cat-new">
+<input id="art-cat-new-input" maxlength="40" placeholder="নতুন বিভাগের নাম, যেমন: উপন্যাস" type="text"/>
+<button class="mini-ok" id="art-cat-new-ok" type="button">যোগ করুন</button>
+<button class="mini-x" id="art-cat-new-cancel" title="বাতিল" type="button">✕</button>
 </div>
-<div class="field-row"><label>বিভাগ</label>
-<select id="art-cat" style="width:100%; padding:11px 13px; background:var(--field-bg); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:14px;">
-<option>গল্প</option><option>কবিতা</option><option>ভ্রমণ</option><option>রম্য</option><option>প্রবন্ধ</option>
-</select>
-</div>
-<div class="field-row">
-<label>কভার ছবি</label>
-<label class="cover-upload" id="art-cover-upload">
+</section>
+<section class="art-card">
+<div class="art-card-head"><span class="art-ico"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><rect height="18" rx="2" width="18" x="3" y="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></span><h4>কভার ছবি</h4></div>
+<label class="cover-upload art-cover" id="art-cover-upload">
 <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><rect height="18" rx="2" width="18" x="3" y="3"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
-<span>কভার আপলোড করতে ক্লিক করুন</span>
+<span>কভার ছবি দিন<small>ক্লিক করুন বা ছবি টেনে আনুন</small></span>
 <img alt="" id="art-cover-preview"/>
 <input accept="image/*" id="art-cover-file" style="display:none;" type="file"/>
 </label>
-</div>
-<div class="field-row"><label>সংখ্যা (আর্কাইভ)</label><select id="art-issue"></select></div><div class="field-row"><div class="stock-toggle-row"><span>হোমের শুরুতে বড় করে দেখান<br/><span style="font-size:11px; color:var(--text-muted); font-weight:400;">(পুরোনো বা নতুন যেটাই হোক, এটাই সবার আগে থাকবে। আগে যেটা ছিল সেটা অটো সরে যাবে)</span></span><label class="switch"><input id="art-home-featured" type="checkbox"/><span class="track"></span></label></div></div><div class="field-row"><label>হোমের "এই সংখ্যায়" তালিকায় ক্রম</label><input id="art-home-order" type="number" min="1" step="1" inputmode="numeric" placeholder="যেমন ১, ২, ৩ — খালি রাখলে অটো (নতুন লেখা আগে)" style="width:100%; padding:11px 13px; background:var(--field-bg); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:14px;"/><div style="font-size:11.5px; color:var(--text-muted); margin-top:6px;">ছোট সংখ্যা আগে আসবে। ক্রম দেওয়া লেখা আগে, বাকিগুলো তারপর।</div></div><div class="field-row"><div class="stock-toggle-row"><span>হোমের তালিকায় দেখাবে না<br/><span style="font-size:11px; color:var(--text-muted); font-weight:400;">(লেখা সাইটে থাকবে, শুধু এই তালিকা থেকে বাদ যাবে)</span></span><label class="switch"><input id="art-home-hidden" type="checkbox"/><span class="track"></span></label></div></div><div class="field-row" style="margin-bottom:0;">
-<div class="stock-toggle-row">
-<span>এখনই প্রকাশ করুন<br/><span style="font-size:11px; color:var(--text-muted); font-weight:400;">(বন্ধ থাকলে ড্রাফট হিসেবে সেভ হবে)</span></span>
-<label class="switch"><input checked="" id="art-published" type="checkbox"/><span class="track"></span></label>
-</div>
-</div>
+</section>
+<section class="art-card">
+<div class="art-card-head"><span class="art-ico"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span><h4>সংখ্যা (আর্কাইভ)</h4><button class="mini-add" id="art-issue-new" type="button"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.4" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>নতুন সংখ্যা</button></div>
+<select class="art-select" id="art-issue"></select>
+</section>
+<details class="art-card art-home">
+<summary>হোম পেজ সেটিংস <small>ঐচ্ছিক</small></summary>
+<div class="stock-toggle-row"><span>হোমের শুরুতে বড় করে দেখান<small>পুরোনো বা নতুন যেটাই হোক, এটাই সবার আগে থাকবে। আগে যেটা ছিল সেটা অটো সরে যাবে</small></span><label class="switch"><input id="art-home-featured" type="checkbox"/><span class="track"></span></label></div>
+<div class="art-home-row"><label class="art-label" for="art-home-order">হোমের "এই সংখ্যায়" তালিকায় ক্রম</label><input class="art-num" id="art-home-order" inputmode="numeric" min="1" placeholder="যেমন ১, ২, ৩ — খালি রাখলে অটো" step="1" type="number"/><div class="field-hint">ছোট সংখ্যা আগে আসবে। ক্রম দেওয়া লেখা আগে, বাকিগুলো তারপর।</div></div>
+<div class="stock-toggle-row"><span>হোমের তালিকায় দেখাবে না<small>লেখা সাইটে থাকবে, শুধু এই তালিকা থেকে বাদ যাবে</small></span><label class="switch"><input id="art-home-hidden" type="checkbox"/><span class="track"></span></label></div>
+</details>
 </div>
 </div>
 <div class="modal-foot">
-<button class="btn btn-secondary" data-close-modal="article-modal">বাতিল করুন</button>
-<button class="btn btn-primary" id="art-save-btn">লেখা সংরক্ষণ করুন</button>
+<button class="btn btn-secondary" data-close-modal="article-modal" type="button">বাতিল করুন</button>
+<button class="btn btn-primary" id="art-save-btn" type="button">লেখা প্রকাশ করুন</button>
 </div>
 </div>
 <!-- ============ মডাল: লেখক প্রোফাইল ============ -->
 <div aria-label="লেখক প্রোফাইল" class="modal-box narrow" id="author-modal" role="dialog">
 <div class="modal-head"><h3 id="author-modal-title">নতুন লেখক যোগ করুন</h3>
-<button class="modal-close" data-close-modal="author-modal"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg></button>
+<button class="modal-close" data-close-sub="author-modal"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg></button>
 </div>
 <div class="modal-body">
 <label class="cover-upload round" id="author-cover-upload">
@@ -524,14 +513,14 @@
 </div><details class="author-more" style="margin-top:6px"><summary style="cursor:pointer;font-weight:600;margin:8px 0">বিস্তারিত পরিচিতি (ঐচ্ছিক — লেখকের পেজে দেখাবে)</summary><div class="field-row"><label>ওয়েবসাইট লিংক</label><input id="author-website" type="url"/></div><div class="field-grid-2"><div class="field-row"><label>পূর্ণ নাম</label><input id="author-fullname" type="text"/></div><div class="field-row"><label>পিতার নাম</label><input id="author-father" type="text"/></div></div><div class="field-grid-2"><div class="field-row"><label>জন্ম তারিখ</label><input id="author-birth" type="date"/></div><div class="field-row"><label>লেখালেখির বয়স</label><input id="author-years" type="text"/></div></div><div class="field-row"><label>বর্তমান ঠিকানা</label><input id="author-address" type="text"/></div><div class="field-grid-2"><div class="field-row"><label>শিক্ষাগত যোগ্যতা</label><input id="author-edu" type="text"/></div><div class="field-row"><label>পেশা</label><input id="author-prof" type="text"/></div></div><div class="field-row"><label>উল্লেখযোগ্য স্বীকৃতি</label><input id="author-recog" type="text"/></div><div class="field-row"><label>প্রোফাইলের কভার ছবি</label><label class="cover-upload" id="author-bg-upload"><span>কভার আপলোড করতে ক্লিক করুন</span><img alt="" id="author-bg-preview"/><input accept="image/*" id="author-bg-file" type="file"/></label></div><div class="field-row"><label>জীবনী</label><textarea id="author-bio" rows="6"></textarea><p class="field-hint">প্রতিটি অনুচ্ছেদ খালি লাইন দিয়ে আলাদা করুন। "# " দিয়ে শুরু করলে শিরোনাম, "&gt; " দিয়ে শুরু করলে উদ্ধৃতি হবে।</p></div></details>
 </div>
 <div class="modal-foot">
-<button class="btn btn-secondary" data-close-modal="author-modal">বাতিল করুন</button>
+<button class="btn btn-secondary" data-close-sub="author-modal">বাতিল করুন</button>
 <button class="btn btn-primary" id="author-save-btn">লেখক সংরক্ষণ করুন</button>
 </div>
 </div>
 <!-- ============ মডাল: আর্কাইভ সংখ্যা ============ -->
 <div aria-label="আর্কাইভ সংখ্যা" class="modal-box narrow" id="issue-archive-modal" role="dialog">
 <div class="modal-head"><h3 id="issue-archive-modal-title">নতুন সংখ্যা তৈরি করুন</h3>
-<button class="modal-close" data-close-modal="issue-archive-modal"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg></button>
+<button class="modal-close" data-close-sub="issue-archive-modal"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg></button>
 </div>
 <div class="modal-body">
 <label class="cover-upload" id="issue-archive-cover-upload">
@@ -540,52 +529,76 @@
 <img alt="" id="issue-archive-cover-preview"/>
 <input accept="image/*" id="issue-archive-cover-file" style="display:none;" type="file"/>
 </label>
-<div class="field-row"><label>সংখ্যার নাম</label><input id="issue-archive-name" placeholder="যেমন: শরতের সংখ্যা — সেপ্টেম্বর ২০২৬" type="text"/></div>
-<div class="field-row"><label>সংখ্যা নম্বর</label><input id="issue-archive-number" placeholder="যেমন: সংখ্যা ৫" type="text"/></div>
-
+<div class="ia-note">এই ঘরগুলোই হোমের "চলতি সংখ্যা" অংশে হুবহু দেখানো হবে। যে ঘর খালি রাখবেন, সেটা হোমে দেখাবে না।</div>
+<div class="field-row"><label>সংখ্যার নাম *</label><input id="issue-archive-name" placeholder="যেমন: শরতের সংখ্যা — সেপ্টেম্বর ২০২৬" type="text"/></div>
+<div class="field-row"><label>সংখ্যা নম্বর *</label><input id="issue-archive-number" placeholder="যেমন: ৫" type="text"/></div>
+<div class="field-row"><label>ছোট বিবরণ <small>(ঐচ্ছিক)</small></label><textarea id="issue-archive-tagline" maxlength="260" placeholder="এই সংখ্যা সম্পর্কে এক-দুই লাইন"></textarea></div>
+<div class="ia-sub">পরিসংখ্যান <small>(ঐচ্ছিক — যেটা লিখবেন শুধু সেটাই দেখাবে)</small></div>
+<div class="field-grid-2">
+<div class="field-row"><label>লেখার সংখ্যা</label><input id="issue-archive-articles" inputmode="numeric" placeholder="যেমন: ১২" type="text"/></div>
+<div class="field-row"><label>লেখকের সংখ্যা</label><input id="issue-archive-authors" inputmode="numeric" placeholder="যেমন: ৮" type="text"/></div>
+<div class="field-row"><label>মাস</label><input id="issue-archive-month" placeholder="যেমন: অক্টোবর" type="text"/></div>
+<div class="field-row"><label>বছর</label><input id="issue-archive-year" inputmode="numeric" placeholder="যেমন: ২০২৬" type="text"/></div>
+</div>
+<div class="ia-sub">বাটন</div>
+<div class="field-row"><label>"পড়ুন" বাটনের লেখা <small>(খালি রাখলে বাটন থাকবে না)</small></label><input id="issue-archive-readlabel" placeholder="সংখ্যাটি পড়ুন" type="text"/></div>
+<label class="ia-check"><input checked="" id="issue-archive-printbtn" type="checkbox"/><span>ছাপা কপির বাটন দেখান <small>(স্টোরে এই সংখ্যার ছাপা কপি থাকলে)</small></span></label>
+<div class="ia-sub">হোমে যেমন দেখাবে</div>
+<div class="ia-preview" id="issue-archive-preview"></div>
 </div>
 <div class="modal-foot">
-<button class="btn btn-secondary" data-close-modal="issue-archive-modal">বাতিল করুন</button>
+<button class="btn btn-secondary" data-close-sub="issue-archive-modal">বাতিল করুন</button>
 <button class="btn btn-primary" id="issue-archive-save-btn">সংখ্যা সংরক্ষণ করুন</button>
 </div>
 </div>
 <!-- ============ মডাল: প্রিন্ট সংখ্যা (স্টোর) ============ -->
-<div aria-label="সংখ্যা যোগ বা এডিট করুন" class="modal-box narrow" id="issue-modal" role="dialog">
+<div aria-label="প্রিন্ট সংখ্যা যোগ বা এডিট করুন" class="modal-box print-box" id="issue-modal" role="dialog">
 <div class="modal-head">
-<h3 id="modal-title">নতুন সংখ্যা যোগ করুন</h3>
+<div><h3 id="modal-title">নতুন সংখ্যা যোগ করুন</h3><p class="pm-sub">স্টোরে যে ছাপা সংখ্যা বিক্রি হবে তার তথ্য দিন</p></div>
 <button class="modal-close" data-close-modal="issue-modal"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg></button>
 </div>
 <div class="modal-body">
-<label class="cover-upload" id="cover-upload">
+<div class="pm-grid">
+<div class="pm-left">
+<div class="pm-label">প্রচ্ছদ</div>
+<label class="cover-upload pm-cover" id="cover-upload">
 <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><rect height="18" rx="2" width="18" x="3" y="3"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
-<span>প্রচ্ছদ ছবি আপলোড করতে ক্লিক করুন</span>
+<b>প্রচ্ছদ আপলোড করুন</b>
+<span>ক্লিক করুন বা ছবি টেনে এনে ছাড়ুন</span>
 <img alt="" id="cover-preview"/>
+<em class="pm-swap">ছবি বদলান</em>
 <input accept="image/*" id="cover-file" style="display:none;" type="file"/>
 </label>
-<div class="field-row"><label>সংখ্যার নাম</label><input id="issue-name" placeholder="যেমন: শরতের সংখ্যা — সেপ্টেম্বর ২০২৬" type="text"/></div>
-<div class="field-row"><label>টিজার (আকর্ষণীয় গল্পের অংশ — ২-৩ লাইন)</label><textarea id="issue-teaser" placeholder="যেমন: চিলেকোঠার চিঠি ও আরও নতুন গল্প নিয়ে এই সংখ্যা..."></textarea></div>
-<div class="field-grid-2" style="margin-bottom:16px;">
-<div class="field-row" style="margin-bottom:0;"><label>দাম</label><div class="field-input-icon"><input id="issue-price" placeholder="২৫০" type="number"/><span class="prefix">৳</span></div></div>
-<div class="field-row" style="margin-bottom:0;"><label>সংখ্যা নম্বর</label><input id="issue-number" placeholder="যেমন: সংখ্যা ৫" type="text"/></div>
+<p class="field-hint" style="text-align:center;">৩:৪ অনুপাতের ছবি সবচেয়ে ভালো দেখায় · সর্বোচ্চ ৫ MB</p>
 </div>
-<div class="stock-toggle-row"><span>স্টকে আছে</span><label class="switch"><input checked="" id="issue-stock" type="checkbox"/><span class="track"></span></label></div>
-<div class="field-row" style="margin-top:16px; margin-bottom:0;">
-<label>নমুনা পিডিএফ (প্রিভিউ)</label>
+<div class="pm-right">
+<div class="pm-sec">
+<div class="field-row"><label>সংখ্যার নাম *</label><input id="issue-name" placeholder="যেমন: শরতের সংখ্যা — সেপ্টেম্বর ২০২৬" type="text"/></div>
+<div class="field-grid-2" style="margin-bottom:0;">
+<div class="field-row" style="margin-bottom:0;"><label>দাম *</label><div class="field-input-icon"><input id="issue-price" inputmode="numeric" placeholder="২৫০" type="number" min="0"/><span class="prefix">৳</span></div></div>
+<div class="field-row" style="margin-bottom:0;"><label>সংখ্যা নম্বর</label><input id="issue-number" placeholder="যেমন: ৫" type="text"/></div>
+</div>
+<p class="field-hint">সংখ্যা নম্বর আর্কাইভের নম্বরের সাথে মিললে দুটো নিজে থেকেই যুক্ত হয়ে যায়।</p>
+</div>
+<div class="pm-sec">
+<div class="field-row" style="margin-bottom:0;"><label>টিজার <small>(ঐচ্ছিক — ২-৩ লাইনের আকর্ষণীয় অংশ)</small></label><textarea id="issue-teaser" maxlength="300" placeholder="যেমন: চিলেকোঠার চিঠি ও আরও নতুন গল্প নিয়ে এই সংখ্যা…"></textarea><div class="pm-count"><span id="issue-teaser-count">০</span>/৩০০</div></div>
+</div>
+<div class="pm-sec">
+<div class="pm-label">স্টকের অবস্থা</div>
+<div class="pm-seg" id="issue-stock-seg"><button type="button" data-stock="1" class="on"><i></i>স্টকে আছে</button><button type="button" data-stock="0"><i></i>স্টক শেষ</button></div>
+<input checked="" id="issue-stock" type="checkbox" style="display:none;"/>
+</div>
+<div class="pm-sec">
+<div class="pm-label">নমুনা পিডিএফ <small>(ঐচ্ছিক)</small></div>
 <div class="pdf-upload-box" id="issue-pdf-box">
 <input accept="application/pdf" id="issue-pdf-file" style="display:none;" type="file"/>
-<div class="pdf-upload-empty" id="issue-pdf-empty">
-<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-<span>পিডিএফ আপলোড করতে ক্লিক করুন</span>
+<div class="pdf-upload-empty" id="issue-pdf-empty"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg><span>পিডিএফ আপলোড করতে ক্লিক করুন · সর্বোচ্চ ১০ MB</span></div>
+<div class="pdf-upload-filled" id="issue-pdf-filled" style="display:none;"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg><span class="pdf-filename" id="issue-pdf-name"></span>
+<button aria-label="সরিয়ে ফেলুন" class="pdf-remove-btn" id="issue-pdf-remove" type="button"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg></button></div>
 </div>
-<div class="pdf-upload-filled" id="issue-pdf-filled" style="display:none;">
-<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-<span class="pdf-filename" id="issue-pdf-name"></span>
-<button aria-label="সরিয়ে ফেলুন" class="pdf-remove-btn" id="issue-pdf-remove" type="button">
-<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg>
-</button>
+<p class="field-hint">যুক্ত করলে ক্রেতা কেনার আগে প্রচ্ছদে ক্লিক করে কিছু পাতা পড়ে দেখতে পারবে।</p>
 </div>
 </div>
-<p class="field-hint">এই পিডিএফ যুক্ত করলে ক্রেতা কেনার আগে প্রচ্ছদে ক্লিক করে কিছু পাতা পড়ে দেখতে পারবে।</p>
 </div>
 </div>
 <div class="modal-foot">
