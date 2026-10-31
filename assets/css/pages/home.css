@@ -134,13 +134,22 @@ body.theme-ready, body.theme-ready *{
 
 .rail-text h3{
     font-size:17px;line-height:1.45;margin-bottom:4px;
+    /* v24: overflow:hidden-এ ফন্টের বাম দিকের অংশ (ই, দ, প্র) কেটে যেত — প্যাডিং দিয়ে জায়গা ছেড়ে দেওয়া হলো */
+    padding:0 .3em;margin-left:-.3em;margin-right:-.3em;
     display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
     transition:color .2s ease;
   }
 
 .rail-list a:hover h3{color:var(--primary);}
 
-.rail-author{font-size:13px;color:var(--text-muted);}
+.rail-author{display:inline-flex;align-items:center;gap:7px;margin-top:9px;font-size:13.5px;font-weight:500;color:var(--text-muted);}
+
+/* v28: হাতে-কলম-ধরা আইকন — ব্যাকগ্রাউন্ড ছাড়া, নামের ঠিক আগে। হাতের কব্জির রেখার উচ্চতা নামের মাঝ বরাবর মেলানো,
+   যাতে মনে হয় কব্জি থেকেই লেখকের নাম শুরু হয়েছে; gap দিয়ে দূরত্ব রাখা হয়েছে যাতে লেগে না যায় */
+.rail-author .pen-ico{
+    flex-shrink:0;width:26px;height:23px;display:block;overflow:visible;
+    transform:translateY(-1px);
+  }
 
 .rail-thumb{width:84px;height:84px;overflow:hidden;border-radius:3px;background:var(--surface);}
 

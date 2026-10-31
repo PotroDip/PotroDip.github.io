@@ -187,6 +187,7 @@
         list.innerHTML = '';
         $('commentCountLabel').textContent = top.length ? UI.bn(top.length) + 'টি মন্তব্য' : 'কোনো মন্তব্য নেই';
         $('emptyState').classList.toggle('show', !top.length);
+        $('sortChips').parentElement.style.display = top.length ? '' : 'none';
         var shown = showAll ? top : top.slice(0, PAGE_SIZE);
         shown.forEach(function (c) { list.appendChild(comment(c, PD.user && c.user_id === PD.user.id)); });
         $('loadMoreBtn').parentElement.style.display = !showAll && top.length > PAGE_SIZE ? 'block' : 'none';

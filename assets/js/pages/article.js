@@ -126,8 +126,12 @@
     /* লেখকের আরও লেখা */
     var panel = document.querySelector('.author-more-panel');
     if (more.length) {
-      var hi = panel.querySelector('.amore-heading img'); hi.src = UI.avatar(au.image_url); hi.alt = au.name;
-      UI.set(panel, '.amore-title', au.name + '-এর আরও লেখা');
+      var hi = panel.querySelector('.ap-avatar'); hi.src = UI.avatar(au.image_url); hi.alt = au.name;
+      UI.set(panel, '.ap-name', au.name);
+      if (au.city) UI.set(panel, '.ap-city', au.city); else panel.querySelector('.ap-city').remove();
+      var apl = panel.querySelector('.ap-id');
+      if (au.slug) apl.href = UI.authorUrl(au); else { apl.removeAttribute('href'); panel.querySelector('.ap-cta').remove(); }
+      UI.set(panel, '.ap-list-title', au.name + '-এর আরও লেখা');
       var row = panel.querySelector('.amore-row');
       more.forEach(function (m) {
         var c = UI.tpl('tpl-amore'); c.href = UI.articleUrl(m);
@@ -143,10 +147,11 @@
       (ids.length ? db.from('authors').select('id,name,city,image_url').in('id', ids) : Promise.resolve({ data: [] })).then(function (r) {
         var map = {}; (r.data || []).forEach(function (u) { map[u.id] = u; });
         var grid = document.querySelector('.related-grid');
+        grid.setAttribute('data-n', Math.min(rel.length, 3));
         rel.forEach(function (m) {
           var u = map[m.author_id] || { name: '' }, c = UI.tpl('tpl-related');
           c.href = UI.articleUrl(m);
-          UI.img(c, '.thumb img', UI.cover(m.cover_url), ''); UI.set(c, '.cat-badge', m.category || ''); UI.set(c, 'h4', m.title);
+          UI.img(c, '.thumb img', UI.cover(m.cover_url), ''); UI.set(c, '.related-cat', m.category || ''); UI.set(c, 'h4', m.title);
           UI.img(c, '.related-meta img', UI.avatar(u.image_url), '');
           var sp = c.querySelector('.related-meta > span'); sp.innerHTML = ''; sp.appendChild(document.createTextNode(u.name));
           if (u.city) { var d = document.createElement('span'); d.className = 'dot-sep'; var cc = document.createElement('span'); cc.className = 'city'; cc.textContent = u.city; sp.appendChild(d); sp.appendChild(cc); }

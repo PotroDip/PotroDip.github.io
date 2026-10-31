@@ -248,6 +248,7 @@
   /* হোমে যেমন দেখাবে — লাইভ প্রিভিউ (খালি ঘর বাদ) */
   function renderArchivePreview() {
     var v = function (k) { return val(IA[k]); }, st = [];
+    var tc = $('issue-archive-tagline-count'); if (tc) tc.textContent = bnum(($(IA.tagline).value || '').length);
     if (v('articles')) st.push('<div><b>' + esc(bnum(v('articles'))) + '</b><span>টি লেখা</span></div>');
     if (v('authors')) st.push('<div><b>' + esc(bnum(v('authors'))) + '</b><span>জন লেখক</span></div>');
     if (v('month') || v('year')) st.push('<div><b>' + esc(v('month') || bnum(v('year'))) + '</b>' + (v('month') && v('year') ? '<span>' + esc(bnum(v('year'))) + '</span>' : '') + '</div>');
@@ -257,6 +258,12 @@
   pickFile($('issue-archive-cover-file'), $('issue-archive-cover-preview'), '', function (f) { ar.cover = f; renderArchivePreview(); });
   Object.keys(IA).forEach(function (k) { $(IA[k]).addEventListener('input', renderArchivePreview); });
   $('issue-archive-printbtn').addEventListener('change', renderArchivePreview);
+  (function () { /* আর্কাইভ প্রচ্ছদ টেনে এনে ছাড়া */
+    var lab = $('issue-archive-cover-upload');
+    ['dragenter', 'dragover'].forEach(function (ev) { lab.addEventListener(ev, function (e) { e.preventDefault(); lab.classList.add('drag'); }); });
+    ['dragleave', 'drop'].forEach(function (ev) { lab.addEventListener(ev, function () { lab.classList.remove('drag'); }); });
+    lab.addEventListener('drop', function (e) { e.preventDefault(); var f = e.dataTransfer.files[0]; if (!f) return; try { var dt = new DataTransfer(); dt.items.add(f); $('issue-archive-cover-file').files = dt.files; $('issue-archive-cover-file').dispatchEvent(new Event('change')); } catch (er) { A.showToast('ক্লিক করে ছবি বেছে নিন'); } });
+  })();
   function openArchive(id, child) {
     ar = { id: id || null, cover: null, child: !!child };
     var i = id ? C.byId(S.issues, id) : null, g = function (k) { return i && i[k] != null ? i[k] : ''; };
