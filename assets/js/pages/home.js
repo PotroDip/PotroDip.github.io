@@ -35,7 +35,7 @@
       nullsFirst: false
     }).order('created_at', {
       ascending: false
-    }).limit(30), db.from('authors').select('id,slug,name,role_title,city,image_url,avg_rating').limit(100), db.from('issues').select('id,title,issue_number,cover_url,published_at,created_at'), db.from('ads').select('slot_id,image_url,link_url').eq('is_active', true), db.from('print_issues').select('id,issue_id,teaser,price,in_stock,cover_url').limit(50), db.from('articles').select('id,title,excerpt,category,cover_url,author_id,issue_id,published_at,created_at,home_order,home_hidden').not('home_order', 'is', null).order('home_order', { ascending: true }).limit(20), db.from('articles').select('id,title,excerpt,category,cover_url,author_id,issue_id,published_at,created_at,home_order,home_hidden').eq('home_featured', true).eq('status', 'published').order('created_at', { ascending: false }).limit(1)]);
+    }).limit(30), db.from('authors').select('id,slug,name,role_title,city,image_url,avg_rating').limit(100), db.from('issues').select('*'), db.from('ads').select('slot_id,image_url,link_url').eq('is_active', true), db.from('print_issues').select('id,issue_id,teaser,price,in_stock,cover_url').limit(50), db.from('articles').select('id,title,excerpt,category,cover_url,author_id,issue_id,published_at,created_at,home_order,home_hidden').not('home_order', 'is', null).order('home_order', { ascending: true }).limit(20), db.from('articles').select('id,title,excerpt,category,cover_url,author_id,issue_id,published_at,created_at,home_order,home_hidden').eq('home_featured', true).eq('status', 'published').order('created_at', { ascending: false }).limit(1)]);
   if (R[0].error) { /* নতুন কলাম (home_order) এখনো ডাটাবেসে না থাকলে আগের মতো চালু থাকুক */
     var fb = await db.from('articles').select('id,title,excerpt,category,cover_url,author_id,issue_id,published_at,created_at').order('published_at', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false }).limit(30);
     if (!fb.error) R[0] = fb
@@ -148,18 +148,21 @@
     var cur = list[0];
     if (!cur) return box.remove();
     var pr = (R[4] && R[4].data || []).filter(function(p) {
-        return p.issue_id === cur.id
-      })[0],
-      arts = A.filter(function(a) {
-        return a.issue_id === cur.id
-      }),
-      wr = {};
-    arts.forEach(function(a) {
-      if (a.author_id) wr[a.author_id] = 1
-    });
-    var cover = cur.cover_url || (pr && pr.cover_url) || PH,
-      teaser = (pr && pr.teaser) || (arts[0] && arts[0].excerpt) || '';
-    box.innerHTML = '<div class="ib-inner"><a class="ib-cover" href="issue.html?id=' + cur.id + '"><img src="' + esc(cover) + '" alt="' + esc(cur.title) + ' প্রচ্ছদ" loading="lazy"></a><div class="ib-text"><div class="ib-kicker"><span>চলতি সংখ্যা</span>' + (cur.issue_number ? '<span class="ib-no">সংখ্যা ' + bn(cur.issue_number) + '</span>' : '') + '</div><h2>' + esc(cur.title) + '</h2>' + (teaser ? '<p class="ib-teaser">' + esc(cut(teaser, 190)) + '</p>' : '') + '<div class="ib-stats"><div><strong>' + bn(arts.length) + '</strong><span>টি লেখা</span></div><div><strong>' + bn(Object.keys(wr).length) + '</strong><span>জন লেখক</span></div>' + (cur.published_at ? '<div><strong>' + M[new Date(cur.published_at).getMonth()] + '</strong><span>' + bn(new Date(cur.published_at).getFullYear()) + '</span></div>' : '') + '</div><div class="ib-actions"><a class="ib-btn primary" href="issue.html?id=' + cur.id + '">সংখ্যাটি পড়ুন ' + arrow + '</a>' + (pr && pr.in_stock ? '<a class="ib-btn ghost" href="store.html">ছাপা কপি · ৳' + bn(Number(pr.price)) + '</a>' : '') + '</div></div></div>';
+      return p.issue_id === cur.id
+    })[0];
+    /* সব তথ্য অ্যাডমিন প্যানেল থেকে — কিছুই অটো নয়; খালি ঘর দেখানো হয় না */
+    var T = function(k) {
+        return cur[k] == null ? '' : String(cur[k]).trim()
+      },
+      st = [];
+    if (T('articles_count')) st.push('<div><strong>' + bn(T('articles_count')) + '</strong><span>টি লেখা</span></div>');
+    if (T('authors_count')) st.push('<div><strong>' + bn(T('authors_count')) + '</strong><span>জন লেখক</span></div>');
+    if (T('issue_month') || T('issue_year')) st.push('<div><strong>' + esc(T('issue_month') || bn(T('issue_year'))) + '</strong>' + (T('issue_month') && T('issue_year') ? '<span>' + bn(T('issue_year')) + '</span>' : '') + '</div>');
+    var readBtn = T('read_label') ? '<a class="ib-btn primary" href="issue.html?id=' + cur.id + '">' + esc(T('read_label')) + ' ' + arrow + '</a>' : '',
+      buyBtn = (cur.show_print_btn !== false && pr && pr.in_stock) ? '<a class="ib-btn ghost" href="store.html">ছাপা কপি · ৳' + bn(Number(pr.price)) + '</a>' : '',
+      cover = cur.cover_url;
+    box.classList.toggle('no-cover', !cover);
+    box.innerHTML = '<div class="ib-inner">' + (cover ? '<a class="ib-cover" href="issue.html?id=' + cur.id + '"><img src="' + esc(cover) + '" alt="' + esc(cur.title) + ' প্রচ্ছদ" loading="lazy"></a>' : '') + '<div class="ib-text"><div class="ib-kicker"><span>চলতি সংখ্যা</span>' + (cur.issue_number ? '<span class="ib-no">সংখ্যা ' + bn(cur.issue_number) + '</span>' : '') + '</div><h2>' + esc(cur.title) + '</h2>' + (T('tagline') ? '<p class="ib-teaser">' + esc(cut(T('tagline'), 260)) + '</p>' : '') + (st.length ? '<div class="ib-stats">' + st.join('') + '</div>' : '') + ((readBtn || buyBtn) ? '<div class="ib-actions">' + readBtn + buyBtn + '</div>' : '') + '</div></div>';
   })();
   /* বিজ্ঞাপন */
   var sl = document.querySelectorAll('.ad-slot'),

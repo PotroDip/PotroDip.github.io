@@ -202,45 +202,64 @@
   /* ---------- বিজ্ঞাপন ---------- */
   function adFor(slot) { return S.ads.filter(function (a) { return slot.re.test((a.slot_id || '') + ' ' + (a.slot_name || '')); })[0]; }
   function renderAds() {
+    var on = 0, off = 0, empty = 0;
     $('adSlotGrid').innerHTML = SLOTS.map(function (s) {
-      var a = adFor(s), img = a && a.image_url;
-      return H`<div class="item-card"><div class="item-cover" style="aspect-ratio:${s.ratio}; cursor:pointer;" data-slot-trigger="${s.id}">${raw(img ? H`<img src="${img}" alt="">` : '<div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; color:var(--text-muted); font-size:12px; text-align:center; padding:10px;">' + ICON.up + '<span>ক্লিক করে আপলোড করুন</span></div>')}</div><input type="file" accept="image/*" style="display:none;" data-slot-file="${s.id}"><div class="item-body left-align"><div class="item-name">${s.name}</div><div style="font-size:12px; color:var(--secondary); font-weight:600; margin-bottom:4px;">${s.size}</div><div class="item-sub-line">${s.where}</div><div class="item-foot"><label class="switch"><input type="checkbox" data-slot-active="${s.id}"${raw(a && a.is_active ? ' checked' : '')}><span class="track"></span></label><div style="display:flex; gap:6px;">${raw(img ? H`<button class="icon-btn-sm danger" data-slot-remove="${s.id}" title="সরিয়ে ফেলুন">${raw(ICON.del)}</button>` : '')}</div></div></div></div>`;
+      var a = adFor(s), img = a && a.image_url, live = !!(img && a.is_active), st = !img ? 'empty' : (live ? 'on' : 'off');
+      if (st === 'on') on++; else if (st === 'off') off++; else empty++;
+      var pill = { on: 'চালু আছে', off: 'বন্ধ আছে', empty: 'ছবি দেওয়া হয়নি' }[st];
+      var stage = img
+        ? H`<div class="ad-frame" style="aspect-ratio:${s.ratio}"><img src="${img}" alt=""><span class="ad-swap">${raw(ICON.up)} ছবি বদলান</span></div>`
+        : H`<div class="ad-empty">${raw(ICON.up)}<b>ছবি আপলোড করুন</b><span>এখানে ক্লিক করুন বা ছবি টেনে এনে ছাড়ুন</span></div>`;
+      return H`<div class="ad-card ${st}"><div class="ad-top"><div><div class="ad-name">${s.name}</div><div class="ad-where">${s.where}</div></div><span class="ad-pill ${st}"><i></i>${pill}</span></div><div class="ad-stage" data-slot-trigger="${s.id}" data-slot-drop="${s.id}" style="--ar:${s.ratio}">${raw(stage)}</div><input type="file" accept="image/*" style="display:none;" data-slot-file="${s.id}"><div class="ad-chips"><span>${s.size}</span><span>JPG · PNG · WebP · GIF</span></div><div class="ad-link"><label>ক্লিক করলে যে লিংকে যাবে <small>(ঐচ্ছিক)</small></label><div class="ad-link-row"><input type="url" placeholder="https://example.com" value="${(a && a.link_url) || ''}" data-slot-link="${s.id}"${raw(img ? '' : ' disabled')}><button class="btn btn-secondary ad-save" data-slot-linksave="${s.id}"${raw(img ? '' : ' disabled')}>সংরক্ষণ</button></div></div><div class="ad-foot"><label class="ad-toggle"><span class="switch"><input type="checkbox" data-slot-active="${s.id}"${raw(live ? ' checked' : '')}><span class="track"></span></span><span>সাইটে দেখান</span></label>${raw(img ? H`<button class="ad-remove" data-slot-remove="${s.id}">${raw(ICON.del)} সরিয়ে ফেলুন</button>` : '')}</div></div>`;
     }).join('');
-    /* ছবি লোড না হলে (যেমন পুরোনো /ads/ লিংক AdBlock আটকালে) ফাঁকা না রেখে কারণ দেখানো */
-    [].forEach.call($('adSlotGrid').querySelectorAll('.item-cover img'), function (im) {
+    $('adStats').innerHTML = [['চালু', on, 'on'], ['বন্ধ', off, 'off'], ['ছবি নেই', empty, 'empty']].map(function (x) { return '<div class="ad-stat ' + x[2] + '"><strong>' + UI.bn(x[1]) + '</strong><span>' + x[0] + '</span></div>'; }).join('');
+    /* ছবি লোড না হলে (যেমন AdBlock আটকালে) ফাঁকা না রেখে কারণ দেখানো */
+    [].forEach.call($('adSlotGrid').querySelectorAll('.ad-frame img'), function (im) {
       im.addEventListener('error', function () {
-        var d = document.createElement('div');
-        d.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;font-size:12px;line-height:1.6;color:var(--text-muted);';
-        d.textContent = 'ছবি লোড হচ্ছে না — ছবিটা আবার আপলোড করুন (বা AdBlock বন্ধ করে দেখুন)';
+        var d = document.createElement('div'); d.className = 'ad-broken';
+        d.textContent = 'ছবি লোড হচ্ছে না — আবার আপলোড করুন (বা AdBlock বন্ধ করে দেখুন)';
         im.replaceWith(d);
       });
     });
   }
+  function slotOf(id) { return SLOTS.filter(function (x) { return x.id === id; })[0]; }
+  function uploadAd(s, file) {
+    var a = adFor(s);
+    if (!file || !/^image\//.test(file.type)) return A.showToast('শুধু ছবি বা GIF দিন');
+    A.showToast('আপলোড হচ্ছে…');
+    window.AdminForms.upload(file, 'banners').then(function (url) {
+      var row = { image_url: url, is_active: true, link_url: a && a.link_url ? a.link_url : null };
+      return a ? PD.db.from('ads').update(row).eq('slot_id', a.slot_id) : PD.db.from('ads').insert(Object.assign({ slot_id: s.id, slot_name: s.name }, row));
+    }).then(function (r) { if (r && ok(r)) { A.showToast('ছবি আপলোড হয়েছে — স্লটের মাপে ফিট করা হয়েছে'); refresh(); } }).catch(function (er) { A.showToast(er.message || 'আপলোড হয়নি'); });
+  }
   $('adSlotGrid').addEventListener('click', function (e) {
     var t = e.target.closest('[data-slot-trigger]'); if (t) { this.querySelector('[data-slot-file="' + t.dataset.slotTrigger + '"]').click(); return; }
+    var sv = e.target.closest('[data-slot-linksave]');
+    if (sv) {
+      var s1 = slotOf(sv.dataset.slotLinksave), a1 = adFor(s1), inp = this.querySelector('[data-slot-link="' + s1.id + '"]'), link = inp.value.trim();
+      if (link && !/^https?:\/\//i.test(link)) return A.showToast('লিংক https:// দিয়ে শুরু হতে হবে');
+      PD.db.from('ads').update({ link_url: link || null }).eq('slot_id', a1.slot_id).then(function (r) { if (ok(r)) { a1.link_url = link || null; A.showToast(link ? 'লিংক সংরক্ষণ হয়েছে' : 'লিংক সরানো হয়েছে'); } });
+      return;
+    }
     var rm = e.target.closest('[data-slot-remove]');
     if (rm) {
-      var s = SLOTS.filter(function (x) { return x.id === rm.dataset.slotRemove; })[0], a = adFor(s);
+      var s = slotOf(rm.dataset.slotRemove), a = adFor(s);
       A.showConfirm('এড সরিয়ে ফেলবেন?', '"' + s.name + '" স্লটের ছবিটা সরিয়ে ফেললে সাইটে ঐ জায়গায় আর কিছু দেখাবে না।', function () {
-        PD.db.from('ads').update({ image_url: null, is_active: false }).eq('slot_id', a.slot_id).then(function (r) { if (ok(r)) { A.showToast('এড সরিয়ে ফেলা হয়েছে'); refresh(); } });
+        PD.db.from('ads').update({ image_url: null, is_active: false, link_url: null }).eq('slot_id', a.slot_id).then(function (r) { if (ok(r)) { A.showToast('এড সরিয়ে ফেলা হয়েছে'); refresh(); } });
       });
     }
   });
+  /* ছবি টেনে এনে ছাড়া (drag & drop) */
+  ['dragenter', 'dragover'].forEach(function (ev) { $('adSlotGrid').addEventListener(ev, function (e) { var d = e.target.closest('[data-slot-drop]'); if (d) { e.preventDefault(); d.classList.add('drag'); } }); });
+  ['dragleave', 'drop'].forEach(function (ev) { $('adSlotGrid').addEventListener(ev, function (e) { var d = e.target.closest('[data-slot-drop]'); if (d) d.classList.remove('drag'); }); });
+  $('adSlotGrid').addEventListener('drop', function (e) { var d = e.target.closest('[data-slot-drop]'); if (!d) return; e.preventDefault(); uploadAd(slotOf(d.dataset.slotDrop), e.dataTransfer.files[0]); });
   $('adSlotGrid').addEventListener('change', function (e) {
     var f = e.target.closest('[data-slot-file]'), tg = e.target.closest('[data-slot-active]');
-    if (f && f.files[0]) {
-      var s = SLOTS.filter(function (x) { return x.id === f.dataset.slotFile; })[0], a = adFor(s), file = f.files[0];
-      window.AdminForms.upload(file, 'banners').then(function (url) {
-        var link = a && a.link_url ? a.link_url : (prompt('বিজ্ঞাপনে ক্লিক করলে কোথায় যাবে? লিংক দিন (https://...) বা খালি রাখুন', '') || '').trim();
-        if (link && !/^https?:\/\//i.test(link)) { A.showToast('লিংক https:// দিয়ে শুরু হতে হবে, তাই লিংক ছাড়া সেভ হলো'); link = ''; }
-        var row = { image_url: url, is_active: true, link_url: link || null };
-        return a ? PD.db.from('ads').update(row).eq('slot_id', a.slot_id) : PD.db.from('ads').insert(Object.assign({ slot_id: s.id, slot_name: s.name }, row));
-      }).then(function (r) { if (r && ok(r)) { A.showToast('ছবি আপলোড হয়েছে, স্লটের মাপে অটো-ফিট করা হয়েছে'); refresh(); } }).catch(function (er) { A.showToast(er.message || 'আপলোড হয়নি'); });
-    }
+    if (f && f.files[0]) uploadAd(slotOf(f.dataset.slotFile), f.files[0]);
     if (tg) {
-      var s2 = SLOTS.filter(function (x) { return x.id === tg.dataset.slotActive; })[0], a2 = adFor(s2);
+      var s2 = slotOf(tg.dataset.slotActive), a2 = adFor(s2);
       if (!a2 || !a2.image_url) { tg.checked = false; A.showToast('আগে একটা ছবি আপলোড করুন'); return; }
-      PD.db.from('ads').update({ is_active: tg.checked }).eq('slot_id', a2.slot_id).then(function (r) { if (ok(r)) { a2.is_active = tg.checked; A.showToast(tg.checked ? 'এড চালু হয়েছে' : 'এড বন্ধ হয়েছে'); } });
+      PD.db.from('ads').update({ is_active: tg.checked }).eq('slot_id', a2.slot_id).then(function (r) { if (ok(r)) { a2.is_active = tg.checked; A.showToast(tg.checked ? 'এড চালু হয়েছে' : 'এড বন্ধ হয়েছে'); renderAds(); } });
     }
   });
 

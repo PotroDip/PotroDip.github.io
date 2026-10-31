@@ -14,7 +14,7 @@
   var db = PD.db;
 
   Promise.all([
-    db.from('issues').select('id,issue_number,title,cover_url,published_at,created_at').order('published_at', { ascending: false }).limit(200),
+    db.from('issues').select('*').order('published_at', { ascending: false }).limit(200),
     db.from('articles').select('id,issue_id,author_id,excerpt').limit(2000),
     db.from('print_issues').select('id,issue_id,teaser,in_stock,price,cover_url')
   ]).then(function (r) {
@@ -37,8 +37,17 @@
     }).join('');
 
     /* সর্বশেষ সংখ্যা — বড় ব্যান্ড */
-    var cur = issues[0], pr = print[cur.id], teaser = (pr && pr.teaser) || first[cur.id] || '';
-    if (band) band.innerHTML = '<div class="ib-inner"><a class="ib-cover" href="issue.html?id=' + encodeURIComponent(cur.id) + '"><img src="' + esc(UI.cover(cur.cover_url || (pr && pr.cover_url))) + '" alt="' + esc(cur.title) + ' প্রচ্ছদ"></a><div class="ib-text"><div class="ib-kicker"><span>সর্বশেষ সংখ্যা</span>' + (cur.issue_number ? '<span class="ib-no">সংখ্যা ' + UI.bn(cur.issue_number) + '</span>' : '') + '</div><h2>' + esc(cur.title) + '</h2>' + (teaser ? '<p class="ib-teaser">' + esc(cut(teaser, 190)) + '</p>' : '') + '<div class="ib-stats"><div><strong>' + UI.bn(count[cur.id] || 0) + '</strong><span>টি লেখা</span></div><div><strong>' + UI.bn(Object.keys(writers[cur.id] || {}).length) + '</strong><span>জন লেখক</span></div>' + (when(cur) ? '<div><strong>' + MON[when(cur).getMonth()] + '</strong><span>' + UI.bn(when(cur).getFullYear()) + '</span></div>' : '') + '</div><div class="ib-actions"><a class="ib-btn primary" href="issue.html?id=' + encodeURIComponent(cur.id) + '">সংখ্যাটি পড়ুন ' + ARROW + '</a>' + (pr && pr.in_stock ? '<a class="ib-btn ghost" href="store.html">ছাপা কপি · ৳' + UI.bn(Number(pr.price)) + '</a>' : '') + '</div></div></div>';
+    var cur = issues[0], pr = print[cur.id];
+    var T = function (k) { return cur[k] == null ? '' : String(cur[k]).trim(); }, st = [];
+    if (T('articles_count')) st.push('<div><strong>' + UI.bn(T('articles_count')) + '</strong><span>টি লেখা</span></div>');
+    if (T('authors_count')) st.push('<div><strong>' + UI.bn(T('authors_count')) + '</strong><span>জন লেখক</span></div>');
+    if (T('issue_month') || T('issue_year')) st.push('<div><strong>' + esc(T('issue_month') || UI.bn(T('issue_year'))) + '</strong>' + (T('issue_month') && T('issue_year') ? '<span>' + UI.bn(T('issue_year')) + '</span>' : '') + '</div>');
+    var rd = T('read_label') ? '<a class="ib-btn primary" href="issue.html?id=' + encodeURIComponent(cur.id) + '">' + esc(T('read_label')) + ' ' + ARROW + '</a>' : '';
+    var by = (cur.show_print_btn !== false && pr && pr.in_stock) ? '<a class="ib-btn ghost" href="store.html">ছাপা কপি · ৳' + UI.bn(Number(pr.price)) + '</a>' : '';
+    if (band) {
+      band.classList.toggle('no-cover', !cur.cover_url);
+      band.innerHTML = '<div class="ib-inner">' + (cur.cover_url ? '<a class="ib-cover" href="issue.html?id=' + encodeURIComponent(cur.id) + '"><img src="' + esc(cur.cover_url) + '" alt="' + esc(cur.title) + ' প্রচ্ছদ"></a>' : '') + '<div class="ib-text"><div class="ib-kicker"><span>সর্বশেষ সংখ্যা</span>' + (cur.issue_number ? '<span class="ib-no">সংখ্যা ' + UI.bn(cur.issue_number) + '</span>' : '') + '</div><h2>' + esc(cur.title) + '</h2>' + (T('tagline') ? '<p class="ib-teaser">' + esc(cut(T('tagline'), 260)) + '</p>' : '') + (st.length ? '<div class="ib-stats">' + st.join('') + '</div>' : '') + ((rd || by) ? '<div class="ib-actions">' + rd + by + '</div>' : '') + '</div></div>';
+    }
 
     /* সব সংখ্যা */
     var year = function (i) { var d = when(i); return d ? String(d.getFullYear()) : ''; };
