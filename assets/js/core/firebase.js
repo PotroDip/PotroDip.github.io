@@ -16,7 +16,7 @@
     return;
   }
   var auth = app.auth();
-  auth.languageCode = 'bn';
+  /* ভাষা সেট করা হয় না: Firebase তাহলে কনসোলের "Template language: English" টেমপ্লেট পাঠায় — সেখানেই আমাদের বাংলা ইমেইল বসানো */
   var storage = PD.config.firebaseStorage && app.storage ? app.storage() : null;
 
   /* Firebase নিজের লগইন-অবস্থা IndexedDB থেকে ফিরিয়ে আনা পর্যন্ত অপেক্ষা */

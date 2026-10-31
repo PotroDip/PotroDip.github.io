@@ -38,7 +38,6 @@
 
   var app = firebase.apps && firebase.apps.length ? firebase.app() : firebase.initializeApp(C.firebase);
   var auth = app.auth();
-  auth.languageCode = 'bn';
 
   /* চোখ-বাটন */
   var eye = $('act-eye');
