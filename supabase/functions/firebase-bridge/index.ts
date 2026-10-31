@@ -1,6 +1,7 @@
 // firebase-bridge — Firebase-এ লগইন করা ইউজারকে একই ইমেইলের Supabase অ্যাকাউন্টে ঢোকায়।
 // ১. Firebase ID token-এর সই Google-এর পাবলিক কী দিয়ে যাচাই
-// ২. ইমেইল ভেরিফায়েড ও পরিচিত প্রোভাইডারের (pd_email_domain_ok) কিনা দেখা
+// ২. ইমেইল-যাচাই: গুগল হলে Google নিজেই যাচাই করা; ইমেইল-পাসওয়ার্ড হলে Supabase-এর পাঠানো যাচাই-ইমেইলে ক্লিক করা হয়েছে কিনা
+//    (pd_fb_check) — এবং সেই Supabase-ইউজার ঠিক এই Firebase-অ্যাকাউন্টের সঙ্গেই জোড়া কিনা। পরিচিত প্রোভাইডারও (pd_email_domain_ok)
 // ৩. Supabase ইউজার না থাকলে তৈরি, থাকলে সেটাই (ইমেইল দিয়ে মিল) — ডেটা দুই জায়গায় হয় না
 // ৪. এককালীন ম্যাজিক-লিংক টোকেন ফেরত দেওয়া, যা দিয়ে ব্রাউজার Supabase সেশন পায়
 import { createRemoteJWKSet, jwtVerify } from "npm:jose@5.9.6";
@@ -8,7 +9,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.45.4";
 
 const FIREBASE_PROJECT = "potrodip-99ad4";
 const JWKS = createRemoteJWKSet(
-  new URL(Deno.env.get("PD_TEST_JWKS_URL") || "https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com"),
+  new URL("https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com"),
 );
 const ORIGINS = ["https://potrodip.github.io"];
 const PROVIDERS = ["password", "google.com"];
@@ -53,8 +54,8 @@ Deno.serve(async (req) => {
   const provider = String(claims.firebase?.sign_in_provider || "");
   if (!email) return reply(400, { error: "no_email" });
   if (!PROVIDERS.includes(provider)) return reply(403, { error: "provider_not_allowed" });
-  // ২. ইমেইল যাচাই করা না থাকলে ঢোকা যাবে না
-  if (claims.email_verified !== true) return reply(403, { error: "email_not_verified" });
+  // গুগলের ইমেইল Google নিজেই যাচাই করে রাখে
+  if (provider === "google.com" && claims.email_verified !== true) return reply(403, { error: "email_not_verified" });
 
   const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
     auth: { autoRefreshToken: false, persistSession: false },
@@ -63,6 +64,16 @@ Deno.serve(async (req) => {
   const dom = await admin.rpc("pd_email_domain_ok", { p_email: email });
   if (dom.error) return reply(500, { error: "server_error" });
   if (dom.data !== true) return reply(403, { error: "email_domain_not_allowed" });
+
+  // ২. ইমেইল-পাসওয়ার্ড অ্যাকাউন্ট: Firebase নিজে ইমেইল যাচাই করে না (যাচাইয়ের ইমেইল যায় Supabase থেকে)
+  if (provider === "password" && claims.email_verified !== true) {
+    const chk = await admin.rpc("pd_fb_check", { p_email: email, p_uid: String(claims.sub || "") });
+    if (chk.error || !chk.data) return reply(500, { error: "server_error" });
+    const c = chk.data as { exists: boolean; confirmed: boolean; uid_match: boolean };
+    if (!c.exists) return reply(403, { error: "need_signup" });           // Supabase-এ এখনো যাচাই-ইমেইল পাঠানো হয়নি
+    if (!c.uid_match) return reply(403, { error: "account_exists" });     // এই ইমেইলে অন্য (আগের) অ্যাকাউন্ট আছে — তার সঙ্গে জোড়া নয়
+    if (!c.confirmed) return reply(403, { error: "email_not_verified" }); // ইমেইলের লিংকে এখনো ক্লিক করা হয়নি
+  }
 
   // ৩. ইউজার তৈরি (আগে থাকলে কিছুই হয় না — একই অ্যাকাউন্ট ব্যবহার হবে)
   const created = await admin.auth.admin.createUser({

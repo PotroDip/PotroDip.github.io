@@ -140,6 +140,7 @@
   var BRIDGE_ERR = {
     email_not_verified: 'আগে ইমেইলে পাঠানো লিংকে ক্লিক করে ইমেইল যাচাই করুন',
     email_domain_not_allowed: 'শুধু পরিচিত ইমেইল (Gmail, Yahoo, Outlook ইত্যাদি) দিয়ে অ্যাকাউন্ট খোলা যায়',
+    account_exists: 'এই ইমেইলে আগের একটা অ্যাকাউন্ট আছে — আগের পাসওয়ার্ড দিয়ে লগইন করুন, বা "পাসওয়ার্ড ভুলে গেছেন?" চাপুন',
     invalid_token: 'লগইন যাচাই করা যায়নি — আবার চেষ্টা করুন'
   };
 
@@ -177,6 +178,37 @@
     })
   }
 
+  /* ---------- যাচাই-ইমেইল পাঠায় Supabase (আপনার কাস্টম বাংলা টেমপ্লেট ও Gmail SMTP-তে) ----------
+     Firebase-এ অ্যাকাউন্ট খোলার পর এখানে একটা Supabase-ইউজার তৈরি হয় (এলোমেলো পাসওয়ার্ডে — ইউজার ঢোকে Firebase-পাসওয়ার্ডে)।
+     ইউজারের ইমেইলে Supabase-এর "Confirm sign up" যায়; ক্লিক করলে ইমেইল যাচাই হয়ে যায়।
+     user_metadata.fb_uid দিয়ে ঠিক এই Firebase-অ্যাকাউন্টের সঙ্গে জোড়া থাকে (সেতু-ফাংশন মিলিয়ে দেখে)। */
+  function rndPw() {
+    var a = new Uint8Array(24);
+    crypto.getRandomValues(a);
+    return btoa(String.fromCharCode.apply(null, a)) + 'Aa1!'
+  }
+
+  function verifyMail(fu, e, n, tsId) {
+    var ct = tok(tsId);
+    if (!ct) return Promise.reject({ message: WAIT });
+    return db.auth.signUp({
+      email: e,
+      password: rndPw(),
+      options: { captchaToken: ct, data: { full_name: n || '', fb_uid: fu.uid }, emailRedirectTo: location.origin + '/' + PD.pages.auth }
+    }).then(function(r) {
+      rs(tsId);
+      if (r.error) throw r.error;
+      var u = r.data.user;
+      return u && u.identities && !u.identities.length ? 'exists' : 'sent'
+    })
+  }
+
+  function dropFb(fu) {
+    return (fu ? fu.delete().catch(function() {}) : Promise.resolve()).then(function() {
+      return FB.auth.signOut().catch(function() {})
+    })
+  }
+
   /* ---------- ইমেইল দিয়ে লগইন ---------- */
   /* Supabase-এ সরাসরি লগইন — Firebase চালু হওয়ার আগে খোলা পুরোনো অ্যাকাউন্টের জন্য (নিরাপত্তা-জাল) */
   function supabaseLogin(b, e, p, fromFb) {
@@ -203,14 +235,31 @@
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) { hint(inp, 'সঠিক ইমেইল ঠিকানা দিন', 1); return inp.focus(); }
     if (FB) {
       busy(b, 1);
+      var fu = null;
       FB.auth.signInWithEmailAndPassword(e, p).then(function(c) {
-        if (!c.user.emailVerified) {
-          busy(b, 0);
-          return openVerify(c.user, 'login')
-        }
-        return bridgeIn(c.user).then(function() { busy(b, 0) })
+        fu = c.user;
+        return bridgeIn(c.user)
+      }).then(function() {
+        busy(b, 0)
       }).catch(function(err) {
         busy(b, 0);
+        var br = err && err.bridge;
+        /* ইমেইলের লিংকে এখনো ক্লিক করা হয়নি */
+        if (br === 'email_not_verified') return openVerify(null, 'login', e);
+        /* Firebase-এ অ্যাকাউন্ট আছে কিন্তু যাচাই-ইমেইল কখনো যায়নি — এখনই পাঠানো */
+        if (br === 'need_signup' && fu) {
+          busy(b, 1);
+          return verifyMail(fu, e, fu.displayName, 'ts-login').then(function(res) {
+            busy(b, 0);
+            if (res === 'exists') return supabaseLogin(b, e, p, true);
+            openVerify(null, 'login', e)
+          }).catch(function(er) {
+            busy(b, 0);
+            toast(msg(er), 1)
+          })
+        }
+        /* এই ইমেইলে আগের (Supabase) অ্যাকাউন্ট আছে — আগের পাসওয়ার্ডে চেষ্টা */
+        if (br === 'account_exists') return supabaseLogin(b, e, p, true);
         /* Firebase-এ এই ইমেইলে অ্যাকাউন্ট নেই বা পাসওয়ার্ড মেলেনি → হয়তো আগের (Supabase) অ্যাকাউন্ট */
         if (err && err.code && /invalid-credential|user-not-found|wrong-password/.test(err.code)) return supabaseLogin(b, e, p, true);
         toast(err && err.code ? fbMsg(err) : msg(err), 1)
@@ -232,18 +281,32 @@
     var nl = $('newsletter-switch');
     nl = !nl || nl.checked;
     if (FB) {
+      if (!tok('ts-signup')) return toast(WAIT, 1);
       busy(b, 1);
+      var fu = null;
       FB.auth.createUserWithEmailAndPassword(e, p).then(function(c) {
-        return c.user.updateProfile({ displayName: n }).catch(function() {}).then(function() {
-          return c.user.sendEmailVerification({ url: location.origin + location.pathname })
-        }).then(function() {
-          if (nl) PD.subscribe(e, null).then(function() {}, function() {});
+        fu = c.user;
+        return fu.updateProfile({ displayName: n }).catch(function() {})
+      }).then(function() {
+        return verifyMail(fu, e, n, 'ts-signup')
+      }).then(function(res) {
+        if (res === 'exists') {
+          /* এই ইমেইলে আগে থেকেই (Supabase) অ্যাকাউন্ট আছে — এইমাত্র বানানো Firebase-অ্যাকাউন্টটা মুছে ফেলা, যাতে অন্যের অ্যাকাউন্ট দখল না হয় */
+          return dropFb(fu).then(function() {
+            busy(b, 0);
+            toast('এই ইমেইলে আগেই অ্যাকাউন্ট আছে — লগইন করুন (অনেক আগের অ্যাকাউন্ট হলে "পাসওয়ার্ড ভুলে গেছেন?" চাপুন)', 1)
+          })
+        }
+        if (nl) PD.subscribe(e, null).then(function() {}, function() {});
+        return FB.auth.signOut().catch(function() {}).then(function() {
           busy(b, 0);
-          openVerify(c.user, 'signup')
+          openVerify(null, 'signup', e)
         })
       }).catch(function(err) {
         busy(b, 0);
-        toast(fbMsg(err), 1)
+        dropFb(fu).then(function() {
+          toast(err && err.code ? fbMsg(err) : msg(err), 1)
+        })
       });
       return
     }
@@ -350,7 +413,6 @@
   function closeOv(force) {
     if (!OV) return;
     if (!force && OV.id === 'fp-overlay' && fpMode === 'new') return; /* নতুন পাসওয়ার্ড না দিয়ে বন্ধ নয় */
-    if (OV.id === 'fp-overlay' && fpMode === 'verify' && FB && pending && pending.user) FB.auth.signOut().catch(function() {});
     if (OV.id === 'fbc-overlay') busy($('fbc-go'), 0);
     OV.classList.remove('open');
     OV.setAttribute('aria-hidden', 'true');
@@ -377,11 +439,11 @@
     $('fp-verify-text').textContent = (from === 'login' ?
       'আপনার ইমেইল এখনো যাচাই হয়নি। ' + em + ' ঠিকানায় পাঠানো লিংকে ক্লিক করুন, তারপর আবার লগইন করুন।' :
       'অ্যাকাউন্ট তৈরি হয়েছে! ' + em + ' ঠিকানায় একটা যাচাই-লিংক পাঠানো হয়েছে। লিংকে ক্লিক করলেই অ্যাকাউন্ট চালু হবে, তারপর এখানে লগইন করুন।');
-    $('fp-resend').hidden = user ? !FB : !em;
+    $('fp-resend').hidden = !em;
     var rn = $('fp-resend-note');
     if (rn) rn.hidden = true;
     openOv('fp-overlay', 'fp-verify-ok');
-    pending = { user: user, email: em };
+    pending = { email: em };
     if (from === 'signup') {
       var t = document.querySelector('.auth-tabs button[data-tab="login"]');
       if (t) t.click();
@@ -419,29 +481,19 @@
     });
 
     on('fp-resend', function(b) {
-      if (!pending) return;
+      if (!pending || !pending.email) return;
       var rn = $('fp-resend-note');
-      var ok = function() {
-        busy(b, 0);
-        if (rn) rn.hidden = false
-      };
-      var bad = function(m) {
-        busy(b, 0);
-        if (rn) rn.hidden = true;
-        toast(m, 1)
-      };
-      if (pending.user) {
-        busy(b, 1);
-        pending.user.sendEmailVerification({ url: location.origin + location.pathname }).then(ok).catch(function(err) { bad(fbMsg(err)) });
-        return
-      }
       var ct = tok('ts-login');
       if (!ct) return toast(WAIT, 1);
       busy(b, 1);
       db.auth.resend({ type: 'signup', email: pending.email, options: { captchaToken: ct, emailRedirectTo: location.origin + '/' + PD.pages.auth } }).then(function(r) {
         rs('ts-login');
-        if (r.error) return bad(msg(r.error));
-        ok()
+        busy(b, 0);
+        if (r.error) {
+          if (rn) rn.hidden = true;
+          return toast(msg(r.error), 1)
+        }
+        if (rn) rn.hidden = false
       })
     });
 
@@ -547,6 +599,7 @@
     if (ev === 'PASSWORD_RECOVERY') { PD.recovery = true; PD.load().then(function() { setTimeout(askNewPassword, 300) }) }
   });
   PD.ready.then(function() {
+    if (PD.user && PD.justVerified) setTimeout(function() { toast('ইমেইল যাচাই হয়েছে — স্বাগতম!') }, 600);
     if (PD.user && window.pdShowDashboard) pdShowDashboard();
     setTimeout(askNewPassword, 500)
   });

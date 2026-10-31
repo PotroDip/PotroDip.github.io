@@ -76,3 +76,11 @@
 - ইউজারকে দেখানো সব ত্রুটি `PD.msg()` (app.js) দিয়ে সহজ বাংলায় যায় — "ফাংশন/কলাম/স্টোরেজ/Supabase" জাতীয় কারিগরি কথা কখনো নয়। আসল কারণ শুধু ব্রাউজার-কনসোলে।
 - ছবি আপলোডের ত্রুটির জন্য `PD.uploadMsg()`।
 - Supabase ড্যাশবোর্ডে হাতে করার বাকি: Authentication → Providers → Email → **Confirm email চালু**, আর (Pro প্ল্যানে) **Leaked password protection** চালু।
+
+### ইমেইল-যাচাই এখন Supabase থেকে (v21)
+- ইমেইল-পাসওয়ার্ডের অ্যাকাউন্ট Firebase-এ খোলা হয়; **যাচাইয়ের ইমেইল পাঠায় Supabase** ("Confirm sign up" টেমপ্লেট + কাস্টম SMTP)।
+- সাইনআপে সাইট Firebase-অ্যাকাউন্ট বানিয়ে Supabase-এ একটা ইউজার বানায় (এলোমেলো পাসওয়ার্ডে, `user_metadata.fb_uid` = Firebase uid)। ইউজার ইমেইলের লিংকে ক্লিক করলে Supabase-ইউজার "confirmed" হয়।
+- লগইনে `firebase-bridge` ফাংশন `pd_fb_check` দিয়ে দেখে: ইউজার আছে, যাচাই হয়েছে, আর `fb_uid` ঠিক এই Firebase-অ্যাকাউন্টের — নইলে ঢুকতে দেয় না (`email_not_verified` · `need_signup` · `account_exists`)।
+- গুগল: Google নিজেই ইমেইল যাচাই করে, তাই আলাদা ইমেইল যায় না।
+- পাসওয়ার্ড রিসেট ও ইমেইল-বদল এখনো Firebase-এর টেমপ্লেটে (`firebase/email/`)।
+- Supabase-এ Redirect URL-এ `https://potrodip.github.io/auth.html` থাকতে হয়।

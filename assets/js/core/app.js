@@ -107,6 +107,8 @@
   }
   /* পাসওয়ার্ড রিসেট লিংক থেকে এলে (#...type=recovery) — ক্লায়েন্ট হ্যাশ মুছে ফেলার আগেই মনে রাখা */
   PD.recovery = /type=recovery/.test(location.hash) || /type=recovery/.test(location.search);
+  /* ইমেইল-যাচাইয়ের লিংকে ক্লিক করে ফিরলে (#...type=signup) — অভিনন্দন দেখানোর জন্য */
+  PD.justVerified = /type=(signup|email|invite)/.test(location.hash);
   var db = PD.db = window.supabase.createClient(C.supabaseUrl, C.anonKey);
   db.auth.onAuthStateChange(function (ev) { if (ev === 'PASSWORD_RECOVERY') PD.recovery = true; });
   PD.load = function() {
