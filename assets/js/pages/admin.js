@@ -372,10 +372,17 @@
     if (note.length < 3) { rj.err.textContent = 'কেন মুছছেন তার কারণ লিখুন — এটা ইউজারকে জানানো হবে।'; rj.note.focus(); return; }
     if (!rjFor) return;
     var id = rjFor.id; rj.yes.disabled = true;
+    /* সাথে সাথে পপআপ বন্ধ + তালিকা থেকে সরানো; ব্যর্থ হলে আবার ফিরিয়ে আনা হবে */
+    var backup = S.comments.slice();
+    S.comments = S.comments.filter(function (c) { return String(c.id) !== String(id) && String(c.parent_comment_id) !== String(id); });
+    closeReject(); renderComments();
     PD.db.rpc('pd_moderate_comment', { p_id: String(id), p_action: 'delete', p_note: note }).then(function (r) {
       rj.yes.disabled = false;
-      if (modFail(r)) return;
-      closeReject(); A.showToast('মন্তব্য মুছে ফেলা হয়েছে — কারণসহ ইউজারকে জানানো হয়েছে'); refresh();
+      if (modFail(r)) { S.comments = backup; renderComments(); refresh(); return; }
+      A.showToast('মন্তব্য মুছে ফেলা হয়েছে — কারণসহ ইউজারকে জানানো হয়েছে'); refresh();
+    }, function (e) {
+      rj.yes.disabled = false; S.comments = backup; renderComments();
+      A.showToast(PD.msg(e)); refresh();
     });
   });
 
