@@ -188,3 +188,19 @@
     window.PDComments.init(a.id);
   }
 })();
+
+
+/* v66: লেখার ছবিতে ক্লিক করলে বড় করে দেখা (স্ক্রিনশটের লেখা পড়ার জন্য) */
+(function () {
+  'use strict';
+  document.addEventListener('click', function (e) {
+    var im = e.target.closest && e.target.closest('.article-body figure img');
+    if (!im || !im.src) return;
+    var box = document.createElement('div'); box.className = 'pd-lightbox'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-label', 'ছবি বড় করে দেখা');
+    var big = document.createElement('img'); big.src = im.currentSrc || im.src; big.alt = im.alt || '';
+    box.appendChild(big); document.body.appendChild(box);
+    function close() { if (box.parentNode) box.parentNode.removeChild(box); document.removeEventListener('keydown', onKey); }
+    function onKey(ev) { if (ev.key === 'Escape') close(); }
+    box.addEventListener('click', close); document.addEventListener('keydown', onKey);
+  });
+})();

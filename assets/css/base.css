@@ -3,9 +3,9 @@
    ============================================================ */
 
 /* ============ ফন্ট: Gunjoron-Font (নিজস্ব সার্ভারে রাখা; Thin / Normal / Bold) ============ */
-@font-face{font-family:'Gunjoron';src:url('../fonts/Gunjoron-Font-Thin.ttf') format('truetype');font-weight:100 300;font-style:normal;font-display:swap;}
-@font-face{font-family:'Gunjoron';src:url('../fonts/Gunjoron-Font-Normal.ttf') format('truetype');font-weight:400 500;font-style:normal;font-display:swap;}
-@font-face{font-family:'Gunjoron';src:url('../fonts/Gunjoron-Font-Bold.ttf') format('truetype');font-weight:600 900;font-style:normal;font-display:swap;}
+@font-face{font-family:'Gunjoron';src:url('../fonts/Gunjoron-Font-Thin.woff2') format('woff2'),url('../fonts/Gunjoron-Font-Thin.ttf') format('truetype');font-weight:100 300;font-style:normal;font-display:swap;}
+@font-face{font-family:'Gunjoron';src:url('../fonts/Gunjoron-Font-Normal.woff2') format('woff2'),url('../fonts/Gunjoron-Font-Normal.ttf') format('truetype');font-weight:400 500;font-style:normal;font-display:swap;}
+@font-face{font-family:'Gunjoron';src:url('../fonts/Gunjoron-Font-Bold.woff2') format('woff2'),url('../fonts/Gunjoron-Font-Bold.ttf') format('truetype');font-weight:600 900;font-style:normal;font-display:swap;}
 
 *{margin:0;padding:0;box-sizing:border-box;}
 

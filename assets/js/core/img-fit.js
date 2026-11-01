@@ -18,6 +18,7 @@
     'banner-top':    { w: 2400, h: 400, max: 1 * MB, label: 'টপ ব্যানার' },       /* ১২০০×২০০ এর ২x */
     'banner-mid':    { w: 1456, h: 300, max: 1 * MB, label: 'মিড ব্যানার' },      /* ৭২৮×১৫০ এর ২x */
     'banner-square': { w: 600,  h: 600, max: 1 * MB, label: 'স্কোয়ার ব্যানার' }, /* ৩০০×৩০০ এর ২x */
+    inline:       { w: 1600, h: 0,    max: 1.5 * MB, label: 'লেখার ভেতরের ছবি', fit: true }, /* v66: ক্রপ নয় — অনুপাত ঠিক রেখে শুধু ছোট করা (স্ক্রিনশটের জন্য) */
     'banner-mobile': { w: 640,  h: 200, max: 1 * MB, label: 'মোবাইল ব্যানার' }   /* ৩২০×১০০ এর ২x */
   };
   PD.IMG_RAW_LIMIT = 40 * MB; /* এর চেয়ে বড় আসল ফাইল ব্রাউজারের মেমরিতে সামলানো যায় না */
@@ -108,8 +109,12 @@
     if (!file || !/^image\//i.test(file.type || '')) return Promise.reject(new Error('শুধু ছবির ফাইল দিন'));
     if (file.size > PD.IMG_RAW_LIMIT) return Promise.reject(new Error('ছবির ফাইল অনেক বড় (৪০ MB-এর বেশি) — একটু ছোট ছবি দিন'));
     /* অ্যানিমেটেড GIF ক্যানভাসে গেলে নড়াচড়া হারায় — সাইজ সীমার মধ্যে থাকলে যেমন আছে তেমনই রাখা (শুধু ব্যানারে অর্থপূর্ণ) */
-    if (file.type === 'image/gif' && file.size <= k.max && /^banner-/.test(kind)) return Promise.resolve(file);
+    if (file.type === 'image/gif' && file.size <= k.max && (/^banner-/.test(kind) || kind === 'inline')) return Promise.resolve(file);
     return load(file).then(function (img) {
+      if (k.fit) { /* ক্রপ ছাড়া: চওড়া সর্বোচ্চ k.w (বড় করা হয় না), উচ্চতা অনুপাতে */
+        var fw = Math.max(1, Math.min(k.w, img.w)), fh = Math.max(1, Math.round(fw * img.h / img.w));
+        k = { w: fw, h: fh, max: k.max, label: k.label };
+      }
       return run(img, k).then(function (b) { img.done(); return b; }, function (e) { img.done(); throw e; });
     });
   };

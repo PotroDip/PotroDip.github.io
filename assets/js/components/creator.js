@@ -36,7 +36,7 @@
       '<div class="cr-sheet-card">' +
         '<div class="cr-sheet-grab"></div>' +
         '<div class="cr-sheet-head">' +
-          (photo ? '<img src="' + (photo.getAttribute('data-avatar') || photo.getAttribute('src')) + '" alt="">' : '') +
+          (photo ? '<img decoding="async" src="' + (photo.getAttribute('data-avatar') || photo.getAttribute('src')) + '" alt="">' : '') +
           '<div><b>MUSTAFIZUR RJ</b><small><span>01704-598 772</span>' + '</small></div>' +
         '</div>' +
         '<div class="cr-sheet-opts">' +

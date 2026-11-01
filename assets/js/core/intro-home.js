@@ -23,7 +23,7 @@
     mainContent.classList.add('revealed');
   }
 
-  if(reduceMotion || document.body.getAttribute('data-intro') === 'instant'){
+  if(reduceMotion || document.documentElement.classList.contains('pd-intro-done') || document.body.getAttribute('data-intro') === 'instant'){
     revealInstant();
     return;
   }

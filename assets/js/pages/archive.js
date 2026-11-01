@@ -46,7 +46,7 @@
     var by = (cur.show_print_btn !== false && pr && pr.in_stock) ? '<a class="ib-btn ghost" href="store.html">ছাপা কপি · ৳' + UI.bn(Number(pr.price)) + '</a>' : '';
     if (band) {
       band.classList.toggle('no-cover', !cur.cover_url);
-      band.innerHTML = '<div class="ib-inner">' + (cur.cover_url ? '<a class="ib-cover" href="issue.html?id=' + encodeURIComponent(cur.id) + '"><img src="' + esc(cur.cover_url) + '" alt="' + esc(cur.title) + ' প্রচ্ছদ"></a>' : '') + '<div class="ib-text"><div class="ib-kicker"><span>সর্বশেষ সংখ্যা</span>' + (cur.issue_number ? '<span class="ib-no">সংখ্যা ' + UI.bn(cur.issue_number) + '</span>' : '') + '</div><h2>' + esc(cur.title) + '</h2>' + (T('tagline') ? '<p class="ib-teaser">' + esc(cut(T('tagline'), 260)) + '</p>' : '') + (st.length ? '<div class="ib-stats">' + st.join('') + '</div>' : '') + ((rd || by) ? '<div class="ib-actions">' + rd + by + '</div>' : '') + '</div></div>';
+      band.innerHTML = '<div class="ib-inner">' + (cur.cover_url ? '<a class="ib-cover" href="issue.html?id=' + encodeURIComponent(cur.id) + '"><img decoding="async" src="' + esc(cur.cover_url) + '" alt="' + esc(cur.title) + ' প্রচ্ছদ"></a>' : '') + '<div class="ib-text"><div class="ib-kicker"><span>সর্বশেষ সংখ্যা</span>' + (cur.issue_number ? '<span class="ib-no">সংখ্যা ' + UI.bn(cur.issue_number) + '</span>' : '') + '</div><h2>' + esc(cur.title) + '</h2>' + (T('tagline') ? '<p class="ib-teaser">' + esc(cut(T('tagline'), 260)) + '</p>' : '') + (st.length ? '<div class="ib-stats">' + st.join('') + '</div>' : '') + ((rd || by) ? '<div class="ib-actions">' + rd + by + '</div>' : '') + '</div></div>';
     }
 
     /* সব সংখ্যা */

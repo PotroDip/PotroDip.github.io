@@ -149,7 +149,7 @@
         var el = document.createElement('div');
         el.className = 'cart-item';
         el.innerHTML =
-          '<div class="ci-cover"><img src="' + esc(item.cover) + '" alt=""></div>' +
+          '<div class="ci-cover"><img decoding="async" src="' + esc(item.cover) + '" alt=""></div>' +
           '<div class="ci-info">' +
           '<div>' +
           '<div class="ci-title">' + esc(item.title) + '</div>' +
@@ -778,7 +778,7 @@
     var chk = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
     var teaser = String(p.teaser || '').replace(/\s+/g, ' ').trim();
     if (teaser.length > 200) { teaser = teaser.slice(0, 200); teaser = teaser.slice(0, teaser.lastIndexOf(' ')) + ' …'; }
-    box.innerHTML = '<div class="ib-inner"><button type="button" class="ib-cover" data-act="preview"><img src="' + esc(UI.cover(p.cover_url)) + '" alt="' + esc(p.title) + ' প্রচ্ছদ">' + (p.preview_pdf_url ? '<span class="ib-peek">নমুনা পাতা পড়ুন</span>' : '') + '</button><div class="ib-text"><div class="ib-kicker"><span>এখন অর্ডার চলছে</span>' + (nums[p.issue_id] ? '<span class="ib-no">সংখ্যা ' + toBn(nums[p.issue_id]) + '</span>' : '') + '</div><h2>' + esc(p.title) + '</h2>' + (teaser ? '<p class="ib-teaser">' + esc(teaser) + '</p>' : '') + '<div class="ib-price"><span class="unit">৳</span>' + toBn(p.price) + '<small>+ ডেলিভারি চার্জ</small></div><div class="ib-actions"><button type="button" class="ib-btn primary" data-act="order">অর্ডার করুন ' + arrow + '</button>' + (p.preview_pdf_url ? '<button type="button" class="ib-btn ghost" data-act="preview">নমুনা পাতা পড়ুন</button>' : '') + '</div><ul class="ib-perks"><li>' + chk + 'ক্যাশ অন ডেলিভারি</li><li>' + chk + 'সারা দেশে ডেলিভারি</li>' + (p.preview_pdf_url ? '<li>' + chk + 'অর্ডারের আগে নমুনা পাতা</li>' : '') + '</ul></div></div>';
+    box.innerHTML = '<div class="ib-inner"><button type="button" class="ib-cover" data-act="preview"><img decoding="async" src="' + esc(UI.cover(p.cover_url)) + '" alt="' + esc(p.title) + ' প্রচ্ছদ">' + (p.preview_pdf_url ? '<span class="ib-peek">নমুনা পাতা পড়ুন</span>' : '') + '</button><div class="ib-text"><div class="ib-kicker"><span>এখন অর্ডার চলছে</span>' + (nums[p.issue_id] ? '<span class="ib-no">সংখ্যা ' + toBn(nums[p.issue_id]) + '</span>' : '') + '</div><h2>' + esc(p.title) + '</h2>' + (teaser ? '<p class="ib-teaser">' + esc(teaser) + '</p>' : '') + '<div class="ib-price"><span class="unit">৳</span>' + toBn(p.price) + '<small>+ ডেলিভারি চার্জ</small></div><div class="ib-actions"><button type="button" class="ib-btn primary" data-act="order">অর্ডার করুন ' + arrow + '</button>' + (p.preview_pdf_url ? '<button type="button" class="ib-btn ghost" data-act="preview">নমুনা পাতা পড়ুন</button>' : '') + '</div><ul class="ib-perks"><li>' + chk + 'ক্যাশ অন ডেলিভারি</li><li>' + chk + 'সারা দেশে ডেলিভারি</li>' + (p.preview_pdf_url ? '<li>' + chk + 'অর্ডারের আগে নমুনা পাতা</li>' : '') + '</ul></div></div>';
     box.addEventListener('click', function(e) {
       var b = e.target.closest('[data-act]');
       if (!b) return;

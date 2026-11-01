@@ -410,8 +410,8 @@ html[data-theme="dark"] .filter-chips button.active{color:#0F1415;}
 
 .authors-row{
     display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:24px;
+    grid-template-columns:repeat(5,1fr);
+    gap:18px;
     padding-bottom:20px;
   }
 
@@ -469,6 +469,9 @@ html[data-theme="dark"] .filter-chips button.active{color:#0F1415;}
 
 html[data-theme="dark"] .follow-btn:hover,html[data-theme="dark"] .follow-btn.following{color:#0F1415;}
 
+@media(max-width:1100px) {
+  .authors-row{grid-template-columns:repeat(3,1fr);gap:18px;}
+}
 @media(max-width:900px) {
   .authors-row{grid-template-columns:repeat(2,1fr);gap:16px;}
 }

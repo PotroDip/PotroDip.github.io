@@ -170,8 +170,14 @@
   /* ---------- লেখক ---------- */
   function renderAuthors() {
     var cnt = {}; S.articles.forEach(function (a) { cnt[a.author_id] = (cnt[a.author_id] || 0) + 1; });
-    $('authorsGrid').innerHTML = S.authors.map(function (a) {
-      return H`<div class="item-card"><div class="item-cover round-cover"><img src="${UI.avatar(a.image_url)}" alt=""></div><div class="item-body"><div class="item-name">${a.name}</div><div class="item-sub-line">${a.role_title || ''} &middot; ${a.city || ''}</div><div style="font-size:12.5px; color:var(--text-muted); margin-bottom:12px;">${UI.bn(cnt[a.id] || 0)}টি লেখা &middot; <span class="stars-mini">${raw(A.starSVG(true))}</span> ${UI.bn(Number(a.avg_rating || 0).toFixed(1))}</div><div class="item-foot centered"><button class="icon-btn-sm" data-edit-author="${a.id}" title="এডিট করুন">${raw(ICON.edit)}</button><button class="icon-btn-sm danger" data-delete-author="${a.id}" title="মুছে ফেলুন">${raw(ICON.del)}</button></div></div></div>`;
+    /* জনপ্রিয় লেখকের ক্রম (১-৫) পাওয়া লেখকেরা আগে, বাকিরা আগের মতো */
+    var list = S.authors.slice().sort(function (x, y) {
+      var rx = Number(x.popular_rank) || 99, ry = Number(y.popular_rank) || 99;
+      return rx - ry;
+    });
+    $('authorsGrid').innerHTML = list.map(function (a) {
+      var rk = Number(a.popular_rank) || 0;
+      return H`<div class="item-card"><div class="item-cover round-cover"><img src="${UI.avatar(a.image_url)}" alt="">${raw(rk ? '<span class="rank-badge" title="হোমের জনপ্রিয় লেখক ক্রম">★ ' + UI.bn(rk) + '</span>' : '')}</div><div class="item-body"><div class="item-name">${a.name}</div><div class="item-sub-line">${a.role_title || ''} &middot; ${a.city || ''}</div><div style="font-size:12.5px; color:var(--text-muted); margin-bottom:12px;">${UI.bn(cnt[a.id] || 0)}টি লেখা &middot; <span class="stars-mini">${raw(A.starSVG(true))}</span> ${UI.bn(Number(a.avg_rating || 0).toFixed(1))}</div><div class="item-foot centered"><button class="icon-btn-sm" data-edit-author="${a.id}" title="এডিট করুন">${raw(ICON.edit)}</button><button class="icon-btn-sm danger" data-delete-author="${a.id}" title="মুছে ফেলুন">${raw(ICON.del)}</button></div></div></div>`;
     }).join('') + '<button class="add-item-card" id="btn-add-author-inline"><span class="plus-circle">' + ICON.plus + '</span><span>নতুন লেখক যোগ করুন</span></button>';
   }
   $('authorsGrid').addEventListener('click', function (e) {

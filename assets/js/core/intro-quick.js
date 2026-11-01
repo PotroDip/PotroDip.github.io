@@ -23,14 +23,14 @@
     svgEl.style.height = '100%';
     try{
       if(typeof svgEl.pauseAnimations === 'function'){
-        svgEl.setCurrentTime(1);
+        svgEl.setCurrentTime(3);
         svgEl.pauseAnimations();
       }
     }catch(e){}
     mainContent.classList.add('revealed');
   }
 
-  if(reduceMotion){
+  if(reduceMotion || document.documentElement.classList.contains('pd-intro-done')){
     revealInstant();
     return;
   }

@@ -176,6 +176,7 @@
     $('article-modal').scrollTop = 0; var bd = $('article-modal').querySelector('.modal-body'); if (bd) bd.scrollTop = 0;
   }
   $('art-save-btn').addEventListener('click', function () {
+    if (window.PDEditorBusy && window.PDEditorBusy()) return A.showToast('লেখার ভেতরের ছবি আপলোড হচ্ছে — শেষ হলে আবার চাপুন');
     var btn = this, title = val('art-title'), box = UI.sanitize($('art-body').innerHTML), text = (box.textContent || '').replace(/\s+/g, ' ').trim();
     if (!title) return flag('fr-title', 'শিরোনাম লিখুন', 'art-title');
     if (!text) return flag('fr-body', 'লেখার মূল অংশ লিখুন', 'art-body');
@@ -200,7 +201,7 @@
   document.querySelectorAll('[data-open-article]').forEach(function (b) { b.addEventListener('click', function () { openArticle(); }); });
 
   /* ---------- লেখক ---------- */
-  var au = { id: null, img: null, bg: null, child: false };
+  var au = { id: null, img: null, bg: null, child: false, rank: null, rank0: null };
   pickFile($('author-cover-file'), $('author-cover-preview'), '', function (f) { au.img = f; });
   pickFile($('author-bg-file'), $('author-bg-preview'), '', function (f) { au.bg = f; });
   function bioToText(s) { return (Array.isArray(s) ? s : []).map(function (x) { return x.quote ? '> ' + x.quote : (x.h ? '# ' + x.h + '\n\n' : '') + (x.p || ''); }).join('\n\n'); }
@@ -213,8 +214,10 @@
   }
   var AF = { 'author-name': 'name', 'author-role': 'role_title', 'author-city': 'city', 'author-fb': 'facebook_url', 'author-ig': 'instagram_url', 'author-website': 'website_url', 'author-fullname': 'full_name', 'author-father': 'father_name', 'author-birth': 'birth_date', 'author-address': 'current_address', 'author-edu': 'education', 'author-prof': 'profession', 'author-years': 'years_writing', 'author-recog': 'recognition' };
   function openAuthor(id, child) {
-    au = { id: id || null, img: null, bg: null, child: !!child };
     var a = id ? C.byId(S.authors, id) : null;
+    var r0 = a && a.popular_rank ? Number(a.popular_rank) : null;
+    au = { id: id || null, img: null, bg: null, child: !!child, rank: r0, rank0: r0 };
+    drawRank();
     $('author-modal-title').textContent = a ? 'লেখক এডিট করুন' : 'নতুন লেখক যোগ করুন';
     Object.keys(AF).forEach(function (k) { $(k).value = a && a[AF[k]] ? a[AF[k]] : ''; });
     $('author-bio').value = a ? bioToText(a.bio_sections) : '';
@@ -222,6 +225,75 @@
     $('author-cover-file').value = ''; $('author-bg-file').value = '';
     if (child) openChild('author-modal'); else A.openModal('author-modal');
     var bd = $('author-modal'); bd.scrollTop = 0;
+  }
+  /* ---------- জনপ্রিয় লেখকের ক্রম (১-৫) ---------- */
+  var rankBox = $('author-rank-pills'), rankHint = $('author-rank-hint');
+  function holder(rank) { /* এই ক্রমে এখন কোন লেখক আছে (নিজেকে বাদ দিয়ে) */
+    if (!rank) return null;
+    return S.authors.filter(function (x) { return Number(x.popular_rank) === Number(rank) && x.id !== au.id; })[0] || null;
+  }
+  function drawRank() {
+    [].forEach.call(rankBox.children, function (b) {
+      var r = b.dataset.rank ? Number(b.dataset.rank) : null, h = holder(r);
+      b.classList.toggle('on', r === au.rank);
+      b.classList.toggle('taken', !!h);
+      b.title = r ? (h ? 'এখন আছেন: ' + h.name : 'ফাঁকা') : 'ক্রম ছাড়া';
+    });
+    var h = holder(au.rank);
+    rankHint.classList.toggle('warn', !!h);
+    rankHint.textContent = !au.rank ? 'ক্রম না দিলে লেখক রেটিং অনুযায়ী অটো বসবে।'
+      : h ? 'ক্রম ' + bnN(au.rank) + '-এ এখন "' + h.name + '" আছেন — সংরক্ষণ করলে তাঁর জায়গায় ইনি বসবেন (আগে জিজ্ঞেস করা হবে)।'
+      : 'ক্রম ' + bnN(au.rank) + ' ফাঁকা — হোমে ' + bnN(au.rank) + ' নম্বরে দেখাবে।';
+  }
+  rankBox.addEventListener('click', function (e) {
+    var b = e.target.closest('.rank-pill'); if (!b) return;
+    au.rank = b.dataset.rank ? Number(b.dataset.rank) : null; drawRank();
+  });
+
+  /* "এই ক্রম আগে থেকেই আছে" পপআপ — চালিয়ে গেলে পুরোনোজন বাদ, নতুনজন বসে */
+  var rankOv = $('rank-overlay'), rankYes = null;
+  function askRank(old, newName, rank, onYes) {
+    $('rank-title').textContent = 'ক্রম ' + bnN(rank) + ' আগে থেকেই আছে';
+    $('rank-desc').textContent = '"' + old.name + '" এখন ' + bnN(rank) + ' নম্বরে আছেন। চালিয়ে গেলে তাঁকে এই ক্রম থেকে সরিয়ে "' + newName + '"-কে ' + bnN(rank) + ' নম্বরে বসানো হবে।';
+    var sw = $('rank-swap'); sw.textContent = '';
+    [['যাচ্ছেন', old.name, 'out'], ['আসছেন', newName, 'in']].forEach(function (x) {
+      var d = document.createElement('div'); d.className = 'rs-' + x[2];
+      var t = document.createElement('small'); t.textContent = x[0];
+      var n = document.createElement('b'); n.textContent = x[1];
+      d.appendChild(t); d.appendChild(n); sw.appendChild(d);
+    });
+    rankYes = onYes; rankOv.classList.add('show');
+  }
+  function closeRank() { rankYes = null; rankOv.classList.remove('show'); }
+  $('rank-yes').addEventListener('click', function () { var f = rankYes; closeRank(); if (f) f(); });
+  $('rank-no').addEventListener('click', closeRank);
+  rankOv.addEventListener('click', function (e) { if (e.target === rankOv) closeRank(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && rankOv.classList.contains('show')) closeRank(); });
+
+  function saveAuthor(btn, row, replace) {
+    busy(btn, true, 1);
+    var cleared = false;
+    Promise.all([upload(au.img, 'authors', 'avatar'), upload(au.bg, 'authors', 'profileCover')]).then(function (u) {
+      if (u[0]) row.image_url = u[0]; if (u[1]) row.cover_url = u[1];
+      if (!au.id) row.slug = slug('w');
+      /* আগের জন সরানো আগে, নইলে একই ক্রম দুইজনের হয়ে ডেটাবেস আটকে দেবে */
+      return replace ? db.from('authors').update({ popular_rank: null }).eq('id', replace.id).then(function (c) { if (c.error) throw c.error; cleared = true; }) : null;
+    }).then(function () {
+      return au.id ? db.from('authors').update(row).eq('id', au.id) : db.from('authors').insert(row).select('id').single();
+    }).then(function (r) {
+      if (r.error) throw r.error; busy(btn, false);
+      var child = au.child, isNew = !au.id, newId = r.data && r.data.id;
+      closeSub('author-modal', child);
+      A.showToast(replace ? '"' + replace.name + '"-কে সরিয়ে ক্রম ' + bnN(row.popular_rank) + '-এ বসানো হয়েছে' : (isNew ? 'লেখক যোগ হয়েছে' : 'লেখক হালনাগাদ হয়েছে'));
+      return C.refresh().then(function () { if (child && newId) { fillAuthors(newId); $('fr-author').classList.remove('invalid'); } });
+    }).catch(function (e) {
+      busy(btn, false);
+      /* সংরক্ষণ না হলে পুরোনো জনকে আগের ক্রমে ফিরিয়ে দেওয়া */
+      if (cleared && replace) db.from('authors').update({ popular_rank: replace.popular_rank }).eq('id', replace.id).then(function () { C.refresh(); });
+      if (e && (e.code === '23505' || /authors_popular_rank_uniq/.test(String(e.message || '')))) { A.showToast('এই ক্রমটা এইমাত্র অন্য কেউ নিয়েছেন — ফর্মটা আবার খুলে নতুন করে বেছে নিন'); C.refresh(); return; }
+      if (e && (/popular_rank/.test(String(e.message || '')) || e.code === 'PGRST204' || e.code === '42703')) { A.showToast('জনপ্রিয় লেখকের ক্রম রাখতে ডেটাবেসে নতুন SQL চালাতে হবে — supabase/migrations/20261102_author_popular_rank.sql Supabase SQL Editor-এ চালান'); return; }
+      fail(e);
+    });
   }
   $('author-save-btn').addEventListener('click', function () {
     var btn = this, row = {};
@@ -231,17 +303,12 @@
     var bad = ['facebook_url', 'instagram_url', 'website_url'].filter(function (f) { return row[f] && !/^https?:\/\//i.test(row[f]); })[0];
     if (bad) return A.showToast('লিংক https:// দিয়ে শুরু হতে হবে');
     row.bio_sections = textToBio($('author-bio').value);
-    busy(btn, true, 1);
-    Promise.all([upload(au.img, 'authors', 'avatar'), upload(au.bg, 'authors', 'profileCover')]).then(function (u) {
-      if (u[0]) row.image_url = u[0]; if (u[1]) row.cover_url = u[1];
-      if (!au.id) row.slug = slug('w');
-      return au.id ? db.from('authors').update(row).eq('id', au.id) : db.from('authors').insert(row).select('id').single();
-    }).then(function (r) {
-      if (r.error) throw r.error; busy(btn, false);
-      var child = au.child, isNew = !au.id, newId = r.data && r.data.id;
-      closeSub('author-modal', child); A.showToast(isNew ? 'লেখক যোগ হয়েছে' : 'লেখক হালনাগাদ হয়েছে');
-      return C.refresh().then(function () { if (child && newId) { fillAuthors(newId); $('fr-author').classList.remove('invalid'); } });
-    }).catch(function (e) { busy(btn, false); fail(e); });
+    /* ক্রম বদলালে তবেই পাঠানো হয় (SQL না চালালেও বাকি সংরক্ষণ আটকায় না) */
+    var changed = au.rank !== au.rank0;
+    if (changed) row.popular_rank = au.rank;
+    var other = changed ? holder(au.rank) : null;
+    if (other) return askRank(other, row.name, au.rank, function () { saveAuthor(btn, row, other); });
+    saveAuthor(btn, row, null);
   });
   document.querySelectorAll('[data-open-author]').forEach(function (b) { b.addEventListener('click', function () { openAuthor(); }); });
 

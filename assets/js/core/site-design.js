@@ -9,6 +9,23 @@
   var CACHE = 'pd-design-cache-v1';
   var STUDIO = /[?&]pdstudio=1/.test(location.search);
 
+  /* ---------- লোগো ইন্ট্রো: সেশনে মাত্র একবার ----------
+     ওয়েবসাইটে প্রথমবার ঢোকার সময়ই লোগো এনিমেশন চলে। এরপর এক পেজ থেকে অন্য পেজে গেলে ইন্ট্রো ও
+     কনটেন্টের ফেড-ইন বাদ — লোগো সরাসরি হেডারে বসে, পেজ সঙ্গে সঙ্গে দেখা যায়।
+     (ট্যাব বন্ধ করে আবার ঢুকলে নতুন সেশন, তখন আবার একবার দেখাবে) */
+  (function () {
+    var seen = false;
+    try {
+      seen = sessionStorage.getItem('pd-intro-seen') === '1';
+      if (!seen) sessionStorage.setItem('pd-intro-seen', '1');
+    } catch (e) {}
+    if (!seen) return;
+    document.documentElement.classList.add('pd-intro-done');
+    var gs = document.createElement('style');
+    gs.textContent = '#intro-overlay{display:none!important}#main-content{opacity:1!important;transition:none!important}';
+    (document.head || document.documentElement).appendChild(gs);
+  })();
+
   /* ---------- অনুমোদিত CSS প্রপার্টি (বাইরে কিছু বসবে না) ---------- */
   var OK = {};
   ('translate rotate scale transform-origin width height min-width min-height max-width max-height ' +

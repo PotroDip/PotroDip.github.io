@@ -83,3 +83,33 @@ html[data-theme="dark"] .issue-band{background:#0F2628;}
 .issue-band.no-cover .ib-inner{grid-template-columns:1fr;max-width:820px;}
 .issue-band.no-cover .ib-text{text-align:left;}
 .ib-text h2 + .ib-actions{margin-top:26px;}
+
+
+/* v69 — হোম (#issue-band) ও আর্কাইভ (#latestIssue):
+   ডিজাইন আগের মতোই (বামে প্রচ্ছদ, ডানে লেখা) — শুধু পুরো জোড়াটা স্ক্রিনের মাঝখানে।
+   হোভারে সোজা হওয়ার বদলে প্রচ্ছদ সারাক্ষণ খুব হালকা ভাসে (চোখে প্রায় ধরা পড়ে না) */
+@media(min-width:861px){
+  #issue-band .ib-inner,
+  #latestIssue .ib-inner{
+    grid-template-columns:360px minmax(0,520px);
+    justify-content:center;
+  }
+  #issue-band.no-cover .ib-inner,
+  #latestIssue.no-cover .ib-inner{grid-template-columns:minmax(0,820px);}
+}
+#issue-band .ib-cover,
+#latestIssue .ib-cover{
+  transition:none;
+  animation:ib-float 9s ease-in-out infinite;
+  will-change:transform;
+}
+#issue-band .ib-cover:hover,
+#latestIssue .ib-cover:hover{transform:rotate(-2.5deg);}
+
+@keyframes ib-float{
+  0%,100%{transform:translateY(0) rotate(-2.5deg);}
+  50%{transform:translateY(-5px) rotate(-1.8deg);}
+}
+@media(prefers-reduced-motion:reduce){
+  #issue-band .ib-cover,#latestIssue .ib-cover{animation:none;}
+}

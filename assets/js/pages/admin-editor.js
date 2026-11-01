@@ -1,4 +1,4 @@
-/* admin-editor.js — প্রফেশনাল লেখা সম্পাদক (v21)
+/* admin-editor.js — প্রফেশনাল লেখা সম্পাদক (v21; v66: লেখার ভেতরে ছবি/স্ক্রিনশট + তথ্য বক্স)
    ভাসমান টুলবার: অনুচ্ছেদ/শিরোনাম, ফন্ট, সাইজ, বোল্ড-ইটালিক-আন্ডারলাইন-স্ট্রাইক, লেখার রং, হাইলাইট,
    সাবস্ক্রিপ্ট/সুপারস্ক্রিপ্ট, অ্যালাইনমেন্ট, তালিকা, ইনডেন্ট, লাইন-স্পেস, উদ্ধৃতি, কোড, বিভাজক, লিংক, ফরম্যাট মুছুন */
 (function () {
@@ -32,7 +32,7 @@
     { k: 'blockquote', t: 'blockquote', n: 'উদ্ধৃতি', s: 'font-style:italic' },
     { k: 'pre', t: 'pre', n: 'কোড ব্লক', s: 'font-family:monospace;font-size:13px' }
   ];
-  var BLOCK_LBL = { title: 'মূল শিরোনাম', subtitle: 'উপশিরোনাম', h2: 'শিরোনাম', h3: 'উপ-শিরোনাম', h4: 'বিভাগ', sub: 'উপ-বিভাগ', p: 'সাধারণ লেখা', blockquote: 'উদ্ধৃতি', pre: 'কোড ব্লক', ul: 'তালিকা', ol: 'তালিকা', li: 'তালিকা', table: 'টেবিল' };
+  var BLOCK_LBL = { title: 'মূল শিরোনাম', subtitle: 'উপশিরোনাম', h2: 'শিরোনাম', h3: 'উপ-শিরোনাম', h4: 'বিভাগ', sub: 'উপ-বিভাগ', p: 'সাধারণ লেখা', blockquote: 'উদ্ধৃতি', pre: 'কোড ব্লক', ul: 'তালিকা', ol: 'তালিকা', li: 'তালিকা', table: 'টেবিল', figure: 'ছবি', aside: 'তথ্য বক্স' };
   var LH = [{ v: '', n: 'ডিফল্ট' }, { v: '1.3', n: '১.৩ — ঘন' }, { v: '1.6', n: '১.৬' }, { v: '1.85', n: '১.৮৫ — আরামদায়ক' }, { v: '2.2', n: '২.২ — খোলা' }, { v: '2.8', n: '২.৮ — অনেক খোলা' }];
   var PALETTE = (function () {
     var rows = [
@@ -71,6 +71,12 @@
     table: ic('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M9 4v16M15 4v16"/>'),
     expand: ic('<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>'),
     shrink: ic('<path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/>'),
+    image: ic('<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 9"/>'),
+    callout: ic('<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M12 8v5"/><circle cx="12" cy="16" r=".6" fill="currentColor"/>'),
+    up: ic('<path d="M12 19V5M6 11l6-6 6 6"/>'),
+    down: ic('<path d="M12 5v14M6 13l6 6 6-6"/>'),
+    trash: ic('<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'),
+    alt: ic('<path d="M4 6h16M4 12h10M4 18h14"/>'),
     pen: ic('<path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/>')
   };
 
@@ -128,6 +134,10 @@
       btn('link', 'লিংক যুক্ত করুন (Ctrl+K)', I.link) +
       btn('unlink', 'লিংক সরান', I.unlink)
     ) +
+    group(
+      btn('image', 'ছবি / স্ক্রিনশট বসান (স্ক্রিনশট কপি করে Ctrl+V-ও চলবে)', I.image) +
+      btn('callout', 'তথ্য বক্স (আবার চাপলে রং বদলায়, শেষে সরে যায়)', I.callout)
+    ) +
     group(btn('clear', 'সব ফরম্যাট মুছে ফেলুন', I.clear)) +
     '<button type="button" class="rt-btn rt-fs" id="rt-fs" data-act="fullscreen" title="ফুল স্ক্রিনে লিখুন (বের হতে Esc)" aria-label="ফুল স্ক্রিন" aria-pressed="false">' + I.expand + '</button>';
 
@@ -158,7 +168,7 @@
     try { return doc.execCommand(c, false, v == null ? null : v); } catch (e) { return false; }
   }
   function fixNesting() {
-    [].slice.call(artBody.querySelectorAll('p > ul, p > ol, p > pre, p > blockquote, p > hr, p > h2, p > h3, p > h4, p > table')).forEach(function (c) {
+    [].slice.call(artBody.querySelectorAll('p > ul, p > ol, p > pre, p > blockquote, p > hr, p > h2, p > h3, p > h4, p > table, p > figure, p > aside')).forEach(function (c) {
       var p = c.parentNode; if (p.parentNode !== artBody) return;
       var only = [].every.call(p.childNodes, function (n) { return n === c || (n.nodeType === 3 && !n.nodeValue.trim()); });
       if (only) { var sel = window.getSelection(), keep = sel.rangeCount ? sel.getRangeAt(0).cloneRange() : null; artBody.replaceChild(c, p); if (keep) { try { sel.removeAllRanges(); sel.addRange(keep); } catch (e) {} } }
@@ -571,6 +581,7 @@
       else if (!tc.disabled) { var ac = tc.getAttribute('data-ta'); closePop(); tableAction(ac); }
       return;
     }
+    if (e.target.closest('[data-altgo]')) { applyAlt(); return; }
     var t = e.target.closest('[data-v],[data-go],[data-rm]'); if (!t) return;
     if (t.hasAttribute('data-go')) { applyLink(); return; }
     if (t.hasAttribute('data-rm')) { removeLink(); return; }
@@ -587,8 +598,235 @@
   });
   doc.addEventListener('keydown', function (e) {
     if (pop && e.key === 'Enter' && e.target && /^rt-l-/.test(e.target.id || '')) { e.preventDefault(); applyLink(); }
+    if (pop && e.key === 'Enter' && e.target && e.target.id === 'rt-alt-in') { e.preventDefault(); applyAlt(); }
     if (pop && e.key === 'Enter' && e.target && /^rt-t-[rc]$/.test(e.target.id || '')) { e.preventDefault(); var go = pop.querySelector('[data-tgo]'); if (go) go.click(); }
   });
+
+
+  /* ---------- ছবি / স্ক্রিনশট (v66) ----------
+     • বাটন, স্ক্রিনশট কপি করে Ctrl+V, বা টেনে এনে ছেড়ে দেওয়া — তিন ভাবেই বসে
+     • ছবি আপলোড হয়ে ওয়েবসাইটের স্টোরেজে থাকে; ক্রপ হয় না, অনুপাত ঠিক থাকে (লেখার স্ক্রিনশট পরিষ্কার পড়া যায়)
+     • ছবিতে ক্লিক করলে সাইজ, অ্যালাইনমেন্ট, বিবরণ, উপরে/নিচে সরানো ও মোছার বার আসে; নিচে ক্যাপশন লেখা যায় */
+  var uploading = 0, selFig = null, figBar = null;
+  window.PDEditorBusy = function () { return uploading > 0; };
+  var fileIn = doc.createElement('input');
+  fileIn.type = 'file'; fileIn.accept = 'image/png,image/jpeg,image/webp,image/gif'; fileIn.multiple = true; fileIn.style.display = 'none';
+  doc.body.appendChild(fileIn);
+  fileIn.addEventListener('change', function () { var fs = [].slice.call(fileIn.files || []); fileIn.value = ''; if (fs.length) insertImages(fs); });
+
+  var CAP_PH = 'ছবির নিচে ক্যাপশন লিখুন (ঐচ্ছিক)';
+  function mkFigure(src) {
+    var f = doc.createElement('figure'); f.className = 'pd-fig';
+    f.setAttribute('data-size', 'l'); f.setAttribute('data-align', 'center'); f.setAttribute('contenteditable', 'false');
+    var im = doc.createElement('img'); im.src = src; im.alt = ''; im.draggable = false; f.appendChild(im);
+    var c = doc.createElement('figcaption'); c.setAttribute('contenteditable', 'true'); c.setAttribute('data-ph', CAP_PH); f.appendChild(c);
+    return f;
+  }
+  /* এডিট করতে খোলা পুরোনো লেখার ছবিগুলোকেও একই ব্যবহারযোগ্য রূপে আনা */
+  function normFigures() {
+    [].forEach.call(artBody.querySelectorAll('figure'), function (f) {
+      if (f.getAttribute('contenteditable') !== 'false') { f.setAttribute('contenteditable', 'false'); f.classList.add('pd-fig'); }
+      var im = f.querySelector('img'); if (im) im.draggable = false;
+      var c = f.querySelector('figcaption');
+      if (!c) { c = doc.createElement('figcaption'); f.appendChild(c); }
+      c.setAttribute('contenteditable', 'true'); c.setAttribute('data-ph', CAP_PH);
+    });
+  }
+  new MutationObserver(normFigures).observe(artBody, { childList: true });
+  normFigures();
+
+  function tailP(node) {
+    var nx = node.nextElementSibling;
+    if (!nx) { var p = doc.createElement('p'); p.appendChild(doc.createElement('br')); artBody.insertBefore(p, node.nextSibling); }
+  }
+  function placeBlock(node) {
+    restoreSel();
+    var blk = topBlockEl();
+    if (blk && blk.tagName === 'P' && !blk.textContent.trim() && !blk.querySelector('img')) artBody.replaceChild(node, blk);
+    else if (blk) artBody.insertBefore(node, blk.nextSibling);
+    else artBody.appendChild(node);
+    tailP(node);
+  }
+  function errText(e) {
+    var m = e && e.message ? String(e.message) : '';
+    if (/[\u0980-\u09FF]/.test(m)) return m;
+    try { if (window.PD && PD.msg) return PD.msg(e || {}, 'upload'); } catch (x) {}
+    return 'ছবি আপলোড হয়নি — আবার চেষ্টা করুন';
+  }
+  function insertImages(files) {
+    var imgs = files.filter(function (f) { return /^image\//.test(f.type); });
+    if (!imgs.length) { toast('শুধু ছবি দেওয়া যাবে (JPG, PNG, WebP, GIF)'); return; }
+    if (imgs.length > 10) { toast('একবারে সর্বোচ্চ ১০টি ছবি দেওয়া যায়'); imgs = imgs.slice(0, 10); }
+    var up = window.AdminForms && window.AdminForms.upload;
+    if (!up) { toast('আপলোড এখনো চালু হয়নি — পাতাটি রিফ্রেশ করে আবার চেষ্টা করুন'); return; }
+    focusEd();
+    var last = null;
+    imgs.forEach(function (file) {
+      var u = URL.createObjectURL(file), fig = mkFigure(u);
+      fig.classList.add('is-uploading');
+      if (last) last.parentNode.insertBefore(fig, last.nextSibling); else placeBlock(fig);
+      last = fig; uploading++;
+      up(file, 'inline', 'inline').then(function (url) {
+        uploading--;
+        if (!fig.parentNode) { URL.revokeObjectURL(u); return; }
+        fig.querySelector('img').src = url; fig.classList.remove('is-uploading'); URL.revokeObjectURL(u); changed();
+      }, function (e) {
+        uploading--; if (fig.parentNode) { if (selFig === fig) deselectFig(); fig.parentNode.removeChild(fig); }
+        URL.revokeObjectURL(u); toast(errText(e)); changed();
+      });
+    });
+    changed();
+    if (last) { selectFig(last); try { last.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) {} }
+  }
+
+  /* ---------- ছবি বাছাই + কন্ট্রোল বার ---------- */
+  function buildFigBar() {
+    figBar = doc.createElement('div'); figBar.className = 'rte-figbar'; figBar.setAttribute('role', 'toolbar'); figBar.setAttribute('aria-label', 'ছবির নিয়ন্ত্রণ');
+    figBar.innerHTML =
+      [['s', 'ছোট'], ['m', 'মাঝারি'], ['l', 'বড়'], ['f', 'পুরো']].map(function (x) { return '<button type="button" data-fs="' + x[0] + '" title="ছবির সাইজ: ' + x[1] + '">' + x[1] + '</button>'; }).join('') +
+      '<i></i>' +
+      [['left', I.left, 'বামে'], ['center', I.center, 'মাঝখানে'], ['right', I.right, 'ডানে']].map(function (x) { return '<button type="button" data-fa="' + x[0] + '" title="' + x[2] + ' রাখুন" aria-label="' + x[2] + '">' + x[1] + '</button>'; }).join('') +
+      '<i></i>' +
+      '<button type="button" data-fx="alt" title="ছবির বিবরণ (Alt) লিখুন">' + I.alt + '</button>' +
+      '<button type="button" data-fx="up" title="ওপরে সরান">' + I.up + '</button>' +
+      '<button type="button" data-fx="down" title="নিচে সরান">' + I.down + '</button>' +
+      '<button type="button" class="danger" data-fx="del" title="ছবি মুছুন (Delete)">' + I.trash + '</button>';
+    doc.body.appendChild(figBar);
+    figBar.addEventListener('mousedown', function (e) { if (!/^(INPUT|TEXTAREA)$/.test(e.target.tagName)) e.preventDefault(); });
+    figBar.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b || !selFig) return;
+      var sz = b.getAttribute('data-fs'), al = b.getAttribute('data-fa'), x = b.getAttribute('data-fx');
+      if (sz) selFig.setAttribute('data-size', sz);
+      else if (al) selFig.setAttribute('data-align', al);
+      else if (x === 'del') { removeFig(selFig); return; }
+      else if (x === 'up' || x === 'down') moveFig(selFig, x === 'up' ? -1 : 1);
+      else if (x === 'alt') { openAlt(b); return; }
+      changed(); showFigBar();
+    });
+  }
+  function showFigBar() {
+    if (!selFig || !selFig.parentNode) { hideFigBar(); return; }
+    if (!figBar) buildFigBar();
+    [].forEach.call(figBar.querySelectorAll('[data-fs]'), function (b) { b.classList.toggle('on', b.getAttribute('data-fs') === selFig.getAttribute('data-size')); });
+    [].forEach.call(figBar.querySelectorAll('[data-fa]'), function (b) { b.classList.toggle('on', b.getAttribute('data-fa') === selFig.getAttribute('data-align')); });
+    var r = selFig.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > window.innerHeight) { figBar.style.display = 'none'; return; }
+    figBar.style.display = 'flex';
+    var w = figBar.offsetWidth, h = figBar.offsetHeight, top = r.top - h - 8;
+    if (top < 8) top = Math.min(Math.max(r.top + 8, 8), window.innerHeight - h - 8);
+    figBar.style.top = top + 'px'; figBar.style.left = Math.max(8, Math.min(r.left + r.width / 2 - w / 2, window.innerWidth - w - 8)) + 'px';
+  }
+  function hideFigBar() { if (figBar) figBar.style.display = 'none'; }
+  function selectFig(f) {
+    if (selFig && selFig !== f) selFig.classList.remove('is-sel');
+    selFig = f; f.classList.add('is-sel'); showFigBar();
+  }
+  function deselectFig() { if (selFig) selFig.classList.remove('is-sel'); selFig = null; hideFigBar(); if (pop && popKind === 'alt') closePop(); }
+  function removeFig(f) {
+    var nx = f.nextElementSibling || f.previousElementSibling;
+    if (selFig === f) deselectFig();
+    if (f.parentNode) f.parentNode.removeChild(f);
+    if (!artBody.children.length) { var p = doc.createElement('p'); p.appendChild(doc.createElement('br')); artBody.appendChild(p); nx = p; }
+    if (nx) { artBody.focus({ preventScroll: true }); placeCaret(nx); }
+    changed();
+  }
+  function moveFig(f, dir) {
+    var sib = dir < 0 ? f.previousElementSibling : f.nextElementSibling; if (!sib) return;
+    if (dir < 0) artBody.insertBefore(f, sib); else artBody.insertBefore(f, sib.nextSibling);
+    tailP(f);
+    try { f.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) {}
+  }
+  function openAlt(anchor) {
+    if (!selFig) return;
+    var im = selFig.querySelector('img');
+    showPop(anchor, '<div class="rte-pop-form"><label>ছবিতে কী আছে (বিবরণ)<input type="text" id="rt-alt-in" maxlength="200" placeholder="যেমন: তারসুস শহরের মানচিত্র" value="' + esc(im ? im.getAttribute('alt') || '' : '') + '"></label>' +
+      '<div class="rte-pop-row"><button type="button" class="rt-primary" data-altgo="1">সংরক্ষণ</button></div>' +
+      '<small class="rte-pop-note">যারা ছবি দেখতে পারেন না তাদের ও গুগল সার্চের জন্য কাজে লাগে</small></div>', 'rte-pop-link', 'alt');
+    setTimeout(function () { var f = doc.getElementById('rt-alt-in'); if (f) { f.focus(); f.select(); } }, 30);
+  }
+  function applyAlt() {
+    var inp = doc.getElementById('rt-alt-in'); if (!inp || !selFig) { closePop(); return; }
+    var im = selFig.querySelector('img'); if (im) im.setAttribute('alt', inp.value.replace(/\s+/g, ' ').trim().slice(0, 200));
+    closePop(); changed(); toast('ছবির বিবরণ রাখা হয়েছে');
+  }
+  artBody.addEventListener('mousedown', function (e) {
+    var f = e.target.closest ? e.target.closest('figure.pd-fig') : null;
+    if (!f || !artBody.contains(f)) return;
+    if (e.target.closest('figcaption')) { selectFig(f); return; }
+    e.preventDefault();
+    artBody.focus({ preventScroll: true });
+    var r = doc.createRange(); r.selectNode(f); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); lastRange = r.cloneRange();
+    selectFig(f); scheduleState();
+  });
+  doc.addEventListener('mousedown', function (e) {
+    if (!selFig) return;
+    var t = e.target;
+    if (selFig.contains(t) || (figBar && figBar.contains(t)) || (pop && pop.contains(t))) return;
+    deselectFig();
+  }, true);
+  artBody.addEventListener('input', function (e) { if (selFig && e.isTrusted && !(e.target && e.target.closest && e.target.closest('figcaption'))) deselectFig(); });
+  window.addEventListener('scroll', function () { if (selFig) showFigBar(); }, true);
+  window.addEventListener('resize', function () { if (selFig) showFigBar(); });
+  artBody.addEventListener('keydown', function (e) {
+    var cap = e.target.closest ? e.target.closest('figcaption') : null;
+    if (cap) {
+      if (e.key === 'Enter') { e.preventDefault(); var fg = cap.closest('figure'), nx = fg && fg.nextElementSibling; if (nx) { artBody.focus({ preventScroll: true }); placeCaret(nx); } }
+      return;
+    }
+    if (selFig && (e.key === 'Backspace' || e.key === 'Delete')) { e.preventDefault(); removeFig(selFig); return; }
+    /* তথ্য বক্সের শেষ খালি লাইনে Enter দিলে বক্স থেকে বেরিয়ে আসা */
+    if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+      var el = selEl(), as = el && el.closest ? el.closest('aside') : null;
+      if (as) {
+        var pb = el.closest('p'), r = curRange();
+        if (pb && pb.parentNode === as && r && r.collapsed && !pb.textContent.trim() && pb === as.lastElementChild && as.children.length > 1) {
+          e.preventDefault(); as.removeChild(pb);
+          var np = doc.createElement('p'); np.appendChild(doc.createElement('br')); artBody.insertBefore(np, as.nextSibling); placeCaret(np); changed();
+        }
+      }
+    }
+  });
+
+  /* ---------- টেনে এনে ছাড়া ---------- */
+  function hasFiles(e) { var t = e.dataTransfer && e.dataTransfer.types; return !!t && [].indexOf.call(t, 'Files') >= 0; }
+  function rangeAt(x, y) {
+    if (doc.caretRangeFromPoint) return doc.caretRangeFromPoint(x, y);
+    if (doc.caretPositionFromPoint) { var p = doc.caretPositionFromPoint(x, y); if (p) { var r = doc.createRange(); r.setStart(p.offsetNode, p.offset); r.collapse(true); return r; } }
+    return null;
+  }
+  ['dragenter', 'dragover'].forEach(function (ev) { artBody.addEventListener(ev, function (e) { if (hasFiles(e)) { e.preventDefault(); artBody.classList.add('is-drop'); } }); });
+  artBody.addEventListener('dragleave', function (e) { if (!artBody.contains(e.relatedTarget)) artBody.classList.remove('is-drop'); });
+  artBody.addEventListener('drop', function (e) {
+    artBody.classList.remove('is-drop');
+    var fs = [].filter.call((e.dataTransfer && e.dataTransfer.files) || [], function (f) { return /^image\//.test(f.type); });
+    if (!fs.length) return;
+    e.preventDefault();
+    var r = rangeAt(e.clientX, e.clientY);
+    if (r && inEditor(r.commonAncestorContainer)) { var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); lastRange = r.cloneRange(); }
+    insertImages(fs);
+  });
+
+  /* ---------- তথ্য বক্স (নোট/সতর্কতা/টিপস) ---------- */
+  var TONES = ['info', 'warn', 'good'], TONE_N = { info: 'তথ্য (নীল)', warn: 'সতর্কতা (হলুদ)', good: 'টিপস/সুখবর (সবুজ)' };
+  function toggleCallout() {
+    focusEd();
+    var e = selEl(), as = e && e.closest ? e.closest('aside') : null;
+    if (as) {
+      var i = TONES.indexOf(as.getAttribute('data-tone'));
+      if (i >= TONES.length - 1) {
+        var first = as.firstElementChild;
+        while (as.firstChild) artBody.insertBefore(as.firstChild, as);
+        artBody.removeChild(as); toast('তথ্য বক্স সরানো হয়েছে'); if (first) placeCaret(first);
+      } else { as.setAttribute('data-tone', TONES[i + 1]); toast('বক্স: ' + TONE_N[TONES[i + 1]]); }
+      changed(); return;
+    }
+    var node = doc.createElement('aside'); node.setAttribute('data-tone', 'info');
+    var blk = topBlockEl();
+    if (blk && /^(P|H2|H3|H4|UL|OL|BLOCKQUOTE)$/.test(blk.tagName) && blk.textContent.trim()) { artBody.insertBefore(node, blk); node.appendChild(blk); placeCaret(blk); }
+    else { var p = doc.createElement('p'); p.appendChild(doc.createElement('br')); node.appendChild(p); placeBlock(node); placeCaret(p); }
+    toast('বক্স: ' + TONE_N.info + ' — আবার বাটন চাপলে রং বদলাবে');
+    changed();
+  }
 
   /* ---------- টুলবারের ক্লিক ---------- */
   toolbar.addEventListener('mousedown', function (e) { if (e.target !== sizeIn) e.preventDefault(); }); /* সিলেকশন হারানো ঠেকাতে */
@@ -612,6 +850,8 @@
     else if (act === 'code') applyBlock('pre');
     else if (act === 'link') { focusEd(); openLink(b); }
     else if (act === 'unlink') { removeLink(); }
+    else if (act === 'image') { focusEd(); fileIn.click(); }
+    else if (act === 'callout') toggleCallout();
     else if (act === 'clear') clearAll();
     else if (act === 'fullscreen') setFull(!isFull);
   });
@@ -648,7 +888,7 @@
     setOn('sub', qs('subscript')); setOn('sup', qs('superscript'));
     setOn('ul', qs('insertUnorderedList')); setOn('ol', qs('insertOrderedList'));
     setOn('left', qs('justifyLeft')); setOn('center', qs('justifyCenter')); setOn('right', qs('justifyRight')); setOn('justify', qs('justifyFull'));
-    setOn('quote', blk === 'blockquote'); setOn('code', blk === 'pre'); setOn('link', !!anchorAtSel());
+    setOn('callout', !!(e.closest && e.closest('aside'))); setOn('quote', blk === 'blockquote'); setOn('code', blk === 'pre'); setOn('link', !!anchorAtSel());
     var cs = window.getComputedStyle(e), fam = (cs.fontFamily.split(',')[0] || '').replace(/["']/g, '').trim().toLowerCase(), fl = doc.getElementById('rt-font-lbl');
     var name = 'গুঞ্জরণ';
     FONTS.forEach(function (f) { if (f.k && fam === f.k) name = f.n; });
@@ -664,7 +904,7 @@
   var composing = false;
   artBody.addEventListener('compositionstart', function () { composing = true; });
   artBody.addEventListener('compositionend', function () { composing = false; });
-  var BLOCKTAG = /^(P|H2|H3|H4|BLOCKQUOTE|PRE|UL|OL|HR|DIV|TABLE)$/;
+  var BLOCKTAG = /^(P|H2|H3|H4|BLOCKQUOTE|PRE|UL|OL|HR|DIV|TABLE|FIGURE|ASIDE)$/;
   function hasBareInline() {
     for (var n = artBody.firstChild; n; n = n.nextSibling) {
       if (n.nodeType === 3 && n.nodeValue.trim()) return true;
@@ -698,9 +938,15 @@
   artBody.addEventListener('paste', function (e) {
     var cd = e.clipboardData; if (!cd) return;
     var html = cd.getData('text/html'), txt = cd.getData('text/plain');
+    if (e.target.closest && e.target.closest('figcaption')) { e.preventDefault(); exec('insertText', (txt || '').replace(/\s+/g, ' '), false); return; } /* ক্যাপশনে শুধু সাধারণ লেখা */
+    var imgFiles = [].filter.call(cd.files || [], function (f) { return /^image\//.test(f.type); });
+    if (imgFiles.length && !(txt && txt.trim())) { e.preventDefault(); insertImages(imgFiles); return; } /* স্ক্রিনশট কপি করে সরাসরি পেস্ট */
     e.preventDefault();
     if (html && UI && UI.sanitize) {
       var box = UI.sanitize(html);
+      var hadImg = !!box.querySelector('img');
+      [].slice.call(box.querySelectorAll('figure,img')).forEach(function (n) { if (n.parentNode) n.parentNode.removeChild(n); }); /* ওয়েব থেকে আসা বাইরের ছবি বসে না — নিজের আপলোড করা ছবিই থাকবে */
+      if (hadImg) toast('অন্য সাইটের ছবি সরাসরি পেস্ট হয় না — ছবিটা সেভ করে ছবির বাটন দিয়ে দিন, অথবা স্ক্রিনশট নিয়ে পেস্ট করুন');
       toneDown(box);
       if (box.textContent.trim() || box.querySelector('hr')) { exec('insertHTML', box.innerHTML, false); changed(); return; }
     }

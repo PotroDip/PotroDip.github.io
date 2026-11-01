@@ -180,39 +180,40 @@ html[data-theme="dark"] .cat-badge{ background:rgba(10,14,15,.75); }
 /* ============ আর্টিকেল বডি — ছবির সাথে একই প্রস্থ, জাস্টিফাইড টেক্সট ============ */
   .article-body{margin:0; padding:0;}
 
-.article-body p{font-size:18px; line-height:1.85; color:var(--text); margin-bottom:24px; text-align:justify; text-justify:inter-word;}
+.article-body p{font-size:19.5px; line-height:1.85; color:var(--text); margin-bottom:24px; text-align:justify; text-justify:inter-word;}
 
 .article-body p:last-child{margin-bottom:0;}
 
 /* v21: সম্পাদকের নতুন ফরম্যাট (শিরোনাম, তালিকা, বিভাজক, কোড ইত্যাদি) পাঠকের পেজে সুন্দরভাবে দেখানো */
-.article-body h2{font-size:30px; font-weight:700; line-height:1.4; color:var(--text); margin:40px 0 16px;}
-.article-body h3{font-size:25px; font-weight:700; line-height:1.45; color:var(--text); margin:34px 0 14px;}
-.article-body h4{font-size:21px; font-weight:700; line-height:1.5; color:var(--text); margin:28px 0 12px;}
-.article-body ul, .article-body ol{margin:0 0 24px; padding-left:28px; font-size:18px; line-height:1.85; color:var(--text);}
+.article-body h2{font-size:31px; font-weight:700; line-height:1.4; color:var(--text); margin:40px 0 16px;}
+.article-body h3{font-size:26px; font-weight:700; line-height:1.45; color:var(--text); margin:34px 0 14px;}
+.article-body h4{font-size:22px; font-weight:700; line-height:1.5; color:var(--text); margin:28px 0 12px;}
+.article-body ul, .article-body ol{margin:0 0 24px; padding-left:28px; font-size:19.5px; line-height:1.85; color:var(--text);}
 .article-body ul{list-style:disc;} .article-body ol{list-style:decimal;}
 .article-body li{margin-bottom:6px;}
 .article-body li > ul, .article-body li > ol{margin:6px 0 0;}
 .article-body hr{border:0; height:1px; background:var(--border); margin:36px 0;}
-.article-body pre{margin:0 0 24px; padding:16px 18px; background:var(--surface); border:1px solid var(--border); border-radius:12px; font-family:'Courier New', Consolas, monospace; font-size:15px; line-height:1.7; white-space:pre-wrap; overflow-x:auto; color:var(--text);}
+.article-body pre{margin:0 0 24px; padding:16px 18px; background:var(--surface); border:1px solid var(--border); border-radius:12px; font-family:'Courier New', Consolas, monospace; font-size:16px; line-height:1.7; white-space:pre-wrap; overflow-x:auto; color:var(--text);}
 .article-body a{color:var(--primary); text-decoration:underline; text-underline-offset:3px;}
 .article-body mark{background:color-mix(in srgb, var(--success) 38%, transparent); color:inherit; padding:0 2px; border-radius:3px;}
 .article-body sub, .article-body sup{font-size:.72em; line-height:0;}
 /* v33: লেখার ভেতরের টেবিল */
-.article-body table{width:100%; margin:0 0 26px; border-collapse:collapse; font-size:16.5px; line-height:1.7; color:var(--text); border:1px solid var(--border);}
+.article-body table{width:100%; margin:0 0 26px; border-collapse:collapse; font-size:17.5px; line-height:1.7; color:var(--text); border:1px solid var(--border);}
 .article-body td, .article-body th{border:1px solid var(--border); padding:10px 14px; vertical-align:top; overflow-wrap:anywhere; text-align:left;}
 .article-body th{background:color-mix(in srgb, var(--primary) 9%, var(--surface)); font-weight:700;}
 .article-body tbody tr:nth-child(even) td{background:color-mix(in srgb, var(--surface) 55%, transparent);}
 .article-body td p, .article-body th p{font-size:inherit; margin:0 0 6px; text-align:left;}
 .article-body td p:last-child, .article-body th p:last-child{margin-bottom:0;}
 @media(max-width:640px){
-  .article-body table{font-size:15px;}
+  .article-body table{font-size:16px;}
   .article-body td, .article-body th{padding:8px 10px;}
   .article-body h2[style*="38px"]{font-size:30px !important;}
 }
 
 @media(max-width:640px){
-  .article-body h2{font-size:25px;} .article-body h3{font-size:22px;} .article-body h4{font-size:19px;}
-  .article-body ul, .article-body ol{font-size:17px;}
+  .article-body p{font-size:18.5px;}
+  .article-body h2{font-size:26px;} .article-body h3{font-size:23px;} .article-body h4{font-size:20px;}
+  .article-body ul, .article-body ol{font-size:18.5px;}
 }
 
 .pull-quote{
@@ -456,3 +457,22 @@ html[data-theme="dark"] .ap-id:hover .ap-cta{color:#0F1415;}
 /* ============ স্কোয়ার (৩০০×৩০০) ও মোবাইল (৩২০×১০০) বিজ্ঞাপন ============ */
 .ad-square{width:100%; max-width:300px; height:auto; aspect-ratio:1/1;}
 .ad-slot.ad-mobile{height:auto; max-width:100%; aspect-ratio:3.2/1;}
+
+/* ===== v66: লেখার ভেতরের ছবি / স্ক্রিনশট ও তথ্য বক্স ===== */
+.article-body figure{display:block; margin:0 auto 28px; max-width:100%;}
+.article-body figure[data-size="s"]{width:40%;} .article-body figure[data-size="m"]{width:60%;} .article-body figure[data-size="l"]{width:80%;} .article-body figure[data-size="f"]{width:100%;}
+.article-body figure[data-align="left"]{margin-left:0; margin-right:auto;} .article-body figure[data-align="right"]{margin-left:auto; margin-right:0;}
+.article-body figure img{display:block; width:100%; height:auto; border-radius:12px; border:1px solid var(--border); background:var(--surface); cursor:zoom-in;}
+.article-body figcaption{margin-top:10px; text-align:center; font-size:16px; line-height:1.6; color:var(--text-muted);}
+.article-body aside{margin:0 0 26px; padding:16px 20px; border-radius:14px; border:1px solid var(--bd); border-left-width:5px; background:var(--bg-t);}
+.article-body aside p{margin-bottom:12px; text-align:left;} .article-body aside > :last-child{margin-bottom:0;}
+.article-body aside[data-tone="info"]{--bd:#3b82f6; --bg-t:color-mix(in srgb, #3b82f6 8%, transparent);}
+.article-body aside[data-tone="warn"]{--bd:#d99a00; --bg-t:color-mix(in srgb, #facc15 13%, transparent);}
+.article-body aside[data-tone="good"]{--bd:#16a34a; --bg-t:color-mix(in srgb, #22c55e 9%, transparent);}
+.pd-lightbox{position:fixed; inset:0; z-index:2000; background:rgba(0,0,0,.88); display:flex; align-items:center; justify-content:center; padding:20px; cursor:zoom-out; animation:pdLb .16s ease-out;}
+.pd-lightbox img{max-width:100%; max-height:100%; width:auto; height:auto; border-radius:8px; box-shadow:0 20px 60px rgba(0,0,0,.5);}
+@keyframes pdLb{from{opacity:0}to{opacity:1}}
+@media(max-width:600px){
+  .article-body figure[data-size="s"]{width:60%;} .article-body figure[data-size="m"]{width:80%;} .article-body figure[data-size="l"], .article-body figure[data-size="f"]{width:100%;}
+  .article-body aside{padding:13px 15px;}
+}

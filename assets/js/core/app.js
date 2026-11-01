@@ -114,8 +114,142 @@
   PD.recovery = /type=recovery/.test(location.hash) || /type=recovery/.test(location.search);
   /* ইমেইল-যাচাইয়ের লিংকে ক্লিক করে ফিরলে (#...type=signup) — অভিনন্দন দেখানোর জন্য */
   PD.justVerified = /type=(signup|email|invite)/.test(location.hash);
-  var db = PD.db = window.supabase.createClient(C.supabaseUrl, C.anonKey);
+  /* ---------- দ্রুত ডেটা: পাবলিক টেবিলের পড়ার রিকোয়েস্টের স্মার্ট ক্যাশ ----------
+     • শুধু লেখা/লেখক/সংখ্যা/বিজ্ঞাপন/প্রিন্ট-সংখ্যা/সাইট-সেটিংসের GET রিকোয়েস্ট (সবার জন্য একই ডেটা)
+     • ক্যাশে থাকলে সঙ্গে সঙ্গে দেয় (নেটওয়ার্কের অপেক্ষা নেই), আর প্রতিবারই পেছনে নতুন ডেটা এনে মিলিয়ে দেখে
+     • নতুন ডেটা আলাদা হলে (কেউ লেখা/সেটিং বদলালে) পেজ নিজে থেকে একবার রিফ্রেশ হয়ে নতুনটা দেখায় — রিয়ালটাইম
+     • রিয়ালটাইম চ্যানেল চালু থাকলে বদলের মুহূর্তেই, না থাকলে প্রতি ২০ সেকেন্ডে ও ট্যাবে ফিরলে যাচাই হয়
+     • কোনো লেখা/সেভ/ডিলিট (POST/PATCH/DELETE) হলেই পুরো ক্যাশ মুছে যায় — এডমিনের বদল সঙ্গে সঙ্গে দেখা যায়
+     • এডমিন/স্টুডিও পেজে ক্যাশ বন্ধ; কমেন্ট, প্রোফাইল, ফলো ইত্যাদি ব্যক্তিগত ডেটা কখনো ক্যাশ হয় না */
+  var SC = (function () {
+    var PFX = 'pd-sc1:', TTL = 86400000, FRESH = 3000, MAXB = 400000;
+    var used = {}; /* এই পেজ যেসব রিকোয়েস্ট ব্যবহার করেছে */
+    var TABLES = /^\/rest\/v1\/(articles|authors|issues|ads|print_issues|site_settings)(\?|$)/;
+    var off = /(^|\/)(admin|admin-studio|action)(\.html)?$/.test(location.pathname) || /[?&]pdstudio=1/.test(location.search);
+    var mem = {}, base = C.supabaseUrl, nativeFetch = window.fetch ? window.fetch.bind(window) : null;
+    var ss = null;
+    try { ss = window.sessionStorage; ss.getItem('x'); } catch (e) { ss = null; }
+    function hdr(init, k) {
+      var h = init && init.headers; if (!h) return '';
+      if (typeof h.get === 'function') return h.get(k) || '';
+      for (var n in h) if (n.toLowerCase() === k) return h[n] || '';
+      return '';
+    }
+    function clearAll() {
+      mem = {};
+      if (!ss) return;
+      try { for (var i = ss.length - 1; i >= 0; i--) { var k = ss.key(i); if (k && k.indexOf(PFX) === 0) ss.removeItem(k); } } catch (e) {}
+    }
+    function get(k) {
+      if (mem[k]) return mem[k];
+      if (!ss) return null;
+      try { var v = ss.getItem(PFX + k); if (v) { v = JSON.parse(v); mem[k] = v; return v; } } catch (e) {}
+      return null;
+    }
+    function put(k, e) {
+      mem[k] = e;
+      if (!ss) return;
+      try { ss.setItem(PFX + k, JSON.stringify(e)); }
+      catch (x) { try { clearAll(); mem[k] = e; } catch (y) {} }
+    }
+    function mk(e) {
+      var h = { 'content-type': e.c };
+      if (e.r) h['content-range'] = e.r;
+      return new Response(e.b, { status: e.s, headers: h });
+    }
+    function wrapped(input, init) {
+      var url = typeof input === 'string' ? input : (input && input.url) || '';
+      var method = ((init && init.method) || (input && input.method) || 'GET').toUpperCase();
+      if (url.indexOf(base) !== 0) return nativeFetch(input, init);
+      var path = url.slice(base.length);
+      if (method !== 'GET' && method !== 'HEAD') {
+        if (path.indexOf('/rest/v1/') === 0 && path.indexOf('/rest/v1/rpc/increment_article_view') !== 0) clearAll();
+        return nativeFetch(input, init);
+      }
+      if (off || method !== 'GET' || typeof input !== 'string' || !TABLES.test(path)) return nativeFetch(input, init);
+      var key = path + '|' + hdr(init, 'authorization').slice(-24) + '|' + hdr(init, 'accept') + '|' + hdr(init, 'prefer') + '|' + hdr(init, 'range');
+      var hit = get(key), now = Date.now();
+      used[key] = [input, init];
+      function refresh() {
+        return nativeFetch(input, init).then(function (res) {
+          if (res.status !== 200 && res.status !== 206) return res;
+          var c = res.clone();
+          c.text().then(function (b) {
+            if (b.length > MAXB) return;
+            var prev = get(key);
+            put(key, { t: Date.now(), s: res.status, c: res.headers.get('content-type') || 'application/json', r: res.headers.get('content-range') || '', b: b });
+            if (hit && norm(hit.b) !== norm(b)) changed();
+          }).catch(function () {});
+          return res;
+        });
+      }
+      if (hit && now - hit.t < TTL) {
+        if (now - hit.t > FRESH) refresh().catch(function () {});
+        return Promise.resolve(mk(hit));
+      }
+      return refresh();
+    }
+    /* ভিউ-কাউন্ট প্রতি ভিজিটে বদলায় — সেটা "বদল" ধরা হয় না */
+    function norm(b) { return String(b).replace(/"view_count":\s*\d+/g, '"view_count":0'); }
+    /* পেজ এখনই নতুন ডেটায় রিফ্রেশ — তবে কেউ লিখতে থাকলে অপেক্ষা করে */
+    function editing() {
+      var a = document.activeElement, t = a && a.tagName;
+      return !!(t === 'INPUT' || t === 'TEXTAREA' || t === 'SELECT' || (a && a.isContentEditable) || document.querySelector('dialog[open]'));
+    }
+    function changed() {
+      if (document.hidden) { pending = true; return; }
+      if (editing()) { setTimeout(changed, 3000); return; }
+      var last = 0;
+      try { last = +sessionStorage.getItem('pd-sr') || 0; } catch (e) {}
+      var wait = 8000 - (Date.now() - last);
+      if (wait > 0) { setTimeout(changed, wait + 100); return; }
+      try { sessionStorage.setItem('pd-sr', String(Date.now())); } catch (e) {}
+      location.reload();
+    }
+    var pending = false, busy = false;
+    /* এই পেজের সব রিকোয়েস্ট আবার এনে মিলিয়ে দেখা */
+    function revalidate() {
+      if (off || busy) return;
+      busy = true;
+      var ks = Object.keys(used), n = ks.length, diff = false;
+      if (!n) { busy = false; return; }
+      ks.forEach(function (k) {
+        nativeFetch(used[k][0], used[k][1]).then(function (res) {
+          if (res.status !== 200 && res.status !== 206) return;
+          return res.text().then(function (b) {
+            var old = get(k);
+            if (b.length > MAXB) return;
+            put(k, { t: Date.now(), s: res.status, c: res.headers.get('content-type') || 'application/json', r: res.headers.get('content-range') || '', b: b });
+            if (old && norm(old.b) !== norm(b)) diff = true;
+          });
+        }).catch(function () {}).then(function () {
+          if (--n === 0) { busy = false; if (diff) changed(); }
+        });
+      });
+    }
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) return;
+      if (pending) { pending = false; changed(); } else revalidate();
+    });
+    return { fetch: nativeFetch ? wrapped : null, clear: clearAll, revalidate: revalidate, off: off };
+  })();
+  PD.clearCache = SC.clear;
+  var db = PD.db = window.supabase.createClient(C.supabaseUrl, C.anonKey, SC.fetch ? { global: { fetch: SC.fetch } } : undefined);
   db.auth.onAuthStateChange(function (ev) { if (ev === 'PASSWORD_RECOVERY') PD.recovery = true; });
+  /* ---------- রিয়ালটাইম: সাইটের ডেটা বদলালেই পেজ হালনাগাদ ---------- */
+  if (!SC.off && db.channel) {
+    var liveOn = false, lt = null;
+    var kick = function () { clearTimeout(lt); lt = setTimeout(SC.revalidate, 600 + Math.random() * 1200); };
+    try {
+      var lch = db.channel('pd-site-data');
+      ['articles', 'authors', 'issues', 'ads', 'print_issues', 'site_settings'].forEach(function (t) {
+        lch.on('postgres_changes', { event: '*', schema: 'public', table: t }, kick);
+      });
+      lch.subscribe(function (st) { liveOn = st === 'SUBSCRIBED'; });
+    } catch (e) {}
+    /* রিয়ালটাইম সংযুক্ত না থাকলে প্রতি ২০ সেকেন্ডে নিজে যাচাই */
+    setInterval(function () { if (!document.hidden && !liveOn) SC.revalidate(); }, 20000);
+  }
   PD.load = function() {
     return db.auth.getSession().then(function(r) {
       PD.user = r.data.session ? r.data.session.user : null;
@@ -252,4 +386,42 @@
   }
   if (document.readyState !== 'loading') ready();
   else document.addEventListener('DOMContentLoaded', ready);
+})();
+
+
+/* ---------- পরের পেজ আগেভাগে লোড (প্রিফেচ) ----------
+   লিংকে মাউস নিলে / আঙুল ছোঁয়ালেই সেই পেজের ফাইল ব্রাউজার চুপচাপ নামিয়ে রাখে —
+   তাই ক্লিক করার মুহূর্তে পেজ প্রায় সঙ্গে সঙ্গে খোলে। ডিজাইন বা এনিমেশনে কোনো বদল নেই। */
+(function () {
+  'use strict';
+  if (/[?&]pdstudio=1/.test(location.search)) return;
+  var cn = navigator.connection || {};
+  if (cn.saveData || /(^|-)2g$/.test(cn.effectiveType || '')) return;
+  var done = {}, timer = null;
+  function eligible(a) {
+    if (!a || !a.href || a.target === '_blank' || a.hasAttribute('download')) return false;
+    var u;
+    try { u = new URL(a.href, location.href); } catch (e) { return false; }
+    if (u.origin !== location.origin || !/^https?:$/.test(u.protocol)) return false;
+    if (u.pathname === location.pathname && u.search === location.search) return false;
+    if (/(^|\/)(admin|admin-studio|action)(\.html)?$/.test(u.pathname)) return false;
+    return u.href.split('#')[0];
+  }
+  function prefetch(href) {
+    if (done[href]) return;
+    done[href] = 1;
+    var l = document.createElement('link');
+    l.rel = 'prefetch'; l.href = href; l.as = 'document';
+    document.head.appendChild(l);
+  }
+  function target(e) { return e.target && e.target.closest ? e.target.closest('a') : null; }
+  document.addEventListener('touchstart', function (e) { var h = eligible(target(e)); if (h) prefetch(h); }, { passive: true, capture: true });
+  document.addEventListener('mousedown', function (e) { if (e.button === 0) { var h = eligible(target(e)); if (h) prefetch(h); } }, { capture: true });
+  document.addEventListener('mouseover', function (e) {
+    var a = target(e), h = eligible(a);
+    if (!h || done[h]) return;
+    clearTimeout(timer);
+    timer = setTimeout(function () { prefetch(h); }, 65);
+    a.addEventListener('mouseleave', function () { clearTimeout(timer); }, { once: true });
+  }, { passive: true, capture: true });
 })();

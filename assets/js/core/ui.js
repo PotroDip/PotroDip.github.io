@@ -37,7 +37,7 @@
     /* সম্পাদকের HTML ছেঁকে শুধু নিরাপদ ট্যাগ রাখা (স্ক্রিপ্ট, ইভেন্ট, অচেনা লিংক সব বাদ) */
     sanitize: function (html) {
       var doc = new DOMParser().parseFromString('<body>' + html, 'text/html');
-      var KEEP = { P: 1, BR: 1, STRONG: 1, EM: 1, U: 1, S: 1, SUB: 1, SUP: 1, MARK: 1, H2: 1, H3: 1, H4: 1, BLOCKQUOTE: 1, PRE: 1, CODE: 1, HR: 1, UL: 1, OL: 1, LI: 1, A: 1, SPAN: 1, TABLE: 1, THEAD: 1, TBODY: 1, TR: 1, TD: 1, TH: 1 };
+      var KEEP = { P: 1, BR: 1, STRONG: 1, EM: 1, U: 1, S: 1, SUB: 1, SUP: 1, MARK: 1, H2: 1, H3: 1, H4: 1, BLOCKQUOTE: 1, PRE: 1, CODE: 1, HR: 1, UL: 1, OL: 1, LI: 1, A: 1, SPAN: 1, TABLE: 1, THEAD: 1, TBODY: 1, TR: 1, TD: 1, TH: 1, FIGURE: 1, FIGCAPTION: 1, IMG: 1, ASIDE: 1 };
       var RENAME = { B: 'strong', I: 'em', STRIKE: 's', DEL: 's', H1: 'h2', H5: 'h4', H6: 'h4', DIV: 'p' };
       var FONT_PX = { 1: 10, 2: 13, 3: 16, 4: 18, 5: 24, 6: 32, 7: 48 };
       var COLOR = /^(#[0-9a-f]{3,8}|rgba?\(\s*\d{1,3}(\s*,\s*\d{1,3}){2}(\s*,\s*[01]?\.?\d*)?\s*\)|[a-z]{3,20})$/i;
@@ -95,15 +95,31 @@
             if (!/^(https?:|mailto:)/i.test(href)) { clean(n, out); return; }
             el.setAttribute('href', href); el.setAttribute('target', '_blank'); el.setAttribute('rel', 'noopener noreferrer');
           }
-          var st = (name === 'hr' || name === 'br') ? {} : keepStyles(n, el, extra);
+          if (name === 'img') { /* শুধু https ছবি; বাকি সব বাদ */
+            var src = (n.getAttribute('src') || '').trim();
+            if (!/^https:\/\//i.test(src) || src.length > 1500) return;
+            el.setAttribute('src', src); el.setAttribute('loading', 'lazy'); el.setAttribute('decoding', 'async');
+            var alt = (n.getAttribute('alt') || '').replace(/\s+/g, ' ').trim().slice(0, 200); el.setAttribute('alt', alt);
+            out.appendChild(el); return;
+          }
+          if (name === 'figure') {
+            var sz = n.getAttribute('data-size'), al2 = n.getAttribute('data-align');
+            el.setAttribute('data-size', /^(s|m|l|f)$/.test(sz || '') ? sz : 'm');
+            el.setAttribute('data-align', /^(left|center|right)$/.test(al2 || '') ? al2 : 'center');
+          }
+          if (name === 'aside') { var tn = n.getAttribute('data-tone'); el.setAttribute('data-tone', /^(info|warn|good)$/.test(tn || '') ? tn : 'info'); }
+          var st = (name === 'hr' || name === 'br' || name === 'figure' || name === 'figcaption' || name === 'aside') ? {} : keepStyles(n, el, extra);
           clean(n, el);
+          if (name === 'figure' && !el.querySelector('img')) return; /* ছবি ছাড়া ফিগার বাদ */
+          if (name === 'figcaption' && !el.textContent.trim()) return; /* খালি ক্যাপশন বাদ */
+          if (name === 'aside' && !el.textContent.trim()) return; /* খালি বক্স বাদ */
           if (/^(blockquote|h[2-4]|pre)$/.test(name) && !el.textContent.trim()) return; /* খালি শিরোনাম/উদ্ধৃতি বাদ */
           if (name === 'table' && !el.querySelector('td,th')) return; /* খালি টেবিল বাদ */
-          if ((name === 'p' || /^h[2-4]$/.test(name)) && el.querySelector(':scope > ul, :scope > ol, :scope > pre, :scope > blockquote, :scope > hr, :scope > p, :scope > h2, :scope > h3, :scope > h4, :scope > table')) {
+          if ((name === 'p' || /^h[2-4]$/.test(name)) && el.querySelector(':scope > ul, :scope > ol, :scope > pre, :scope > blockquote, :scope > hr, :scope > p, :scope > h2, :scope > h3, :scope > h4, :scope > table, :scope > figure, :scope > aside')) {
             /* অনুচ্ছেদের ভেতরে তালিকা/ব্লক থাকলে সেগুলো বাইরে তুলে আনা */
             var run = null;
             [].slice.call(el.childNodes).forEach(function (c) {
-              var isBlock = c.nodeType === 1 && /^(UL|OL|PRE|BLOCKQUOTE|HR|P|H2|H3|H4|TABLE)$/.test(c.tagName);
+              var isBlock = c.nodeType === 1 && /^(UL|OL|PRE|BLOCKQUOTE|HR|P|H2|H3|H4|TABLE|FIGURE|ASIDE)$/.test(c.tagName);
               if (isBlock) { run = null; out.appendChild(c); return; }
               if (c.nodeType === 3 && !c.nodeValue.trim() && !run) return;
               if (!run) { run = document.createElement(name); if (el.getAttribute('style')) run.setAttribute('style', el.getAttribute('style')); out.appendChild(run); }

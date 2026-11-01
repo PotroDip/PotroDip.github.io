@@ -46,7 +46,7 @@
 
     /* প্রচ্ছদ-ব্যান্ড */
     var buy = pr ? (pr.in_stock ? '<a class="ib-btn ghost" href="store.html">ছাপা কপি কিনুন · ৳' + UI.bn(Number(pr.price)) + '</a>' : '<span class="ib-btn ghost is-off">ছাপা কপি শেষ</span>') : '';
-    $('issue-hero').innerHTML = '<div class="ib-inner"><div class="ib-cover"><img src="' + esc(UI.cover(is.cover_url || (pr && pr.cover_url))) + '" alt="' + esc(is.title) + ' প্রচ্ছদ"></div><div class="ib-text"><div class="ib-kicker"><span>' + (is.issue_number ? 'সংখ্যা ' + UI.bn(is.issue_number) : 'পত্রদ্বীপ') + '</span>' + (hasD ? '<span class="ib-no">' + MON[d.getMonth()] + ' ' + UI.bn(d.getFullYear()) + '</span>' : '') + '</div><h1>' + esc(is.title) + '</h1>' + (teaser ? '<p class="ib-teaser">' + esc(cut(teaser, 220)) + '</p>' : '') + '<div class="ib-stats"><div><strong>' + UI.bn(arts.length) + '</strong><span>টি লেখা</span></div><div><strong>' + UI.bn(wr.length) + '</strong><span>জন লেখক</span></div><div><strong>' + UI.bn(cats.length) + '</strong><span>টি বিভাগ</span></div></div><div class="ib-actions">' + (arts.length ? '<a class="ib-btn primary" href="#toc">সূচিপত্র দেখুন ' + DOWN + '</a>' : '') + buy + '</div></div></div>';
+    $('issue-hero').innerHTML = '<div class="ib-inner"><div class="ib-cover"><img decoding="async" src="' + esc(UI.cover(is.cover_url || (pr && pr.cover_url))) + '" alt="' + esc(is.title) + ' প্রচ্ছদ"></div><div class="ib-text"><div class="ib-kicker"><span>' + (is.issue_number ? 'সংখ্যা ' + UI.bn(is.issue_number) : 'পত্রদ্বীপ') + '</span>' + (hasD ? '<span class="ib-no">' + MON[d.getMonth()] + ' ' + UI.bn(d.getFullYear()) + '</span>' : '') + '</div><h1>' + esc(is.title) + '</h1>' + (teaser ? '<p class="ib-teaser">' + esc(cut(teaser, 220)) + '</p>' : '') + '<div class="ib-stats"><div><strong>' + UI.bn(arts.length) + '</strong><span>টি লেখা</span></div><div><strong>' + UI.bn(wr.length) + '</strong><span>জন লেখক</span></div><div><strong>' + UI.bn(cats.length) + '</strong><span>টি বিভাগ</span></div></div><div class="ib-actions">' + (arts.length ? '<a class="ib-btn primary" href="#toc">সূচিপত্র দেখুন ' + DOWN + '</a>' : '') + buy + '</div></div></div>';
 
     if (!arts.length) {
       ['toc', 'writers'].forEach(function (k) { $(k).remove(); });
@@ -66,7 +66,7 @@
       var list = arts.filter(function (a) { return !cat || a.category === cat; });
       $('article-grid').innerHTML = list.map(function (a) {
         var u = au(a);
-        return '<article class="article-card"><a class="ac-link" href="' + UI.articleUrl(a) + '"><div class="thumb"><img src="' + esc(UI.cover(a.cover_url)) + '" alt="" loading="lazy">' + (a.category ? '<span class="ac-cat">' + esc(a.category) + '</span>' : '') + '</div><div class="ac-body"><h3>' + esc(a.title) + '</h3><p>' + esc(cut(a.excerpt, 120)) + '</p><div class="card-meta"><img src="' + esc(UI.avatar(u.image_url)) + '" alt=""><span class="cm-name">' + esc(u.name) + '</span><span class="cm-date">' + UI.date(a.published_at || a.created_at) + '</span></div></div></a></article>';
+        return '<article class="article-card"><a class="ac-link" href="' + UI.articleUrl(a) + '"><div class="thumb"><img decoding="async" src="' + esc(UI.cover(a.cover_url)) + '" alt="" loading="lazy">' + (a.category ? '<span class="ac-cat">' + esc(a.category) + '</span>' : '') + '</div><div class="ac-body"><h3>' + esc(a.title) + '</h3><p>' + esc(cut(a.excerpt, 120)) + '</p><div class="card-meta"><img decoding="async" src="' + esc(UI.avatar(u.image_url)) + '" alt=""><span class="cm-name">' + esc(u.name) + '</span><span class="cm-date">' + UI.date(a.published_at || a.created_at) + '</span></div></div></a></article>';
       }).join('');
     }
     var chips = $('chips');
@@ -84,7 +84,7 @@
     if (!wr.length) return $('writers').remove();
     $('writer-row').innerHTML = wr.map(function (u) {
       var n = arts.filter(function (a) { return a.author_id === u.id; }).length;
-      return '<a class="writer" href="' + UI.authorUrl(u) + '"><span class="w-ava"><img src="' + esc(UI.avatar(u.image_url)) + '" alt=""></span><span class="w-text"><strong>' + esc(u.name) + '</strong><span>' + esc(u.role_title || u.city || '') + (u.role_title || u.city ? ' · ' : '') + UI.bn(n) + 'টি লেখা</span></span></a>';
+      return '<a class="writer" href="' + UI.authorUrl(u) + '"><span class="w-ava"><img decoding="async" src="' + esc(UI.avatar(u.image_url)) + '" alt=""></span><span class="w-text"><strong>' + esc(u.name) + '</strong><span>' + esc(u.role_title || u.city || '') + (u.role_title || u.city ? ' · ' : '') + UI.bn(n) + 'টি লেখা</span></span></a>';
     }).join('');
   }
 })();
