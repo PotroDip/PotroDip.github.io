@@ -67,7 +67,8 @@ body{
   html[data-theme="dark"] #brand-logo #tag2,
   html[data-theme="dark"] #brand-logo #tag3,
   html[data-theme="dark"] #brand-logo #tag4,
-  html[data-theme="dark"] #brand-logo #tag5{
+  html[data-theme="dark"] #brand-logo #tag5,
+  html[data-theme="dark"] #brand-logo #tag6{
     filter:brightness(0) invert(1);
   }
 

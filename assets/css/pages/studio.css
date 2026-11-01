@@ -1,7 +1,7 @@
 /* studio.css — ডিজাইন স্টুডিও (ইলাস্ট্রেটর-স্টাইল গাঢ় ইন্টারফেস) */
-@font-face{font-family:'Gunjoron';src:url('../../fonts/Gunjoron-Font-Thin.woff2') format('woff2'),url('../../fonts/Gunjoron-Font-Thin.ttf') format('truetype');font-weight:100 300;font-display:swap;}
-@font-face{font-family:'Gunjoron';src:url('../../fonts/Gunjoron-Font-Normal.woff2') format('woff2'),url('../../fonts/Gunjoron-Font-Normal.ttf') format('truetype');font-weight:400 500;font-display:swap;}
-@font-face{font-family:'Gunjoron';src:url('../../fonts/Gunjoron-Font-Bold.woff2') format('woff2'),url('../../fonts/Gunjoron-Font-Bold.ttf') format('truetype');font-weight:600 900;font-display:swap;}
+@font-face{font-family:'Gunjoron';src:url('../../fonts/Gunjoron-Font-Thin.woff2?v=75') format('woff2'),url('../../fonts/Gunjoron-Font-Thin.ttf?v=75') format('truetype');font-weight:100 300;font-display:swap;}
+@font-face{font-family:'Gunjoron';src:url('../../fonts/Gunjoron-Font-Normal.woff2?v=75') format('woff2'),url('../../fonts/Gunjoron-Font-Normal.ttf?v=75') format('truetype');font-weight:400 500;font-display:swap;}
+@font-face{font-family:'Gunjoron';src:url('../../fonts/Gunjoron-Font-Bold.woff2?v=75') format('woff2'),url('../../fonts/Gunjoron-Font-Bold.ttf?v=75') format('truetype');font-weight:600 900;font-display:swap;}
 :root{--ui-bg:#1e2124;--ui-panel:#26292d;--ui-panel2:#2d3136;--ui-line:#3a3f45;--ui-text:#e8e6e1;--ui-mute:#9aa0a6;--ui-acc:#38bdf8;--ui-brand:#4FA8AD;--ui-ok:#3fb27f;--ui-warn:#e0b354;--ui-bad:#e06b57;--sel:#38bdf8;}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:var(--ui-bg);color:var(--ui-text);font:400 13.5px/1.45 'Gunjoron',system-ui,sans-serif}

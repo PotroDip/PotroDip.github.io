@@ -9,7 +9,8 @@
       })
     },
     M = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'],
-    PH = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'%3E%3Crect width='4' height='3' fill='%23C9A98A'/%3E%3C/svg%3E",
+    PH = 'assets/img/placeholder.svg',
+    AV = 'assets/img/avatar.svg',
     esc = function(s) {
       return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
         return {
@@ -69,7 +70,7 @@
       return esc(u.name) + (u.city ? '<span class="dot-sep"></span><span class="city">' + esc(u.city) + '</span>' : '')
     },
     im = function(u) {
-      return '<img decoding="async" src="' + esc(u.image_url || PH) + '" alt="">'
+      return '<img decoding="async" src="' + esc(u.image_url || AV) + '" alt="">'
     };
   /* হিরো — ম্যাগাজিন-কভার স্টাইল: বড় প্রধান লেখা (ছবির ওপর লেখা) + পাশে "এই সংখ্যায়" তালিকা */
   var cut = function(t, n) {

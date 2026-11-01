@@ -4,6 +4,11 @@ window.PD_CONFIG = {
   anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxb3N6Y3VoeGRhdmVobnh1bmRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1ODIzMDUsImV4cCI6MjEwNjE1ODMwNX0.UqZYaUMsH29NmMTZpFHDmoX9qyTG-U7APOWsalQS2JQ',
   turnstileSiteKey: '0x4AAAAAAFnlme_tpslbtttw',
 
+  /* শেয়ার-প্রিভিউ ওয়ার্কারের ঠিকানা (share-worker/ ফোল্ডার, Cloudflare Worker)। শেষে / দেবেন না।
+     উদাহরণ: 'https://potrodip-share.আপনার-নাম.workers.dev'
+     খালি থাকলে শেয়ার আগের মতোই সাধারণ লিংকে যাবে (তখন ফেসবুকে লেখার টাইটেল/ছবির বদলে সাইটের লোগো দেখাবে)। */
+  shareBase: 'https://potrodip-share.potrodip.workers.dev',
+
   /* Firebase — ইমেইল ও গুগল লগইন এবং ছবি/PDF রাখার জায়গা (Web app-এর firebaseConfig থেকে)। */
   firebase: {
     apiKey: 'AIzaSyBog8mJSDrkE0OumCXvMFKezt8TS2FUL58',

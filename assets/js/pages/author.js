@@ -50,7 +50,8 @@
     /* শেয়ার: প্রোফাইলের লিংক কপি */
     var sh = document.getElementById('shareBtn');
     if (sh) sh.addEventListener('click', function () {
-      var url = location.href;
+      var sb = String((window.PD_CONFIG && window.PD_CONFIG.shareBase) || '').replace(/\/+$/, '');
+      var url = sb && au.slug ? sb + '/w/' + encodeURIComponent(au.slug) : location.href;
       if (navigator.share) { navigator.share({ title: au.name + ' | পত্রদ্বীপ', url: url }).catch(function () { }); return; }
       var done = function () { UI.toast('প্রোফাইলের লিংক কপি হয়েছে'); };
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, function () { UI.toast('লিংক কপি করা যায়নি', 1); });

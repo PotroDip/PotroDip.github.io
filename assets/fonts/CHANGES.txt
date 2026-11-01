@@ -1,0 +1,21 @@
+Gunjoron-Font - added characters (Thin, Normal, Bold)
+Glyphs 851 -> 863, Unicode mappings 202 -> 227. Nothing existing was modified.
+
+Reused existing Gunjoron glyphs (same shape, new Unicode entry):
+ U+037E ; Greek Question Mark    U+2215 / Division Slash
+ U+2045 U+2046 Square brackets with quill
+ U+2768 U+2769 Ornament parentheses   U+2774 U+2775 Ornament braces
+ U+02BC Modifier Apostrophe   U+02EE Modifier Double Apostrophe
+ U+2032 Prime   U+2033 Double Prime   U+2015 Horizontal Bar
+
+New glyphs drawn from Gunjoron's own outlines (per weight):
+ U+201A Single Low-9 Quotation Mark   U+2217 Asterisk Operator
+ Superscripts: U+00B9 U+00B2 U+00B3 U+2070 U+2074-U+2079
+
+Unchanged: all old glyphs/outlines/hinting, Bengali shaping (GSUB/GPOS), metrics, names, license.
+
+Naming fix (metadata only):
+ Thin   : Family "Gunjoron-Font Thin" / Regular | Typographic: Gunjoron-Font / Thin   | PS: Gunjoron-Font-Thin
+ Normal : Family "Gunjoron-Font" / Regular      | Typographic: Gunjoron-Font / Normal | PS: Gunjoron-Font-Normal
+ Bold   : Family "Gunjoron-Font" / Bold         | Typographic: Gunjoron-Font / Bold   | PS: Gunjoron-Font-Bold
+ Also: unique ID (name 3) per file; OS/2 fsSelection Regular/Bold bit and head.macStyle made consistent.

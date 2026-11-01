@@ -4,7 +4,7 @@
   var DIG = '০১২৩৪৫৬৭৮৯';
   var MON = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
   var AVATAR = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23C9A98A'/%3E%3Ccircle cx='20' cy='15' r='7' fill='%23F7F3EC'/%3E%3Cpath d='M6 40c2-10 9-13 14-13s12 3 14 13z' fill='%23F7F3EC'/%3E%3C/svg%3E";
-  var COVER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'%3E%3Crect width='4' height='3' fill='%23C9A98A'/%3E%3C/svg%3E";
+  var COVER = "assets/img/placeholder.svg";
   var STAR = '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/>';
 
   window.PDUI = {

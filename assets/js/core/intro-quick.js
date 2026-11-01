@@ -18,7 +18,7 @@
     overlay.style.display = 'none';
     headerSlot = pickSlot();
     headerSlot.appendChild(svgEl);
-    svgEl.setAttribute('viewBox','35 235 930 510');
+    svgEl.setAttribute('viewBox','24 156 464 264');
     svgEl.style.width = '100%';
     svgEl.style.height = '100%';
     try{
@@ -49,7 +49,7 @@
 
     headerSlot = pickSlot();
     headerSlot.appendChild(svgEl);
-    svgEl.setAttribute('viewBox','35 235 930 510');
+    svgEl.setAttribute('viewBox','24 156 464 264');
     var lastRect = svgEl.getBoundingClientRect();
 
     var dx = firstRect.left - lastRect.left + (firstRect.width - lastRect.width)/2;

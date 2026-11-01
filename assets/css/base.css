@@ -3,9 +3,9 @@
    ============================================================ */
 
 /* ============ ফন্ট: Gunjoron-Font (নিজস্ব সার্ভারে রাখা; Thin / Normal / Bold) ============ */
-@font-face{font-family:'Gunjoron';src:url('../fonts/Gunjoron-Font-Thin.woff2') format('woff2'),url('../fonts/Gunjoron-Font-Thin.ttf') format('truetype');font-weight:100 300;font-style:normal;font-display:swap;}
-@font-face{font-family:'Gunjoron';src:url('../fonts/Gunjoron-Font-Normal.woff2') format('woff2'),url('../fonts/Gunjoron-Font-Normal.ttf') format('truetype');font-weight:400 500;font-style:normal;font-display:swap;}
-@font-face{font-family:'Gunjoron';src:url('../fonts/Gunjoron-Font-Bold.woff2') format('woff2'),url('../fonts/Gunjoron-Font-Bold.ttf') format('truetype');font-weight:600 900;font-style:normal;font-display:swap;}
+@font-face{font-family:'Gunjoron';src:url('../fonts/Gunjoron-Font-Thin.woff2?v=75') format('woff2'),url('../fonts/Gunjoron-Font-Thin.ttf?v=75') format('truetype');font-weight:100 300;font-style:normal;font-display:swap;}
+@font-face{font-family:'Gunjoron';src:url('../fonts/Gunjoron-Font-Normal.woff2?v=75') format('woff2'),url('../fonts/Gunjoron-Font-Normal.ttf?v=75') format('truetype');font-weight:400 500;font-style:normal;font-display:swap;}
+@font-face{font-family:'Gunjoron';src:url('../fonts/Gunjoron-Font-Bold.woff2?v=75') format('woff2'),url('../fonts/Gunjoron-Font-Bold.ttf?v=75') format('truetype');font-weight:600 900;font-style:normal;font-display:swap;}
 
 *{margin:0;padding:0;box-sizing:border-box;}
 
@@ -235,8 +235,8 @@ html[data-theme="dark"] .free-badge{color:#123A3D;}
 
 .copyright-logo-mark{
     display:inline-flex;
-    height:0.95em;width:auto;
-    vertical-align:-0.12em;
+    height:1.7em;width:auto;
+    vertical-align:-0.5em;
     margin:0 1px;
   }
 

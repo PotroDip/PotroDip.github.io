@@ -162,7 +162,9 @@
     } else rsec.remove();
 
     /* শেয়ার ও বুকমার্ক */
-    var url = location.href;
+    /* শেয়ারের লিংক: ওয়ার্কার থাকলে সেটা (ফেসবুক/হোয়াটসঅ্যাপ লেখার টাইটেল-ছবি দেখাবে), না থাকলে এই পেজের লিংক */
+    var shareBase = String((window.PD_CONFIG && window.PD_CONFIG.shareBase) || '').replace(/\/+$/, '');
+    var url = shareBase ? shareBase + '/a/' + encodeURIComponent(a.id) : location.href;
     $('fbBtn').addEventListener('click', function () { window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url), '_blank', 'noopener'); });
     $('waBtn').addEventListener('click', function () { window.open('https://wa.me/?text=' + encodeURIComponent(a.title + ' ' + url), '_blank', 'noopener'); });
     var cp = $('copyLinkBtn');
