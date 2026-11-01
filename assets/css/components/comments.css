@@ -503,3 +503,11 @@ html[data-theme="dark"] .pd-edit-card{border-color:rgba(255,255,255,.1); box-sha
 .pd-edit-no:hover{color:var(--text);}
 .pd-edit-yes{padding:10px 22px; border-radius:12px; font-weight:700; color:#fff; background:linear-gradient(135deg,#2A747A,#1D5358 60%,#143F43); box-shadow:0 10px 20px -10px rgba(29,83,88,.8);}
 html[data-theme="dark"] .pd-edit-yes{color:#0B1517; background:linear-gradient(135deg,#5BB8BD,#3F9499 60%,#2E7377);}
+
+/* ---------- অনুমোদনের অপেক্ষায় থাকা মন্তব্য (শুধু লেখক দেখেন) ---------- */
+.comment-item.is-own:has(.pending-tag){border-style:dashed;}
+.pending-tag{display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; padding:2px 10px; border-radius:999px; color:var(--secondary); background:color-mix(in srgb, var(--secondary) 14%, transparent); border:1px solid color-mix(in srgb, var(--secondary) 30%, transparent);}
+.pending-tag::before{content:''; width:6px; height:6px; border-radius:50%; background:currentColor; animation:pdPend 1.6s ease-in-out infinite;}
+@keyframes pdPend{0%,100%{opacity:1} 50%{opacity:.3}}
+.pending-note{margin:2px 0 8px; font-size:12.5px; line-height:1.7; color:var(--text-muted);}
+@media (prefers-reduced-motion:reduce){.pending-tag::before{animation:none}}

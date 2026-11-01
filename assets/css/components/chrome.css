@@ -179,3 +179,13 @@ html[data-theme="dark"] #mobile-menu .mm-logo img{filter:brightness(0) invert(1)
   .site-footer .nl-kicker,.nl-kicker{justify-content:center;}
   .site-footer .newsletter-form{width:100%;max-width:760px;margin:0 auto;}
 }
+
+/* ---------- নিউজলেটার ফর্মের নিচের বার্তা (সফল / আগে থেকে আছে / সমস্যা) ---------- */
+.site-footer .newsletter-form{position:relative;}
+.site-footer .newsletter-form.is-busy button{opacity:.6;pointer-events:none;}
+.nl-status{grid-column:1/-1;justify-self:center;width:100%;max-height:0;overflow:hidden;margin:0;padding:0 4px;font-size:13.5px;line-height:1.65;text-align:center;opacity:0;transform:translateY(-4px);pointer-events:none;transition:opacity .25s ease,transform .25s ease,max-height .25s ease,margin .25s ease;}
+.nl-status.show{opacity:1;transform:none;max-height:90px;margin:12px 0 4px;}
+.nl-status::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;vertical-align:middle;background:currentColor;}
+.nl-status.ok{color:#7FD6A4;}
+.nl-status.info{color:#E9C98F;}
+.nl-status.warn{color:#F0A596;}

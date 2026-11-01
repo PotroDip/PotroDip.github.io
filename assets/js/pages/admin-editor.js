@@ -18,15 +18,21 @@
     { k: 'courier new', n: 'মনোস্পেস (কোড)', v: "'Courier New', Consolas, monospace" },
     { k: 'segoe script', n: 'হাতের লেখা', v: "'Segoe Script', 'Bradley Hand', cursive" }
   ];
+  /* নোটপ্যাডের মতো সাতটা ধরন। ট্যাগ একই থাকে (h2/h3/h4/p) — তাই সাইটের পুরোনো লেখা ও SEO ঠিক থাকে;
+     মূল শিরোনাম, উপশিরোনাম ও উপ-বিভাগ আলাদা হয় ব্লকের সাইজ (px) দিয়ে। */
   var BLOCKS = [
-    { t: 'p', n: 'সাধারণ অনুচ্ছেদ', s: 'font-size:15px' },
-    { t: 'h2', n: 'শিরোনাম ১', s: 'font-size:22px;font-weight:700' },
-    { t: 'h3', n: 'শিরোনাম ২', s: 'font-size:19px;font-weight:700' },
-    { t: 'h4', n: 'শিরোনাম ৩', s: 'font-size:16px;font-weight:700' },
-    { t: 'blockquote', n: 'উদ্ধৃতি', s: 'font-style:italic' },
-    { t: 'pre', n: 'কোড ব্লক', s: 'font-family:monospace;font-size:13px' }
+    { k: 'title', t: 'h2', fs: 38, n: 'মূল শিরোনাম', s: 'font-size:25px;font-weight:700' },
+    { k: 'subtitle', t: 'p', fs: 23, n: 'উপশিরোনাম', s: 'font-size:19px' },
+    { k: 'h2', t: 'h2', n: 'শিরোনাম', s: 'font-size:21px;font-weight:700' },
+    { k: 'h3', t: 'h3', n: 'উপ-শিরোনাম', s: 'font-size:18px;font-weight:700' },
+    { k: 'h4', t: 'h4', n: 'বিভাগ', s: 'font-size:16px;font-weight:700' },
+    { k: 'sub', t: 'h4', fs: 19, n: 'উপ-বিভাগ', s: 'font-size:14.5px;font-weight:700' },
+    { k: 'p', t: 'p', n: 'সাধারণ লেখা', s: 'font-size:14px' },
+    { sep: 1 },
+    { k: 'blockquote', t: 'blockquote', n: 'উদ্ধৃতি', s: 'font-style:italic' },
+    { k: 'pre', t: 'pre', n: 'কোড ব্লক', s: 'font-family:monospace;font-size:13px' }
   ];
-  var BLOCK_LBL = { p: 'সাধারণ অনুচ্ছেদ', h2: 'শিরোনাম ১', h3: 'শিরোনাম ২', h4: 'শিরোনাম ৩', blockquote: 'উদ্ধৃতি', pre: 'কোড ব্লক', ul: 'তালিকা', ol: 'তালিকা', li: 'তালিকা' };
+  var BLOCK_LBL = { title: 'মূল শিরোনাম', subtitle: 'উপশিরোনাম', h2: 'শিরোনাম', h3: 'উপ-শিরোনাম', h4: 'বিভাগ', sub: 'উপ-বিভাগ', p: 'সাধারণ লেখা', blockquote: 'উদ্ধৃতি', pre: 'কোড ব্লক', ul: 'তালিকা', ol: 'তালিকা', li: 'তালিকা', table: 'টেবিল' };
   var LH = [{ v: '', n: 'ডিফল্ট' }, { v: '1.3', n: '১.৩ — ঘন' }, { v: '1.6', n: '১.৬' }, { v: '1.85', n: '১.৮৫ — আরামদায়ক' }, { v: '2.2', n: '২.২ — খোলা' }, { v: '2.8', n: '২.৮ — অনেক খোলা' }];
   var PALETTE = (function () {
     var rows = [
@@ -62,6 +68,9 @@
     link: ic('<path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.2 1.1"/><path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.1-1.1"/>'),
     unlink: ic('<path d="m18.84 12.25 1.72-1.71a5 5 0 0 0-.12-7.07 5 5 0 0 0-6.95 0l-1.72 1.71"/><path d="m5.17 11.75-1.71 1.71a5 5 0 0 0 .12 7.07 5 5 0 0 0 6.95 0l1.71-1.71"/><path d="M8 2v3M2 8h3M16 19v3M19 16h3"/>'),
     clear: ic('<path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/><path d="M4 4l16 16"/>'),
+    table: ic('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M9 4v16M15 4v16"/>'),
+    expand: ic('<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>'),
+    shrink: ic('<path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/>'),
     pen: ic('<path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/>')
   };
 
@@ -77,7 +86,7 @@
   toolbar.setAttribute('aria-label', 'লেখা সম্পাদনার টুলবার');
   toolbar.innerHTML =
     group(
-      menu('block', 'অনুচ্ছেদ ও শিরোনামের ধরন', '<span class="rt-lbl" id="rt-block-lbl">সাধারণ অনুচ্ছেদ</span>', 'rt-w-block') +
+      menu('block', 'অনুচ্ছেদ ও শিরোনামের ধরন', '<span class="rt-lbl" id="rt-block-lbl">সাধারণ লেখা</span>', 'rt-w-block') +
       menu('font', 'ফন্ট বদলান (নির্বাচিত অংশে)', '<span class="rt-lbl" id="rt-font-lbl">গুঞ্জরণ</span>', 'rt-w-font')
     ) +
     group(
@@ -115,10 +124,12 @@
       btn('quote', 'উদ্ধৃতি', I.quote) +
       btn('code', 'কোড ব্লক', I.code) +
       btn('hr', 'আড়াআড়ি বিভাজক রেখা', I.hr) +
+      menu('table', 'টেবিল ঢোকান ও সম্পাদনা', I.table) +
       btn('link', 'লিংক যুক্ত করুন (Ctrl+K)', I.link) +
       btn('unlink', 'লিংক সরান', I.unlink)
     ) +
-    group(btn('clear', 'সব ফরম্যাট মুছে ফেলুন', I.clear));
+    group(btn('clear', 'সব ফরম্যাট মুছে ফেলুন', I.clear)) +
+    '<button type="button" class="rt-btn rt-fs" id="rt-fs" data-act="fullscreen" title="ফুল স্ক্রিনে লিখুন (বের হতে Esc)" aria-label="ফুল স্ক্রিন" aria-pressed="false">' + I.expand + '</button>';
 
   var sizeIn = doc.getElementById('rt-size-in');
 
@@ -147,7 +158,7 @@
     try { return doc.execCommand(c, false, v == null ? null : v); } catch (e) { return false; }
   }
   function fixNesting() {
-    [].slice.call(artBody.querySelectorAll('p > ul, p > ol, p > pre, p > blockquote, p > hr, p > h2, p > h3, p > h4')).forEach(function (c) {
+    [].slice.call(artBody.querySelectorAll('p > ul, p > ol, p > pre, p > blockquote, p > hr, p > h2, p > h3, p > h4, p > table')).forEach(function (c) {
       var p = c.parentNode; if (p.parentNode !== artBody) return;
       var only = [].every.call(p.childNodes, function (n) { return n === c || (n.nodeType === 3 && !n.nodeValue.trim()); });
       if (only) { var sel = window.getSelection(), keep = sel.rangeCount ? sel.getRangeAt(0).cloneRange() : null; artBody.replaceChild(c, p); if (keep) { try { sel.removeAllRanges(); sel.addRange(keep); } catch (e) {} } }
@@ -264,11 +275,33 @@
   }
 
   /* ---------- ব্লক (অনুচ্ছেদ/শিরোনাম/উদ্ধৃতি/কোড) ---------- */
-  function applyBlock(tag) {
+  function blockKey(el) {
+    if (!el) return 'p';
+    var t = el.tagName.toLowerCase(), px = Math.round(parseFloat(el.style && el.style.fontSize) || 0), i;
+    for (i = 0; i < BLOCKS.length; i++) {
+      var b = BLOCKS[i];
+      if (b.t === t && b.fs && px === b.fs) return b.k;
+    }
+    for (i = 0; i < BLOCKS.length; i++) if (BLOCKS[i].t === t && !BLOCKS[i].fs) return BLOCKS[i].k;
+    return t;
+  }
+  function topBlockEl() {
+    var e = selEl(); if (!e) return null;
+    while (e && e.parentNode !== artBody) e = e.parentNode;
+    return e && e !== artBody ? e : null;
+  }
+  function applyBlock(key) {
     focusEd();
-    var cur = topBlock();
-    if ((tag === 'blockquote' || tag === 'pre') && cur === tag) tag = 'p';
-    exec('formatBlock', '<' + tag + '>', false);
+    var def = BLOCKS.filter(function (b) { return b.k === key; })[0] || BLOCKS[6];
+    var cur = topBlockEl(), curKey = cur ? blockKey(cur) : '';
+    if ((def.t === 'blockquote' || def.t === 'pre') && curKey === def.k) def = BLOCKS[6];
+    exec('formatBlock', '<' + def.t + '>', false);
+    if (/^(p|h2|h3|h4)$/.test(def.t)) {
+      leafBlocks().forEach(function (b) {
+        if (def.fs) b.style.setProperty('font-size', def.fs + 'px'); else b.style.removeProperty('font-size');
+        if (!b.getAttribute('style')) b.removeAttribute('style');
+      });
+    }
     changed();
   }
   var BLOCK_SEL = 'p,h2,h3,h4,blockquote,pre,li,div';
@@ -309,6 +342,7 @@
       leafBlocks().forEach(function (b) { b.removeAttribute('style'); });
     }
     if (/^(h2|h3|h4|blockquote|pre)$/.test(topBlock())) exec('formatBlock', '<p>', false);
+    leafBlocks().forEach(function (b) { b.style.removeProperty('font-size'); if (!b.getAttribute('style')) b.removeAttribute('style'); });
     changed();
   }
 
@@ -369,6 +403,7 @@
   }
   function itemsHtml(list, cur) {
     return list.map(function (x) {
+      if (x.sep) return '<div class="rte-pop-sep" role="separator"></div>';
       return '<button type="button" class="rte-pop-item' + (x.on ? ' on' : '') + '" data-v="' + esc(x.v) + '"><span style="' + esc(x.s || '') + '">' + esc(x.n) + '</span></button>';
     }).join('');
   }
@@ -380,11 +415,128 @@
       '<div class="rt-grid">' + g + '</div>' +
       '<label class="rt-custom"><span>নিজের পছন্দের রং</span><input type="color" id="rt-custom" value="' + (isHl ? '#fde047' : '#2563eb') + '"></label>';
   }
+  /* ---------- টেবিল (নোটপ্যাডের মতো ঘর বেছে ঢোকানো + সম্পাদনা) ---------- */
+  var TB_R = 5, TB_C = 6, TB_MAX_R = 100, TB_MAX_C = 12;
+  function cellOf(range) {
+    var r = range || curRange() || lastRange; if (!r || !inEditor(r.startContainer)) return null;
+    var e = elOf(r.startContainer);
+    return e && e.closest ? e.closest('td,th') : null;
+  }
+  function tableEdits() {
+    return [
+      { a: 'row-above', n: 'উপরে সারি যোগ' }, { a: 'row-below', n: 'নিচে সারি যোগ' },
+      { a: 'col-left', n: 'বামে কলাম যোগ' }, { a: 'col-right', n: 'ডানে কলাম যোগ' },
+      { a: 'header', n: 'হেডার সারি (চালু/বন্ধ)' }, { a: 'del-row', n: 'সারি মুছুন' },
+      { a: 'del-col', n: 'কলাম মুছুন' }, { a: 'del-table', n: 'টেবিল মুছুন', danger: 1 }
+    ];
+  }
+  function tablePopHtml() {
+    var cells = '', r, c, inTbl = !!cellOf();
+    for (r = 1; r <= TB_R; r++) for (c = 1; c <= TB_C; c++) cells += '<button type="button" class="rt-tcell" data-tr="' + r + '" data-tc="' + c + '" aria-label="' + bn(r) + ' সারি ' + bn(c) + ' কলাম"></button>';
+    var edits = tableEdits().map(function (x) {
+      return '<button type="button" class="rte-pop-item rt-tedit' + (x.danger ? ' is-danger' : '') + '" data-ta="' + x.a + '"' + (inTbl ? '' : ' disabled') + '>' + esc(x.n) + '</button>';
+    }).join('');
+    return '<div class="rt-tbl-head">টেবিল ঢোকান</div>' +
+      '<div class="rt-tgrid" style="grid-template-columns:repeat(' + TB_C + ',26px)">' + cells + '</div>' +
+      '<div class="rt-tsize" id="rt-tsize">ঘরের ওপর মাউস নিয়ে মাপ বেছে ক্লিক করুন</div>' +
+      '<div class="rt-tcustom"><label>সারি<input type="number" id="rt-t-r" min="1" max="' + TB_MAX_R + '" value="3"></label>' +
+      '<label>কলাম<input type="number" id="rt-t-c" min="1" max="' + TB_MAX_C + '" value="3"></label>' +
+      '<button type="button" class="rt-primary" data-tgo="1">ঢোকান</button></div>' +
+      '<div class="rte-pop-sep" role="separator"></div>' +
+      '<div class="rt-tbl-head">টেবিল সম্পাদনা' + (inTbl ? '' : ' <small>— টেবিলের ঘরে কার্সার রাখুন</small>') + '</div><div class="rt-tedits">' + edits + '</div>';
+  }
+  function placeCaret(cell) {
+    if (!cell) return;
+    var nr = doc.createRange(); nr.selectNodeContents(cell); nr.collapse(true);
+    var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(nr); lastRange = nr.cloneRange();
+  }
+  function mkCell(tag) { var c = doc.createElement(tag || 'td'); c.appendChild(doc.createElement('br')); return c; }
+  function insertTable(rows, cols) {
+    rows = Math.max(1, Math.min(TB_MAX_R, parseInt(rows, 10) || 0)); cols = Math.max(1, Math.min(TB_MAX_C, parseInt(cols, 10) || 0));
+    if (!rows || !cols) { toast('সারি ও কলামের সংখ্যা লিখুন'); return; }
+    restoreSel(); focusEd();
+    var inCell = cellOf();
+    if (inCell) { /* টেবিলের ভেতরে টেবিল নয় — বর্তমান টেবিলের পরে বসবে */
+      var tb = inCell.closest('table'), nr = doc.createRange(); nr.setStartAfter(tb); nr.collapse(true);
+      var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(nr);
+    }
+    [].forEach.call(artBody.querySelectorAll('table'), function (t) { t.setAttribute('data-seen', '1'); });
+    var h = '<table><tbody>', r, c;
+    for (r = 0; r < rows; r++) { h += '<tr>'; for (c = 0; c < cols; c++) h += '<td><br></td>'; h += '</tr>'; }
+    h += '</tbody></table><p><br></p>';
+    exec('insertHTML', h, false);
+    changed();
+    var last = null;
+    [].forEach.call(artBody.querySelectorAll('table'), function (t) { if (!t.hasAttribute('data-seen')) last = t; else t.removeAttribute('data-seen'); });
+    if (last) placeCaret(last.querySelector('td,th'));
+    scheduleState();
+  }
+  function tableAction(a) {
+    restoreSel(); focusEd();
+    var cell = cellOf(); if (!cell) { toast('আগে টেবিলের কোনো ঘরে ক্লিক করুন'); return; }
+    var row = cell.parentNode, tbl = cell.closest('table'), idx = cell.cellIndex, rows = [].slice.call(tbl.rows), nc;
+    function newRowLike(ref) { var tr = doc.createElement('tr'); [].forEach.call(ref.cells, function (x) { tr.appendChild(mkCell(x.tagName.toLowerCase())); }); return tr; }
+    if (a === 'row-above' || a === 'row-below') {
+      if (rows.length >= TB_MAX_R) { toast('এর বেশি সারি দেওয়া যাবে না'); return; }
+      var tr = newRowLike(row);
+      if (a === 'row-above') { row.parentNode.insertBefore(tr, row); if (row.cells[0] && row.cells[0].tagName === 'TH' && row === rows[0]) [].forEach.call(row.cells, function (x, i) { tr.replaceChild(mkCell('td'), tr.cells[i]); }); } else row.parentNode.insertBefore(tr, row.nextSibling);
+      placeCaret(tr.cells[Math.min(idx, tr.cells.length - 1)]);
+    } else if (a === 'col-left' || a === 'col-right') {
+      if (row.cells.length >= TB_MAX_C) { toast('এর বেশি কলাম দেওয়া যাবে না'); return; }
+      rows.forEach(function (tr) {
+        var ref = tr.cells[idx], cn = mkCell(ref ? ref.tagName.toLowerCase() : 'td');
+        if (a === 'col-left') tr.insertBefore(cn, ref || null); else tr.insertBefore(cn, ref ? ref.nextSibling : null);
+        if (tr === row) nc = cn;
+      });
+      placeCaret(nc);
+    } else if (a === 'header') {
+      var first = tbl.rows[0], toTh = first.cells[0].tagName === 'TD';
+      [].slice.call(first.cells).forEach(function (x) {
+        var n = doc.createElement(toTh ? 'th' : 'td'); while (x.firstChild) n.appendChild(x.firstChild);
+        if (x.getAttribute('style')) n.setAttribute('style', x.getAttribute('style')); first.replaceChild(n, x);
+      });
+      placeCaret(first.cells[Math.min(idx, first.cells.length - 1)]);
+    } else if (a === 'del-row') {
+      if (rows.length === 1) { delTable(tbl); return; }
+      var nxt = row.nextElementSibling || row.previousElementSibling; row.parentNode.removeChild(row); placeCaret(nxt && nxt.cells[Math.min(idx, nxt.cells.length - 1)]);
+    } else if (a === 'del-col') {
+      if (row.cells.length === 1) { delTable(tbl); return; }
+      var keep = row.cells[idx + 1] || row.cells[idx - 1];
+      rows.forEach(function (tr) { if (tr.cells[idx]) tr.removeChild(tr.cells[idx]); });
+      placeCaret(keep);
+    } else if (a === 'del-table') { delTable(tbl); return; }
+    changed();
+  }
+  function delTable(tbl) {
+    var nx = tbl.nextElementSibling, pv = tbl.previousElementSibling;
+    tbl.parentNode.removeChild(tbl);
+    if (!artBody.children.length) { var p = doc.createElement('p'); p.appendChild(doc.createElement('br')); artBody.appendChild(p); }
+    var tgt = nx || pv || artBody.firstElementChild;
+    if (tgt) { var nr = doc.createRange(); nr.selectNodeContents(tgt); nr.collapse(true); var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(nr); lastRange = nr.cloneRange(); }
+    changed();
+  }
+  /* Tab / Shift+Tab: পরের/আগের ঘরে যাওয়া; শেষ ঘরে Tab দিলে নতুন সারি */
+  artBody.addEventListener('keydown', function (e) {
+    if (e.key !== 'Tab' || e.ctrlKey || e.metaKey || e.altKey) return;
+    var cell = cellOf(curRange()); if (!cell) return;
+    e.preventDefault();
+    var cells = [].slice.call(cell.closest('table').querySelectorAll('td,th')), i = cells.indexOf(cell);
+    if (e.shiftKey) { if (i > 0) placeCaret(cells[i - 1]); return; }
+    if (i === cells.length - 1) { tableAction('row-below'); return; }
+    placeCaret(cells[i + 1]);
+  });
+  doc.addEventListener('mouseover', function (e) {
+    var c = e.target.closest && e.target.closest('.rt-tcell'); if (!c || !pop || !pop.contains(c)) return;
+    var r = +c.getAttribute('data-tr'), k = +c.getAttribute('data-tc');
+    [].forEach.call(pop.querySelectorAll('.rt-tcell'), function (x) { x.classList.toggle('on', +x.getAttribute('data-tr') <= r && +x.getAttribute('data-tc') <= k); });
+    var z = doc.getElementById('rt-tsize'); if (z) z.textContent = bn(r) + ' সারি × ' + bn(k) + ' কলাম';
+  });
+
   function openMenu(name, anchor) {
     var cur;
     if (name === 'block') {
-      cur = topBlock() || 'p';
-      showPop(anchor, itemsHtml(BLOCKS.map(function (b) { return { v: b.t, n: b.n, s: b.s, on: b.t === cur }; })), 'rte-pop-list', 'block');
+      cur = blockKey(topBlockEl());
+      showPop(anchor, itemsHtml(BLOCKS.map(function (b) { return b.sep ? b : { v: b.k, n: b.n, s: b.s, on: b.k === cur }; })), 'rte-pop-list rte-pop-blocks', 'block');
     } else if (name === 'font') {
       var fl = doc.getElementById('rt-font-lbl').textContent;
       showPop(anchor, itemsHtml(FONTS.map(function (f) { return { v: f.v, n: f.n, s: f.v ? 'font-family:' + f.v : '', on: f.n === fl }; })), 'rte-pop-list', 'font');
@@ -397,6 +549,8 @@
       showPop(anchor, colorPopHtml(false), 'rte-pop-color', 'color');
     } else if (name === 'hl') {
       showPop(anchor, colorPopHtml(true), 'rte-pop-color', 'hl');
+    } else if (name === 'table') {
+      showPop(anchor, tablePopHtml(), 'rte-pop-table', 'table');
     }
   }
   doc.addEventListener('mousedown', function (e) {
@@ -406,10 +560,17 @@
     closePop();
   }, true);
   doc.addEventListener('touchstart', function (e) { if (pop && !pop.contains(e.target) && !(popFor && popFor.contains(e.target))) closePop(); }, { passive: true, capture: true });
-  doc.addEventListener('keydown', function (e) { if (e.key === 'Escape' && pop) { e.stopPropagation(); closePop(); } }, true);
+  doc.addEventListener('keydown', function (e) { if (e.key === 'Escape' && pop) { e.stopPropagation(); e.stopImmediatePropagation(); closePop(); } }, true);
   window.addEventListener('resize', closePop);
   doc.addEventListener('click', function (e) {
     if (!pop || !pop.contains(e.target)) return;
+    var tc = e.target.closest('[data-tr],[data-ta],[data-tgo]');
+    if (tc) {
+      if (tc.hasAttribute('data-tr')) { var rr = tc.getAttribute('data-tr'), cc = tc.getAttribute('data-tc'); closePop(); insertTable(rr, cc); }
+      else if (tc.hasAttribute('data-tgo')) { var ri = doc.getElementById('rt-t-r'), ci = doc.getElementById('rt-t-c'); var rv = ri && ri.value, cv = ci && ci.value; closePop(); insertTable(rv, cv); }
+      else if (!tc.disabled) { var ac = tc.getAttribute('data-ta'); closePop(); tableAction(ac); }
+      return;
+    }
     var t = e.target.closest('[data-v],[data-go],[data-rm]'); if (!t) return;
     if (t.hasAttribute('data-go')) { applyLink(); return; }
     if (t.hasAttribute('data-rm')) { removeLink(); return; }
@@ -426,6 +587,7 @@
   });
   doc.addEventListener('keydown', function (e) {
     if (pop && e.key === 'Enter' && e.target && /^rt-l-/.test(e.target.id || '')) { e.preventDefault(); applyLink(); }
+    if (pop && e.key === 'Enter' && e.target && /^rt-t-[rc]$/.test(e.target.id || '')) { e.preventDefault(); var go = pop.querySelector('[data-tgo]'); if (go) go.click(); }
   });
 
   /* ---------- টুলবারের ক্লিক ---------- */
@@ -451,6 +613,7 @@
     else if (act === 'link') { focusEd(); openLink(b); }
     else if (act === 'unlink') { removeLink(); }
     else if (act === 'clear') clearAll();
+    else if (act === 'fullscreen') setFull(!isFull);
   });
   /* সাইজ বক্সে হাতে লিখে Enter */
   sizeIn.addEventListener('focus', function () { sizeIn.select(); });
@@ -479,8 +642,8 @@
   function qs(c) { try { return doc.queryCommandState(c); } catch (e) { return false; } }
   function updateState() {
     var e = selEl(); if (!e) return;
-    var blk = topBlock() || 'p';
-    var lbl = doc.getElementById('rt-block-lbl'); if (lbl) lbl.textContent = BLOCK_LBL[blk] || 'সাধারণ অনুচ্ছেদ';
+    var blk = topBlock() || 'p', bk = blockKey(topBlockEl());
+    var lbl = doc.getElementById('rt-block-lbl'); if (lbl) lbl.textContent = BLOCK_LBL[bk] || BLOCK_LBL[blk] || 'সাধারণ লেখা';
     setOn('bold', qs('bold')); setOn('italic', qs('italic')); setOn('underline', qs('underline')); setOn('strike', qs('strikeThrough'));
     setOn('sub', qs('subscript')); setOn('sup', qs('superscript'));
     setOn('ul', qs('insertUnorderedList')); setOn('ol', qs('insertOrderedList'));
@@ -501,7 +664,7 @@
   var composing = false;
   artBody.addEventListener('compositionstart', function () { composing = true; });
   artBody.addEventListener('compositionend', function () { composing = false; });
-  var BLOCKTAG = /^(P|H2|H3|H4|BLOCKQUOTE|PRE|UL|OL|HR|DIV)$/;
+  var BLOCKTAG = /^(P|H2|H3|H4|BLOCKQUOTE|PRE|UL|OL|HR|DIV|TABLE)$/;
   function hasBareInline() {
     for (var n = artBody.firstChild; n; n = n.nextSibling) {
       if (n.nodeType === 3 && n.nodeValue.trim()) return true;
@@ -555,5 +718,30 @@
     toolbar.parentNode.insertBefore(s, toolbar);
     new IntersectionObserver(function (en) { toolbar.classList.toggle('is-stuck', !en[0].isIntersecting); }, { root: scroller, threshold: [0, 1] }).observe(s);
   })();
+  /* ---------- ফুল স্ক্রিন: শুধু লেখার বক্স (টুলবার + লেখার ঘর) ---------- */
+  var wrap = doc.getElementById('rte-wrap'), isFull = false, holder = null, modalBox = artBody.closest('.modal-box');
+  function setFull(on) {
+    if (!wrap || on === isFull) return;
+    closePop(); isFull = on;
+    if (on) {
+      holder = doc.createComment('rte-wrap'); wrap.parentNode.insertBefore(holder, wrap);
+      doc.body.appendChild(wrap); /* মডালের transform থেকে বের করে আনা, নইলে fixed ঠিক কাজ করে না */
+      wrap.classList.add('is-full'); doc.documentElement.classList.add('rte-fs-lock');
+    } else {
+      wrap.classList.remove('is-full'); doc.documentElement.classList.remove('rte-fs-lock');
+      if (holder && holder.parentNode) { holder.parentNode.insertBefore(wrap, holder); holder.parentNode.removeChild(holder); }
+      holder = null;
+    }
+    var fb = doc.getElementById('rt-fs');
+    if (fb) { fb.innerHTML = on ? I.shrink : I.expand; fb.setAttribute('aria-pressed', on ? 'true' : 'false'); fb.title = on ? 'ফুল স্ক্রিন থেকে বের হন (Esc)' : 'ফুল স্ক্রিনে লিখুন (বের হতে Esc)'; fb.setAttribute('aria-label', on ? 'ফুল স্ক্রিন থেকে বের হন' : 'ফুল স্ক্রিন'); }
+    toolbar.classList.remove('is-stuck');
+    requestAnimationFrame(function () { artBody.focus({ preventScroll: true }); restoreSel(); scheduleState(); });
+  }
+  if (modalBox) new MutationObserver(function () { if (isFull && !modalBox.classList.contains('open')) setFull(false); }).observe(modalBox, { attributes: true, attributeFilter: ['class'] });
+  doc.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && isFull && !pop) { e.stopPropagation(); e.preventDefault(); setFull(false); }
+  }, true);
+  window.PDEditorFullscreen = setFull;
+
   paintBars();
 })();

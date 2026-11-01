@@ -89,8 +89,11 @@
       input.maxLength = MAX_LEN;
 
       function load() {
-        return db.from('comments').select('id,user_id,user_name,user_avatar,body,rating,parent_comment_id,created_at')
-          .eq('article_id', articleId).order('created_at', { ascending: false }).limit(300).then(function (r) {
+        var q = function (cols) { return db.from('comments').select(cols).eq('article_id', articleId).order('created_at', { ascending: false }).limit(300); };
+        /* মডারেশনের SQL চালানোর আগে 'status' কলাম না থাকলেও সাইট যেন আগের মতো চলে */
+        return q('id,user_id,user_name,user_avatar,body,rating,parent_comment_id,status,created_at').then(function (r0) {
+          return r0.error ? q('id,user_id,user_name,user_avatar,body,rating,parent_comment_id,created_at') : r0;
+        }).then(function (r) {
             rows = r.data || [];
             var ids = rows.map(function (x) { return x.id; });
             if (!ids.length) { likes = {}; return; }
@@ -102,7 +105,7 @@
       }
 
       function summary() {
-        var rated = rows.filter(function (r) { return !r.parent_comment_id && r.rating; });
+        var rated = rows.filter(function (r) { return !r.parent_comment_id && r.rating && r.status !== 'pending'; });
         var n = rated.length, avg = n ? rated.reduce(function (s, r) { return s + r.rating; }, 0) / n : 0;
         var ring = document.querySelector('.num-ring'), num = ring.querySelector('.num');
         ring.style.setProperty('--pct', Math.round(avg / 5 * 100));
@@ -128,15 +131,18 @@
         var body = el('div', 'comment-body'), top = el('div', 'comment-top');
         top.appendChild(el('strong', '', c.user_name || 'পাঠক'));
         if (own) top.appendChild(el('span', 'own-tag', 'আপনি'));
+        var isPending = c.status === 'pending';
+        if (isPending) top.appendChild(el('span', 'pending-tag', 'অনুমোদনের অপেক্ষায়'));
         if (c.rating) { var st = el('span', 'comment-stars'); st.innerHTML = UI.starsHTML(c.rating); top.appendChild(st); }
         top.appendChild(el('span', 'comment-date', UI.date(c.created_at)));
         body.appendChild(top);
         body.appendChild(el('p', 'comment-text', c.body));
+        if (isPending && own) body.appendChild(el('p', 'pending-note', 'আপনার মন্তব্য জমা হয়েছে। এখন শুধু আপনি এটা দেখতে পাচ্ছেন — অ্যাডমিন অনুমোদন করলে সবাই দেখতে পাবেন।'));
         var act = el('div', 'comment-actions'), lk = likes[c.id] || [], liked = PD.user && lk.indexOf(PD.user.id) >= 0;
         var hb = el('button', 'helpful' + (liked ? ' liked' : ''));
         hb.innerHTML = ICON.like + ' সহায়ক (<span class="helpful-count">' + UI.bn(lk.length) + '</span>)';
         hb.addEventListener('click', function () { toggleLike(c); });
-        act.appendChild(hb);
+        if (!isPending) act.appendChild(hb);
         var replies = rows.filter(function (r) { return r.parent_comment_id === c.id; }).reverse();
         var rform = el('div', 'reply-form');
         if (!own) {
@@ -157,8 +163,10 @@
             var ri = el('div', 'reply-item'), ri_img = el('img'), rb2 = el('div', 'comment-body'), rt = el('div', 'comment-top');
             ri_img.src = UI.avatar(r.user_avatar); ri_img.alt = '';
             rt.appendChild(el('strong', '', r.user_name || 'পাঠক'));
+            if (r.status === 'pending') rt.appendChild(el('span', 'pending-tag', 'অনুমোদনের অপেক্ষায়'));
             rt.appendChild(el('span', 'comment-date', UI.date(r.created_at)));
             rb2.appendChild(rt); rb2.appendChild(el('p', 'comment-text', r.body));
+            if (r.status === 'pending' && PD.user && r.user_id === PD.user.id) rb2.appendChild(el('p', 'pending-note', 'শুধু আপনি দেখতে পাচ্ছেন — অনুমোদনের পর সবাই দেখবেন।'));
             if (PD.user && r.user_id === PD.user.id) {
               var rd = el('button', 'delete-btn'); rd.innerHTML = ICON.del; rd.title = 'মুছে ফেলুন';
               rd.addEventListener('click', function () { askDelete(r); });
@@ -185,7 +193,8 @@
         else if (sort === 'top') top.sort(function (a, b) { return (b.rating || 0) - (a.rating || 0) || new Date(b.created_at) - new Date(a.created_at); });
         else top.sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); });
         list.innerHTML = '';
-        $('commentCountLabel').textContent = top.length ? UI.bn(top.length) + 'টি মন্তব্য' : 'কোনো মন্তব্য নেই';
+        var pubN = top.filter(function (x) { return x.status !== 'pending'; }).length;
+        $('commentCountLabel').textContent = pubN ? UI.bn(pubN) + 'টি মন্তব্য' : 'কোনো মন্তব্য নেই';
         $('emptyState').classList.toggle('show', !top.length);
         $('sortChips').parentElement.style.display = top.length ? '' : 'none';
         var shown = showAll ? top : top.slice(0, PAGE_SIZE);
@@ -214,7 +223,7 @@
           btn.disabled = false;
           if (fail(r)) return;
           input.value = ''; $('cfCharHint').textContent = '০ / ' + UI.bn(MAX_LEN); cfSel = 0; paint(cfBox, 0, 'selected');
-          UI.toast(mine ? 'আপনার মন্তব্য হালনাগাদ হয়েছে' : 'মন্তব্য যোগ হয়েছে');
+          UI.toast(PD.isAdmin() ? (mine ? 'আপনার মন্তব্য হালনাগাদ হয়েছে' : 'মন্তব্য যোগ হয়েছে') : 'মন্তব্য জমা হয়েছে — অ্যাডমিন অনুমোদন করলে সবাই দেখতে পাবেন');
           sort = 'new'; [].forEach.call(document.querySelectorAll('#sortChips button'), function (c) { c.classList.toggle('active', c.dataset.sort === 'new'); });
           refresh();
         });
@@ -226,7 +235,7 @@
         btn.disabled = true;
         db.from('comments').insert({ article_id: articleId, user_id: PD.user.id, body: text, parent_comment_id: c.id }).then(function (r) {
           btn.disabled = false;
-          if (!fail(r)) { UI.toast('জবাব যোগ হয়েছে'); refresh(); }
+          if (!fail(r)) { UI.toast(PD.isAdmin() ? 'জবাব যোগ হয়েছে' : 'জবাব জমা হয়েছে — অনুমোদনের পর সবাই দেখতে পাবেন'); refresh(); }
         });
       }
       function toggleLike(c) {
@@ -256,7 +265,7 @@
           if (!editFor) return;
           if (!t) { UI.toast('মন্তব্য খালি রাখা যাবে না', 1); return; }
           var id = editFor.id; close();
-          db.from('comments').update({ body: t }).eq('id', id).then(function (r) { if (!fail(r)) { UI.toast('মন্তব্য বদলানো হয়েছে'); refresh(); } });
+          db.from('comments').update({ body: t }).eq('id', id).then(function (r) { if (!fail(r)) { UI.toast(PD.isAdmin() ? 'মন্তব্য বদলানো হয়েছে' : 'মন্তব্য বদলানো হয়েছে — আবার অনুমোদনের অপেক্ষায়'); refresh(); } });
         });
       }
       function edit(c) {

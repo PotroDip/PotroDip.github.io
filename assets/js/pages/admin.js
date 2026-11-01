@@ -16,6 +16,7 @@
   var ICON = {
     edit: SVGA + '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>',
     del: SVGA + '<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+    check: SVGA + '<polyline points="20 6 9 17 4 12"/></svg>',
     plus: SVGA + '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>',
     up: SVGA + '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>',
     pdf: SVGA + '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
@@ -48,17 +49,48 @@
     return UI.bn(Math.round(m / 1440)) + ' দিন আগে';
   }
 
+  /* কলাম/টেবিল ডাটাবেসে নেই কিনা (SQL মাইগ্রেশন চালানো হয়নি) */
+  function isMissing(e) {
+    if (!e) return false;
+    return /^(42703|42P01|PGRST204|PGRST205)$/.test(String(e.code || '')) || /column .* does not exist|relation .* does not exist|schema cache|could not find/i.test(String(e.message || ''));
+  }
+  /* লেখার তালিকা: home_order / home_hidden / home_featured কলাম না থাকলেও যেন লেখা আসে */
+  function loadArticles(T) {
+    /* 'body' (পুরো লেখা) তালিকায় আনা হয় না — অনেক লেখা থাকলে ডেটাবেস টাইমআউট করে তালিকা খালি দেখায়। এডিট খুললে তখন আলাদা আনা হয় */
+    var BASE = 'id,slug,title,category,author_id,issue_id,cover_url,status,view_count,published_at,created_at';
+    return T('articles', BASE + ',home_order,home_hidden,home_featured').order('created_at', { ascending: false }).limit(1000).then(function (r) {
+      if (r.error && isMissing(r.error)) {
+        S.homeColsMissing = true;
+        return T('articles', BASE).order('created_at', { ascending: false }).limit(1000);
+      }
+      S.homeColsMissing = false;
+      return r;
+    });
+  }
+  /* মন্তব্য: 'status' কলাম না থাকলে (মডারেশন SQL চালানো হয়নি) আগের মতো আনা, সবগুলো approved ধরা */
+  function loadComments(T) {
+    return T('comments', 'id,article_id,user_id,user_name,user_avatar,body,rating,parent_comment_id,status,created_at').order('created_at', { ascending: false }).limit(500).then(function (r) {
+      if (r.error && isMissing(r.error)) {
+        S.cmStatusMissing = true;
+        return T('comments', 'id,article_id,user_name,user_avatar,body,rating,parent_comment_id,created_at').order('created_at', { ascending: false }).limit(500);
+      }
+      S.cmStatusMissing = false;
+      return r;
+    });
+  }
+  var LOAD_NAMES = ['লেখক', 'লেখা', 'সংখ্যা', 'প্রিন্ট সংখ্যা', 'অর্ডার', 'অর্ডারের আইটেম', 'বিজ্ঞাপন', 'মন্তব্য', 'নিউজলেটার', 'সেটিংস', 'ইউজার', 'ফলো'];
+
   function loadAll() {
     var T = function (t, c, o) { return PD.db.from(t).select(c || '*', o); };
     return Promise.all([
       T('authors').order('created_at', { ascending: false }).limit(500),
-      T('articles', 'id,slug,title,body,category,author_id,issue_id,cover_url,status,view_count,published_at,created_at,home_order,home_hidden,home_featured').order('created_at', { ascending: false }).limit(1000),
+      loadArticles(T),
       T('issues').order('created_at', { ascending: false }).limit(300),
       T('print_issues').order('sort_order', { ascending: true }).limit(300),
       T('orders', 'id,order_number,customer_name,phone,area,subtotal,delivery_charge,transaction_id,payment_status,created_at').order('created_at', { ascending: false }).limit(500),
       T('order_items', 'order_id,title_snapshot,quantity').limit(3000),
       T('ads'),
-      T('comments', 'id,article_id,user_name,user_avatar,body,rating,parent_comment_id,created_at').order('created_at', { ascending: false }).limit(500),
+      loadComments(T),
       T('newsletter_subscribers', 'id,email,user_id,source,created_at').order('created_at', { ascending: false }).limit(3000),
       T('site_settings', 'key,value'),
       T('profiles', 'id', { count: 'exact', head: true }),
@@ -67,9 +99,15 @@
       var k = ['authors', 'articles', 'issues', 'prints', 'orders', 'items', 'ads', 'comments', 'subs'];
       k.forEach(function (n, i) { S[n] = r[i].data || []; });
       S.set = {}; (r[9].data || []).forEach(function (x) { S.set[x.key] = x.value || {}; });
+      S.artErr = r[1].error ? { msg: String(r[1].error.message || ''), code: String(r[1].error.code || '') } : null;
       S.users = r[10].count || 0; S.follows = r[11].count || 0;
-      var bad = r.filter(function (x) { return x.error; })[0];
-      if (bad) A.showToast('কিছু তথ্য আনা যায়নি — ' + PD.msg(bad.error));
+      var failed = [], missing = false;
+      r.forEach(function (x, i) { if (x.error) { failed.push(LOAD_NAMES[i]); if (isMissing(x.error)) missing = true; if (window.console) console.warn('[admin] ' + LOAD_NAMES[i] + ' আনা যায়নি:', x.error); } });
+      if (failed.length) {
+        A.showToast('আনা যায়নি: ' + failed.join(', ') + (missing ? ' — ডাটাবেসে নতুন SQL আপডেট চালানো হয়নি (supabase/migrations ফোল্ডারের ফাইলগুলো Supabase SQL Editor-এ চালান)' : ' — ' + PD.msg(r[LOAD_NAMES.indexOf(failed[0])].error)));
+      } else if (S.homeColsMissing) {
+        A.showToast('লেখার তালিকা এসেছে, তবে হোমের ক্রম/প্রধান লেখার কলাম ডাটাবেসে নেই — supabase/migrations-এর home_rail_order ও home_featured ফাইল দুটো SQL Editor-এ চালান');
+      }
     });
   }
 
@@ -84,7 +122,7 @@
     var act = [];
     S.articles.filter(function (a) { return a.status === 'published'; }).slice(0, 2).forEach(function (a) { act.push({ t: a.published_at || a.created_at, icon: ICON.art, title: '"' + a.title + '" প্রকাশিত হয়েছে', sub: authorName(a.author_id) }); });
     S.orders.slice(0, 2).forEach(function (o) { act.push({ t: o.created_at, icon: ICON.cart, title: 'নতুন অর্ডার #' + o.order_number + ' এসেছে', sub: o.customer_name }); });
-    S.comments.slice(0, 2).forEach(function (c) { act.push({ t: c.created_at, icon: ICON.chat, title: 'নতুন মন্তব্য', sub: (c.user_name || 'পাঠক') + ': ' + String(c.body || '').slice(0, 40) }); });
+    S.comments.slice(0, 2).forEach(function (c) { act.push({ t: c.created_at, icon: ICON.chat, title: c.body ? 'নতুন মন্তব্য' : 'নতুন রেটিং', sub: (c.user_name || 'পাঠক') + (c.body ? ': ' + String(c.body).slice(0, 40) : ' স্টার রেটিং দিয়েছেন') }); });
     S.subs.slice(0, 1).forEach(function (s) { act.push({ t: s.created_at, icon: ICON.user, title: 'নতুন নিউজলেটার সাবস্ক্রাইবার', sub: s.email }); });
     act.sort(function (a, b) { return new Date(b.t) - new Date(a.t); });
     $('recentActivityList').innerHTML = act.length ? act.slice(0, 6).map(function (a) {
@@ -105,6 +143,7 @@
       return true;
     });
     var tb = $('articlesTbody');
+    if (S.artErr) { tb.innerHTML = H`<tr><td colspan="7"><div class="mod-warn">লেখার তালিকা ডেটাবেস থেকে আনা যায়নি। কারণ: <b>${S.artErr.code}</b> ${S.artErr.msg}<br>এটা আমাকে পাঠালে ঠিক করে দেব।</div></td></tr>`; return; }
     if (!list.length) { tb.innerHTML = '<tr><td colspan="7"><div class="empty-row-note">কোনো লেখা পাওয়া যায়নি।</div></td></tr>'; return; }
     tb.innerHTML = list.map(function (a) {
       var pub = a.status === 'published';
@@ -264,21 +303,81 @@
   });
 
   /* ---------- মন্তব্য মডারেশন ---------- */
+  var cmFilter = 'pending';
+  function cmStatus(c) { return c.status === 'pending' ? 'pending' : 'approved'; }
   function renderComments() {
-    var list = S.comments.filter(function (c) { return c.body; });
-    $('modList').innerHTML = list.length ? list.map(function (c) {
-      var art = byId(S.articles, c.article_id);
-      return H`<div class="mod-item"><img src="${UI.avatar(c.user_avatar)}" alt=""><div class="mod-body"><div class="mod-top"><strong>${c.user_name || 'পাঠক'}</strong><span class="mod-context">"${art ? art.title : ''}"</span><span class="mod-date">${UI.date(c.created_at)}</span></div><p class="mod-text">${c.body}</p><div class="mod-actions"><button class="btn btn-danger-ghost" data-delete-comment="${c.id}">${raw(ICON.del)} মুছে ফেলুন</button></div></div></div>`;
-    }).join('') : '<div class="empty-row-note">কোনো মন্তব্য নেই।</div>';
+    var all = S.comments.filter(function (c) { return c.body; });
+    var nPend = all.filter(function (c) { return cmStatus(c) === 'pending'; }).length, nOk = all.length - nPend;
+    var chips = $('commentFilters');
+    if (chips) {
+      chips.innerHTML = H`<button data-filter="pending" class="${cmFilter === 'pending' ? 'active' : ''}">অনুমোদনের অপেক্ষায় <span class="chip-count${nPend ? ' hot' : ''}">${UI.bn(nPend)}</span></button><button data-filter="approved" class="${cmFilter === 'approved' ? 'active' : ''}">অনুমোদিত <span class="chip-count">${UI.bn(nOk)}</span></button><button data-filter="all" class="${cmFilter === 'all' ? 'active' : ''}">সব <span class="chip-count">${UI.bn(all.length)}</span></button>`;
+    }
+    var list = all.filter(function (c) { return cmFilter === 'all' || cmStatus(c) === cmFilter; });
+    var warn = S.cmStatusMissing ? '<div class="mod-warn">মডারেশনের SQL এখনো চালানো হয়নি — <b>supabase/migrations/20261101_comment_moderation.sql</b> ফাইলটি Supabase → SQL Editor-এ একবার চালান। তার আগে সব মন্তব্য সরাসরি প্রকাশিত থাকবে।</div>' : '';
+    var empty = cmFilter === 'pending' ? 'অনুমোদনের অপেক্ষায় কোনো মন্তব্য নেই। 🎉' : 'কোনো মন্তব্য নেই।';
+    $('modList').innerHTML = warn + (list.length ? list.map(function (c) {
+      var art = byId(S.articles, c.article_id), pend = cmStatus(c) === 'pending', isReply = !!c.parent_comment_id;
+      var stars = c.rating ? H`<span class="mod-stars">${raw(UI.starsHTML(c.rating))}</span>` : '';
+      var tag = pend ? '<span class="mod-tag pend">অনুমোদনের অপেক্ষায়</span>' : '<span class="mod-tag ok">প্রকাশিত</span>';
+      var kind = isReply ? '<span class="mod-tag reply">জবাব</span>' : '';
+      var approveBtn = pend ? H`<button class="btn btn-primary" data-approve-comment="${c.id}">${raw(ICON.check)} অনুমোদন করুন</button>` : '';
+      return H`<div class="mod-item${pend ? ' is-pending' : ''}"><img src="${UI.avatar(c.user_avatar)}" alt=""><div class="mod-body"><div class="mod-top"><strong>${c.user_name || 'পাঠক'}</strong>${raw(tag)}${raw(kind)}${raw(stars)}<span class="mod-context">"${art ? art.title : ''}"</span><span class="mod-date">${UI.date(c.created_at)}</span></div><p class="mod-text">${c.body}</p><div class="mod-actions">${raw(approveBtn)}<button class="btn btn-danger-ghost" data-delete-comment="${c.id}">${raw(ICON.del)} মুছে ফেলুন</button></div></div></div>`;
+    }).join('') : '<div class="empty-row-note">' + empty + '</div>');
   }
+  function modFail(r) {
+    if (r && r.error) {
+      var e = r.error, m = String(e.message || '');
+      if (/42883|PGRST202|could not find the function|does not exist/i.test(String(e.code || '') + ' ' + m)) A.showToast('মডারেশনের SQL এখনো চালানো হয়নি — 20261101_comment_moderation.sql ফাইলটি Supabase SQL Editor-এ চালান');
+      else if (/42501|not allowed/i.test(String(e.code || '') + ' ' + m)) A.showToast('এই কাজ শুধু এডমিন করতে পারেন');
+      else A.showToast(PD.msg(e));
+      return true;
+    }
+    return false;
+  }
+  $('commentFilters').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-filter]'); if (!b) return;
+    cmFilter = b.dataset.filter; renderComments();
+  });
   $('modList').addEventListener('click', function (e) {
+    var ap = e.target.closest('[data-approve-comment]');
+    if (ap) {
+      ap.disabled = true;
+      PD.db.rpc('pd_moderate_comment', { p_id: String(ap.dataset.approveComment), p_action: 'approve', p_note: null }).then(function (r) {
+        ap.disabled = false;
+        if (modFail(r)) return;
+        A.showToast('মন্তব্য অনুমোদিত হয়েছে — এখন সবাই দেখতে পাবে'); refresh();
+      });
+      return;
+    }
     var b = e.target.closest('[data-delete-comment]'); if (!b) return;
-    var id = b.dataset.deleteComment;
-    A.showConfirm('মন্তব্য মুছে ফেলবেন?', 'এই মন্তব্যটা (এবং এর জবাবগুলো) মুছে ফেললে আর ফিরিয়ে আনা যাবে না।', function () {
-      PD.db.from('comments').delete().eq('parent_comment_id', id).then(function () { return PD.db.from('comments').delete().eq('id', id); }).then(function (r) { if (ok(r)) { A.showToast('মন্তব্য মুছে ফেলা হয়েছে'); refresh(); } });
+    var c = byId(S.comments, b.dataset.deleteComment); if (!c) return;
+    openReject(c);
+  });
+
+  /* কারণ-লেখার পপআপ: মুছতে হলে কারণ দিতেই হবে, সেটা ইউজারের নোটিফিকেশনে যাবে */
+  var rj = { ov: $('reject-overlay'), note: $('reject-note'), cnt: $('reject-count'), who: $('reject-who'), quote: $('reject-quote'), yes: $('reject-yes'), no: $('reject-no'), err: $('reject-err') }, rjFor = null;
+  function openReject(c) {
+    rjFor = c; rj.note.value = ''; rj.err.textContent = ''; rj.cnt.textContent = UI.bn(0) + '/' + UI.bn(300);
+    rj.who.textContent = (c.user_name || 'পাঠক') + '-এর মন্তব্য';
+    rj.quote.textContent = String(c.body || '').slice(0, 160) + (String(c.body || '').length > 160 ? '…' : '');
+    rj.ov.classList.add('show'); setTimeout(function () { rj.note.focus(); }, 120);
+  }
+  function closeReject() { rjFor = null; rj.ov.classList.remove('show'); }
+  rj.note.addEventListener('input', function () { rj.cnt.textContent = UI.bn(rj.note.value.length) + '/' + UI.bn(300); if (rj.note.value.trim().length >= 3) rj.err.textContent = ''; });
+  rj.no.addEventListener('click', closeReject);
+  rj.ov.addEventListener('mousedown', function (e) { if (e.target === rj.ov) closeReject(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && rj.ov.classList.contains('show')) closeReject(); });
+  rj.yes.addEventListener('click', function () {
+    var note = rj.note.value.trim();
+    if (note.length < 3) { rj.err.textContent = 'কেন মুছছেন তার কারণ লিখুন — এটা ইউজারকে জানানো হবে।'; rj.note.focus(); return; }
+    if (!rjFor) return;
+    var id = rjFor.id; rj.yes.disabled = true;
+    PD.db.rpc('pd_moderate_comment', { p_id: String(id), p_action: 'delete', p_note: note }).then(function (r) {
+      rj.yes.disabled = false;
+      if (modFail(r)) return;
+      closeReject(); A.showToast('মন্তব্য মুছে ফেলা হয়েছে — কারণসহ ইউজারকে জানানো হয়েছে'); refresh();
     });
   });
-  (function () { var f = $('commentFilters'); if (f) f.style.display = 'none'; })();
 
   /* ---------- নিউজলেটার ---------- */
   var subQ = '';

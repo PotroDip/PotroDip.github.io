@@ -737,6 +737,60 @@ select.status-select{
 .rte-body a{color:var(--primary); text-decoration:underline;}
 .rte-body sub, .rte-body sup{font-size:.75em; line-height:0;}
 
+/* v33: লেখার ঘরে টেবিল */
+.rte-body table{border-collapse:collapse; width:100%; margin:14px 0; table-layout:fixed;}
+.rte-body td, .rte-body th{border:1px solid var(--border); padding:8px 10px; vertical-align:top; min-width:48px; word-break:break-word; line-height:1.6;}
+.rte-body th{background:color-mix(in srgb, var(--primary) 10%, var(--surface)); font-weight:700; text-align:left;}
+.rte-body td p, .rte-body th p{margin:0;}
+.rte-body td:focus-within, .rte-body th:focus-within{outline:2px solid color-mix(in srgb, var(--primary) 60%, transparent); outline-offset:-2px;}
+
+/* v33: ব্লক-ধরনের তালিকা (নোটপ্যাডের মতো) */
+.rte-pop-blocks{min-width:210px;}
+.rte-pop-blocks .rte-pop-item{padding:9px 12px;}
+.rte-pop-sep{height:1px; background:var(--border); margin:6px 4px;}
+
+/* v33: টেবিল পপ-ওভার — ঘর বেছে মাপ ঠিক করা */
+.rte-pop-table{width:min(92vw, 300px); max-width:none; max-height:min(88vh, 560px);}
+.rt-tbl-head{font-size:12.5px; font-weight:700; color:var(--text-muted); padding:6px 8px 4px;}
+.rt-tbl-head small{font-weight:400; opacity:.85;}
+.rt-tgrid{display:grid; gap:4px; padding:4px 8px 6px; justify-content:start;}
+.rt-tcell{width:26px; height:26px; border:1.5px solid var(--border); border-radius:5px; background:transparent; cursor:pointer; transition:background-color .08s ease, border-color .08s ease;}
+.rt-tcell.on{background:color-mix(in srgb, var(--primary) 30%, transparent); border-color:var(--primary);}
+.rt-tsize{font-size:12.5px; color:var(--text-muted); padding:0 8px 8px; min-height:20px;}
+.rt-tcustom{display:flex; align-items:flex-end; gap:8px; padding:0 8px 8px;}
+.rt-tcustom label{display:flex; flex-direction:column; gap:3px; font-size:11.5px; color:var(--text-muted); font-weight:600; flex:1;}
+.rt-tcustom input{width:100%; padding:7px 8px; border:1px solid var(--border); border-radius:8px; background:var(--field-bg); color:var(--text); font-size:14px; font-family:inherit;}
+.rt-tcustom input:focus{outline:none; border-color:var(--primary);}
+.rt-tcustom .rt-primary{padding:8px 14px; border-radius:8px; font-size:13px; font-weight:700; white-space:nowrap;}
+html[data-theme="dark"] .rt-primary{color:#0F1415;}
+.rt-tedits{display:grid; grid-template-columns:1fr 1fr; gap:2px; padding:0 2px 2px;}
+.rt-tedit{font-size:13px; padding:8px 9px; white-space:normal; line-height:1.35;}
+.rt-tedit:disabled{opacity:.4; cursor:not-allowed; background:none;}
+.rt-tedit.is-danger{color:var(--error);}
+
+/* v33: ফুল স্ক্রিন বাটন — টুলবারের উপরের ডান কোণে */
+.rte-wrap{position:relative;}
+.rte-toolbar{padding-right:50px;}
+.rt-fs{position:absolute; top:6px; right:8px; width:34px; height:34px; border:1px solid var(--border); background:var(--field-bg); color:var(--text-muted); border-radius:9px;}
+.rt-fs:hover{border-color:var(--primary); color:var(--primary);}
+.rt-fs.is-active{color:var(--primary);}
+html.rte-fs-lock, html.rte-fs-lock body{overflow:hidden;}
+.rte-wrap.is-full{position:fixed; inset:0; z-index:1200; background:var(--bg); display:flex; flex-direction:column;}
+.rte-wrap.is-full .rte-toolbar{position:static; top:auto; flex-shrink:0; border-radius:0; border-width:0 0 1px; box-shadow:none !important; padding:8px 58px 8px 14px; background:var(--bg);}
+.rte-wrap.is-full .rt-fs{top:9px; right:14px;}
+.rte-wrap.is-full .rte-body{flex:1; min-height:0; overflow-y:auto; border:0; border-radius:0; font-size:18px; background:var(--field-bg); padding:34px max(18px, calc((100% - 860px) / 2)) 80px;}
+.rte-wrap.is-full .rte-body:focus{border:0;}
+.rte-wrap.is-full .rte-body[data-empty="1"]::before{left:max(18px, calc((100% - 860px) / 2)); top:34px;}
+.rte-wrap.is-full .rte-meta{flex-shrink:0; margin:0; padding:9px 18px; border-top:1px solid var(--border); background:var(--bg);}
+@media(max-width:960px){
+  .rte-toolbar{padding-right:6px;}
+  .rt-fs{position:sticky; right:0; top:auto; flex-shrink:0; margin-left:auto;}
+  .rte-wrap.is-full .rte-toolbar{padding:6px;}
+  .rte-wrap.is-full .rt-fs{top:auto; right:0;}
+  .rte-wrap.is-full .rte-body{padding:20px 16px 70px; font-size:17px;}
+  .rte-wrap.is-full .rte-body[data-empty="1"]::before{left:16px; top:20px;}
+}
+
 /* ---------- PDF নমুনা আপলোড বক্স ---------- */
   .pdf-upload-box{
     border:1.5px dashed var(--border); border-radius:10px; padding:16px; text-align:center; cursor:pointer;
@@ -1157,3 +1211,36 @@ html[data-theme="dark"] .confirm-danger:hover{background:#c65243;}
   .archive-box .pm-sub{display:none;}
 }
 @media(max-width:760px){ .archive-box .field-grid-2 > .field-row:has(> .field-hint) > label{display:none;} .archive-box .field-grid-2 > .field-row:has(> .field-hint){margin-top:-6px!important;} }
+
+/* ---------- কমেন্ট মডারেশন: অপেক্ষমাণ/অনুমোদিত ও কারণ-পপআপ ---------- */
+.chip-count{display:inline-block; min-width:20px; padding:0 6px; margin-right:4px; border-radius:999px; font-size:11px; font-weight:700; line-height:19px; text-align:center; background:color-mix(in srgb, var(--text-muted) 16%, transparent);}
+.chip-row button.active .chip-count{background:rgba(255,255,255,.25);}
+.chip-count.hot{background:var(--error); color:#fff;}
+.mod-item.is-pending{border-color:color-mix(in srgb, var(--secondary) 45%, var(--border)); background:color-mix(in srgb, var(--secondary) 5%, var(--surface));}
+.mod-tag{font-size:10.5px; font-weight:700; padding:2px 9px; border-radius:999px;}
+.mod-tag.pend{color:var(--secondary); background:color-mix(in srgb, var(--secondary) 15%, transparent);}
+.mod-tag.ok{color:var(--text-muted); background:color-mix(in srgb, var(--text-muted) 13%, transparent);}
+.mod-tag.reply{color:var(--primary); background:color-mix(in srgb, var(--primary) 12%, transparent);}
+.mod-stars{display:inline-flex; color:var(--success);}
+.mod-stars svg{width:13px; height:13px;}
+.mod-actions .btn{display:inline-flex; align-items:center; gap:6px;}
+.mod-actions .btn svg{width:15px; height:15px;}
+.mod-warn{margin-bottom:12px; padding:12px 14px; border-radius:10px; font-size:13px; line-height:1.7; color:var(--error); background:color-mix(in srgb, var(--error) 9%, var(--surface)); border:1px solid color-mix(in srgb, var(--error) 30%, var(--border));}
+#reject-overlay{position:fixed; inset:0; z-index:2100; background:rgba(10,14,15,.5); display:flex; align-items:center; justify-content:center; padding:20px; opacity:0; pointer-events:none; transition:opacity .25s ease;}
+#reject-overlay.show{opacity:1; pointer-events:auto;}
+.reject-card{width:100%; max-width:440px; max-height:92vh; overflow:auto; background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:28px 26px 22px; text-align:center; box-shadow:0 26px 60px -20px rgba(0,0,0,.35); transform:translateY(10px) scale(.97); transition:transform .25s ease;}
+#reject-overlay.show .reject-card{transform:none;}
+.reject-card h3{font-size:18px; margin-bottom:12px;}
+.reject-quote-box{text-align:left; padding:11px 14px; margin-bottom:16px; border-radius:11px; background:var(--bg, color-mix(in srgb, var(--text-muted) 8%, transparent)); border:1px solid var(--border); border-left:3px solid var(--secondary);}
+.reject-quote-box b{display:block; font-size:12px; color:var(--secondary); margin-bottom:3px;}
+.reject-quote-box p{margin:0; font-size:13px; line-height:1.7; color:var(--text);}
+.reject-label{display:block; text-align:left; font-size:13px; font-weight:600; margin-bottom:7px;}
+.reject-label span{font-weight:400; color:var(--text-muted); font-size:12px;}
+.reject-card textarea{width:100%; box-sizing:border-box; resize:vertical; min-height:96px; padding:11px 13px; border-radius:11px; border:1px solid var(--border); background:var(--surface); color:var(--text); font:inherit; font-size:14px; line-height:1.7;}
+.reject-card textarea:focus{outline:none; border-color:var(--primary); box-shadow:0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);}
+.reject-foot{display:flex; justify-content:space-between; gap:10px; margin:6px 0 18px; font-size:12px; min-height:18px;}
+.reject-err{color:var(--error); text-align:left;}
+.reject-count{color:var(--text-muted); margin-left:auto;}
+.mod-actions{flex-wrap:wrap;}
+.mod-actions .btn{white-space:nowrap; justify-content:center;}
+@media (max-width:640px){.mod-actions .btn{flex:1 1 140px;}}

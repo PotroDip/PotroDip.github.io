@@ -197,6 +197,19 @@ html[data-theme="dark"] .cat-badge{ background:rgba(10,14,15,.75); }
 .article-body a{color:var(--primary); text-decoration:underline; text-underline-offset:3px;}
 .article-body mark{background:color-mix(in srgb, var(--success) 38%, transparent); color:inherit; padding:0 2px; border-radius:3px;}
 .article-body sub, .article-body sup{font-size:.72em; line-height:0;}
+/* v33: লেখার ভেতরের টেবিল */
+.article-body table{width:100%; margin:0 0 26px; border-collapse:collapse; font-size:16.5px; line-height:1.7; color:var(--text); border:1px solid var(--border);}
+.article-body td, .article-body th{border:1px solid var(--border); padding:10px 14px; vertical-align:top; overflow-wrap:anywhere; text-align:left;}
+.article-body th{background:color-mix(in srgb, var(--primary) 9%, var(--surface)); font-weight:700;}
+.article-body tbody tr:nth-child(even) td{background:color-mix(in srgb, var(--surface) 55%, transparent);}
+.article-body td p, .article-body th p{font-size:inherit; margin:0 0 6px; text-align:left;}
+.article-body td p:last-child, .article-body th p:last-child{margin-bottom:0;}
+@media(max-width:640px){
+  .article-body table{font-size:15px;}
+  .article-body td, .article-body th{padding:8px 10px;}
+  .article-body h2[style*="38px"]{font-size:30px !important;}
+}
+
 @media(max-width:640px){
   .article-body h2{font-size:25px;} .article-body h3{font-size:22px;} .article-body h4{font-size:19px;}
   .article-body ul, .article-body ol{font-size:17px;}

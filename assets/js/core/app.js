@@ -203,17 +203,39 @@
       location.replace(PD.pages.auth)
     }
   });
-  /* নিউজলেটার ফর্ম (সব পেজের ফুটারে): ইমেইল যাচাই করে সাবস্ক্রাইব */
+  /* নিউজলেটার ফর্ম (সব পেজের ফুটারে): প্রথমবার হলে \"সফল\", আগে থেকে সাবস্ক্রাইব করা থাকলে \"ইতিমধ্যে সাবস্ক্রাইব করা আছে\" */
   function bindNewsletter() {
     [].forEach.call(document.querySelectorAll('.newsletter-form'), function (f) {
+      var st = document.createElement('p'), hideT = 0, busy = false;
+      st.className = 'nl-status'; st.setAttribute('role', 'status'); st.setAttribute('aria-live', 'polite');
+      f.parentNode.insertBefore(st, f.nextSibling);
+      function say(kind, text) {
+        clearTimeout(hideT);
+        st.className = 'nl-status show ' + kind;
+        st.textContent = text;
+        hideT = setTimeout(function () { st.classList.remove('show'); }, 7000);
+      }
       f.addEventListener('submit', function (e) {
         e.preventDefault();
+        if (busy) return;
         var i = f.querySelector('input[type=email]');
-        if (!i || !i.value.trim()) return;
-        PD.subscribe(i.value.trim(), PD.user && PD.user.id).then(function (r) {
-          if (r.error && r.error.code !== '23505') return PD.toast('সমস্যা হয়েছে, আবার চেষ্টা করুন', 1);
-          PD.toast('ধন্যবাদ! সাবস্ক্রাইব হয়েছে।');
+        var email = i ? i.value.trim().toLowerCase() : '';
+        if (!email) return;
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return say('warn', 'ইমেইল ঠিকানাটা সঠিক মনে হচ্ছে না — একবার দেখে নিন।');
+        busy = true; f.classList.add('is-busy');
+        PD.subscribe(email, PD.user && PD.user.id).then(function (r) {
+          busy = false; f.classList.remove('is-busy');
+          var er = r && r.error;
+          if (er && (er.code === '23505' || /duplicate key|already exists/i.test(String(er.message || '')))) {
+            say('info', 'এই ইমেইলটি ইতিমধ্যে নিউজলেটারে সাবস্ক্রাইব করা আছে। নতুন সংখ্যা প্রকাশ হলে ঠিকই জানিয়ে দেব।');
+            return;
+          }
+          if (er) return say('warn', 'এই মুহূর্তে সাবস্ক্রাইব করা যায়নি — একটু পরে আবার চেষ্টা করুন।');
+          say('ok', 'সাবস্ক্রাইব সফল হয়েছে! নতুন সংখ্যা প্রকাশ হলেই ইমেইলে জানিয়ে দেব।');
           f.reset();
+        }, function () {
+          busy = false; f.classList.remove('is-busy');
+          say('warn', 'ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।');
         });
       });
     });

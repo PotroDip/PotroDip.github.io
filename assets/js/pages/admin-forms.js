@@ -155,7 +155,12 @@
     var a = id ? C.byId(S.articles, id) : null;
     $('article-modal-title').textContent = a ? 'লেখা এডিট করুন' : 'নতুন লেখা প্রকাশ করুন';
     $('art-title').value = a ? a.title : '';
-    $('art-body').innerHTML = a ? bodyToHtml(a.body) : '';
+    $('art-body').innerHTML = a ? bodyToHtml(a.body || '') : '';
+    /* তালিকায় পুরো লেখা আনা হয় না — এডিট খুললে এখানে আলাদা এনে বসানো হয় */
+    if (a && a.body == null) db.from('articles').select('body').eq('id', a.id).single().then(function (r) {
+      if (r.error || !r.data || art.id !== a.id) { if (r.error) A.showToast('লেখার মূল অংশ আনা যায়নি — আবার চেষ্টা করুন'); return; }
+      a.body = r.data.body || ''; $('art-body').innerHTML = bodyToHtml(a.body); syncArt();
+    });
     fillAuthors(a ? a.author_id : '');
     fillIssues(a ? a.issue_id : '');
     renderCats(a && a.category ? a.category : '');
