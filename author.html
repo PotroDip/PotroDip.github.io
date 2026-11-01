@@ -12,6 +12,7 @@
 <link href="assets/css/pages/author.css" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/css/components/nav.css">
 <link rel="stylesheet" href="assets/css/components/chrome.css">
+<link rel="stylesheet" href="assets/css/pages/author-premium.css">
 <script src="assets/js/core/site-design.js"></script>
 </head>
 <body>
@@ -599,12 +600,12 @@
 <div class="cover-overlay"></div>
 <span class="cover-eyebrow">পত্রদ্বীপ লেখক</span>
 </div>
-<div class="profile-avatar">
-<img alt="ফারহানা ইসলাম" src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=300&amp;q=80"/>
-</div>
 </div>
 <!-- ============ প্রোফাইল তথ্য ============ -->
 <div class="profile-top">
+<div class="profile-avatar">
+<img alt="ফারহানা ইসলাম" src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=300&amp;q=80"/>
+</div>
 <div class="profile-info">
 <h1>ফারহানা ইসলাম</h1>
 <div class="profile-role-row">
@@ -637,11 +638,11 @@
 <div class="rating-count">৭৬টি রেটিং</div>
 </div>
 <div class="side-divider"></div>
-<button class="follow-btn" id="followBtn">ফলো করুন</button>
+<div class="ap-actions"><button class="follow-btn" id="followBtn">ফলো করুন</button><button type="button" class="ap-share" id="shareBtn" aria-label="প্রোফাইলের লিংক কপি করুন" title="লিংক কপি করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button></div>
 </div>
 </div>
 <!-- ============ পরিচিতি / জীবনী ============ -->
-<div class="section-head" style="margin-top:34px; padding-top:0; border-top:none;">
+<div class="section-head" id="ap-bio">
 <h2>পরিচিতি</h2>
 </div>
 <div class="bio-panel">
@@ -654,7 +655,7 @@
 </div></template><template id="tpl-bioquote"><p class="bio-quote">গল্প লেখা মানে আমার কাছে ফেলে আসা সময়টাকে আরেকবার ছুঁয়ে দেখা — যেখানে কিছু কথা বলার চেয়ে না-বলাই বেশি অর্থবহ হয়ে ওঠে।</p></template><div class="bio-story"></div>
 </div>
 <!-- ============ সব লেখা ============ -->
-<div class="section-head">
+<div class="section-head" id="ap-arts">
 <h2>ফারহানা ইসলামের লেখা</h2>
 <div class="filter-chips">
 <button class="active">সব</button>

@@ -11,11 +11,12 @@
 <link href="assets/css/base.css" rel="stylesheet"/>
 <link href="assets/css/layout.css" rel="stylesheet"/>
 <link href="assets/css/pages/home.css" rel="stylesheet"/>
+<link href="assets/css/pages/authors.css" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/css/components/nav.css">
 <link rel="stylesheet" href="assets/css/components/chrome.css">
 <script src="assets/js/core/site-design.js"></script>
 </head>
-<body data-intro="instant">
+<body class="authors-page" data-intro="instant">
 <!-- ============ ইন্ট্রো ওভারলে (লোগো এনিমেশন) ============ -->
 <div id="intro-overlay">
 <div id="logo-stage">
@@ -596,12 +597,24 @@
 <!-- ============ এড স্লট: মিড-স্ক্রল ============ -->
 
 <!-- ============ জনপ্রিয় লেখক ============ -->
-<section>
-<div class="section-head">
-<h2>লেখক তালিকা</h2>
+<section class="au-hero" aria-labelledby="au-title">
+<span class="au-eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>কলমের মানুষেরা</span>
+<h1 id="au-title">লেখক তালিকা</h1>
+<p class="au-sub">পত্রদ্বীপের পাতায় যাঁদের কলমে জন্ম নেয় গল্প, কবিতা ও ভাবনা — তাঁদের সাথে পরিচিত হোন, ফলো করুন, আর নতুন লেখার খবর সবার আগে পান।</p>
+<div class="au-stats" id="au-stats" hidden>
+<div class="au-stat"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></i><div><b id="au-st-authors">০</b><span>মোট লেখক</span></div></div>
+<div class="au-stat"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></i><div><b id="au-st-arts">০</b><span>প্রকাশিত লেখা</span></div></div>
 </div>
-<div class="authors-row" id="authors-row"></div>
 </section>
+<div class="au-bar">
+<label class="au-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input id="au-q" type="search" autocomplete="off" placeholder="লেখকের নাম, পরিচয় বা শহর খুঁজুন…" aria-label="লেখক খুঁজুন"><button type="button" class="au-x" id="au-x" aria-label="মুছুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></label>
+<div class="au-sort" role="group" aria-label="সাজান">
+<button type="button" class="on" data-sort="name">নাম অনুযায়ী</button>
+<button type="button" data-sort="rating">সেরা রেটিং</button>
+<button type="button" data-sort="arts">বেশি লেখা</button>
+</div>
+</div>
+<div class="authors-row au-grid" id="authors-row" aria-live="polite"></div>
 </main>
 <!-- ============ ফুটার ============ -->
 <footer class="site-footer">
