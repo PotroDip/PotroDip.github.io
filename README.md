@@ -29,11 +29,11 @@
     ├── css/
     │   ├── base.css          সব পেজে: রঙ (লাইট/ডার্ক), ফন্ট, হেডার, ফুটার
     │   ├── layout.css        হোম ও আইনি পেজের কাঠামো
-    │   ├── components/       nav.css (সার্চ, মোবাইল মেনু) · comments.css (মন্তব্য)
+    │   ├── components/       nav.css (সার্চ, মোবাইল মেনু) · comments.css (মন্তব্য) · scroll-top.css (স্ক্রোল প্রগ্রেস + উপরে-যাওয়ার বাটন)
     │   └── pages/            প্রতি পেজের নিজস্ব স্টাইল
     ├── js/
-    │   ├── core/             config.js · app.js · ui.js · theme.js · intro-*.js
-    │   ├── components/       nav.js (সার্চ + মোবাইল মেনু) · comments.js
+    │   ├── core/             config.js · app.js · ui.js · theme.js · intro-*.js · reveal.js (স্ক্রোল-এনিমেশন)
+    │   ├── components/       nav.js (সার্চ + মোবাইল মেনু) · comments.js · scroll-top.js (পাতা-তারা স্ক্রোল বাটন)
     │   └── pages/            প্রতি পেজের নিজস্ব কোড (home, article, author, store, admin…)
     ├── fonts/                Gunjoron-Font (Thin/Normal/Bold) — সাইটের একমাত্র ফন্ট, base.css-এ @font-face
     ├── img/                  favicon.svg · brand/ (লোগো)
@@ -189,3 +189,11 @@
 
 সাম্প্রতিক লেখা → গল্প → সাহিত্য → ভ্রমণ → কবিতা → প্রবন্ধ → রম্য → স্মৃতিগদ্য → কাব্য → ছড়া → (অ্যাডমিনের খোলা নতুন বিভাগ) → জনপ্রিয় লেখক → ম্যাগাজিন।
 যে বিভাগে লেখা নেই সেটা দেখানো হয় না; লেখা এলেই নিজে থেকে আসে। ক্রম বদলাতে `assets/js/pages/home.js`-এর `CAT_ORDER` দেখুন।
+
+## স্ক্রোল-রিভিল এনিমেশন (v58)
+
+নিচে স্ক্রোল করলে কার্ড/লেখা নিচ থেকে উঠে আসে — একই সারি একসাথে, পরের সারি তার পেছনে (চুম্বকের টান)।
+* কোড: `assets/js/core/reveal.js` · স্টাইল: `assets/css/base.css`-এর শেষে `.rv` অংশ।
+* কোথায় কোথায় চলবে তার তালিকা `reveal.js`-এর শুরুর `RULES`-এ। নতুন কিছুতে চালাতে একটা লাইন যোগ করুন: `['.আপনার-ক্লাস', '']` (লেখার জন্য `'t'`)।
+* কোনো জায়গায় বন্ধ রাখতে সেই উপাদানে `data-rv-skip` দিন। reduced-motion, প্রিন্ট ও স্টুডিও-প্রিভিউতে আপনাআপনি বন্ধ।
+* নতুন পেজে যোগ করতে `nav.js`-এর ঠিক পরে `<script src="assets/js/core/reveal.js"></script>` দিন।
