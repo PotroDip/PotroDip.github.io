@@ -12,6 +12,9 @@
 <link href="assets/css/base.css" rel="stylesheet"/>
 <link href="assets/css/pages/auth.css" rel="stylesheet"/>
 <link href="assets/css/components/nav.css" rel="stylesheet"/>
+<link rel="preconnect" href="https://pqoszcuhxdavehnxundq.supabase.co" crossorigin>
+<link rel="preload" href="assets/fonts/Gunjoron-Font-Normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/Gunjoron-Font-Bold.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/css/components/chrome.css">
 <script src="assets/js/core/site-design.js"></script>
 <link rel="stylesheet" href="assets/css/components/scroll-top.css">
@@ -689,7 +692,7 @@
 <div class="dash-top">
 <div class="dash-hero-left">
 <div class="dash-avatar">
-<img alt="প্রোফাইল ছবি" id="dash-avatar-img" src=""/>
+<img decoding="async" alt="প্রোফাইল ছবি" id="dash-avatar-img" src=""/>
 </div>
 <div class="dash-hero-text">
 <h1 id="dash-name">&nbsp;</h1>
@@ -730,7 +733,7 @@
 </button>
 <button class="dash-tab-btn" data-dtab="notifications">
 <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-          নোটিফিকেশন <span class="count">৩</span>
+          নোটিফিকেশন <span class="count">০</span>
 </button><button class="dash-tab-btn" data-dtab="orders"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M21 8l-9-5-9 5 9 5 9-5z"></path><path d="M3 8v8l9 5 9-5V8"></path><path d="M12 13v8"></path></svg>
           আমার অর্ডার <span class="count">০</span></button>
 <button class="dash-tab-btn" data-dtab="settings">
@@ -743,9 +746,9 @@
 <!-- ফলো করা লেখক -->
 <div class="dash-panel active" id="dpanel-following">
 <template id="tpl-following"><div class="following-card">
-<img alt="" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&amp;q=80"/>
-<h4>রুমানা আক্তার</h4>
-<div class="following-role">কবি · চট্টগ্রাম</div>
+<img decoding="async" alt="" src="assets/img/placeholder.svg"/>
+<h4></h4>
+<div class="following-role"></div>
 <button class="unfollow-btn">
 <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg>
               আনফলো
@@ -756,16 +759,16 @@
 <div class="dash-panel" id="dpanel-saved">
 <template id="tpl-saved"><article class="saved-card">
 <div class="thumb">
-<img alt="" src="https://images.unsplash.com/photo-1519681393784-d120267933ba?w=600&amp;q=80"/>
+<img decoding="async" alt="" src="assets/img/placeholder.svg"/>
 <button aria-label="সেভ থেকে বাদ দিন" class="remove-bookmark" title="সেভ থেকে বাদ দিন">
 <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg>
 </button>
 </div>
-<span class="cat-label">গল্প</span>
-<h3>চিলেকোঠার চিঠি</h3>
+<span class="cat-label"></span>
+<h3></h3>
 <div class="card-meta">
-<img alt="" src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=100&amp;q=80"/>
-<span>ফারহানা ইসলাম<span class="dot-sep"></span><span class="city">রাজশাহী</span></span>
+<img decoding="async" alt="" src="assets/img/placeholder.svg"/>
+<span></span>
 </div>
 </article></template><div class="saved-grid"></div>
 </div>
@@ -776,8 +779,8 @@
 <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
 </span>
 <div class="notif-body">
-<p><strong>ফারহানা ইসলাম</strong> নতুন একটা লেখা প্রকাশ করেছেন — "চিলেকোঠার চিঠি"</p>
-<div class="notif-time">২ ঘণ্টা আগে</div>
+<p></p>
+<div class="notif-time"></div>
 </div>
 <span class="notif-dot"></span>
 </div></template><div class="notif-list"></div>
@@ -1065,7 +1068,7 @@
 </div>
 <form id="pe-form" novalidate>
 <div class="pe-photo">
-<div class="pe-photo-img"><img alt="" id="pe-avatar" src=""/></div>
+<div class="pe-photo-img"><img decoding="async" alt="" id="pe-avatar" src=""/></div>
 <div class="pe-photo-btns">
 <label class="pe-upload" for="pe-file">ছবি বদলান</label>
 <input accept="image/*" id="pe-file" type="file"/>
