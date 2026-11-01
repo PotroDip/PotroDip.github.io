@@ -47,6 +47,16 @@
     document.getElementById('profileStars').innerHTML = UI.starsHTML(avg);
     UI.set(document, '.rating-count', au.rating_count ? UI.bn(au.rating_count) + 'টি রেটিং' : 'এখনো কোনো রেটিং নেই');
 
+    /* শেয়ার: প্রোফাইলের লিংক কপি */
+    var sh = document.getElementById('shareBtn');
+    if (sh) sh.addEventListener('click', function () {
+      var url = location.href;
+      if (navigator.share) { navigator.share({ title: au.name + ' | পত্রদ্বীপ', url: url }).catch(function () { }); return; }
+      var done = function () { UI.toast('প্রোফাইলের লিংক কপি হয়েছে'); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, function () { UI.toast('লিংক কপি করা যায়নি', 1); });
+      else { var t = document.createElement('textarea'); t.value = url; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); done(); } catch (e) { UI.toast('লিংক কপি করা যায়নি', 1); } t.remove(); }
+    });
+
     /* ফলো */
     var fb = document.getElementById('followBtn'), following = false;
     function paintFollow() { fb.classList.toggle('following', following); fb.textContent = following ? 'ফলো করছেন' : 'ফলো করুন'; }
@@ -91,6 +101,7 @@
         UI.set(c, '.card-meta > span:last-child', UI.date(a.published_at || a.created_at));
         c.addEventListener('click', function () { location.href = UI.articleUrl(a); });
         c.style.cursor = 'pointer';
+        if (!cat && list.length >= 3 && list[0] === a) c.classList.add('featured');
         grid.appendChild(c);
       });
     }
@@ -105,5 +116,26 @@
     });
     if (cats.length < 2) chips.style.display = 'none';
     paint('');
+
+    /* ট্যাব: পরিচিতি | লেখা */
+    var bioHead = document.getElementById('ap-bio'), artHead = document.getElementById('ap-arts');
+    var tabs = document.createElement('nav'); tabs.className = 'ap-tabs'; tabs.setAttribute('aria-label', 'প্রোফাইলের অংশ');
+    var items = [];
+    if (bioHead && bioHead.isConnected) items.push(['ap-bio', 'পরিচিতি', '']);
+    if (artHead) items.push(['ap-arts', 'লেখা', '<em>' + UI.bn(arts.length) + '</em>']);
+    if (items.length > 1) {
+      tabs.innerHTML = items.map(function (t, i) { return '<a href="#' + t[0] + '"' + (i ? '' : ' class="on"') + '>' + t[1] + t[2] + '</a>'; }).join('');
+      var top = document.querySelector('.profile-top'); top.parentNode.insertBefore(tabs, top.nextSibling);
+      tabs.addEventListener('click', function (e) {
+        var a = e.target.closest('a'); if (!a) return; e.preventDefault();
+        var el = document.getElementById(a.getAttribute('href').slice(1)); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (en) {
+          en.forEach(function (x) { if (x.isIntersecting) [].forEach.call(tabs.children, function (a) { a.classList.toggle('on', a.getAttribute('href') === '#' + x.target.id); }); });
+        }, { rootMargin: '-25% 0px -65% 0px' });
+        items.forEach(function (t) { io.observe(document.getElementById(t[0])); });
+      }
+    }
   }
 })();

@@ -181,7 +181,15 @@
     following(); saved(); notifs(); orders();
   }
   var orig = window.pdShowDashboard;
-  window.pdShowDashboard = function () { if (orig) orig.apply(this, arguments); load(); };
+  window.pdShowDashboard = function () {
+    if (orig) orig.apply(this, arguments); load();
+    /* হেডারের নোটিফিকেশন বেল থেকে এলে (auth.html?tab=notifications) সরাসরি নোটিফিকেশন ট্যাব খোলা */
+    try {
+      var want = new URLSearchParams(location.search).get('tab');
+      var tb = want && document.querySelector('.dash-tab-btn[data-dtab="' + want.replace(/[^a-z]/g, '') + '"]');
+      if (tb) setTimeout(function () { tb.click(); }, 60);
+    } catch (e) {}
+  };
   PD.ready.then(load);
 })();
 

@@ -268,4 +268,148 @@
   }
   if (document.readyState !== 'loading') init();
   else document.addEventListener('DOMContentLoaded', init);
+
+  /* ============ নোটিফিকেশন বেল (v38) — প্রোফাইল আইকনের বামে; শুধু লগইন করা ইউজারের জন্য ============ */
+  function bell() {
+    var acct = document.querySelector('.site-header .header-actions .account-btn');
+    if (!acct || document.getElementById('notif-btn') || !PD || !PD.db || !PD.ready) return;
+    var svg = function (d) { return '<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + '</svg>'; };
+    var IC = {
+      bell: svg('<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>'),
+      chat: svg('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'),
+      check: svg('<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>'),
+      x: svg('<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>'),
+      star: svg('<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>'),
+      doc: svg('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>')
+    };
+    var uid = null, busy = false, lastUnread = -1, open = false;
+
+    var btn = document.createElement('button');
+    btn.id = 'notif-btn'; btn.type = 'button'; btn.className = 'icon-btn notif-btn'; btn.hidden = true;
+    btn.setAttribute('aria-label', 'নোটিফিকেশন'); btn.setAttribute('title', 'নোটিফিকেশন');
+    btn.setAttribute('aria-haspopup', 'dialog'); btn.setAttribute('aria-expanded', 'false'); btn.setAttribute('aria-controls', 'notif-panel');
+    btn.innerHTML = IC.bell + '<span class="notif-badge" hidden></span>';
+    acct.parentNode.insertBefore(btn, acct);
+    var badge = btn.querySelector('.notif-badge');
+
+    var scrim = document.createElement('div'); scrim.id = 'notif-scrim';
+    var panel = document.createElement('div'); panel.id = 'notif-panel'; panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', 'নোটিফিকেশন');
+    panel.innerHTML = '<div class="np-head"><div class="np-title">নোটিফিকেশন <span class="np-count" hidden></span></div><button type="button" class="np-readall" disabled>সব পড়া হয়েছে</button></div>' +
+      '<div class="np-list" role="list"></div><div class="np-foot"><a href="auth.html?tab=notifications">সব নোটিফিকেশন দেখুন</a></div>';
+    document.body.appendChild(scrim); document.body.appendChild(panel);
+    var list = panel.querySelector('.np-list'), cnt = panel.querySelector('.np-count'), readAll = panel.querySelector('.np-readall');
+
+    var bn = function (n) { return UI && UI.bn ? UI.bn(n) : String(n); };
+    function ago(iso) {
+      var m = Math.max(0, Math.round((Date.now() - new Date(iso)) / 60000));
+      if (m < 2) return 'এইমাত্র';
+      if (m < 60) return bn(m) + ' মিনিট আগে';
+      if (m < 1440) return bn(Math.round(m / 60)) + ' ঘণ্টা আগে';
+      return bn(Math.round(m / 1440)) + ' দিন আগে';
+    }
+    function safeLink(u) { u = String(u || '').replace(/^\//, ''); return /^(article|author|issue|store|archive|auth)\.html(\?[\w=&%.-]*)?$/.test(u) ? u : ''; }
+    function kind(t) {
+      t = String(t || '');
+      if (/removed|reject|delete/.test(t)) return ['x', 'bad'];
+      if (/approved/.test(t)) return ['check', ''];
+      if (/comment|reply/.test(t)) return ['chat', ''];
+      if (/rating/.test(t)) return ['star', ''];
+      return ['doc', ''];
+    }
+    function setBadge(n) {
+      if (n > 0) { badge.hidden = false; badge.textContent = n > 9 ? bn(9) + '+' : bn(n); } else badge.hidden = true;
+      cnt.hidden = n < 1; cnt.textContent = bn(n) + ' নতুন'; readAll.disabled = n < 1;
+      btn.setAttribute('aria-label', n > 0 ? 'নোটিফিকেশন — ' + bn(n) + 'টি নতুন' : 'নোটিফিকেশন');
+      if (lastUnread >= 0 && n > lastUnread && !open) {
+        btn.classList.remove('ring'); void btn.offsetWidth; btn.classList.add('ring');
+      }
+      lastUnread = n;
+    }
+    function empty() {
+      list.innerHTML = '<div class="np-empty"><div class="np-ico">' + IC.bell + '</div>এখনো কোনো নোটিফিকেশন নেই।<br>নতুন কিছু এলে এখানেই দেখতে পাবেন।</div>';
+    }
+    function skeleton() {
+      var h = ''; for (var i = 0; i < 3; i++) h += '<div class="np-skel"><i style="width:36px;height:36px;border-radius:50%"></i><div style="flex:1"><i style="height:12px;width:70%;margin-bottom:8px"></i><i style="height:10px;width:92%"></i></div></div>';
+      list.innerHTML = h;
+    }
+    function render(rows) {
+      if (!rows.length) return empty();
+      list.innerHTML = '';
+      rows.forEach(function (n) {
+        var k = kind(n.type), b = document.createElement('button');
+        b.type = 'button'; b.setAttribute('role', 'listitem'); b.className = 'np-item' + (n.is_read ? '' : ' unread');
+        var ico = document.createElement('div'); ico.className = 'np-ico ' + k[1]; ico.innerHTML = IC[k[0]];
+        var body = document.createElement('div'); body.className = 'np-body';
+        var t = document.createElement('div'); t.className = 'np-t'; t.textContent = n.title || '';
+        var tx = document.createElement('div'); tx.className = 'np-b'; tx.textContent = n.body || '';
+        var tm = document.createElement('div'); tm.className = 'np-time'; tm.textContent = ago(n.created_at);
+        body.appendChild(t); if (n.body) body.appendChild(tx); body.appendChild(tm);
+        b.appendChild(ico); b.appendChild(body);
+        if (!n.is_read) { var d = document.createElement('span'); d.className = 'np-dot'; b.appendChild(d); }
+        b.addEventListener('click', function () {
+          var go = safeLink(n.link_url);
+          var done = function () { if (go) location.href = go; else { b.classList.remove('unread'); var dd = b.querySelector('.np-dot'); if (dd) dd.remove(); fetchCount(); } };
+          if (n.is_read) return done();
+          PD.db.from('notifications').update({ is_read: true }).eq('id', n.id).then(done, done);
+        });
+        list.appendChild(b);
+      });
+    }
+    function fetchCount() {
+      if (!uid) return Promise.resolve();
+      return PD.db.from('notifications').select('id', { count: 'exact', head: true }).eq('user_id', uid).eq('is_read', false).then(function (r) {
+        if (!r.error) setBadge(r.count || 0);
+      }, function () {});
+    }
+    function fetchList() {
+      if (!uid || busy) return Promise.resolve(); busy = true;
+      return PD.db.from('notifications').select('id,type,title,body,link_url,is_read,created_at').eq('user_id', uid).order('created_at', { ascending: false }).limit(8).then(function (r) {
+        busy = false;
+        if (r.error) { list.innerHTML = '<div class="np-empty">নোটিফিকেশন আনা যায়নি — একটু পরে আবার চেষ্টা করুন।</div>'; return; }
+        render(r.data || []);
+      }, function () { busy = false; });
+    }
+
+    function place() {
+      var r = btn.getBoundingClientRect(), hd = document.querySelector('header.site-header'), hb = hd ? hd.getBoundingClientRect().bottom : r.bottom;
+      panel.style.setProperty('--np-top', Math.round(Math.max(hb, r.bottom) + 8) + 'px');
+      if (window.innerWidth > 560) {
+        panel.style.top = Math.round(r.bottom + 10) + 'px';
+        panel.style.right = Math.max(10, Math.round(window.innerWidth - r.right - 6)) + 'px';
+        panel.style.left = 'auto';
+      } else { panel.style.top = ''; panel.style.right = ''; panel.style.left = ''; }
+    }
+    function openPanel() {
+      open = true; place(); btn.setAttribute('aria-expanded', 'true');
+      panel.classList.add('open'); scrim.classList.add('open'); btn.classList.remove('ring');
+      skeleton(); fetchList(); fetchCount();
+    }
+    function closePanel() {
+      open = false; btn.setAttribute('aria-expanded', 'false'); panel.classList.remove('open'); scrim.classList.remove('open');
+    }
+    btn.addEventListener('click', function (e) { e.stopPropagation(); open ? closePanel() : openPanel(); });
+    scrim.addEventListener('click', closePanel);
+    document.addEventListener('mousedown', function (e) { if (open && !panel.contains(e.target) && !btn.contains(e.target)) closePanel(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && open) { closePanel(); btn.focus(); } });
+    window.addEventListener('resize', function () { if (open) place(); });
+    window.addEventListener('scroll', function () { if (open && window.innerWidth <= 560) place(); }, { passive: true });
+    readAll.addEventListener('click', function () {
+      readAll.disabled = true;
+      PD.db.from('notifications').update({ is_read: true }).eq('user_id', uid).eq('is_read', false).then(function () { setBadge(0); fetchList(); }, function () { fetchCount(); });
+    });
+
+    PD.ready.then(function () {
+      if (!PD.user) return;
+      uid = PD.user.id; btn.hidden = false; fetchCount();
+      /* নতুন নোটিফিকেশন এলে সাথে সাথে বেল আপডেট (রিয়েলটাইম); না চললে ট্যাবে ফিরলে ও প্রতি মিনিটে আপডেট */
+      try {
+        PD.db.channel('pd-notif-' + uid).on('postgres_changes', { event: '*', schema: 'public', table: 'notifications', filter: 'user_id=eq.' + uid }, function () {
+          fetchCount(); if (open) fetchList();
+        }).subscribe();
+      } catch (e) {}
+      document.addEventListener('visibilitychange', function () { if (!document.hidden) fetchCount(); });
+      setInterval(function () { if (!document.hidden) { fetchCount(); if (open) fetchList(); } }, 60000);
+    });
+  }
+  if (document.readyState !== 'loading') bell(); else document.addEventListener('DOMContentLoaded', bell);
 })();

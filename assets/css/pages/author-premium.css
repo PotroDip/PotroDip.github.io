@@ -1,0 +1,147 @@
+/* author-premium.css — লেখক প্রোফাইল (v41): আধুনিক, প্রিমিয়াম ও ইউনিক ডিজাইন। author.css-এর পরে লোড হয় ও তার ওপর বসে। */
+
+/* ---------- কভার ---------- */
+.profile-media{margin-top:18px;}
+.profile-cover{height:320px;border-radius:26px;background:
+  radial-gradient(600px 300px at 15% 0%, color-mix(in srgb, var(--secondary) 55%, transparent), transparent 70%),
+  radial-gradient(700px 360px at 100% 100%, color-mix(in srgb, var(--primary) 70%, transparent), transparent 70%),
+  linear-gradient(135deg, var(--primary-dark), var(--primary));}
+.profile-cover img{position:absolute;inset:0;opacity:.34;mix-blend-mode:luminosity;transform:scale(1.04);}
+.profile-cover .cover-overlay{background:linear-gradient(180deg, rgba(10,18,20,.05) 0%, rgba(10,18,20,.55) 100%);}
+html[data-theme="dark"] .profile-cover .cover-overlay{background:linear-gradient(180deg, rgba(10,14,15,.1) 0%, rgba(10,14,15,.7) 100%);}
+.profile-cover::before{content:"";position:absolute;right:-70px;top:-90px;width:380px;height:380px;border-radius:50%;z-index:1;
+  border:1px solid rgba(255,255,255,.18);box-shadow:0 0 0 46px rgba(255,255,255,.04), 0 0 0 96px rgba(255,255,255,.03);}
+.profile-cover::after{content:"";position:absolute;inset:0;z-index:1;opacity:.5;
+  background-image:radial-gradient(rgba(255,255,255,.14) 1px, transparent 1.4px);background-size:22px 22px;
+  -webkit-mask-image:linear-gradient(120deg, #000, transparent 65%);mask-image:linear-gradient(120deg, #000, transparent 65%);}
+.cover-eyebrow{left:28px;top:24px;z-index:3;display:inline-flex;align-items:center;gap:8px;font-size:12.5px;letter-spacing:.06em;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);padding:7px 16px;}
+.cover-eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--secondary-light);box-shadow:0 0 0 4px rgba(255,255,255,.14);}
+
+/* ---------- প্রোফাইল কার্ড (কভারের ওপর ভাসমান) ---------- */
+.profile-top{position:relative;z-index:3;margin-top:-84px;padding:30px 34px 30px 226px;border:1px solid var(--border);border-radius:26px;
+  background:color-mix(in srgb, var(--surface) 90%, transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  box-shadow:0 24px 60px -28px rgba(10,30,32,.38), 0 2px 6px rgba(10,30,32,.05);align-items:center;gap:26px;}
+.profile-top .profile-avatar{position:absolute;left:36px;top:-58px;bottom:auto;transform:none;width:150px;height:150px;border:0;padding:5px;overflow:visible;
+  background:conic-gradient(from 220deg, var(--secondary-light), var(--primary), var(--secondary), var(--secondary-light));
+  box-shadow:0 16px 34px -10px rgba(0,0,0,.42);}
+.profile-top .profile-avatar img{display:block;border-radius:50%;border:5px solid var(--surface);background:var(--surface);}
+.profile-info h1{font-size:clamp(28px,3.6vw,40px);line-height:1.2;margin:0 0 12px;letter-spacing:-.3px;}
+.profile-role-row{gap:10px;margin-bottom:18px;}
+.profile-role-row .role-badge{display:inline-flex;align-items:center;font-size:13.5px;color:var(--primary);background:color-mix(in srgb, var(--primary) 12%, transparent);
+  border:1px solid color-mix(in srgb, var(--primary) 28%, transparent);padding:5px 14px;border-radius:999px;}
+.profile-role-row .dot-sep{display:none;}
+.profile-role-row .dot-sep + span{display:inline-flex;align-items:center;gap:6px;font-size:14px;}
+.profile-role-row .dot-sep + span::before{content:"";width:15px;height:15px;background:currentColor;opacity:.75;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3C/svg%3E") center/contain no-repeat;}
+.profile-stats{gap:12px;margin-bottom:18px;}
+.profile-stats span{display:flex;align-items:baseline;gap:8px;padding:10px 18px;border-radius:14px;font-size:13px;
+  background:color-mix(in srgb, var(--bg) 70%, var(--surface));border:1px solid var(--border);}
+.profile-stats strong{font-size:20px;line-height:1;color:var(--primary);}
+.social-btn{width:42px;height:42px;background:color-mix(in srgb, var(--bg) 70%, var(--surface));transition:transform .2s ease,background-color .2s ease,color .2s ease,border-color .2s ease;}
+.social-btn:hover{transform:translateY(-3px);background:var(--primary);color:var(--overlay-bg);border-color:var(--primary);}
+html[data-theme="dark"] .social-btn:hover{color:#0F1415;}
+
+/* ---------- রেটিং ও অ্যাকশন ---------- */
+.profile-side{flex-direction:column;align-items:stretch;gap:16px;padding:20px 22px;border-radius:20px;min-width:230px;
+  background:linear-gradient(160deg, color-mix(in srgb, var(--primary) 9%, var(--surface)), var(--surface));box-shadow:none;}
+.side-divider{display:none;}
+.rating-block{display:grid;grid-template-columns:auto 1fr;grid-template-rows:1fr 1fr;column-gap:14px;row-gap:3px;align-items:stretch;justify-items:start;}
+.rating-ring{grid-row:1/3;width:64px;height:64px;box-shadow:0 0 0 6px color-mix(in srgb, var(--success) 12%, transparent);margin:6px;}
+.rating-ring::before{background:var(--surface);}
+.rating-block .rating-stars{align-self:end;}
+.rating-block .rating-stars svg{width:14px;height:14px;}
+.rating-block .rating-count{align-self:start;font-size:12.5px;}
+.ap-actions{display:flex;gap:10px;}
+.profile-side .follow-btn{flex:1;padding:13px 20px;border-radius:14px;font-size:15px;box-shadow:0 10px 22px -12px var(--primary);}
+.profile-side .follow-btn.following{box-shadow:none;background:color-mix(in srgb, var(--primary) 10%, transparent);}
+.ap-share{flex:none;width:48px;height:48px;border-radius:14px;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:color .2s ease,border-color .2s ease,transform .15s ease;}
+.ap-share:hover{color:var(--primary);border-color:var(--primary);}
+.ap-share:active{transform:scale(.93);}
+.ap-share svg{width:19px;height:19px;}
+
+/* ---------- ট্যাব ---------- */
+.ap-tabs{display:flex;gap:6px;width:max-content;max-width:100%;margin:26px 0 0;padding:5px;border-radius:16px;background:var(--surface);border:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
+.ap-tabs::-webkit-scrollbar{display:none;}
+.ap-tabs a{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;font-size:14px;font-weight:600;color:var(--text-muted);white-space:nowrap;transition:background-color .2s ease,color .2s ease;}
+.ap-tabs a:hover{color:var(--text);}
+.ap-tabs a.on{background:var(--primary);color:var(--overlay-bg);}
+html[data-theme="dark"] .ap-tabs a.on{color:#0F1415;}
+.ap-tabs a em{font-style:normal;font-size:12px;padding:1px 8px;border-radius:999px;background:color-mix(in srgb, currentColor 16%, transparent);}
+
+/* ---------- সেকশন হেডিং ---------- */
+.section-head{border-top:0;margin:44px 0 24px;padding-top:0;scroll-margin-top:96px;}
+.section-head h2{display:flex;align-items:center;gap:14px;font-size:28px;}
+.section-head h2::before{content:"";width:6px;height:30px;border-radius:3px;background:linear-gradient(180deg, var(--secondary), var(--primary));flex:none;}
+.filter-chips button{padding:8px 18px;transition:background-color .2s ease,color .2s ease,border-color .2s ease;}
+.filter-chips button:hover{border-color:var(--primary);color:var(--primary);}
+.filter-chips button.active:hover{color:var(--overlay-bg);}
+
+/* ---------- পরিচিতি ---------- */
+.bio-panel{grid-template-columns:320px 1fr;gap:28px;align-items:start;}
+.bio-facts{border:1px solid var(--border);border-left:1px solid var(--border);border-radius:22px;padding:8px 0;background:var(--surface);overflow:hidden;}
+.bio-facts dl{gap:0;}
+.bio-facts .fact{position:relative;padding:15px 22px 15px 48px;gap:2px;border-bottom:1px solid var(--border);}
+.bio-facts .fact:last-child{border-bottom:0;}
+.bio-facts .fact::before{content:"";position:absolute;left:22px;top:22px;width:10px;height:10px;border-radius:50%;background:var(--secondary);box-shadow:0 0 0 5px color-mix(in srgb, var(--secondary) 18%, transparent);}
+.bio-facts dt{font-size:12px;letter-spacing:.04em;}
+.bio-facts dd{font-size:15px;}
+.bio-story{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:34px 38px;}
+.bio-story .bio-block{padding-bottom:26px;margin-bottom:26px;border-bottom:1px dashed var(--border);}
+.bio-story .bio-block:last-child{padding-bottom:0;margin-bottom:0;border-bottom:0;}
+.bio-story h4{display:inline-block;font-size:13.5px;color:var(--primary);background:color-mix(in srgb, var(--primary) 11%, transparent);padding:4px 14px;border-radius:999px;margin-bottom:14px;}
+.bio-story p{font-size:16.5px;line-height:1.95;}
+.bio-quote{position:relative;font-size:22px;line-height:1.65;color:var(--text);background:linear-gradient(120deg, color-mix(in srgb, var(--secondary) 13%, var(--surface)), var(--surface));
+  border:1px solid color-mix(in srgb, var(--secondary) 28%, var(--border));border-left:0;border-radius:18px;padding:34px 34px 28px 74px;margin:30px 0;}
+.bio-quote::before{content:"“";position:absolute;left:22px;top:4px;font-size:84px;line-height:1;color:var(--secondary);opacity:.75;font-family:Georgia,serif;}
+
+/* ---------- লেখার কার্ড ---------- */
+.article-grid{gap:26px;padding-bottom:64px;}
+.article-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;cursor:pointer;
+  transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease, border-color .3s ease;}
+.article-card:hover{transform:translateY(-6px);border-color:color-mix(in srgb, var(--primary) 40%, var(--border));box-shadow:0 22px 46px -22px rgba(10,30,32,.4);}
+.article-card .thumb{border:0;border-radius:0;margin-bottom:0;aspect-ratio:16/10;}
+.article-card .thumb::after{content:"";position:absolute;inset:auto 0 0 0;height:45%;background:linear-gradient(180deg, transparent, rgba(0,0,0,.28));pointer-events:none;}
+.article-card h3{padding:18px 22px 0;font-size:20px;margin-bottom:8px;transition:color .2s ease;}
+.article-card:hover h3{color:var(--primary);}
+.article-card p{padding:0 22px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:16px;}
+.article-card .card-meta{padding:13px 22px 17px;margin:auto 0 0;border-top:1px solid var(--border);justify-content:space-between;}
+.article-card.featured{grid-column:1/-1;display:grid;grid-template-columns:1.15fr 1fr;grid-template-rows:auto auto 1fr auto;}
+.article-card.featured .thumb{grid-row:1/-1;aspect-ratio:auto;min-height:330px;}
+.article-card.featured .thumb::before{content:"সর্বশেষ লেখা";position:absolute;left:16px;top:16px;z-index:3;font-size:12px;font-weight:700;color:#fff;
+  background:linear-gradient(120deg, var(--secondary), color-mix(in srgb, var(--secondary) 60%, #000));padding:6px 14px;border-radius:999px;box-shadow:0 6px 16px rgba(0,0,0,.28);}
+.article-card.featured h3{font-size:30px;line-height:1.35;padding:38px 38px 0;margin-bottom:12px;}
+.article-card.featured p{padding:0 38px;-webkit-line-clamp:4;font-size:16px;line-height:1.85;}
+.article-card.featured .card-meta{padding:16px 38px 28px;}
+.ap-more-empty{grid-column:1/-1;text-align:center;color:var(--text-muted);padding:48px 0;}
+
+@media(max-width:1000px){
+  .bio-panel{grid-template-columns:1fr;}
+  .article-card.featured{grid-template-columns:1fr;}
+  .article-card.featured .thumb{grid-row:auto;min-height:0;aspect-ratio:16/9;}
+  .article-card.featured h3{font-size:24px;padding:20px 24px 0;}
+  .article-card.featured p{padding:0 24px;}
+  .article-card.featured .card-meta{padding:14px 24px 18px;}
+}
+@media(max-width:860px){
+  .profile-top{padding:70px 22px 24px;margin-top:-70px;text-align:center;flex-direction:column;align-items:center;gap:22px;border-radius:24px;}
+  .profile-top .profile-avatar{left:50%;transform:translateX(-50%);top:-62px;width:124px;height:124px;}
+  .profile-info{width:100%;min-width:0;}
+  .profile-role-row,.profile-stats,.social-row{justify-content:center;}
+  .profile-side{width:100%;max-width:none;}
+}
+@media(max-width:640px){
+  .profile-cover{height:220px;border-radius:22px;}
+  .cover-eyebrow{left:16px;top:16px;font-size:11px;padding:5px 12px;}
+  .profile-stats span{padding:9px 14px;}
+  .bio-story{padding:24px 20px;}
+  .bio-quote{font-size:18px;padding:28px 22px 22px 56px;}
+  .bio-quote::before{left:16px;font-size:64px;}
+  .section-head h2{font-size:23px;}
+  .article-grid{gap:20px;}
+  .article-card.featured h3{font-size:21px;}
+  .ap-tabs{width:100%;}.ap-tabs a{flex:1;justify-content:center;padding:10px 12px;}
+}
+@media (prefers-reduced-motion:reduce){ .article-card,.social-btn{transition:none;} .article-card:hover{transform:none;} }
