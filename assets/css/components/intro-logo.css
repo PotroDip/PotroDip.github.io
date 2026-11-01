@@ -27,18 +27,22 @@ html[data-theme="dark"] #intro-overlay.pdi{
   width:min(82vw, 443px, calc(80dvh * 1.6667));
   aspect-ratio:800/480;
   flex:none;
-  will-change:transform,opacity,filter;
 }
 #intro-overlay.pdi .pdi-svg{width:100%; height:100%; display:block; overflow:visible;}
 
 /* রঙ */
 #intro-overlay.pdi .pdi-word{fill:var(--pdi-word);}
-#intro-overlay.pdi .pdi-quill{fill:var(--pdi-quill);}
+#intro-overlay.pdi .pdi-use{fill:var(--pdi-quill);}
 #intro-overlay.pdi .pdi-t{fill:var(--pdi-ink);}
 
 /* ============ এনিমেশন (আপনার ফাইলের হুবহু টাইমিং; শুধু নাম প্রিফিক্স করা) ============ */
 #intro-overlay .pdi-s{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1 2;stroke-dashoffset:1;animation:pdi-draw var(--l) linear var(--d) forwards}
 @keyframes pdi-draw{to{stroke-dashoffset:0}}
+/* পারফরম্যান্স: ৫৪২টা আলাদা স্ট্রোক-অ্যানিমেশনের বদলে ফ্রেম-ভিত্তিক গ্রুপ (দৃশ্যত একই) */
+#intro-overlay .pdi-b{opacity:0;animation:pdi-cin .001s linear var(--d) forwards}
+#intro-overlay .pdi-sx{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round}
+#intro-overlay .pdi-cx{fill:#fff}
+#intro-overlay.pdi:not(.pdi-go) *{animation-play-state:paused!important}
 #intro-overlay .pdi-c{fill:#fff;opacity:0;animation:pdi-cin .05s linear var(--d) forwards}
 #intro-overlay .pdi-fa{fill:#fff;opacity:0;animation:pdi-cin .12s linear var(--d) forwards}
 @keyframes pdi-cin{to{opacity:1}}
@@ -58,7 +62,7 @@ html[data-theme="dark"] #intro-overlay.pdi{
 /* ============ বিদায় ট্রানজিশন: লোগো ধীরে উঠে মিলিয়ে যায় → পর্দা মোলায়েম ফেড → হোম নিচ থেকে হালকা উঠে আসে ============ */
 #intro-overlay.pdi.pdi-out{pointer-events:none;opacity:0;transition:opacity .85s cubic-bezier(.4,0,.2,1) .22s;}
 #intro-overlay.pdi.pdi-out .pdi-art{animation:pdi-logo-out .62s cubic-bezier(.4,0,.6,1) forwards;}
-@keyframes pdi-logo-out{from{opacity:1;transform:none;filter:blur(0)}to{opacity:0;transform:translateY(-10px) scale(1.045);filter:blur(2.5px)}}
+@keyframes pdi-logo-out{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-10px) scale(1.045)}}
 
 #main-content.pdi-enter{animation:pdi-rise 1s cubic-bezier(.22,.61,.36,1) .2s both;}
 @keyframes pdi-rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}

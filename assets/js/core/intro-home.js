@@ -31,8 +31,8 @@
   }
 
   var ANIM_MS = 2700;   /* অ্যানিমেশন ২.৬s + সামান্য থামা */
-  var OUT_MS = 1300;   /* বিদায় ট্রানজিশনের মোট সময় (CSS: pdi-out / pdi-enter) */
-  var done = false;
+  var OUT_MS = 1300;    /* বিদায় ট্রানজিশনের মোট সময় (CSS: pdi-out / pdi-enter) */
+  var done = false, started = false, startAt = 0, loaded = false;
 
   function finish(){
     if(done) return; done = true;
@@ -44,14 +44,30 @@
     setTimeout(function(){ if(overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay); }, OUT_MS);
   }
 
-  function schedule(){
-    var wait = Math.max(0, ANIM_MS - (Date.now() - t0));
-    setTimeout(finish, wait);
+  function tryFinish(){
+    if(!started || !loaded) return;
+    setTimeout(finish, Math.max(0, ANIM_MS - (Date.now() - startAt)));
   }
 
-  if(document.readyState === 'complete') schedule();
-  else window.addEventListener('load', schedule);
+  /* অ্যানিমেশন শুরু: পেজের ভারী স্ক্রিপ্টগুলো চলা শেষ হওয়ার পর, পরের ফ্রেমে — যাতে শুরুতে আটকে না যায় */
+  function start(){
+    if(started) return;
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        if(started) return; started = true;
+        startAt = Date.now();
+        overlay.classList.add('pdi-go');
+        tryFinish();
+      });
+    });
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
 
-  /* নিরাপত্তা: লোড ধীর হলেও ইন্ট্রো ৬ সেকেন্ডের বেশি আটকে রাখবে না */
-  setTimeout(finish, 6000);
+  if(document.readyState === 'complete'){ loaded = true; }
+  else window.addEventListener('load', function(){ loaded = true; tryFinish(); });
+
+  /* নিরাপত্তা: কিছু আটকে গেলেও ইন্ট্রো ৬ সেকেন্ডের বেশি ধরে রাখবে না */
+  setTimeout(function(){ overlay.classList.add('pdi-go'); }, 1500);
+  setTimeout(finish, 7000);
 })();
