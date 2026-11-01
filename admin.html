@@ -229,14 +229,11 @@
 <div class="page-head">
 <div class="page-head-copy">
 <h2 style="font-size:17px;">কমেন্ট মডারেশন</h2>
-<p>আপত্তিকর বা রিপোর্ট হওয়া মন্তব্য এখান থেকে পর্যালোচনা করে ডিলিট করা যাবে।</p>
+<p>ইউজারের প্রতিটা নতুন মন্তব্য ও জবাব প্রথমে এখানে জমা হয়। অনুমোদন করলে তবেই সবাই দেখতে পাবে; আপত্তিকর হলে কারণ লিখে মুছে দিন — কারণটা ইউজারের নোটিফিকেশনে চলে যাবে।</p>
 </div>
 </div>
 <div class="table-filters" style="background:var(--surface); border:1px solid var(--border); border-radius:12px 12px 0 0; border-bottom:none;">
-<div class="chip-row" id="commentFilters">
-<button class="active" data-filter="all">সব</button>
-<button data-filter="flagged">রিপোর্ট হয়েছে</button>
-</div>
+<div class="chip-row" id="commentFilters"></div>
 </div>
 <div class="mod-list" id="modList" style="border:1px solid var(--border); border-top:none; border-radius:0 0 12px 12px; padding:14px; background:var(--surface);"></div>
 </section>
@@ -434,9 +431,11 @@
 </div>
 <div class="art-block" id="fr-body">
 <label class="art-label">লেখার মূল অংশ <em class="req">*</em></label>
+<div class="rte-wrap" id="rte-wrap">
 <div class="rte-toolbar" id="art-toolbar"></div>
 <div class="rte-body" contenteditable="true" data-placeholder="এখানে লেখার মূল অংশ লিখুন…" spellcheck="true" id="art-body"></div>
 <div class="rte-meta"><span id="art-wc">০ শব্দ</span><i></i><span id="art-rt">পড়তে ০ মিনিট</span><span class="rte-tip">লেখা সিলেক্ট করে ফন্ট, সাইজ, রং ও ফরম্যাট বদলান — টুলবার সবসময় উপরে থাকবে</span></div>
+</div>
 </div>
 <div class="art-block">
 <label class="art-label">অতিরিক্ত ছবি (গ্যালারি) <small>ঐচ্ছিক</small></label>
@@ -647,6 +646,21 @@
 <div class="confirm-actions">
 <button class="confirm-danger" id="confirm-yes">হ্যাঁ, নিশ্চিত</button>
 <button class="confirm-cancel" id="confirm-no">না, থাক</button>
+</div>
+</div>
+</div>
+<!-- ============ মন্তব্য মোছার কারণ-পপআপ ============ -->
+<div aria-label="মন্তব্য মুছুন" id="reject-overlay" role="dialog">
+<div class="reject-card">
+<div class="confirm-icon"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></div>
+<h3>মন্তব্য মুছে ফেলবেন?</h3>
+<div class="reject-quote-box"><b id="reject-who"></b><p id="reject-quote"></p></div>
+<label class="reject-label" for="reject-note">মুছে ফেলার কারণ <span>(ইউজারের নোটিফিকেশনে যাবে)</span></label>
+<textarea id="reject-note" maxlength="300" rows="4" placeholder="যেমন: অশালীন ভাষা ব্যবহার করা হয়েছে, লেখার সাথে সম্পর্কহীন…"></textarea>
+<div class="reject-foot"><span class="reject-err" id="reject-err"></span><span class="reject-count" id="reject-count">০/৩০০</span></div>
+<div class="confirm-actions">
+<button class="confirm-danger" id="reject-yes" type="button">কারণসহ মুছে ফেলুন</button>
+<button class="confirm-cancel" id="reject-no" type="button">না, থাক</button>
 </div>
 </div>
 </div>
