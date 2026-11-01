@@ -100,6 +100,11 @@
       })
     })
   };
+  /* বিভাগের নামের বানান: ডাটাবেসে পুরোনো/ভুল বানানে থাকলেও সাইটে সবখানে সঠিক রূপে দেখানো (ভ্রমন→ভ্রমণ, সৃতিগদ্য→স্মৃতিগদ্য) */
+  var CAT_FIX = { 'ভ্রমন': 'ভ্রমণ', 'সৃতিগদ্য': 'স্মৃতিগদ্য', 'সৃতি গদ্য': 'স্মৃতিগদ্য', 'স্মৃতি গদ্য': 'স্মৃতিগদ্য' };
+  PD.normCat = function(c) { c = String(c == null ? '' : c).replace(/\s+/g, ' ').trim(); return CAT_FIX[c] || c };
+  PD.fixCats = function(rows) { (rows || []).forEach(function(r) { if (r && r.category != null) r.category = PD.normCat(r.category) }); return rows };
+  PD.catVariants = function(c) { c = PD.normCat(c); var v = [c]; for (var k in CAT_FIX) if (CAT_FIX[k] === c) v.push(k); return v };
   if (!window.supabase) {
     document.addEventListener('DOMContentLoaded', PD.fixLinks);
     console.warn('supabase-js লোড হয়নি');

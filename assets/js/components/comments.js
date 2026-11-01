@@ -137,7 +137,6 @@
         top.appendChild(el('span', 'comment-date', UI.date(c.created_at)));
         body.appendChild(top);
         body.appendChild(el('p', 'comment-text', c.body));
-        if (isPending && own) body.appendChild(el('p', 'pending-note', 'আপনার মন্তব্য জমা হয়েছে। এখন শুধু আপনি এটা দেখতে পাচ্ছেন — অ্যাডমিন অনুমোদন করলে সবাই দেখতে পাবেন।'));
         var act = el('div', 'comment-actions'), lk = likes[c.id] || [], liked = PD.user && lk.indexOf(PD.user.id) >= 0;
         var hb = el('button', 'helpful' + (liked ? ' liked' : ''));
         hb.innerHTML = ICON.like + ' সহায়ক (<span class="helpful-count">' + UI.bn(lk.length) + '</span>)';
@@ -166,7 +165,6 @@
             if (r.status === 'pending') rt.appendChild(el('span', 'pending-tag', 'অনুমোদনের অপেক্ষায়'));
             rt.appendChild(el('span', 'comment-date', UI.date(r.created_at)));
             rb2.appendChild(rt); rb2.appendChild(el('p', 'comment-text', r.body));
-            if (r.status === 'pending' && PD.user && r.user_id === PD.user.id) rb2.appendChild(el('p', 'pending-note', 'শুধু আপনি দেখতে পাচ্ছেন — অনুমোদনের পর সবাই দেখবেন।'));
             if (PD.user && r.user_id === PD.user.id) {
               var rd = el('button', 'delete-btn'); rd.innerHTML = ICON.del; rd.title = 'মুছে ফেলুন';
               rd.addEventListener('click', function () { askDelete(r); });
@@ -204,6 +202,17 @@
       }
 
       function refresh() { return load().then(render); }
+      /* রিয়ালটাইম: অ্যাডমিন অনুমোদন করলে/কেউ মন্তব্য করলে রিফ্রেশ ছাড়াই তালিকা বদলায় (লিখতে থাকা ফর্ম নষ্ট না করে) */
+      if (PD.live) PD.live({
+        tables: ['comments'], poll: 20000,
+        onChange: function () {
+          (function go() {
+            var ae = document.activeElement;
+            if (ae && /^(TEXTAREA|INPUT)$/.test(ae.tagName) && ae.value && $('commentList') && $('commentList').contains(ae)) return setTimeout(go, 4000);
+            refresh();
+          })();
+        }
+      });
       function fail(r) { if (r && r.error) { UI.toast(PD.msg(r.error), 1); return true; } return false; }
 
       function quickRate(v) {
@@ -223,7 +232,7 @@
           btn.disabled = false;
           if (fail(r)) return;
           input.value = ''; $('cfCharHint').textContent = '০ / ' + UI.bn(MAX_LEN); cfSel = 0; paint(cfBox, 0, 'selected');
-          UI.toast(PD.isAdmin() ? (mine ? 'আপনার মন্তব্য হালনাগাদ হয়েছে' : 'মন্তব্য যোগ হয়েছে') : 'মন্তব্য জমা হয়েছে — অ্যাডমিন অনুমোদন করলে সবাই দেখতে পাবেন');
+          UI.toast(PD.isAdmin() ? (mine ? 'আপনার মন্তব্য হালনাগাদ হয়েছে' : 'মন্তব্য যোগ হয়েছে') : 'মন্তব্য জমা হয়েছে');
           sort = 'new'; [].forEach.call(document.querySelectorAll('#sortChips button'), function (c) { c.classList.toggle('active', c.dataset.sort === 'new'); });
           refresh();
         });
@@ -235,7 +244,7 @@
         btn.disabled = true;
         db.from('comments').insert({ article_id: articleId, user_id: PD.user.id, body: text, parent_comment_id: c.id }).then(function (r) {
           btn.disabled = false;
-          if (!fail(r)) { UI.toast(PD.isAdmin() ? 'জবাব যোগ হয়েছে' : 'জবাব জমা হয়েছে — অনুমোদনের পর সবাই দেখতে পাবেন'); refresh(); }
+          if (!fail(r)) { UI.toast(PD.isAdmin() ? 'জবাব যোগ হয়েছে' : 'জবাব জমা হয়েছে'); refresh(); }
         });
       }
       function toggleLike(c) {
@@ -265,7 +274,7 @@
           if (!editFor) return;
           if (!t) { UI.toast('মন্তব্য খালি রাখা যাবে না', 1); return; }
           var id = editFor.id; close();
-          db.from('comments').update({ body: t }).eq('id', id).then(function (r) { if (!fail(r)) { UI.toast(PD.isAdmin() ? 'মন্তব্য বদলানো হয়েছে' : 'মন্তব্য বদলানো হয়েছে — আবার অনুমোদনের অপেক্ষায়'); refresh(); } });
+          db.from('comments').update({ body: t }).eq('id', id).then(function (r) { if (!fail(r)) { UI.toast(PD.isAdmin() ? 'মন্তব্য বদলানো হয়েছে' : 'মন্তব্য বদলানো হয়েছে'); refresh(); } });
         });
       }
       function edit(c) {

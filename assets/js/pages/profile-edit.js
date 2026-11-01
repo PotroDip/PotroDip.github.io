@@ -24,40 +24,10 @@
     ['pe-name', 'pe-phone', 'pe-email', 'pe-address'].forEach(function (i) { setErr(i, ''); });
   }
 
-  /* ---------- ছবি: যেকোনো সাইজ/পিক্সেল → ৫১২×৫১২ বৃত্তাকার-উপযোগী বর্গ, ৮০০ KB-এর মধ্যে ---------- */
-  var SIZE = 512, MAX_BYTES = 800 * 1024;
-  function encode(canvas, q) {
-    return new Promise(function (resolve) {
-      canvas.toBlob(function (b) { resolve(b); }, 'image/webp', q);
-    });
-  }
-  function shrink(f) {
-    return new Promise(function (resolve, reject) {
-      var img = new Image(), u = URL.createObjectURL(f);
-      img.onload = function () {
-        URL.revokeObjectURL(u);
-        var side = Math.min(img.naturalWidth, img.naturalHeight);
-        var c = document.createElement('canvas');
-        c.width = c.height = SIZE;
-        var ctx = c.getContext('2d');
-        ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
-        ctx.drawImage(img, (img.naturalWidth - side) / 2, (img.naturalHeight - side) / 2, side, side, 0, 0, SIZE, SIZE);
-        var q = 0.92;
-        (function attempt() {
-          encode(c, q).then(function (b) {
-            if (!b) return reject(new Error('এই ছবি প্রসেস করা যাচ্ছে না'));
-            if (b.size <= MAX_BYTES || q <= 0.5) return resolve(b);
-            q = Math.round((q - 0.08) * 100) / 100;
-            attempt();
-          });
-        })();
-      };
-      img.onerror = function () { URL.revokeObjectURL(u); reject(new Error('এই ছবির ফরম্যাট সাপোর্ট করা যাচ্ছে না — JPG বা PNG দিন')); };
-      img.src = u;
-    });
-  }
+  /* ---------- ছবি: যেকোনো সাইজ/পিক্সেল/লম্বা-চওড়া → ৫১২×৫১২ বর্গ (বৃত্তে দেখানোর উপযোগী), ৮০০ KB-এর মধ্যে (img-fit.js) ---------- */
+  function shrink(f) { return PD.fitImage(f, 'avatar'); }
   function uploadAvatar(blob) {
-    var path = 'avatars/' + PD.user.id + '/' + Date.now().toString(36) + '.webp';
+    var path = 'avatars/' + PD.user.id + '/' + Date.now().toString(36) + '.' + PD.fitExt(blob);
     return PD.upload(blob, path, blob.type || 'image/webp');
   }
   function setPreview(src) { $('pe-avatar').src = src; }

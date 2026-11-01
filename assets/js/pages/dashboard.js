@@ -78,7 +78,7 @@
       count('saved', ids.length);
       if (!ids.length) return empty(box, 'এখনো কোনো লেখা সেভ করেননি।');
       return db.from('articles').select('id,title,category,cover_url,author_id').in('id', ids).then(function (a) {
-        var arts = a.data || [], au = arts.map(function (x) { return x.author_id; }).filter(Boolean);
+        var arts = PD.fixCats(a.data || []), au = arts.map(function (x) { return x.author_id; }).filter(Boolean);
         return (au.length ? db.from('authors').select('id,name,city,image_url').in('id', au) : Promise.resolve({ data: [] })).then(function (ar) {
           var U = {}; (ar.data || []).forEach(function (u) { U[u.id] = u; });
           arts.forEach(function (x) {

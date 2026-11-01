@@ -4,19 +4,19 @@
   var PD = window.PD, UI = window.PDUI, A = window.AdminUI, C = window.AdminCore, S = window.AdminData;
   if (!PD || !PD.db || !A || !C) return;
   var db = PD.db, $ = function (i) { return document.getElementById(i); }, val = function (i) { return $(i).value.trim(); };
-  var MAX_IMG = 5 * 1024 * 1024, MAX_PDF = 10 * 1024 * 1024;
+  var MAX_IMG = PD.IMG_RAW_LIMIT || 40 * 1024 * 1024, MAX_PDF = 10 * 1024 * 1024; /* ছবির আসল ফাইল যত বড়ই হোক, আপলোডের আগে অটো নির্ধারিত মাপ ও সাইজে আসে (img-fit.js) */
   var DEL_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 
   /* ---------- আপলোড (শুধু এডমিন; ধরন ও আকার যাচাই) ---------- */
-  function upload(file, folder) {
+  function upload(file, folder, kind) {
     if (!file) return Promise.resolve(null);
-    var img = /^image\/(jpeg|png|webp|gif)$/.test(file.type), pdf = file.type === 'application/pdf';
+    var img = /^image\//.test(file.type), pdf = file.type === 'application/pdf';
     if (!img && !pdf) return Promise.reject(new Error('শুধু ছবি (JPG, PNG, WebP, GIF) বা PDF দেওয়া যাবে'));
-    if (img && file.size > MAX_IMG) return Promise.reject(new Error('ছবি ৫ MB-এর বেশি হওয়া চলবে না'));
     if (pdf && file.size > MAX_PDF) return Promise.reject(new Error('PDF ১০ MB-এর বেশি হওয়া চলবে না'));
-    var ext = ({ 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif', 'application/pdf': 'pdf' })[file.type];
-    var path = folder + '/' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8) + '.' + ext;
-    return PD.upload(file, path, file.type);
+    var name = function (ext) { return folder + '/' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8) + '.' + ext; };
+    if (pdf) return PD.upload(file, name('pdf'), file.type);
+    /* ছবি: নির্ধারিত মাপে ক্রপ/রিসাইজ + নির্ধারিত সাইজে কম্প্রেস, তারপর আপলোড */
+    return PD.fitImage(file, kind).then(function (blob) { return PD.upload(blob, name(PD.fitExt(blob)), blob.type); });
   }
   function fail(e) { A.showToast(PD.msg(e || {}, e && /^[^\u0980-\u09FF]*$/.test(String(e.message || '')) && /storage|bucket|upload|object|size|mime/i.test(String(e.message || '')) ? 'upload' : undefined)); }
   function busy(btn, on, label) { btn.disabled = on; if (label) btn.dataset.l = btn.dataset.l || btn.textContent; btn.textContent = on ? 'সংরক্ষণ হচ্ছে…' : (btn.dataset.l || btn.textContent); }
@@ -25,7 +25,7 @@
     input.addEventListener('change', function () {
       var f = input.files[0]; if (!f) return;
       if (!/^image\//.test(f.type)) { A.showToast('শুধু ছবি দিন'); input.value = ''; return; }
-      if (f.size > MAX_IMG) { A.showToast('ছবি ৫ MB-এর বেশি হওয়া চলবে না'); input.value = ''; return; }
+      if (f.size > MAX_IMG) { A.showToast('ছবির ফাইল অনেক বড় (৪০ MB-এর বেশি) — একটু ছোট ছবি দিন'); input.value = ''; return; }
       preview.src = URL.createObjectURL(f); preview.style.display = 'block';
       var sp = input.parentNode.querySelector('span'); if (sp) sp.style.display = 'none';
       cb(f);
@@ -62,7 +62,7 @@
   galAdd.addEventListener('click', function () { $('art-gallery-file').click(); });
   $('art-gallery-file').addEventListener('change', function (e) {
     [].slice.call(e.target.files).forEach(function (f) {
-      if (!/^image\/(jpeg|png|webp|gif)$/.test(f.type) || f.size > MAX_IMG) { A.showToast('"' + f.name + '" বাদ: শুধু ৫ MB পর্যন্ত ছবি চলবে'); return; }
+      if (!/^image\/(jpeg|png|webp|gif)$/.test(f.type) || f.size > MAX_IMG) { A.showToast('"' + f.name + '" বাদ: শুধু ছবি (সর্বোচ্চ ৪০ MB) চলবে'); return; }
       var t = thumb(URL.createObjectURL(f), null); t._file = f; art.newImgs.push(f);
     });
     e.target.value = '';
@@ -84,11 +84,11 @@
     el.value = sel || '';
   }
   /* বিভাগ: ডিফল্ট + সেভ করা + লেখাগুলোতে ব্যবহৃত বিভাগ; ক্লিকযোগ্য চিপ */
-  var DEF_CATS = ['গল্প', 'কবিতা', 'ভ্রমণ', 'রম্য', 'প্রবন্ধ'];
+  var DEF_CATS = ['গল্প', 'সাহিত্য', 'ভ্রমণ', 'কবিতা', 'প্রবন্ধ', 'রম্য', 'স্মৃতিগদ্য', 'কাব্য', 'ছড়া'];
   function allCats(extra) {
     var out = [], seen = {};
     DEF_CATS.concat((S.set.categories && S.set.categories.list) || [], S.articles.map(function (a) { return a.category; }), extra ? [extra] : []).forEach(function (c) {
-      c = String(c || '').trim(); if (c && !seen[c.toLowerCase()]) { seen[c.toLowerCase()] = 1; out.push(c); }
+      c = PD.normCat(c); if (c && !seen[c.toLowerCase()]) { seen[c.toLowerCase()] = 1; out.push(c); }
     });
     return out;
   }
@@ -182,9 +182,9 @@
     if (!$('art-author').value) return flag('fr-author', 'লেখক বেছে নিন — না থাকলে "নতুন লেখক" চাপুন', 'art-author');
     busy(btn, true, 1);
     var old = art.id ? C.byId(S.articles, art.id) : null;
-    var row = { title: title, body: box.innerHTML, excerpt: text.slice(0, 160), category: $('art-cat').value, author_id: $('art-author').value, issue_id: $('art-issue').value || null, home_order: (function (v) { v = parseInt(v, 10); return isNaN(v) || v < 1 ? null : v; })($('art-home-order').value), home_hidden: $('art-home-hidden').checked, home_featured: $('art-home-featured').checked, status: $('art-published').checked ? 'published' : 'draft' };
+    var row = { title: title, body: box.innerHTML, excerpt: text.slice(0, 160), category: PD.normCat($('art-cat').value), author_id: $('art-author').value, issue_id: $('art-issue').value || null, home_order: (function (v) { v = parseInt(v, 10); return isNaN(v) || v < 1 ? null : v; })($('art-home-order').value), home_hidden: $('art-home-hidden').checked, home_featured: $('art-home-featured').checked, status: $('art-published').checked ? 'published' : 'draft' };
     if (row.status === 'published' && !(old && old.published_at)) row.published_at = new Date().toISOString();
-    upload(art.cover, 'covers').then(function (url) {
+    upload(art.cover, 'covers', 'article').then(function (url) {
       if (url) row.cover_url = url;
       if (!old) row.slug = slug('a');
       return old ? db.from('articles').update(row).eq('id', old.id).select('id').single() : db.from('articles').insert(row).select('id').single();
@@ -193,7 +193,7 @@
       var aid = r.data.id, jobs = [];
       if (row.home_featured) jobs.push(db.from('articles').update({ home_featured: false }).eq('home_featured', true).neq('id', aid)); /* আগের শুরুর লেখাটা সরিয়ে দেওয়া */
       if (art.removed.length) jobs.push(db.from('article_images').delete().in('id', art.removed));
-      art.newImgs.forEach(function (f, i) { jobs.push(upload(f, 'gallery').then(function (u) { return db.from('article_images').insert({ article_id: aid, image_url: u, caption: '', sort_order: i + 1 }); })); });
+      art.newImgs.forEach(function (f, i) { jobs.push(upload(f, 'gallery', 'gallery').then(function (u) { return db.from('article_images').insert({ article_id: aid, image_url: u, caption: '', sort_order: i + 1 }); })); });
       return Promise.all(jobs);
     }).then(function () { busy(btn, false); A.closeModal('article-modal'); A.showToast(old ? 'লেখা হালনাগাদ হয়েছে' : (row.status === 'published' ? 'লেখা প্রকাশিত হয়েছে' : 'ড্রাফট সেভ হয়েছে')); C.refresh(); }).catch(function (e) { busy(btn, false); fail(e); });
   });
@@ -232,7 +232,7 @@
     if (bad) return A.showToast('লিংক https:// দিয়ে শুরু হতে হবে');
     row.bio_sections = textToBio($('author-bio').value);
     busy(btn, true, 1);
-    Promise.all([upload(au.img, 'authors'), upload(au.bg, 'authors')]).then(function (u) {
+    Promise.all([upload(au.img, 'authors', 'avatar'), upload(au.bg, 'authors', 'profileCover')]).then(function (u) {
       if (u[0]) row.image_url = u[0]; if (u[1]) row.cover_url = u[1];
       if (!au.id) row.slug = slug('w');
       return au.id ? db.from('authors').update(row).eq('id', au.id) : db.from('authors').insert(row).select('id').single();
@@ -288,7 +288,7 @@
     busy(btn, true, 1);
     var old = ar.id ? C.byId(S.issues, ar.id) : null, nz = function (k) { return val(IA[k]) || null; };
     var row = { title: t, issue_number: n, tagline: nz('tagline'), articles_count: nz('articles'), authors_count: nz('authors'), issue_month: nz('month'), issue_year: nz('year'), read_label: nz('label'), show_print_btn: $('issue-archive-printbtn').checked };
-    upload(ar.cover, 'issues').then(function (u) {
+    upload(ar.cover, 'issues', 'issue').then(function (u) {
       if (u) row.cover_url = u;
       if (!old) { row.slug = slug('issue'); row.published_at = new Date().toISOString().slice(0, 10); }
       return old ? db.from('issues').update(row).eq('id', old.id) : db.from('issues').insert(row).select('id').single();
@@ -354,7 +354,7 @@
     var link = num ? S.issues.filter(function (i) { return en(i.issue_number) === en(num); })[0] : null;
     var row = { title: t, teaser: $('issue-teaser').value.trim(), price: price, in_stock: $('issue-stock').checked, issue_id: link ? link.id : null };
     if (pr.clearPdf) row.preview_pdf_url = null;
-    Promise.all([upload(pr.cover, 'issues'), upload(pr.pdf, 'previews')]).then(function (u) {
+    Promise.all([upload(pr.cover, 'issues', 'issue'), upload(pr.pdf, 'previews')]).then(function (u) {
       if (u[0]) row.cover_url = u[0]; if (u[1]) row.preview_pdf_url = u[1];
       if (!old) row.sort_order = S.prints.reduce(function (m, p) { return Math.max(m, p.sort_order || 0); }, 0) + 1;
       return old ? db.from('print_issues').update(row).eq('id', old.id) : db.from('print_issues').insert(row);

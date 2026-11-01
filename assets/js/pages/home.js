@@ -44,6 +44,9 @@
     $('article-grid').innerHTML = '<p class="pd-empty">লেখাগুলো এখন আনা যাচ্ছে না। ইন্টারনেট যাচাই করে পেজটা আবার খুলুন।</p>';
     return
   }
+  /* বানান ঠিক রাখা: পুরোনো/ভুল বানানে সেভ হওয়া বিভাগের নাম সঠিক রূপে দেখানো */
+  var normCat = PD.normCat;
+  (R[0].data || []).forEach(function(a) { a.category = normCat(a.category) });
   var A = R[0].data || [],
     U = {},
     I = {},
@@ -109,14 +112,16 @@
     $('hero-grid').innerHTML = feat + side;
     $('hero-grid').classList.toggle('no-rail', !rail.length);
   }
+  /* লেখার কার্ড (সাম্প্রতিক লেখা ও বিভাগ-সেকশন একই চেহারা) */
+  function card(a) {
+      return '<article class="article-card" data-id="' + a.id + '"><a class="ac-link" href="article.html?id=' + a.id + '"><div class="thumb"><img src="' + esc(a.cover_url || PH) + '" alt="" loading="lazy">' + (a.category ? '<span class="ac-cat">' + esc(a.category) + '</span>' : '') + '</div><div class="ac-body"><h3>' + esc(a.title) + '</h3><p>' + esc(cut(a.excerpt, 120)) + '</p><div class="card-meta">' + im(au(a)) + '<span class="cm-name">' + esc(au(a).name) + '</span><span class="cm-date">' + dt(a.published_at || a.created_at) + '</span></div></div></a></article>'
+  }
   /* লেখার গ্রিড ও ফিল্টার */
   function grid(tag) {
     var l = A.filter(function(a) {
       return !tag || a.category == tag
     });
-    $('article-grid').innerHTML = l.length ? l.map(function(a) {
-      return '<article class="article-card" data-id="' + a.id + '"><a class="ac-link" href="article.html?id=' + a.id + '"><div class="thumb"><img src="' + esc(a.cover_url || PH) + '" alt="" loading="lazy">' + (a.category ? '<span class="ac-cat">' + esc(a.category) + '</span>' : '') + '</div><div class="ac-body"><h3>' + esc(a.title) + '</h3><p>' + esc(cut(a.excerpt, 120)) + '</p><div class="card-meta">' + im(au(a)) + '<span class="cm-name">' + esc(au(a).name) + '</span><span class="cm-date">' + dt(a.published_at || a.created_at) + '</span></div></div></a></article>'
-    }).join('') : '<p class="pd-empty">এই বিভাগে এখনো লেখা নেই।</p>'
+    $('article-grid').innerHTML = l.length ? l.map(card    ).join('') : '<p class="pd-empty">এই বিভাগে এখনো লেখা নেই।</p>'
   }
   var tags = [];
   A.forEach(function(a) {
@@ -139,6 +144,42 @@
     var c = e.target.closest('.article-card');
     if (c) location.href = 'article.html?id=' + c.dataset.id
   };
+  /* বিভাগ-ভিত্তিক সেকশন: নির্ধারিত ক্রমে (সাম্প্রতিক লেখার পর), লেখা না থাকলে সেকশন আসে না।
+     অ্যাডমিন নতুন কোনো বিভাগ খুলে লেখা দিলে সেটাও নিজে থেকে নিচে যোগ হয়। */
+  var CAT_ORDER = ['গল্প', 'সাহিত্য', 'ভ্রমণ', 'কবিতা', 'প্রবন্ধ', 'রম্য', 'স্মৃতিগদ্য', 'কাব্য', 'ছড়া'];
+  async function catSections() {
+    var box = $('cat-sections');
+    if (!box) return;
+    var all = A;
+    try {
+      var q = await db.from('articles').select('id,title,excerpt,category,cover_url,author_id,issue_id,published_at,created_at').order('published_at', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false }).limit(400);
+      if (!q.error && q.data) {
+        all = q.data;
+        all.forEach(function(a) { a.category = normCat(a.category) });
+      }
+    } catch (e) {}
+    var by = {}, extra = [];
+    all.forEach(function(a) {
+      if (!a.category) return;
+      if (!by[a.category]) { by[a.category] = []; if (CAT_ORDER.indexOf(a.category) < 0) extra.push(a.category) }
+      by[a.category].push(a)
+    });
+    box.innerHTML = CAT_ORDER.concat(extra).filter(function(c) { return by[c] && by[c].length }).map(function(c) {
+      return '<section class="cat-sec" data-cat="' + esc(c) + '"><div class="section-head"><h2>' + esc(c) + '</h2></div><div class="article-grid">' + by[c].slice(0, 3).map(card).join('') + '</div></section>'
+    }).join('')
+  }
+  await catSections();
+  /* ম্যাগাজিন: চলতি সংখ্যার ব্যান্ডের নিচে আগের সংখ্যাগুলোর প্রচ্ছদ */
+  (function() {
+    var row = $('issue-row');
+    if (!row) return;
+    var list = (R[2].data || []).filter(function(i) { return i.cover_url }).sort(function(a, b) {
+      return new Date(b.published_at || b.created_at) - new Date(a.published_at || a.created_at)
+    }).slice(1, 7);
+    row.innerHTML = list.map(function(i) {
+      return '<a class="mag-card" href="issue.html?id=' + i.id + '"><div class="mag-cover"><img src="' + esc(i.cover_url) + '" alt="' + esc(i.title) + ' প্রচ্ছদ" loading="lazy"></div><h4>' + esc(i.title) + '</h4>' + (i.issue_number ? '<span>সংখ্যা ' + bn(i.issue_number) + '</span>' : '') + '</a>'
+    }).join('')
+  })();
   /* চলতি সংখ্যা — সর্বশেষ সংখ্যার প্রচ্ছদ, বিবরণ, পড়া ও কেনার বাটন */
   (function() {
     var box = $('issue-band');
@@ -147,7 +188,7 @@
       return new Date(b.published_at || b.created_at) - new Date(a.published_at || a.created_at)
     });
     var cur = list[0];
-    if (!cur) return box.remove();
+    if (!cur) { var ms = $('mag-section'); return ms ? ms.remove() : box.remove() }
     var pr = (R[4] && R[4].data || []).filter(function(p) {
       return p.issue_id === cur.id
     })[0];

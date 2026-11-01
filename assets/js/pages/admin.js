@@ -98,6 +98,7 @@
     ]).then(function (r) {
       var k = ['authors', 'articles', 'issues', 'prints', 'orders', 'items', 'ads', 'comments', 'subs'];
       k.forEach(function (n, i) { S[n] = r[i].data || []; });
+      PD.fixCats(S.articles);
       S.set = {}; (r[9].data || []).forEach(function (x) { S.set[x.key] = x.value || {}; });
       S.artErr = r[1].error ? { msg: String(r[1].error.message || ''), code: String(r[1].error.code || '') } : null;
       S.users = r[10].count || 0; S.follows = r[11].count || 0;
@@ -266,7 +267,7 @@
     var a = adFor(s);
     if (!file || !/^image\//.test(file.type)) return A.showToast('শুধু ছবি বা GIF দিন');
     A.showToast('আপলোড হচ্ছে…');
-    window.AdminForms.upload(file, 'banners').then(function (url) {
+    window.AdminForms.upload(file, 'banners', 'banner-' + s.id).then(function (url) {
       var row = { image_url: url, is_active: true, link_url: a && a.link_url ? a.link_url : null };
       return a ? PD.db.from('ads').update(row).eq('slot_id', a.slot_id) : PD.db.from('ads').insert(Object.assign({ slot_id: s.id, slot_name: s.name }, row));
     }).then(function (r) { if (r && ok(r)) { A.showToast('ছবি আপলোড হয়েছে — স্লটের মাপে ফিট করা হয়েছে'); refresh(); } }).catch(function (er) { A.showToast(er.message || 'আপলোড হয়নি'); });
@@ -424,8 +425,41 @@
     bars('analyticsCatBars', Object.keys(cat).map(function (k) { return { label: k, value: cat[k] }; }).sort(function (a, b) { return b.value - a.value; }));
   }
 
-  function renderAll() { renderDashboard(); renderArticles(); renderAuthors(); renderArchive(); renderIssues(); renderOrders(); renderAds(); renderComments(); renderSubs(); renderAnalytics(); if (window.AdminForms) window.AdminForms.fillSettings(); }
+  function renderAll() { renderDashboard(); renderArticles(); renderAuthors(); renderArchive(); renderIssues(); renderOrders(); renderAds(); renderComments(); renderSubs(); renderAnalytics(); updateBadges(); if (window.AdminForms) window.AdminForms.fillSettings(); }
+  /* সাইডবারের ব্যাজ: কমেন্ট মডারেশনে অপেক্ষমাণ মন্তব্য, অর্ডারে যাচাই-বাকি অর্ডার, নিউজলেটারে নতুন সাবস্ক্রাইবার (পেজটা শেষবার দেখার পর) */
+  var SEEN_KEY = 'pd_admin_seen_newsletter';
+  function seenSubs() { try { var v = localStorage.getItem(SEEN_KEY); if (!v) { v = new Date().toISOString(); localStorage.setItem(SEEN_KEY, v); } return v; } catch (e) { return new Date(0).toISOString(); } }
+  function markSubsSeen() { try { localStorage.setItem(SEEN_KEY, new Date().toISOString()); } catch (e) {} A.setBadge('newsletter', 0); }
+  function updateBadges() {
+    var seen = seenSubs();
+    A.setBadge('comments', S.cmStatusMissing ? 0 : S.comments.filter(function (c) { return c.status === 'pending'; }).length);
+    A.setBadge('orders', S.orders.filter(function (o) { return ostatus(o) === 'pending'; }).length);
+    A.setBadge('newsletter', document.getElementById('page-newsletter').classList.contains('active') ? 0 : S.subs.filter(function (x) { return x.created_at > seen; }).length);
+  }
+  document.addEventListener('ad:page', function (e) { if (e.detail === 'newsletter') markSubsSeen(); });
   function refresh() { return loadAll().then(renderAll); }
+  /* রিয়ালটাইম: নতুন মন্তব্য/অর্ডার/সাবস্ক্রাইবার এলে বা অনুমোদন-যাচাই বদলালে রিফ্রেশ ছাড়াই তালিকা, ড্যাশবোর্ড ও ব্যাজ হালনাগাদ।
+     ফর্ম/সেটিংস ইনপুটে হাত দেওয়া হয় না (শুধু ওই তালিকাগুলো আবার আঁকা হয়) */
+  function softRefresh() {
+    var ae = document.activeElement;
+    if (ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName) && ae.closest && ae.closest('.modal-box,.reject-box,#page-comments')) return setTimeout(softRefresh, 4000);
+    return loadAll().then(function () { renderDashboard(); renderOrders(); renderComments(); renderSubs(); renderAnalytics(); updateBadges(); });
+  }
+  function startLive() {
+    if (!PD.live) return;
+    PD.live({
+      tables: ['comments', 'orders', 'newsletter_subscribers'],
+      poll: 20000,
+      onChange: function (ev) {
+        softRefresh();
+        (ev || []).forEach(function (p) {
+          if (p.eventType !== 'INSERT' || !p.new) return;
+          if (p.table === 'comments' && p.new.user_id !== (PD.user && PD.user.id) && p.new.status !== 'approved') A.showToast('নতুন মন্তব্য এসেছে — অনুমোদনের অপেক্ষায়');
+          else if (p.table === 'orders') A.showToast('নতুন অর্ডার এসেছে');
+        });
+      }
+    });
+  }
   window.AdminCore = { refresh: refresh, ok: ok, esc: esc, byId: byId };
 
   /* ---------- শুরু: শুধু এডমিন ঢুকতে পারবে ---------- */
@@ -437,6 +471,6 @@
     if (!PD.user) return deny('এডমিন প্যানেলে ঢুকতে আগে লগইন করুন');
     if (!PD.isAdmin()) return deny('শুধু এডমিন এই পেজ দেখতে পারেন');
     app.style.display = '';
-    refresh();
+    refresh().then(startLive);
   });
 })();

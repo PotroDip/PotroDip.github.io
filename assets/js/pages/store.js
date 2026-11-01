@@ -668,9 +668,14 @@
       gridMsg('এখনো কোনো ছাপা সংখ্যা অর্ডারের জন্য প্রস্তুত নেই।');
       return;
     }
-    items.forEach(function(p) {
+    items.forEach(function(p, idx) {
       var c = UI.tpl(p.in_stock ? 'tpl-issue' : 'tpl-issue-out');
       c.dataset.id = p.id;
+      c.dataset.price = +p.price || 0;
+      c.dataset.stock = p.in_stock ? '1' : '0';
+      c.dataset.ts = new Date(p.created_at || 0).getTime() || 0;
+      c.dataset.ord = idx;
+      c.dataset.q = String(p.title || '').toLowerCase();
       if (p.preview_pdf_url) {
         c.dataset.pdf = p.preview_pdf_url;
         c.dataset.pdfTitle = p.title;
@@ -707,7 +712,60 @@
       }
       grid.appendChild(c);
     });
+    /* স্টকে থাকা সর্বশেষ সংখ্যায় 'নতুন' চিহ্ন */
+    var fresh = null;
+    [].forEach.call(grid.querySelectorAll('.issue-card:not(.sold-out)'), function(c) {
+      if (!fresh || +c.dataset.ts > +fresh.dataset.ts) fresh = c;
+    });
+    var stage = fresh && fresh.querySelector('.issue-stage');
+    if (stage && items.length > 1) {
+      var nc = document.createElement('span');
+      nc.className = 'new-chip';
+      nc.textContent = 'নতুন';
+      stage.appendChild(nc);
+    }
+    var tools = document.getElementById('storeTools');
+    if (tools) tools.hidden = false;
+    applyView();
   }
+
+  /* ---------- খোঁজা, ছাঁকনি ও সাজানো (কার্ড DOM-এই থাকে, শুধু সাজানো/লুকানো হয়) ---------- */
+  var view = { f: 'all', s: 'default', q: '' };
+
+  function applyView() {
+    var cards = [].slice.call(grid.querySelectorAll('.issue-card'));
+    if (!cards.length) return;
+    cards.sort(function(a, b) {
+      if (view.s === 'newest') return b.dataset.ts - a.dataset.ts;
+      if (view.s === 'price-asc') return a.dataset.price - b.dataset.price;
+      if (view.s === 'price-desc') return b.dataset.price - a.dataset.price;
+      return a.dataset.ord - b.dataset.ord;
+    });
+    var shown = 0;
+    cards.forEach(function(c) {
+      grid.appendChild(c);
+      var okStock = view.f === 'all' || (view.f === 'in' && c.dataset.stock === '1') || (view.f === 'out' && c.dataset.stock === '0');
+      var ok = okStock && (!view.q || c.dataset.q.indexOf(view.q) > -1);
+      c.hidden = !ok;
+      if (ok) shown++;
+    });
+    var em = document.getElementById('stEmpty');
+    if (em) em.hidden = shown > 0;
+  }
+  (function bindTools() {
+    var chips = document.getElementById('stChips'),
+      sort = document.getElementById('stSort'),
+      q = document.getElementById('stSearch');
+    if (chips) chips.addEventListener('click', function(e) {
+      var b = e.target.closest('.st-chip');
+      if (!b) return;
+      [].forEach.call(chips.querySelectorAll('.st-chip'), function(x) { x.classList.toggle('on', x === b); });
+      view.f = b.dataset.f;
+      applyView();
+    });
+    if (sort) sort.addEventListener('change', function() { view.s = this.value; applyView(); });
+    if (q) q.addEventListener('input', function() { view.q = this.value.trim().toLowerCase(); applyView(); });
+  })();
 
   /* বিশেষ সংখ্যা: স্টকে থাকা সর্বশেষ সংখ্যা — বাটনগুলো গ্রিডের কার্ডের মতোই কাজ করে */
   function renderFeature(items, nums) {
@@ -717,9 +775,10 @@
     var p = list.sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); })[0];
     if (!p) return box.remove();
     var arrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+    var chk = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
     var teaser = String(p.teaser || '').replace(/\s+/g, ' ').trim();
     if (teaser.length > 200) { teaser = teaser.slice(0, 200); teaser = teaser.slice(0, teaser.lastIndexOf(' ')) + ' …'; }
-    box.innerHTML = '<div class="ib-inner"><button type="button" class="ib-cover" data-act="preview"><img src="' + esc(UI.cover(p.cover_url)) + '" alt="' + esc(p.title) + ' প্রচ্ছদ">' + (p.preview_pdf_url ? '<span class="ib-peek">নমুনা পাতা পড়ুন</span>' : '') + '</button><div class="ib-text"><div class="ib-kicker"><span>এখন অর্ডার চলছে</span>' + (nums[p.issue_id] ? '<span class="ib-no">সংখ্যা ' + toBn(nums[p.issue_id]) + '</span>' : '') + '</div><h2>' + esc(p.title) + '</h2>' + (teaser ? '<p class="ib-teaser">' + esc(teaser) + '</p>' : '') + '<div class="ib-price"><span class="unit">৳</span>' + toBn(p.price) + '<small>+ ডেলিভারি চার্জ</small></div><div class="ib-actions"><button type="button" class="ib-btn primary" data-act="order">অর্ডার করুন ' + arrow + '</button>' + (p.preview_pdf_url ? '<button type="button" class="ib-btn ghost" data-act="preview">নমুনা পাতা পড়ুন</button>' : '') + '</div></div></div>';
+    box.innerHTML = '<div class="ib-inner"><button type="button" class="ib-cover" data-act="preview"><img src="' + esc(UI.cover(p.cover_url)) + '" alt="' + esc(p.title) + ' প্রচ্ছদ">' + (p.preview_pdf_url ? '<span class="ib-peek">নমুনা পাতা পড়ুন</span>' : '') + '</button><div class="ib-text"><div class="ib-kicker"><span>এখন অর্ডার চলছে</span>' + (nums[p.issue_id] ? '<span class="ib-no">সংখ্যা ' + toBn(nums[p.issue_id]) + '</span>' : '') + '</div><h2>' + esc(p.title) + '</h2>' + (teaser ? '<p class="ib-teaser">' + esc(teaser) + '</p>' : '') + '<div class="ib-price"><span class="unit">৳</span>' + toBn(p.price) + '<small>+ ডেলিভারি চার্জ</small></div><div class="ib-actions"><button type="button" class="ib-btn primary" data-act="order">অর্ডার করুন ' + arrow + '</button>' + (p.preview_pdf_url ? '<button type="button" class="ib-btn ghost" data-act="preview">নমুনা পাতা পড়ুন</button>' : '') + '</div><ul class="ib-perks"><li>' + chk + 'ক্যাশ অন ডেলিভারি</li><li>' + chk + 'সারা দেশে ডেলিভারি</li>' + (p.preview_pdf_url ? '<li>' + chk + 'অর্ডারের আগে নমুনা পাতা</li>' : '') + '</ul></div></div>';
     box.addEventListener('click', function(e) {
       var b = e.target.closest('[data-act]');
       if (!b) return;

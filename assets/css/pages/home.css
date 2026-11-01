@@ -494,3 +494,16 @@ html[data-theme="dark"] .follow-btn:hover,html[data-theme="dark"] .follow-btn.fo
 
 /* মোবাইল ব্যানার (৩২০×১০০) — মোবাইলে উপরের ব্যানারের জায়গায় */
 .ad-slot.ad-mobile{height:auto;max-width:100%;aspect-ratio:3.2/1;}
+
+/* ============ বিভাগ-ভিত্তিক সেকশন ও ম্যাগাজিনের আগের সংখ্যা (v48) ============ */
+#cat-sections .cat-sec .article-grid{padding-bottom:40px;}
+#cat-sections .cat-sec:last-child .article-grid{padding-bottom:16px;}
+.issue-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:22px;margin-top:34px;}
+.issue-row:empty{display:none;}
+.mag-card{display:block;}
+.mag-card .mag-cover{aspect-ratio:3/4;border-radius:6px;overflow:hidden;background:var(--surface);box-shadow:0 2px 4px rgba(0,0,0,.08),0 16px 28px -18px rgba(0,0,0,.45);transition:transform .35s ease;}
+.mag-card:hover .mag-cover{transform:translateY(-4px);}
+.mag-card .mag-cover img{width:100%;height:100%;object-fit:cover;display:block;}
+.mag-card h4{font-size:15px;margin-top:12px;line-height:1.5;}
+.mag-card span{font-size:12.5px;color:var(--text-muted);}
+@media(max-width:640px){.issue-row{grid-template-columns:repeat(2,1fr);gap:16px;}}

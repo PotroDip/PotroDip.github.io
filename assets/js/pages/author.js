@@ -14,7 +14,7 @@
     var au = r.data;
     if (r.error || !au) return notFound('লেখককে পাওয়া যায়নি');
     return db.from('articles').select('id,title,excerpt,category,cover_url,published_at,created_at').eq('author_id', au.id).order('published_at', { ascending: false }).limit(60).then(function (ar) {
-      var arts = ar.data || [], ids = arts.map(function (a) { return a.id; });
+      var arts = PD.fixCats(ar.data || []), ids = arts.map(function (a) { return a.id; });
       var cm = ids.length ? db.from('comments').select('article_id,rating').in('article_id', ids).not('rating', 'is', null) : Promise.resolve({ data: [] });
       return Promise.all([cm, db.rpc('author_follower_count', { p_author: au.id })]).then(function (x) { show(au, arts, x[0].data || [], x[1].data); });
     });

@@ -290,7 +290,8 @@
     grp.items.forEach(function(it) {
       navHtml += '<button class="nav-item' + (it.id === 'dashboard' ? ' active' : '') + '" data-page="' + it.id + '">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + it.icon + '</svg>' +
-        it.label +
+        '<span class="nav-label">' + it.label + '</span>' +
+        '<span class="nav-badge" data-badge="' + it.id + '" hidden></span>' +
         '</button>';
     });
   });
@@ -319,6 +320,20 @@
       top: 0,
       behavior: 'smooth'
     });
+    document.dispatchEvent(new CustomEvent('ad:page', { detail: pageId }));
+    /* রিফ্রেশ দিলে যেন এই পেজেই থাকা যায়: ঠিকানায় (#comments) ও ব্রাউজারের মেমরিতে মনে রাখা */
+    try { history.replaceState(null, '', '#' + pageId); } catch (e) {}
+    try { localStorage.setItem('pd_admin_page', pageId); } catch (e) {}
+  }
+
+  /* সাইডবারের মেনুর পাশে সংখ্যার ব্যাজ (০ হলে লুকানো) */
+  function setBadge(pageId, n) {
+    var b = sidebarNav.querySelector('[data-badge="' + pageId + '"]');
+    if (!b) return;
+    n = parseInt(n, 10) || 0;
+    b.hidden = n <= 0;
+    b.textContent = n > 99 ? toBn(99) + '+' : toBn(n);
+    b.setAttribute('aria-label', toBn(n) + 'টি নতুন');
   }
 
   sidebarNav.addEventListener('click', function(e) {
@@ -345,6 +360,13 @@
     });
   });
 
+  /* শুরুতে: আগের পেজ (ঠিকানার # বা মেমরি) থাকলে সেখানেই খোলা, না থাকলে ড্যাশবোর্ড */
+  (function restorePage() {
+    var id = (location.hash || '').replace('#', '');
+    if (!id) { try { id = localStorage.getItem('pd_admin_page') || ''; } catch (e) {} }
+    if (id && id !== 'dashboard' && PAGE_META[id] && document.getElementById('page-' + id)) goToPage(id);
+  })();
+
   window.AdminUI = {
     toBn: toBn,
     bnTaka: bnTaka,
@@ -354,6 +376,7 @@
     showConfirm: showConfirm,
     openModal: openModal,
     closeModal: closeModal,
-    goToPage: goToPage
+    goToPage: goToPage,
+    setBadge: setBadge
   };
 })();

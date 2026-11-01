@@ -33,6 +33,7 @@
   function show(is, arts, authors, pr) {
     document.title = is.title + ' | পত্রদ্বীপ';
     $('crumb-title').textContent = is.title;
+    PD.fixCats(arts);
     var U = {}; authors.forEach(function (u) { U[u.id] = u; });
     var au = function (a) { return U[a.author_id] || { name: 'অজানা লেখক' }; };
     var wr = [], cats = [];

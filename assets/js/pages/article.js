@@ -72,11 +72,12 @@
   (id ? q.eq('id', id) : q.eq('slug', slug)).maybeSingle().then(function (r) {
     var a = r.data;
     if (r.error || !a) return notFound('লেখাটি পাওয়া যায়নি');
+    var rawCat = a.category; a.category = PD.normCat(a.category);
     var jobs = [
       a.author_id ? db.from('authors').select('id,slug,name,city,image_url').eq('id', a.author_id).maybeSingle() : Promise.resolve({}),
       db.from('ads').select('slot_id,slot_name,image_url,link_url').eq('is_active', true),
       a.author_id ? db.from('articles').select('id,title,category,cover_url').eq('author_id', a.author_id).neq('id', a.id).order('published_at', { ascending: false }).limit(3) : Promise.resolve({ data: [] }),
-      a.category ? db.from('articles').select('id,title,category,cover_url,author_id').eq('category', a.category).neq('id', a.id).order('published_at', { ascending: false }).limit(3) : Promise.resolve({ data: [] })
+      a.category ? db.from('articles').select('id,title,category,cover_url,author_id').in('category', PD.catVariants(rawCat)).neq('id', a.id).order('published_at', { ascending: false }).limit(3) : Promise.resolve({ data: [] })
     ];
     return Promise.all(jobs).then(function (res) { show(a, res[0].data, res[1].data, res[2].data || [], res[3].data || []); });
   });
@@ -135,7 +136,7 @@
       var row = panel.querySelector('.amore-row');
       more.forEach(function (m) {
         var c = UI.tpl('tpl-amore'); c.href = UI.articleUrl(m);
-        UI.img(c, '.amore-thumb img', UI.cover(m.cover_url), ''); UI.set(c, '.amore-cat', m.category || ''); UI.set(c, 'h4', m.title);
+        UI.img(c, '.amore-thumb img', UI.cover(m.cover_url), ''); UI.set(c, '.amore-cat', PD.normCat(m.category)); UI.set(c, 'h4', m.title);
         row.appendChild(c);
       });
     } else panel.closest('section').remove();
@@ -151,7 +152,7 @@
         rel.forEach(function (m) {
           var u = map[m.author_id] || { name: '' }, c = UI.tpl('tpl-related');
           c.href = UI.articleUrl(m);
-          UI.img(c, '.thumb img', UI.cover(m.cover_url), ''); UI.set(c, '.related-cat', m.category || ''); UI.set(c, 'h4', m.title);
+          UI.img(c, '.thumb img', UI.cover(m.cover_url), ''); UI.set(c, '.related-cat', PD.normCat(m.category)); UI.set(c, 'h4', m.title);
           UI.img(c, '.related-meta img', UI.avatar(u.image_url), '');
           var sp = c.querySelector('.related-meta > span'); sp.innerHTML = ''; sp.appendChild(document.createTextNode(u.name));
           if (u.city) { var d = document.createElement('span'); d.className = 'dot-sep'; var cc = document.createElement('span'); cc.className = 'city'; cc.textContent = u.city; sp.appendChild(d); sp.appendChild(cc); }

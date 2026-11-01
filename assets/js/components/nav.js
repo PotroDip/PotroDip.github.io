@@ -97,7 +97,8 @@
       }).limit(3)]).then(function(r) {
         var list = [];
         (r[0].data || []).forEach(function(a) {
-          if (a.category && list.indexOf(a.category) < 0 && list.length < 4) list.push(a.category);
+          var ct = PD.normCat(a.category);
+          if (ct && list.indexOf(ct) < 0 && list.length < 4) list.push(ct);
         });
         (r[1].data || []).forEach(function(a) {
           if (a.name && list.indexOf(a.name) < 0) list.push(a.name);
@@ -201,7 +202,7 @@
       if (arts.length) {
         var g2 = group('লেখা', ICON.art, arts.length);
         arts.forEach(function(a) {
-          g2.appendChild(item(UI.articleUrl(a), UI.cover(a.cover_url), false, a.title, (a.category || '') + ' · ' + (names[a.author_id] || ''), q));
+          g2.appendChild(item(UI.articleUrl(a), UI.cover(a.cover_url), false, a.title, PD.normCat(a.category) + ' · ' + (names[a.author_id] || ''), q));
         });
         results.appendChild(g2);
       }
