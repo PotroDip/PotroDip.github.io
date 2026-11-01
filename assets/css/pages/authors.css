@@ -46,8 +46,8 @@ html[data-theme="dark"] .au-sort button.on{color:#0F1415;}
 #authors-row.au-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;padding-bottom:40px;overflow:visible;margin:0;scroll-snap-type:none;}
 .au-card{position:relative;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;
   transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease, border-color .3s ease;
-  opacity:0;transform:translateY(14px);animation:au-in .55s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(var(--i,0) * 45ms);}
-@keyframes au-in{to{opacity:1;transform:none;}}
+  }
+/* ঢোকার এনিমেশন এখন সব পেজের জন্য একটাই — base.css-এর .rv (reveal.js) */
 .au-card:hover{transform:translateY(-6px);border-color:color-mix(in srgb, var(--primary) 45%, var(--border));box-shadow:0 22px 44px rgba(20,40,42,.14);}
 html[data-theme="dark"] .au-card:hover{box-shadow:0 22px 44px rgba(0,0,0,.45);}
 .au-banner{height:92px;position:relative;overflow:hidden;
