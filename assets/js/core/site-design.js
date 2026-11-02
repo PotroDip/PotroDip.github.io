@@ -124,9 +124,9 @@
   /* ---------- ডিজাইন-ব্লকের ডিফল্ট স্টাইল (শুধু নতুন এলিমেন্ট যোগ হলেই বসে) ---------- */
   var BLOCK_CSS =
     '.pd-box{padding:28px;border-radius:14px;background:var(--surface);border:1px solid var(--border);}' +
-    '.pd-h{font-family:"Gunjoron",serif;font-weight:700;line-height:1.3;color:var(--text);font-size:30px;margin:0;}' +
-    '.pd-p{font-family:"Gunjoron",serif;font-size:17px;line-height:1.75;color:var(--text);margin:0;}' +
-    '.pd-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 26px;border-radius:999px;background:var(--primary);color:#fff;font-family:"Gunjoron",serif;font-weight:600;font-size:16px;text-decoration:none;cursor:pointer;border:0;}' +
+    '.pd-h{font-family:"Noto Serif Bengali",serif;font-weight:700;line-height:1.3;color:var(--text);font-size:30px;margin:0;}' +
+    '.pd-p{font-family:"Noto Serif Bengali",serif;font-size:17px;line-height:1.75;color:var(--text);margin:0;}' +
+    '.pd-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 26px;border-radius:999px;background:var(--primary);color:#fff;font-family:"Noto Serif Bengali",serif;font-weight:600;font-size:16px;text-decoration:none;cursor:pointer;border:0;}' +
     '.pd-btn:hover{filter:brightness(1.1);}' +
     '.pd-img{display:block;width:100%;max-width:100%;height:auto;border-radius:12px;object-fit:cover;background:var(--secondary-light);}' +
     '.pd-divider{height:2px;border:0;background:var(--border);margin:24px 0;width:100%;}' +
@@ -139,7 +139,7 @@
     '.pd-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;}' +
     '.pd-card{padding:24px;border-radius:14px;background:var(--surface);border:1px solid var(--border);display:flex;flex-direction:column;gap:10px;}' +
     '.pd-card .pd-h{font-size:22px;}' +
-    '.pd-quote{padding:28px 32px;border-left:5px solid var(--secondary);background:var(--surface);border-radius:0 14px 14px 0;font-family:"Gunjoron",serif;font-size:22px;line-height:1.6;color:var(--text);}' +
+    '.pd-quote{padding:28px 32px;border-left:5px solid var(--secondary);background:var(--surface);border-radius:0 14px 14px 0;font-family:"Noto Serif Bengali",serif;font-size:22px;line-height:1.6;color:var(--text);}' +
     '.pd-quote cite{display:block;margin-top:12px;font-size:15px;color:var(--text-muted);font-style:normal;}' +
     '.pd-cta{padding:36px;border-radius:18px;background:var(--secondary-light);display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between;}' +
     '.pd-cta .pd-h{font-size:26px;color:#2A2A28;}' +

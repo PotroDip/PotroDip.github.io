@@ -95,6 +95,15 @@
     var cv = document.querySelector('.cover-media img'); cv.src = UI.cover(a.cover_url); cv.alt = a.title;
     var badge = document.querySelector('.cover-media .cat-badge'); if (a.category) badge.textContent = a.category; else badge.remove();
     UI.set(document, '.article-head h1', a.title);
+    /* v82: শিরোনামের ফন্ট + লেখায় ব্যবহৃত নিজের ফন্টগুলো লোড (শুধু যেগুলো লাগে) */
+    (function () {
+      var PF = window.PDFonts, h1 = document.querySelector('.article-head h1');
+      if (!PF) return;
+      var tf = /^[a-z0-9_]{1,40}$/.test(a.title_font || '') ? a.title_font : '';
+      if (tf && h1) h1.style.fontFamily = PF.css(tf);
+      var used = PF.scan(a.body); if (tf && used.indexOf(tf) < 0) used.push(tf);
+      if (used.length) PF.loadFor(used);
+    })();
 
     var by = document.querySelector('.byline');
     by.href = au.slug ? UI.authorUrl(au) : '#';

@@ -103,9 +103,14 @@
             out.appendChild(el); return;
           }
           if (name === 'figure') {
-            var sz = n.getAttribute('data-size'), al2 = n.getAttribute('data-align');
-            el.setAttribute('data-size', /^(s|m|l|f)$/.test(sz || '') ? sz : 'm');
-            el.setAttribute('data-align', /^(left|center|right)$/.test(al2 || '') ? al2 : 'center');
+            var sz = n.getAttribute('data-size'), al2 = n.getAttribute('data-align'), dw = parseFloat(n.getAttribute('data-w'));
+            /* v82: মাপ শতাংশে (৮–১০০); পুরোনো ছোট/মাঝারি/বড় ছবি আগের মতোই থাকে */
+            if (dw >= 8 && dw <= 100) { dw = Math.round(dw * 10) / 10; el.setAttribute('data-w', String(dw)); el.style.width = dw + '%'; }
+            else el.setAttribute('data-size', /^(s|m|l|f)$/.test(sz || '') ? sz : 'm');
+            al2 = /^(left|center|right)$/.test(al2 || '') ? al2 : 'center';
+            el.setAttribute('data-align', al2);
+            if (n.getAttribute('data-wrap') === '1' && al2 !== 'center') el.setAttribute('data-wrap', '1'); /* লেখা ছবির চারপাশে ঘিরে আসবে */
+            var dst = n.getAttribute('data-style'); if (/^(plain|round|shadow)$/.test(dst || '')) el.setAttribute('data-style', dst);
           }
           if (name === 'aside') { var tn = n.getAttribute('data-tone'); el.setAttribute('data-tone', /^(info|warn|good)$/.test(tn || '') ? tn : 'info'); }
           var st = (name === 'hr' || name === 'br' || name === 'figure' || name === 'figcaption' || name === 'aside') ? {} : keepStyles(n, el, extra);

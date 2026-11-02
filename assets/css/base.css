@@ -2,10 +2,16 @@
    base.css — সব পেজে লাগে: রঙ (লাইট/ডার্ক), ফন্ট, হেডার, নেভিগেশন, ফুটার
    ============================================================ */
 
-/* ============ ফন্ট: Gunjoron-Font (নিজস্ব সার্ভারে রাখা; Thin / Normal / Bold) ============ */
-@font-face{font-family:'Gunjoron';src:url('../fonts/Gunjoron-Font-Thin.woff2?v=75') format('woff2'),url('../fonts/Gunjoron-Font-Thin.ttf?v=75') format('truetype');font-weight:100 300;font-style:normal;font-display:swap;}
-@font-face{font-family:'Gunjoron';src:url('../fonts/Gunjoron-Font-Normal.woff2?v=75') format('woff2'),url('../fonts/Gunjoron-Font-Normal.ttf?v=75') format('truetype');font-weight:400 500;font-style:normal;font-display:swap;}
-@font-face{font-family:'Gunjoron';src:url('../fonts/Gunjoron-Font-Bold.woff2?v=75') format('woff2'),url('../fonts/Gunjoron-Font-Bold.ttf?v=75') format('truetype');font-weight:600 900;font-style:normal;font-display:swap;}
+/* ============ ফন্ট: Noto Serif Bengali (নিজস্ব সার্ভারে রাখা; Thin থেকে Black — ৯টি ওজন) ============ */
+@font-face{font-family:'Noto Serif Bengali';src:url('../fonts/NotoSerifBengali-Thin.woff?v=82') format('woff'),url('../fonts/NotoSerifBengali-Thin.ttf?v=82') format('truetype');font-weight:100;font-style:normal;font-display:swap;}
+@font-face{font-family:'Noto Serif Bengali';src:url('../fonts/NotoSerifBengali-ExtraLight.woff?v=82') format('woff'),url('../fonts/NotoSerifBengali-ExtraLight.ttf?v=82') format('truetype');font-weight:200;font-style:normal;font-display:swap;}
+@font-face{font-family:'Noto Serif Bengali';src:url('../fonts/NotoSerifBengali-Light.woff?v=82') format('woff'),url('../fonts/NotoSerifBengali-Light.ttf?v=82') format('truetype');font-weight:300;font-style:normal;font-display:swap;}
+@font-face{font-family:'Noto Serif Bengali';src:url('../fonts/NotoSerifBengali-Regular.woff?v=82') format('woff'),url('../fonts/NotoSerifBengali-Regular.ttf?v=82') format('truetype');font-weight:400;font-style:normal;font-display:swap;}
+@font-face{font-family:'Noto Serif Bengali';src:url('../fonts/NotoSerifBengali-Medium.woff?v=82') format('woff'),url('../fonts/NotoSerifBengali-Medium.ttf?v=82') format('truetype');font-weight:500;font-style:normal;font-display:swap;}
+@font-face{font-family:'Noto Serif Bengali';src:url('../fonts/NotoSerifBengali-SemiBold.woff?v=82') format('woff'),url('../fonts/NotoSerifBengali-SemiBold.ttf?v=82') format('truetype');font-weight:600;font-style:normal;font-display:swap;}
+@font-face{font-family:'Noto Serif Bengali';src:url('../fonts/NotoSerifBengali-Bold.woff?v=82') format('woff'),url('../fonts/NotoSerifBengali-Bold.ttf?v=82') format('truetype');font-weight:700;font-style:normal;font-display:swap;}
+@font-face{font-family:'Noto Serif Bengali';src:url('../fonts/NotoSerifBengali-ExtraBold.woff?v=82') format('woff'),url('../fonts/NotoSerifBengali-ExtraBold.ttf?v=82') format('truetype');font-weight:800;font-style:normal;font-display:swap;}
+@font-face{font-family:'Noto Serif Bengali';src:url('../fonts/NotoSerifBengali-Black.woff?v=82') format('woff'),url('../fonts/NotoSerifBengali-Black.ttf?v=82') format('truetype');font-weight:900;font-style:normal;font-display:swap;}
 
 *{margin:0;padding:0;box-sizing:border-box;}
 
@@ -14,7 +20,7 @@ html{scroll-behavior:smooth;}
 /* ============ টাইপোগ্রাফি হায়ারার্কি — ওজন দিয়ে ============ */
   /* Bold(700): হেডলাইন/শিরোনাম — h1, আর্টিকেল টাইটেল, সেকশন হেডিং */
   h1,h2,h3{
-    font-family:'Gunjoron', serif;
+    font-family:'Noto Serif Bengali', serif;
     font-weight:700;
     line-height:1.3;
     color:var(--text);

@@ -1,10 +1,16 @@
 /* studio.css — ডিজাইন স্টুডিও (ইলাস্ট্রেটর-স্টাইল গাঢ় ইন্টারফেস) */
-@font-face{font-family:'Gunjoron';src:url('../../fonts/Gunjoron-Font-Thin.woff2?v=75') format('woff2'),url('../../fonts/Gunjoron-Font-Thin.ttf?v=75') format('truetype');font-weight:100 300;font-display:swap;}
-@font-face{font-family:'Gunjoron';src:url('../../fonts/Gunjoron-Font-Normal.woff2?v=75') format('woff2'),url('../../fonts/Gunjoron-Font-Normal.ttf?v=75') format('truetype');font-weight:400 500;font-display:swap;}
-@font-face{font-family:'Gunjoron';src:url('../../fonts/Gunjoron-Font-Bold.woff2?v=75') format('woff2'),url('../../fonts/Gunjoron-Font-Bold.ttf?v=75') format('truetype');font-weight:600 900;font-display:swap;}
+@font-face{font-family:'Noto Serif Bengali';src:url('../../fonts/NotoSerifBengali-Thin.woff?v=82') format('woff'),url('../../fonts/NotoSerifBengali-Thin.ttf?v=82') format('truetype');font-weight:100;font-style:normal;font-display:swap;}
+@font-face{font-family:'Noto Serif Bengali';src:url('../../fonts/NotoSerifBengali-ExtraLight.woff?v=82') format('woff'),url('../../fonts/NotoSerifBengali-ExtraLight.ttf?v=82') format('truetype');font-weight:200;font-style:normal;font-display:swap;}
+@font-face{font-family:'Noto Serif Bengali';src:url('../../fonts/NotoSerifBengali-Light.woff?v=82') format('woff'),url('../../fonts/NotoSerifBengali-Light.ttf?v=82') format('truetype');font-weight:300;font-style:normal;font-display:swap;}
+@font-face{font-family:'Noto Serif Bengali';src:url('../../fonts/NotoSerifBengali-Regular.woff?v=82') format('woff'),url('../../fonts/NotoSerifBengali-Regular.ttf?v=82') format('truetype');font-weight:400;font-style:normal;font-display:swap;}
+@font-face{font-family:'Noto Serif Bengali';src:url('../../fonts/NotoSerifBengali-Medium.woff?v=82') format('woff'),url('../../fonts/NotoSerifBengali-Medium.ttf?v=82') format('truetype');font-weight:500;font-style:normal;font-display:swap;}
+@font-face{font-family:'Noto Serif Bengali';src:url('../../fonts/NotoSerifBengali-SemiBold.woff?v=82') format('woff'),url('../../fonts/NotoSerifBengali-SemiBold.ttf?v=82') format('truetype');font-weight:600;font-style:normal;font-display:swap;}
+@font-face{font-family:'Noto Serif Bengali';src:url('../../fonts/NotoSerifBengali-Bold.woff?v=82') format('woff'),url('../../fonts/NotoSerifBengali-Bold.ttf?v=82') format('truetype');font-weight:700;font-style:normal;font-display:swap;}
+@font-face{font-family:'Noto Serif Bengali';src:url('../../fonts/NotoSerifBengali-ExtraBold.woff?v=82') format('woff'),url('../../fonts/NotoSerifBengali-ExtraBold.ttf?v=82') format('truetype');font-weight:800;font-style:normal;font-display:swap;}
+@font-face{font-family:'Noto Serif Bengali';src:url('../../fonts/NotoSerifBengali-Black.woff?v=82') format('woff'),url('../../fonts/NotoSerifBengali-Black.ttf?v=82') format('truetype');font-weight:900;font-style:normal;font-display:swap;}
 :root{--ui-bg:#1e2124;--ui-panel:#26292d;--ui-panel2:#2d3136;--ui-line:#3a3f45;--ui-text:#e8e6e1;--ui-mute:#9aa0a6;--ui-acc:#38bdf8;--ui-brand:#4FA8AD;--ui-ok:#3fb27f;--ui-warn:#e0b354;--ui-bad:#e06b57;--sel:#38bdf8;}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;overflow:hidden;background:var(--ui-bg);color:var(--ui-text);font:400 13.5px/1.45 'Gunjoron',system-ui,sans-serif}
+html,body{height:100%;overflow:hidden;background:var(--ui-bg);color:var(--ui-text);font:400 13.5px/1.45 'Noto Serif Bengali',system-ui,sans-serif}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 input,select,textarea{font:inherit;color:var(--ui-text)}
 .booting #app{visibility:hidden}

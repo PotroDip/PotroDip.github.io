@@ -47,7 +47,7 @@ html[data-theme="dark"]{
 body{
     background:var(--bg);
     color:var(--text);
-    font-family:'Gunjoron', serif;
+    font-family:'Noto Serif Bengali', serif;
     font-weight:400;
     line-height:1.7;
     overflow-x:hidden;
@@ -58,7 +58,7 @@ body.theme-ready, body.theme-ready *{
     transition:background-color .25s ease, color .25s ease, border-color .25s ease, fill .25s ease, box-shadow .25s ease;
   }
 
-h4, button{font-family:'Gunjoron', serif; font-weight:600;}
+h4, button{font-family:'Noto Serif Bengali', serif; font-weight:600;}
 
 p{font-weight:400;}
 
@@ -665,7 +665,7 @@ select.status-select{
 .rt-btn svg{width:16px; height:16px; flex-shrink:0;}
 .rt-btn svg.rt-chev{width:11px; height:11px; opacity:.65; margin-left:1px;}
 .rt-btn.open svg.rt-chev{transform:rotate(180deg);}
-.rt-txt{font-size:15px; font-weight:700; line-height:1; font-family:'Gunjoron', serif;}
+.rt-txt{font-size:15px; font-weight:700; line-height:1; font-family:'Noto Serif Bengali', serif;}
 .rt-b{font-weight:900;} .rt-i{font-style:italic; font-weight:600;} .rt-u{text-decoration:underline; text-underline-offset:2px;} .rt-s{text-decoration:line-through;}
 .rt-sc{font-size:14px;} .rt-sc sub, .rt-sc sup{font-size:.62em;}
 .rt-sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;}
@@ -1325,3 +1325,72 @@ html[data-theme="dark"] .rank-badge{color:#0F1415;}
 .rank-continue{width:100%;text-align:center;background:var(--primary);color:#fff;font-size:14.5px;font-weight:600;padding:12px;border-radius:10px;transition:filter .2s ease;}
 .rank-continue:hover{filter:brightness(1.12);}
 html[data-theme="dark"] .rank-continue{color:#0F1415;}
+
+/* ===== v82: লেখা-ঘেরা ছবি (সম্পাদক) ===== */
+.rte-body{display:flow-root;}
+.rte-body figure[data-w]{max-width:100%;}
+.rte-body figure[data-align="center"]{clear:both;}
+.rte-body figure[data-wrap="1"][data-align="left"]{float:left; clear:left; margin:6px 22px 12px 0;}
+.rte-body figure[data-wrap="1"][data-align="right"]{float:right; clear:right; margin:6px 0 12px 22px;}
+.rte-body figure[data-wrap="1"] figcaption{font-size:.82em;}
+.rte-body hr, .rte-body table, .rte-body pre, .rte-body aside{clear:both;}
+.rte-body figure[data-style="plain"] img{border:0; border-radius:0;}
+.rte-body figure[data-style="round"] img{border-radius:24px;}
+.rte-body figure[data-style="shadow"] img{border-color:transparent; box-shadow:0 12px 30px -12px rgba(0,0,0,.5);}
+.rte-body figure.is-moving{opacity:.55; outline:2px dashed var(--primary); outline-offset:4px;}
+.rte-body figure.is-moving img{outline:none;}
+.rte-body.is-fig-drag{cursor:grabbing;}
+html.rte-dragging, html.rte-dragging *{cursor:grabbing !important; -webkit-user-select:none !important; user-select:none !important;}
+html.rte-dragging .rte-body img{pointer-events:none;}
+.rte-body figure.pd-fig img{cursor:grab;}
+.rte-body figure.is-resizing img{outline-style:dashed;}
+.rte-ghost{position:fixed; left:0; top:0; z-index:1400; pointer-events:none; border-radius:10px; overflow:hidden; opacity:.82; box-shadow:0 18px 40px -8px rgba(0,0,0,.5); border:2px solid var(--primary); background:var(--bg); will-change:transform;}
+.rte-ghost img{display:block; width:100%; height:auto;}
+/* ছবির কোণার হ্যান্ডেল */
+.rte-figctl{position:fixed; z-index:1305; display:none; pointer-events:none;}
+.rte-figctl .rte-h{position:absolute; width:14px; height:14px; margin:-7px 0 0 -7px; background:#fff; border:2px solid var(--primary); border-radius:4px; pointer-events:auto; touch-action:none; box-shadow:0 1px 4px rgba(0,0,0,.35);}
+.rte-figctl .rte-h[data-c="nw"]{left:0; top:0; cursor:nwse-resize;}
+.rte-figctl .rte-h[data-c="ne"]{left:100%; top:0; cursor:nesw-resize;}
+.rte-figctl .rte-h[data-c="sw"]{left:0; top:100%; cursor:nesw-resize;}
+.rte-figctl .rte-h[data-c="se"]{left:100%; top:100%; cursor:nwse-resize;}
+.rte-figctl .rte-mv{position:absolute; left:10px; top:10px; width:32px; height:32px; border-radius:9px; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; pointer-events:auto; touch-action:none; cursor:grab; box-shadow:0 4px 12px rgba(0,0,0,.35);}
+.rte-figctl .rte-mv svg{width:18px; height:18px;}
+.rte-figctl .rte-wv{position:absolute; left:50%; bottom:10px; transform:translateX(-50%); padding:2px 9px; font-size:11.5px; font-weight:700; color:#fff; background:rgba(0,0,0,.62); border-radius:999px; pointer-events:none; white-space:nowrap;}
+.rte-figbar .rt-pc{font-size:11.5px; padding:0 7px;}
+@media(max-width:560px){
+  .rte-body figure[data-wrap="1"]{float:none; clear:both; width:100% !important; margin:14px 0;}
+}
+
+/* ===== v82: ফন্ট ম্যানেজার + শিরোনামের ফন্ট ===== */
+.rte-pop-fonts{min-width:240px; max-height:min(60vh,420px); overflow:auto;}
+.art-label-row{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:8px;}
+.art-label-row .art-label{margin:0;}
+.title-font-pick{display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--text-muted);}
+.title-font-pick select{max-width:200px; padding:5px 8px; font-size:12.5px; border-radius:8px; border:1px solid var(--border); background:var(--field-bg); color:var(--text); font-family:inherit;}
+.title-font-pick select:focus{outline:none; border-color:var(--primary);}
+.pdf-ov{position:fixed; inset:0; z-index:1600; display:none; align-items:center; justify-content:center; padding:18px; background:rgba(8,12,16,.62); backdrop-filter:blur(3px);}
+.pdf-ov.open{display:flex; animation:rtPop .15s ease-out;}
+.pdf-box{width:min(620px,100%); max-height:min(88vh,760px); display:flex; flex-direction:column; background:var(--bg); color:var(--text); border:1px solid var(--border); border-radius:18px; box-shadow:0 30px 80px -20px rgba(0,0,0,.6); overflow:hidden;}
+.pdf-head{display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:18px 20px 14px; border-bottom:1px solid var(--border);}
+.pdf-head h3{font-size:18px; font-weight:700; margin:0 0 3px;} .pdf-head p{margin:0; font-size:12.5px; color:var(--text-muted);}
+.pdf-x{width:34px; height:34px; border-radius:10px; font-size:24px; line-height:1; color:var(--text-muted); flex-shrink:0;} .pdf-x:hover{background:color-mix(in srgb,var(--text) 9%,transparent); color:var(--text);}
+.pdf-body{padding:16px 20px 20px; overflow:auto;}
+.pdf-add{display:flex; flex-direction:column; gap:10px; padding:14px; border:1px dashed color-mix(in srgb,var(--primary) 55%,var(--border)); border-radius:14px; background:color-mix(in srgb,var(--primary) 5%,transparent);}
+.pdf-pick{display:block; cursor:pointer; padding:12px 14px; border-radius:10px; background:var(--field-bg); border:1px solid var(--border); font-weight:700; font-size:14px; word-break:break-all;}
+.pdf-pick:hover{border-color:var(--primary);} .pdf-pick input{display:none;} .pdf-pick small{font-weight:400; color:var(--text-muted); font-size:11.5px;}
+.pdf-row{display:flex; gap:8px;}
+.pdf-row input{flex:1; min-width:0; padding:11px 13px; font-size:14px; border-radius:10px; border:1px solid var(--border); background:var(--field-bg); color:var(--text); font-family:inherit;}
+.pdf-row input:focus{outline:none; border-color:var(--primary); box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 16%,transparent);}
+.pdf-go{padding:0 18px; border-radius:10px; background:var(--primary); color:#fff; font-weight:700; font-size:14px; white-space:nowrap;} .pdf-go:disabled{opacity:.45; cursor:not-allowed;}
+.pdf-note{font-size:12.5px; color:#dc2626; min-height:0;} .pdf-note:empty{display:none;}
+.pdf-sec{margin:18px 2px 8px; font-size:12.5px; font-weight:700; color:var(--text-muted); letter-spacing:.02em;}
+.pdf-list{display:flex; flex-direction:column; gap:10px;}
+.pdf-item{padding:12px 14px; border:1px solid var(--border); border-radius:12px; background:var(--surface);}
+.pdf-item.is-def{border-color:color-mix(in srgb,var(--primary) 40%,var(--border));}
+.pdf-meta{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:6px;} .pdf-meta b{font-size:14px;}
+.pdf-tag{font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; background:color-mix(in srgb,var(--primary) 16%,transparent); color:var(--primary);}
+.pdf-lock,.pdf-sz{margin-left:auto; font-size:11.5px; color:var(--text-muted); font-style:normal;}
+.pdf-del{margin-left:8px; padding:4px 11px; font-size:12px; font-weight:700; border-radius:8px; color:#dc2626; border:1px solid color-mix(in srgb,#dc2626 35%,transparent);} .pdf-del:hover{background:color-mix(in srgb,#dc2626 12%,transparent);}
+.pdf-sample{font-size:19px; line-height:1.6; word-break:break-word;}
+.pdf-empty{padding:14px; font-size:13px; color:var(--text-muted); text-align:center; border:1px dashed var(--border); border-radius:12px;} .pdf-empty.warn{color:#b45309; text-align:left; border-color:#d99a00; background:color-mix(in srgb,#facc15 10%,transparent);}
+.pdf-empty code{font-size:12px; word-break:break-all;}

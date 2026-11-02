@@ -39,7 +39,7 @@
 
 .search-field input{
     flex:1; min-width:0; border:none; background:transparent; outline:none;
-    font-size:16px; color:var(--text); font-family:'Gunjoron', serif;
+    font-size:16px; color:var(--text); font-family:'Noto Serif Bengali', serif;
   }
 
 .search-field input::placeholder{color:var(--text-muted); opacity:.65;}

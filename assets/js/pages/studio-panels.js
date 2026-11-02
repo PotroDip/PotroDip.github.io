@@ -394,9 +394,9 @@
       }
       b.appendChild(sel({
         label: 'ফন্ট', prop: 'font-family', loose: true,
-        options: [['Gunjoron', 'গুঞ্জরন (সাইটের ফন্ট)'], ['Georgia', 'সেরিফ (Georgia)'], ['Arial', 'সান্স (Arial)'], ['Courier New', 'মনোস্পেস'], ['Trebuchet MS', 'Trebuchet']],
+        options: [['Noto Serif Bengali', 'নোটো সেরিফ বাংলা (সাইটের ফন্ট)'], ['Georgia', 'সেরিফ (Georgia)'], ['Arial', 'সান্স (Arial)'], ['Courier New', 'মনোস্পেস'], ['Trebuchet MS', 'Trebuchet']],
         get: function () { var v = eff('font-family').split(',')[0].replace(/["']/g, '').trim(); return v; },
-        set: function (v) { P.cssAll({ 'font-family': v === 'Gunjoron' ? "'Gunjoron', serif" : "'" + v + "', " + (v === 'Georgia' ? 'serif' : v === 'Courier New' ? 'monospace' : 'sans-serif') }); }
+        set: function (v) { P.cssAll({ 'font-family': v === 'Noto Serif Bengali' ? "'Noto Serif Bengali', serif" : "'" + v + "', " + (v === 'Georgia' ? 'serif' : v === 'Courier New' ? 'monospace' : 'sans-serif') }); }
       }));
       b.appendChild(seg({ label: 'ওজন', options: [['300', 'পাতলা'], ['400', 'সাধারণ'], ['700', 'গাঢ়']], prop: 'font-weight', match: function (v, o) { var n = +v; return o === '300' ? n < 350 : o === '400' ? n >= 350 && n < 600 : n >= 600; } }));
       b.appendChild(num({ label: 'সাইজ', prop: 'font-size', min: 6, max: 200, range: true, dec: 1 }));

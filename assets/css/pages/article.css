@@ -37,7 +37,7 @@ html[data-theme="dark"]{
 body{
     background:var(--bg);
     color:var(--text);
-    font-family:'Gunjoron', serif;
+    font-family:'Noto Serif Bengali', serif;
     font-weight:400;
     line-height:1.7;
     overflow-x:hidden;
@@ -48,7 +48,7 @@ body.theme-ready, body.theme-ready *{
     transition:background-color .3s ease, color .3s ease, border-color .3s ease, fill .3s ease, stroke .3s ease, filter .3s ease;
   }
 
-h4, button, .brand-name{font-family:'Gunjoron', serif; font-weight:600;}
+h4, button, .brand-name{font-family:'Noto Serif Bengali', serif; font-weight:600;}
 
 p{font-weight:400;}
 
@@ -218,7 +218,7 @@ html[data-theme="dark"] .cat-badge{ background:rgba(10,14,15,.75); }
 }
 
 .pull-quote{
-    font-family:'Gunjoron', serif; font-weight:700; font-size:30px; color:var(--secondary);
+    font-family:'Noto Serif Bengali', serif; font-weight:700; font-size:30px; color:var(--secondary);
     padding:24px 28px; border-left:3px solid var(--secondary); margin:36px 0; line-height:1.5;
     background:var(--quote-highlight); border-radius:0 8px 8px 0; text-align:left;
   }
@@ -476,4 +476,21 @@ html[data-theme="dark"] .ap-id:hover .ap-cta{color:#0F1415;}
 @media(max-width:600px){
   .article-body figure[data-size="s"]{width:60%;} .article-body figure[data-size="m"]{width:80%;} .article-body figure[data-size="l"], .article-body figure[data-size="f"]{width:100%;}
   .article-body aside{padding:13px 15px;}
+}
+
+/* ===== v82: পত্রিকার মতো লেখা-ঘেরা ছবি ===== */
+.article-body{display:flow-root;}
+.article-body figure[data-w]{max-width:100%;}
+.article-body figure[data-align="center"]{clear:both;}
+.article-body figure[data-wrap="1"][data-align="left"]{float:left; clear:left; margin:6px 28px 14px 0;}
+.article-body figure[data-wrap="1"][data-align="right"]{float:right; clear:right; margin:6px 0 14px 28px;}
+.article-body figure[data-wrap="1"] figcaption{font-size:14.5px; margin-top:8px; line-height:1.55;}
+.article-body hr, .article-body table, .article-body pre, .article-body aside, .article-body h2{clear:both;}
+.article-body figure[data-style="plain"] img{border:0; border-radius:0;}
+.article-body figure[data-style="round"] img{border-radius:26px;}
+.article-body figure[data-style="shadow"] img{border-color:transparent; box-shadow:0 14px 34px -12px rgba(0,0,0,.4), 0 2px 8px rgba(0,0,0,.12);}
+@media(max-width:600px){
+  /* ছোট পর্দায় ঘেরা ছবি পুরো প্রস্থে নামে — নইলে লেখার জায়গা খুব সরু হয়ে যায় */
+  .article-body figure[data-wrap="1"]{float:none; clear:both; width:100% !important; margin:0 0 22px;}
+  .article-body figure[data-w]{width:100%;}
 }

@@ -50,23 +50,8 @@
   var bnN = function (x) { return String(x).replace(/\d/g, function (d) { return '০১২৩৪৫৬৭৮৯'[d]; }); };
 
   /* ---------- লেখা ---------- */
-  var art = { id: null, cover: null, newImgs: [], removed: [] }, gal = $('art-gallery-row'), galAdd = $('art-gallery-add');
-  function thumb(url, id) {
-    var t = document.createElement('div'); t.className = 'img-upload-thumb';
-    var im = document.createElement('img'); im.src = url; im.alt = ''; t.appendChild(im);
-    var rm = document.createElement('span'); rm.className = 'rm-btn'; rm.innerHTML = DEL_SVG; t.appendChild(rm);
-    rm.addEventListener('click', function () { if (id) art.removed.push(id); else art.newImgs = art.newImgs.filter(function (f) { return f !== t._file; }); t.remove(); });
-    gal.insertBefore(t, galAdd); return t;
-  }
+  var art = { id: null, cover: null };
   pickFile($('art-cover-file'), $('art-cover-preview'), '', function (f) { art.cover = f; });
-  galAdd.addEventListener('click', function () { $('art-gallery-file').click(); });
-  $('art-gallery-file').addEventListener('change', function (e) {
-    [].slice.call(e.target.files).forEach(function (f) {
-      if (!/^image\/(jpeg|png|webp|gif)$/.test(f.type) || f.size > MAX_IMG) { A.showToast('"' + f.name + '" বাদ: শুধু ছবি (সর্বোচ্চ ৪০ MB) চলবে'); return; }
-      var t = thumb(URL.createObjectURL(f), null); t._file = f; art.newImgs.push(f);
-    });
-    e.target.value = '';
-  });
   function bodyToHtml(b) {
     if (UI.isHtml(b)) { var box = UI.sanitize(b); return box.innerHTML; }
     return String(b || '').split(/\n\s*\n/).map(function (p) { p = p.trim(); if (!p || /^\[\[.*\]\]$/.test(p)) return ''; var d = document.createElement(p.indexOf('> ') === 0 ? 'blockquote' : 'p'); d.textContent = p.replace(/^> /, ''); return d.outerHTML; }).join('');
@@ -150,8 +135,30 @@
   $('art-author-new').addEventListener('click', function () { openAuthor(null, true); });
   $('art-issue-new').addEventListener('click', function () { openArchive(null, true); });
 
+  /* ---------- শিরোনামের ফন্ট বাছাই (v82) ---------- */
+  var tfSel = $('art-title-font');
+  function fillTitleFont(sel) {
+    var F = window.PDFonts; if (!F || !tfSel) return;
+    var h = F.BUILTIN.map(function (b) { return opt(b.k, b.n + (b.def ? ' (ডিফল্ট)' : '')); });
+    var rows = F.list();
+    if (rows.length) h.push('<optgroup label="আমার ফন্ট">' + rows.map(function (r) { return opt(r.family, r.name); }).join('') + '</optgroup>');
+    h.push(opt('__manage', '＋ নিজের ফন্ট যোগ / মুছুন…'));
+    tfSel.innerHTML = h.join('');
+    tfSel.value = sel || ''; if (tfSel.value !== (sel || '')) tfSel.value = '';
+    tfSel.dataset.cur = tfSel.value; paintTitleFont();
+  }
+  function paintTitleFont() { var t = $('art-title'); if (t && window.PDFonts) t.style.fontFamily = PDFonts.css(tfSel.value); }
+  if (tfSel) {
+    tfSel.addEventListener('change', function () {
+      if (tfSel.value === '__manage') { tfSel.value = tfSel.dataset.cur || ''; if (window.PDFontManager) window.PDFontManager.open(); return; }
+      tfSel.dataset.cur = tfSel.value; paintTitleFont();
+    });
+    if (window.PDFonts) { PDFonts.onChange(function () { fillTitleFont(tfSel.dataset.cur || ''); }); PDFonts.load(); }
+    fillTitleFont('');
+  }
+
   function openArticle(id) {
-    art = { id: id || null, cover: null, newImgs: [], removed: [] };
+    art = { id: id || null, cover: null };
     var a = id ? C.byId(S.articles, id) : null;
     $('article-modal-title').textContent = a ? 'লেখা এডিট করুন' : 'নতুন লেখা প্রকাশ করুন';
     $('art-title').value = a ? a.title : '';
@@ -169,8 +176,9 @@
     $('art-published').checked = a ? a.status === 'published' : true;
     $('art-home-order').value = a && a.home_order != null ? a.home_order : ''; $('art-home-hidden').checked = !!(a && a.home_hidden); $('art-home-featured').checked = !!(a && a.home_featured);
     setPreview($('art-cover-preview'), a ? a.cover_url : null); $('art-cover-file').value = '';
-    [].slice.call(gal.querySelectorAll('.img-upload-thumb')).forEach(function (t) { t.remove(); });
-    if (a) db.from('article_images').select('id,image_url').eq('article_id', a.id).order('sort_order', { ascending: true }).then(function (r) { (r.data || []).forEach(function (g) { thumb(g.image_url, g.id); }); });
+    /* শিরোনামের ফন্ট: আগে ডিফল্ট, তারপর সেভ করা মান এনে বসানো (কলাম না থাকলে চুপচাপ ডিফল্ট) */
+    fillTitleFont(''); 
+    if (a) db.from('articles').select('title_font').eq('id', a.id).maybeSingle().then(function (r) { if (!r.error && r.data && art.id === a.id) { var v = r.data.title_font || ''; (window.PDFonts ? PDFonts.load() : Promise.resolve()).then(function () { if (art.id === a.id) fillTitleFont(v); }); } }, function () {});
     syncArt();
     A.openModal('article-modal');
     $('article-modal').scrollTop = 0; var bd = $('article-modal').querySelector('.modal-body'); if (bd) bd.scrollTop = 0;
@@ -185,18 +193,22 @@
     var old = art.id ? C.byId(S.articles, art.id) : null;
     var row = { title: title, body: box.innerHTML, excerpt: text.slice(0, 160), category: PD.normCat($('art-cat').value), author_id: $('art-author').value, issue_id: $('art-issue').value || null, home_order: (function (v) { v = parseInt(v, 10); return isNaN(v) || v < 1 ? null : v; })($('art-home-order').value), home_hidden: $('art-home-hidden').checked, home_featured: $('art-home-featured').checked, status: $('art-published').checked ? 'published' : 'draft' };
     if (row.status === 'published' && !(old && old.published_at)) row.published_at = new Date().toISOString();
+    var tf = $('art-title-font').value || '', tfSkipped = false;
+    if (tf || old) row.title_font = tf || null; /* কলাম না থাকলে নিচে বাদ দিয়ে আবার চেষ্টা হয় */
+    function send() { return old ? db.from('articles').update(row).eq('id', old.id).select('id').single() : db.from('articles').insert(row).select('id').single(); }
     upload(art.cover, 'covers', 'article').then(function (url) {
       if (url) row.cover_url = url;
       if (!old) row.slug = slug('a');
-      return old ? db.from('articles').update(row).eq('id', old.id).select('id').single() : db.from('articles').insert(row).select('id').single();
+      return send();
+    }).then(function (r) {
+      if (r.error && 'title_font' in row && /title_font/i.test(String(r.error.message || '') + String(r.error.details || ''))) { delete row.title_font; tfSkipped = !!tf; return send(); }
+      return r;
     }).then(function (r) {
       if (r.error) throw r.error;
       var aid = r.data.id, jobs = [];
       if (row.home_featured) jobs.push(db.from('articles').update({ home_featured: false }).eq('home_featured', true).neq('id', aid)); /* আগের শুরুর লেখাটা সরিয়ে দেওয়া */
-      if (art.removed.length) jobs.push(db.from('article_images').delete().in('id', art.removed));
-      art.newImgs.forEach(function (f, i) { jobs.push(upload(f, 'gallery', 'gallery').then(function (u) { return db.from('article_images').insert({ article_id: aid, image_url: u, caption: '', sort_order: i + 1 }); })); });
       return Promise.all(jobs);
-    }).then(function () { busy(btn, false); A.closeModal('article-modal'); A.showToast(old ? 'লেখা হালনাগাদ হয়েছে' : (row.status === 'published' ? 'লেখা প্রকাশিত হয়েছে' : 'ড্রাফট সেভ হয়েছে')); C.refresh(); }).catch(function (e) { busy(btn, false); fail(e); });
+    }).then(function () { busy(btn, false); A.closeModal('article-modal'); if (tfSkipped) setTimeout(function () { A.showToast('লেখা সেভ হয়েছে, কিন্তু শিরোনামের ফন্ট সেভ হয়নি — supabase/migrations/20261105_custom_fonts.sql একবার চালান'); }, 900); A.showToast(old ? 'লেখা হালনাগাদ হয়েছে' : (row.status === 'published' ? 'লেখা প্রকাশিত হয়েছে' : 'ড্রাফট সেভ হয়েছে')); C.refresh(); }).catch(function (e) { busy(btn, false); fail(e); });
   });
   document.querySelectorAll('[data-open-article]').forEach(function (b) { b.addEventListener('click', function () { openArticle(); }); });
 

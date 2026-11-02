@@ -10,14 +10,20 @@
 
   /* ---------- ধ্রুবক ---------- */
   var SIZES = [10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 28, 32, 36, 42, 48, 60, 72];
-  var FONTS = [
+  var FONTS_BASE = [
     { k: '', n: 'ডিফল্ট ফন্ট', v: '' },
-    { k: 'gunjoron', n: 'গুঞ্জরণ', v: "'Gunjoron', serif" },
+    { k: 'noto serif bengali', n: 'নোটো সেরিফ বাংলা', v: "'Noto Serif Bengali', serif" },
     { k: 'georgia', n: 'সেরিফ (ক্লাসিক)', v: "Georgia, 'Noto Serif Bengali', 'Times New Roman', serif" },
     { k: 'noto sans bengali', n: 'সান-সেরিফ (আধুনিক)', v: "'Noto Sans Bengali', 'Segoe UI', 'Nirmala UI', Arial, sans-serif" },
     { k: 'courier new', n: 'মনোস্পেস (কোড)', v: "'Courier New', Consolas, monospace" },
     { k: 'segoe script', n: 'হাতের লেখা', v: "'Segoe Script', 'Bradley Hand', cursive" }
   ];
+  /* নিজের যোগ করা ফন্টগুলো (ফন্ট ম্যানেজার থেকে) তালিকার শেষে জুড়ে যায় */
+  function fonts() {
+    var out = FONTS_BASE.slice(), PF = window.PDFonts;
+    if (PF) PF.list().forEach(function (r) { out.push({ k: r.family, n: r.name, v: "'" + r.family + "', 'Noto Serif Bengali', serif" }); });
+    return out;
+  }
   /* নোটপ্যাডের মতো সাতটা ধরন। ট্যাগ একই থাকে (h2/h3/h4/p) — তাই সাইটের পুরোনো লেখা ও SEO ঠিক থাকে;
      মূল শিরোনাম, উপশিরোনাম ও উপ-বিভাগ আলাদা হয় ব্লকের সাইজ (px) দিয়ে। */
   var BLOCKS = [
@@ -93,7 +99,7 @@
   toolbar.innerHTML =
     group(
       menu('block', 'অনুচ্ছেদ ও শিরোনামের ধরন', '<span class="rt-lbl" id="rt-block-lbl">সাধারণ লেখা</span>', 'rt-w-block') +
-      menu('font', 'ফন্ট বদলান (নির্বাচিত অংশে)', '<span class="rt-lbl" id="rt-font-lbl">গুঞ্জরণ</span>', 'rt-w-font')
+      menu('font', 'ফন্ট বদলান (নির্বাচিত অংশে)', '<span class="rt-lbl" id="rt-font-lbl">নোটো সেরিফ বাংলা</span>', 'rt-w-font')
     ) +
     group(
       btn('size-dec', 'লেখা ছোট করুন', '<span class="rt-txt">−</span>') +
@@ -525,10 +531,46 @@
     if (tgt) { var nr = doc.createRange(); nr.selectNodeContents(tgt); nr.collapse(true); var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(nr); lastRange = nr.cloneRange(); }
     changed();
   }
+  /* ---------- Tab (v82): সাধারণ টেক্সট এডিটরের মতো ----------
+     • লেখার ভেতরে Tab = ফাঁক (দুটি em-স্পেস), Shift+Tab = ফাঁক কমানো
+     • তালিকায় Tab = ভেতরে ঢোকানো, Shift+Tab = বের করা
+     • একাধিক অনুচ্ছেদ বাছা থাকলে সবগুলো একসাথে ইনডেন্ট/আউটডেন্ট
+     • ছবির ক্যাপশনে আগের মতোই (ফোকাস সরে) */
+  var TAB_CH = '\u2003\u2003';
+  function selSpansBlocks() {
+    var r = curRange(); if (!r || r.collapsed) return false;
+    return leafBlocks().length > 1;
+  }
+  function removeTabBefore() {
+    var r = curRange(); if (!r || !r.collapsed) return false;
+    var n = r.startContainer, off = r.startOffset;
+    if (n.nodeType !== 3) { /* কার্সার ঘরের শুরুতে — আগের টেক্সট নোড দেখা */
+      var prev = n.childNodes[off - 1]; if (prev && prev.nodeType === 3) { n = prev; off = prev.nodeValue.length; } else return false;
+    }
+    var v = n.nodeValue, c = 0;
+    while (c < 2 && off - c > 0 && v.charAt(off - c - 1) === '\u2003') c++;
+    if (c) { n.deleteData(off - c, c); return true; }
+    if (off === 0 || !v.slice(0, off).trim()) { /* অনুচ্ছেদের শুরুতে কার্সার, ফাঁক সামনে */
+      var m = /^\u2003{1,2}/.exec(v.slice(off)); if (m) { n.deleteData(off, m[0].length); return true; }
+    }
+    return false;
+  }
+  function tabInText(e) {
+    var el = selEl(); if (!el || !el.closest) return;
+    if (el.closest('figcaption')) return;
+    e.preventDefault();
+    if (el.closest('li')) { exec(e.shiftKey ? 'outdent' : 'indent', null, false); changed(); return; }
+    if (selSpansBlocks()) { indentBlocks(e.shiftKey ? -1 : 1); return; }
+    if (e.shiftKey) {
+      if (!removeTabBefore()) { var bl = leafBlocks()[0]; if (bl && parseInt(bl.style.marginLeft, 10)) indentBlocks(-1); }
+      changed(); return;
+    }
+    exec('insertText', el.closest('pre') ? '\t' : TAB_CH, false); changed();
+  }
   /* Tab / Shift+Tab: পরের/আগের ঘরে যাওয়া; শেষ ঘরে Tab দিলে নতুন সারি */
   artBody.addEventListener('keydown', function (e) {
     if (e.key !== 'Tab' || e.ctrlKey || e.metaKey || e.altKey) return;
-    var cell = cellOf(curRange()); if (!cell) return;
+    var cell = cellOf(curRange()); if (!cell) { tabInText(e); return; }
     e.preventDefault();
     var cells = [].slice.call(cell.closest('table').querySelectorAll('td,th')), i = cells.indexOf(cell);
     if (e.shiftKey) { if (i > 0) placeCaret(cells[i - 1]); return; }
@@ -549,7 +591,9 @@
       showPop(anchor, itemsHtml(BLOCKS.map(function (b) { return b.sep ? b : { v: b.k, n: b.n, s: b.s, on: b.k === cur }; })), 'rte-pop-list rte-pop-blocks', 'block');
     } else if (name === 'font') {
       var fl = doc.getElementById('rt-font-lbl').textContent;
-      showPop(anchor, itemsHtml(FONTS.map(function (f) { return { v: f.v, n: f.n, s: f.v ? 'font-family:' + f.v : '', on: f.n === fl }; })), 'rte-pop-list', 'font');
+      var fl2 = fonts().map(function (f) { return { v: f.v, n: f.n, s: f.v ? 'font-family:' + f.v : '', on: f.n === fl }; });
+      fl2.push({ sep: 1 }); fl2.push({ v: '__manage', n: '＋ নিজের ফন্ট যোগ / মুছুন…', s: 'font-weight:700;color:var(--primary)' });
+      showPop(anchor, itemsHtml(fl2), 'rte-pop-list rte-pop-fonts', 'font');
     } else if (name === 'size') {
       cur = currentSize();
       showPop(anchor, itemsHtml(SIZES.map(function (s) { return { v: String(s), n: bn(s), s: '', on: s === cur }; })), 'rte-pop-list rte-pop-sizes', 'size');
@@ -586,6 +630,7 @@
     if (t.hasAttribute('data-go')) { applyLink(); return; }
     if (t.hasAttribute('data-rm')) { removeLink(); return; }
     var v = t.getAttribute('data-v'), k = popKind; closePop();
+    if (k === 'font' && v === '__manage') { if (window.PDFontManager) window.PDFontManager.open(); else toast('ফন্ট ম্যানেজার চালু হয়নি — পাতাটি রিফ্রেশ করুন'); return; }
     if (k === 'block') applyBlock(v);
     else if (k === 'font') applyInline('font-family', v);
     else if (k === 'size') applySize(parseInt(v, 10));
@@ -603,11 +648,18 @@
   });
 
 
-  /* ---------- ছবি / স্ক্রিনশট (v66) ----------
-     • বাটন, স্ক্রিনশট কপি করে Ctrl+V, বা টেনে এনে ছেড়ে দেওয়া — তিন ভাবেই বসে
-     • ছবি আপলোড হয়ে ওয়েবসাইটের স্টোরেজে থাকে; ক্রপ হয় না, অনুপাত ঠিক থাকে (লেখার স্ক্রিনশট পরিষ্কার পড়া যায়)
-     • ছবিতে ক্লিক করলে সাইজ, অ্যালাইনমেন্ট, বিবরণ, উপরে/নিচে সরানো ও মোছার বার আসে; নিচে ক্যাপশন লেখা যায় */
-  var uploading = 0, selFig = null, figBar = null;
+  /* ---------- ছবি / স্ক্রিনশট (v66 → v82: পত্রিকার মতো লেখা-ঘেরা ছবি) ----------
+     • বাটন, স্ক্রিনশট কপি করে Ctrl+V, বা ফাইল টেনে এনে ছাড়া — তিন ভাবেই বসে; যেকোনো মাপ/অনুপাতের ছবি চলে (ক্রপ হয় না)
+     • তিন ধরনের বসা: বামে (লেখা ডানে ঘিরবে) · মাঝে (উপরে-নিচে লেখা) · ডানে (লেখা বামে ঘিরবে)
+     • ছবি ধরে টেনে যেখানে খুশি সরানো যায় — লেখা সঙ্গে সঙ্গে সরে গিয়ে জায়গা করে নেয়
+     • কোণা ধরে টেনে বড়-ছোট (অনুপাত ঠিক থাকে, চ্যাপ্টা হয় না); নিচে ক্যাপশন; স্টাইল, বিবরণ, মোছা */
+  I.move = ic('<path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/>');
+  I.wl = ic('<rect x="3" y="4" width="9" height="9" rx="1.5"/><path d="M15 5h6M15 9h6M3 17h18M3 21h13"/>');
+  I.wr = ic('<rect x="12" y="4" width="9" height="9" rx="1.5"/><path d="M3 5h6M3 9h6M3 17h18M8 21h13"/>');
+  I.wc = ic('<path d="M3 3h18M3 7h13"/><rect x="7" y="10" width="10" height="5" rx="1.5"/><path d="M3 18h18M3 22h13"/>');
+  I.sty = ic('<rect x="4" y="4" width="16" height="16" rx="5"/><path d="M8 15l3-4 2 2.5 2-3 2 4.5"/>');
+
+  var uploading = 0, selFig = null, figBar = null, figCtl = null;
   window.PDEditorBusy = function () { return uploading > 0; };
   var fileIn = doc.createElement('input');
   fileIn.type = 'file'; fileIn.accept = 'image/png,image/jpeg,image/webp,image/gif'; fileIn.multiple = true; fileIn.style.display = 'none';
@@ -615,9 +667,33 @@
   fileIn.addEventListener('change', function () { var fs = [].slice.call(fileIn.files || []); fileIn.value = ''; if (fs.length) insertImages(fs); });
 
   var CAP_PH = 'ছবির নিচে ক্যাপশন লিখুন (ঐচ্ছিক)';
-  function mkFigure(src) {
+  var STYLES = [{ k: '', n: 'সাধারণ' }, { k: 'plain', n: 'সোজা কোণ, বর্ডার ছাড়া' }, { k: 'round', n: 'গোল কোণ' }, { k: 'shadow', n: 'ছায়াসহ' }];
+
+  /* --- বসার ধরন: wl = বামে (লেখা ঘিরবে) · c = মাঝে · wr = ডানে (লেখা ঘিরবে) · bl/br = পুরোনো ধরনের বামে/ডানে (ঘেরা ছাড়া) --- */
+  function setMode(f, m) {
+    if (m === 'wl') { f.setAttribute('data-align', 'left'); f.setAttribute('data-wrap', '1'); }
+    else if (m === 'wr') { f.setAttribute('data-align', 'right'); f.setAttribute('data-wrap', '1'); }
+    else { f.setAttribute('data-align', 'center'); f.removeAttribute('data-wrap'); }
+  }
+  function modeOf(f) {
+    var a = f.getAttribute('data-align'), w = f.getAttribute('data-wrap') === '1';
+    if (w && a === 'left') return 'wl'; if (w && a === 'right') return 'wr';
+    return a === 'left' ? 'bl' : a === 'right' ? 'br' : 'c';
+  }
+  function contentW() {
+    var cs = window.getComputedStyle(artBody);
+    return Math.max(120, artBody.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0));
+  }
+  function setW(f, pct) {
+    pct = Math.round(Math.max(8, Math.min(100, pct)) * 10) / 10;
+    f.setAttribute('data-w', String(pct)); f.style.width = pct + '%'; f.removeAttribute('data-size');
+  }
+  function curW(f) { var w = parseFloat(f.getAttribute('data-w')); return w || (f.getBoundingClientRect().width / contentW() * 100); }
+  function legacyFix(f) { if (!f.hasAttribute('data-w')) setW(f, curW(f)); } /* পুরোনো ছোট/মাঝারি/বড় ছবিকে মাপের সংখ্যায় আনা */
+
+  function mkFigure(src, mode, w) {
     var f = doc.createElement('figure'); f.className = 'pd-fig';
-    f.setAttribute('data-size', 'l'); f.setAttribute('data-align', 'center'); f.setAttribute('contenteditable', 'false');
+    setMode(f, mode || 'c'); setW(f, w || 60); f.setAttribute('contenteditable', 'false');
     var im = doc.createElement('img'); im.src = src; im.alt = ''; im.draggable = false; f.appendChild(im);
     var c = doc.createElement('figcaption'); c.setAttribute('contenteditable', 'true'); c.setAttribute('data-ph', CAP_PH); f.appendChild(c);
     return f;
@@ -653,7 +729,25 @@
     try { if (window.PD && PD.msg) return PD.msg(e || {}, 'upload'); } catch (x) {}
     return 'ছবি আপলোড হয়নি — আবার চেষ্টা করুন';
   }
-  function insertImages(files) {
+
+  /* --- কোথায় বসবে: পয়েন্টারের x দিয়ে বাম/মাঝ/ডান, y দিয়ে কোন অনুচ্ছেদের আগে --- */
+  function bodyBox() {
+    var br = artBody.getBoundingClientRect(), cs = window.getComputedStyle(artBody), pl = parseFloat(cs.paddingLeft) || 0, pr = parseFloat(cs.paddingRight) || 0;
+    return { left: br.left + pl, width: Math.max(80, br.width - pl - pr) };
+  }
+  function modeAtX(x) { var b = bodyBox(), rel = (x - b.left) / b.width; return rel < 0.34 ? 'wl' : rel > 0.66 ? 'wr' : 'c'; }
+  function beforeAtY(f, y) {
+    var kids = [].filter.call(artBody.children, function (c) { return c !== f; }), i, r;
+    for (i = 0; i < kids.length; i++) { r = kids[i].getBoundingClientRect(); if (y < r.top + r.height * 0.5) return kids[i]; }
+    return null;
+  }
+  function placeAt(f, x, y) {
+    var m = modeAtX(x); if (modeOf(f) !== m) setMode(f, m);
+    var before = beforeAtY(f, y);
+    if (f.parentNode !== artBody || f.nextElementSibling !== before) artBody.insertBefore(f, before);
+  }
+
+  function insertImages(files, at) {
     var imgs = files.filter(function (f) { return /^image\//.test(f.type); });
     if (!imgs.length) { toast('শুধু ছবি দেওয়া যাবে (JPG, PNG, WebP, GIF)'); return; }
     if (imgs.length > 10) { toast('একবারে সর্বোচ্চ ১০টি ছবি দেওয়া যায়'); imgs = imgs.slice(0, 10); }
@@ -662,14 +756,16 @@
     focusEd();
     var last = null;
     imgs.forEach(function (file) {
-      var u = URL.createObjectURL(file), fig = mkFigure(u);
+      var u = URL.createObjectURL(file), fig = mkFigure(u, 'c', 60);
       fig.classList.add('is-uploading');
-      if (last) last.parentNode.insertBefore(fig, last.nextSibling); else placeBlock(fig);
+      if (last) { last.parentNode.insertBefore(fig, last.nextSibling); setMode(fig, 'c'); }
+      else if (at) { placeAt(fig, at.x, at.y); setW(fig, modeOf(fig) === 'c' ? 60 : 40); tailP(fig); }
+      else placeBlock(fig);
       last = fig; uploading++;
       up(file, 'inline', 'inline').then(function (url) {
         uploading--;
         if (!fig.parentNode) { URL.revokeObjectURL(u); return; }
-        fig.querySelector('img').src = url; fig.classList.remove('is-uploading'); URL.revokeObjectURL(u); changed();
+        fig.querySelector('img').src = url; fig.classList.remove('is-uploading'); URL.revokeObjectURL(u); changed(); if (selFig === fig) showFigBar();
       }, function (e) {
         uploading--; if (fig.parentNode) { if (selFig === fig) deselectFig(); fig.parentNode.removeChild(fig); }
         URL.revokeObjectURL(u); toast(errText(e)); changed();
@@ -680,46 +776,68 @@
   }
 
   /* ---------- ছবি বাছাই + কন্ট্রোল বার ---------- */
+  function wl(n) { return bn(n) + '%'; }
   function buildFigBar() {
     figBar = doc.createElement('div'); figBar.className = 'rte-figbar'; figBar.setAttribute('role', 'toolbar'); figBar.setAttribute('aria-label', 'ছবির নিয়ন্ত্রণ');
     figBar.innerHTML =
-      [['s', 'ছোট'], ['m', 'মাঝারি'], ['l', 'বড়'], ['f', 'পুরো']].map(function (x) { return '<button type="button" data-fs="' + x[0] + '" title="ছবির সাইজ: ' + x[1] + '">' + x[1] + '</button>'; }).join('') +
+      [['wl', I.wl, 'বামে রাখুন — লেখা ছবির ডানে ঘিরে আসবে'], ['c', I.wc, 'মাঝে রাখুন — ছবির উপরে ও নিচে লেখা'], ['wr', I.wr, 'ডানে রাখুন — লেখা ছবির বামে ঘিরে আসবে']].map(function (x) { return '<button type="button" data-fm="' + x[0] + '" title="' + x[2] + '" aria-label="' + x[2] + '">' + x[1] + '</button>'; }).join('') +
       '<i></i>' +
-      [['left', I.left, 'বামে'], ['center', I.center, 'মাঝখানে'], ['right', I.right, 'ডানে']].map(function (x) { return '<button type="button" data-fa="' + x[0] + '" title="' + x[2] + ' রাখুন" aria-label="' + x[2] + '">' + x[1] + '</button>'; }).join('') +
+      [25, 50, 75, 100].map(function (n) { return '<button type="button" class="rt-pc" data-fw="' + n + '" title="ছবির প্রস্থ ' + wl(n) + '">' + wl(n) + '</button>'; }).join('') +
       '<i></i>' +
+      '<button type="button" data-fx="style" title="ছবির স্টাইল বদলান (সাধারণ / সোজা / গোল কোণ / ছায়া)">' + I.sty + '</button>' +
       '<button type="button" data-fx="alt" title="ছবির বিবরণ (Alt) লিখুন">' + I.alt + '</button>' +
-      '<button type="button" data-fx="up" title="ওপরে সরান">' + I.up + '</button>' +
-      '<button type="button" data-fx="down" title="নিচে সরান">' + I.down + '</button>' +
+      '<button type="button" data-fx="up" title="এক ব্লক ওপরে সরান">' + I.up + '</button>' +
+      '<button type="button" data-fx="down" title="এক ব্লক নিচে সরান">' + I.down + '</button>' +
       '<button type="button" class="danger" data-fx="del" title="ছবি মুছুন (Delete)">' + I.trash + '</button>';
     doc.body.appendChild(figBar);
     figBar.addEventListener('mousedown', function (e) { if (!/^(INPUT|TEXTAREA)$/.test(e.target.tagName)) e.preventDefault(); });
     figBar.addEventListener('click', function (e) {
       var b = e.target.closest('button'); if (!b || !selFig) return;
-      var sz = b.getAttribute('data-fs'), al = b.getAttribute('data-fa'), x = b.getAttribute('data-fx');
-      if (sz) selFig.setAttribute('data-size', sz);
-      else if (al) selFig.setAttribute('data-align', al);
+      var fm = b.getAttribute('data-fm'), fw = b.getAttribute('data-fw'), x = b.getAttribute('data-fx');
+      legacyFix(selFig);
+      if (fm) { setMode(selFig, fm); if (fm !== 'c' && curW(selFig) > 70) setW(selFig, 45); }
+      else if (fw) setW(selFig, +fw);
       else if (x === 'del') { removeFig(selFig); return; }
+      else if (x === 'style') { var cur = selFig.getAttribute('data-style') || '', i = 0; STYLES.forEach(function (s, n) { if (s.k === cur) i = n; }); var nx = STYLES[(i + 1) % STYLES.length]; if (nx.k) selFig.setAttribute('data-style', nx.k); else selFig.removeAttribute('data-style'); toast('ছবির স্টাইল: ' + nx.n); }
       else if (x === 'up' || x === 'down') moveFig(selFig, x === 'up' ? -1 : 1);
       else if (x === 'alt') { openAlt(b); return; }
       changed(); showFigBar();
     });
   }
+  function buildCtl() {
+    figCtl = doc.createElement('div'); figCtl.className = 'rte-figctl';
+    figCtl.innerHTML = '<i class="rte-h" data-c="nw"></i><i class="rte-h" data-c="ne"></i><i class="rte-h" data-c="sw"></i><i class="rte-h" data-c="se"></i>' +
+      '<button type="button" class="rte-mv" title="ধরে টেনে ছবি সরান — লেখা নিজে সরে জায়গা করে দেবে" aria-label="ছবি সরান">' + I.move + '</button><span class="rte-wv"></span>';
+    doc.body.appendChild(figCtl);
+    figCtl.addEventListener('pointerdown', function (e) {
+      if (!selFig || (e.pointerType === 'mouse' && e.button !== 0)) return;
+      var h = e.target.closest('.rte-h'), mv = e.target.closest('.rte-mv');
+      if (h) startResize(e, h.getAttribute('data-c')); else if (mv) startMove(e, true);
+    });
+  }
   function showFigBar() {
     if (!selFig || !selFig.parentNode) { hideFigBar(); return; }
+    if (selFig.classList.contains('is-moving')) return; /* টানার সময় বার/হ্যান্ডেল লুকানো থাকে */
     if (!figBar) buildFigBar();
-    [].forEach.call(figBar.querySelectorAll('[data-fs]'), function (b) { b.classList.toggle('on', b.getAttribute('data-fs') === selFig.getAttribute('data-size')); });
-    [].forEach.call(figBar.querySelectorAll('[data-fa]'), function (b) { b.classList.toggle('on', b.getAttribute('data-fa') === selFig.getAttribute('data-align')); });
+    if (!figCtl) buildCtl();
+    var mode = modeOf(selFig), w = Math.round(curW(selFig));
+    [].forEach.call(figBar.querySelectorAll('[data-fm]'), function (b) { b.classList.toggle('on', b.getAttribute('data-fm') === mode); });
+    [].forEach.call(figBar.querySelectorAll('[data-fw]'), function (b) { b.classList.toggle('on', +b.getAttribute('data-fw') === w); });
     var r = selFig.getBoundingClientRect();
-    if (r.bottom < 0 || r.top > window.innerHeight) { figBar.style.display = 'none'; return; }
+    if (r.bottom < 0 || r.top > window.innerHeight) { figBar.style.display = 'none'; figCtl.style.display = 'none'; return; }
     figBar.style.display = 'flex';
-    var w = figBar.offsetWidth, h = figBar.offsetHeight, top = r.top - h - 8;
-    if (top < 8) top = Math.min(Math.max(r.top + 8, 8), window.innerHeight - h - 8);
-    figBar.style.top = top + 'px'; figBar.style.left = Math.max(8, Math.min(r.left + r.width / 2 - w / 2, window.innerWidth - w - 8)) + 'px';
+    var bw = figBar.offsetWidth, bh = figBar.offsetHeight, top = r.top - bh - 8;
+    if (top < 8) top = Math.min(Math.max(r.top + 8, 8), window.innerHeight - bh - 8);
+    figBar.style.top = top + 'px'; figBar.style.left = Math.max(8, Math.min(r.left + r.width / 2 - bw / 2, window.innerWidth - bw - 8)) + 'px';
+    var im = selFig.querySelector('img'), ir = im ? im.getBoundingClientRect() : r;
+    figCtl.style.display = 'block';
+    figCtl.style.left = ir.left + 'px'; figCtl.style.top = ir.top + 'px'; figCtl.style.width = ir.width + 'px'; figCtl.style.height = ir.height + 'px';
+    figCtl.querySelector('.rte-wv').textContent = bn(w) + '%';
   }
-  function hideFigBar() { if (figBar) figBar.style.display = 'none'; }
+  function hideFigBar() { if (figBar) figBar.style.display = 'none'; if (figCtl) figCtl.style.display = 'none'; }
   function selectFig(f) {
     if (selFig && selFig !== f) selFig.classList.remove('is-sel');
-    selFig = f; f.classList.add('is-sel'); showFigBar();
+    selFig = f; f.classList.add('is-sel'); legacyFix(f); showFigBar();
   }
   function deselectFig() { if (selFig) selFig.classList.remove('is-sel'); selFig = null; hideFigBar(); if (pop && popKind === 'alt') closePop(); }
   function removeFig(f) {
@@ -736,6 +854,103 @@
     tailP(f);
     try { f.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) {}
   }
+
+  /* ---------- কোণা ধরে বড়-ছোট (শুধু প্রস্থ বদলায়, উচ্চতা অটো — তাই ছবি চ্যাপ্টা হয় না) ---------- */
+  var rzRaf = 0;
+  function startResize(e, corner) {
+    e.preventDefault(); e.stopPropagation();
+    var f = selFig, cap = e.target; legacyFix(f);
+    var sx = e.clientX, w0 = f.getBoundingClientRect().width, cw = contentW(), east = corner.indexOf('e') >= 0, m = modeOf(f);
+    var k = (m === 'c') ? 2 : 1, sign = east ? 1 : -1;
+    try { cap.setPointerCapture(e.pointerId); } catch (x) {}
+    f.classList.add('is-resizing'); doc.documentElement.classList.add('rte-dragging');
+    function mv(ev) {
+      setW(f, (w0 + sign * k * (ev.clientX - sx)) / cw * 100);
+      if (!rzRaf) rzRaf = requestAnimationFrame(function () { rzRaf = 0; showFigBar(); });
+    }
+    function up() {
+      cap.removeEventListener('pointermove', mv); cap.removeEventListener('pointerup', up); cap.removeEventListener('pointercancel', up);
+      f.classList.remove('is-resizing'); doc.documentElement.classList.remove('rte-dragging'); changed(); showFigBar();
+    }
+    cap.addEventListener('pointermove', mv); cap.addEventListener('pointerup', up); cap.addEventListener('pointercancel', up);
+  }
+
+  /* ---------- ধরে টেনে সরানো (লেখা সঙ্গে সঙ্গে জায়গা করে নেয়) ---------- */
+  function scrollParent(el) {
+    for (var n = el; n && n !== doc.body; n = n.parentNode) {
+      if (n.nodeType !== 1) continue;
+      var o = window.getComputedStyle(n).overflowY;
+      if ((o === 'auto' || o === 'scroll') && n.scrollHeight > n.clientHeight + 2) return n;
+    }
+    return doc.scrollingElement || doc.documentElement;
+  }
+  function startMove(e, viaHandle) {
+    if (viaHandle) { e.preventDefault(); e.stopPropagation(); }
+    var f = selFig; if (!f) return;
+    var sx = e.clientX, sy = e.clientY, moved = false, ghost = null, lastY = null, px = sx, py = sy, raf = 0, sp = scrollParent(artBody), auto = 0;
+    var cap = e.target;
+    try { if (viaHandle) cap.setPointerCapture(e.pointerId); } catch (x) {}
+    function begin() {
+      moved = true;
+      var im = f.querySelector('img'), r = im.getBoundingClientRect(), gw = Math.max(70, Math.min(r.width, 220));
+      ghost = doc.createElement('div'); ghost.className = 'rte-ghost'; ghost.style.width = gw + 'px';
+      var gi = doc.createElement('img'); gi.src = im.src; ghost.appendChild(gi); doc.body.appendChild(ghost);
+      f.classList.add('is-moving'); artBody.classList.add('is-fig-drag'); doc.documentElement.classList.add('rte-dragging');
+      if (figBar) figBar.style.display = 'none'; if (figCtl) figCtl.style.display = 'none';
+    }
+    function paint() {
+      raf = 0; if (!ghost) return;
+      var gw = ghost.offsetWidth, gh = ghost.offsetHeight;
+      ghost.style.transform = 'translate(' + Math.round(px - gw / 2) + 'px,' + Math.round(py - gh / 2) + 'px)';
+    }
+    function reflow() {
+      /* ছোট কাঁপুনি এড়াতে: জায়গা বদলাবে যদি আগের বদলের পর ৬px-এর বেশি সরা হয় */
+      var m = modeAtX(px), before = beforeAtY(f, py);
+      var changedSpot = f.nextElementSibling !== before || modeOf(f) !== m;
+      if (changedSpot && (lastY === null || Math.abs(py - lastY) >= 6 || modeOf(f) !== m)) {
+        if (modeOf(f) !== m) { setMode(f, m); if (m !== 'c' && curW(f) > 55) setW(f, 45); } /* পাশে বসালে খুব চওড়া ছবি ছোট হয়ে লেখার জায়গা রাখে */
+        if (f.nextElementSibling !== before) artBody.insertBefore(f, before);
+        lastY = py;
+      }
+    }
+    function tick() {
+      if (!moved) return;
+      var sr = sp === doc.scrollingElement || sp === doc.documentElement ? { top: 0, bottom: window.innerHeight } : sp.getBoundingClientRect();
+      var d = 0; if (py < sr.top + 60) d = -Math.min(18, (sr.top + 60 - py) / 3); else if (py > sr.bottom - 60) d = Math.min(18, (py - (sr.bottom - 60)) / 3);
+      if (d) { sp.scrollTop += d; reflow(); auto = requestAnimationFrame(tick); } else auto = 0;
+    }
+    function mv(ev) {
+      px = ev.clientX; py = ev.clientY;
+      if (!moved) { if (Math.hypot(px - sx, py - sy) < 5) return; begin(); }
+      ev.preventDefault();
+      if (!raf) raf = requestAnimationFrame(paint);
+      reflow();
+      if (!auto) auto = requestAnimationFrame(tick);
+    }
+    function end() {
+      doc.removeEventListener('pointermove', mv, true); doc.removeEventListener('pointerup', end, true); doc.removeEventListener('pointercancel', end, true);
+      if (auto) cancelAnimationFrame(auto); if (raf) cancelAnimationFrame(raf);
+      if (ghost) ghost.remove();
+      f.classList.remove('is-moving'); artBody.classList.remove('is-fig-drag'); doc.documentElement.classList.remove('rte-dragging');
+      if (moved) {
+        tailP(f);
+        var r = doc.createRange(); r.selectNode(f); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); lastRange = r.cloneRange();
+        changed(); showFigBar();
+        try { f.scrollIntoView({ block: 'nearest' }); } catch (x) {}
+      }
+    }
+    doc.addEventListener('pointermove', mv, { capture: true, passive: false });
+    doc.addEventListener('pointerup', end, true); doc.addEventListener('pointercancel', end, true);
+  }
+  /* ছবির ওপর মাউস চেপে ধরে টানলেই সরে (টাচে ছবির কোণার "সরান" হ্যান্ডেল ধরে) */
+  artBody.addEventListener('pointerdown', function (e) {
+    if (e.pointerType === 'touch' || e.button !== 0) return;
+    var im = e.target.closest ? e.target.closest('figure.pd-fig > img') : null;
+    if (!im || !artBody.contains(im)) return;
+    var f = im.parentNode; if (f.classList.contains('is-uploading')) return;
+    selectFig(f); startMove(e, false);
+  });
+
   function openAlt(anchor) {
     if (!selFig) return;
     var im = selFig.querySelector('img');
@@ -761,7 +976,7 @@
   doc.addEventListener('mousedown', function (e) {
     if (!selFig) return;
     var t = e.target;
-    if (selFig.contains(t) || (figBar && figBar.contains(t)) || (pop && pop.contains(t))) return;
+    if (selFig.contains(t) || (figBar && figBar.contains(t)) || (figCtl && figCtl.contains(t)) || (pop && pop.contains(t))) return;
     deselectFig();
   }, true);
   artBody.addEventListener('input', function (e) { if (selFig && e.isTrusted && !(e.target && e.target.closest && e.target.closest('figcaption'))) deselectFig(); });
@@ -787,13 +1002,8 @@
     }
   });
 
-  /* ---------- টেনে এনে ছাড়া ---------- */
+  /* ---------- ফাইল টেনে এনে ছাড়া: যেখানে ছাড়বেন সেখানেই বসবে, লেখা ছবির চারপাশে আসবে ---------- */
   function hasFiles(e) { var t = e.dataTransfer && e.dataTransfer.types; return !!t && [].indexOf.call(t, 'Files') >= 0; }
-  function rangeAt(x, y) {
-    if (doc.caretRangeFromPoint) return doc.caretRangeFromPoint(x, y);
-    if (doc.caretPositionFromPoint) { var p = doc.caretPositionFromPoint(x, y); if (p) { var r = doc.createRange(); r.setStart(p.offsetNode, p.offset); r.collapse(true); return r; } }
-    return null;
-  }
   ['dragenter', 'dragover'].forEach(function (ev) { artBody.addEventListener(ev, function (e) { if (hasFiles(e)) { e.preventDefault(); artBody.classList.add('is-drop'); } }); });
   artBody.addEventListener('dragleave', function (e) { if (!artBody.contains(e.relatedTarget)) artBody.classList.remove('is-drop'); });
   artBody.addEventListener('drop', function (e) {
@@ -801,9 +1011,7 @@
     var fs = [].filter.call((e.dataTransfer && e.dataTransfer.files) || [], function (f) { return /^image\//.test(f.type); });
     if (!fs.length) return;
     e.preventDefault();
-    var r = rangeAt(e.clientX, e.clientY);
-    if (r && inEditor(r.commonAncestorContainer)) { var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); lastRange = r.cloneRange(); }
-    insertImages(fs);
+    insertImages(fs, { x: e.clientX, y: e.clientY });
   });
 
   /* ---------- তথ্য বক্স (নোট/সতর্কতা/টিপস) ---------- */
@@ -890,9 +1098,9 @@
     setOn('left', qs('justifyLeft')); setOn('center', qs('justifyCenter')); setOn('right', qs('justifyRight')); setOn('justify', qs('justifyFull'));
     setOn('callout', !!(e.closest && e.closest('aside'))); setOn('quote', blk === 'blockquote'); setOn('code', blk === 'pre'); setOn('link', !!anchorAtSel());
     var cs = window.getComputedStyle(e), fam = (cs.fontFamily.split(',')[0] || '').replace(/["']/g, '').trim().toLowerCase(), fl = doc.getElementById('rt-font-lbl');
-    var name = 'গুঞ্জরণ';
-    FONTS.forEach(function (f) { if (f.k && fam === f.k) name = f.n; });
-    if (fl) fl.textContent = fam && !FONTS.some(function (f) { return f.k && f.k === fam; }) ? (fam.charAt(0).toUpperCase() + fam.slice(1)) : name;
+    var name = 'নোটো সেরিফ বাংলা', FL = fonts();
+    FL.forEach(function (f) { if (f.k && fam === f.k) name = f.n; });
+    if (fl) fl.textContent = fam && !FL.some(function (f) { return f.k && f.k === fam; }) ? (fam.charAt(0).toUpperCase() + fam.slice(1)) : name;
     if (doc.activeElement !== sizeIn) sizeIn.value = Math.round(parseFloat(cs.fontSize) || 16);
   }
   artBody.addEventListener('keyup', scheduleState);
@@ -989,5 +1197,6 @@
   }, true);
   window.PDEditorFullscreen = setFull;
 
+  if (window.PDFonts) { window.PDFonts.onChange(scheduleState); window.PDFonts.load(); }
   paintBars();
 })();
