@@ -2,7 +2,7 @@
 <html lang="bn">
 <html lang="bn">
 <head>
-<meta charset="utf-8"/><meta content="default-src 'self'; script-src 'self' https://apis.google.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; connect-src 'self' https://pqoszcuhxdavehnxundq.supabase.co wss://pqoszcuhxdavehnxundq.supabase.co https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebasestorage.googleapis.com https://www.googleapis.com; frame-src https://potrodip-99ad4.firebaseapp.com https://accounts.google.com; object-src 'none'; base-uri 'self'; form-action 'self'" http-equiv="Content-Security-Policy"/>
+<meta charset="utf-8"/><meta content="default-src 'self'; script-src 'self' https://apis.google.com; style-src 'self' 'unsafe-inline'; font-src 'self' data: https://pqoszcuhxdavehnxundq.supabase.co; img-src 'self' data: blob: https:; connect-src 'self' https://pqoszcuhxdavehnxundq.supabase.co wss://pqoszcuhxdavehnxundq.supabase.co https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebasestorage.googleapis.com https://www.googleapis.com; frame-src https://potrodip-99ad4.firebaseapp.com https://accounts.google.com; object-src 'none'; base-uri 'self'; form-action 'self'" http-equiv="Content-Security-Policy"/>
 <meta content="strict-origin-when-cross-origin" name="referrer"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>এডমিন প্যানেল | পত্রদ্বীপ | Potrodip</title>
@@ -433,7 +433,7 @@
 <div class="modal-body">
 <div class="art-main">
 <div class="art-block" id="fr-title">
-<label class="art-label" for="art-title">শিরোনাম <em class="req">*</em></label>
+<div class="art-label-row"><label class="art-label" for="art-title">শিরোনাম <em class="req">*</em></label><label class="title-font-pick" for="art-title-font">শিরোনামের ফন্ট<select id="art-title-font" aria-label="শিরোনামের ফন্ট"><option value="">নোটো সেরিফ বাংলা (ডিফল্ট)</option></select></label></div>
 <input class="art-title-input" id="art-title" maxlength="160" placeholder="যেমন: আল্লাহকে চিনার উপায়" type="text"/>
 </div>
 <div class="art-block" id="fr-body">
@@ -441,15 +441,8 @@
 <div class="rte-wrap" id="rte-wrap">
 <div class="rte-toolbar" id="art-toolbar"></div>
 <div class="rte-body" contenteditable="true" data-placeholder="এখানে লেখার মূল অংশ লিখুন…" spellcheck="true" id="art-body"></div>
-<div class="rte-meta"><span id="art-wc">০ শব্দ</span><i></i><span id="art-rt">পড়তে ০ মিনিট</span><span class="rte-tip">লেখা সিলেক্ট করে ফরম্যাট বদলান · ছবি/স্ক্রিনশট: বাটন চাপুন, Ctrl+V করুন বা টেনে এনে ছাড়ুন</span></div>
+<div class="rte-meta"><span id="art-wc">০ শব্দ</span><i></i><span id="art-rt">পড়তে ০ মিনিট</span><span class="rte-tip">লেখা সিলেক্ট করে ফরম্যাট বদলান · ছবি: বাটন চাপুন, Ctrl+V করুন বা টেনে এনে ছাড়ুন — ছবি ধরে টেনে সরান, কোণা ধরে বড়-ছোট করুন · Tab চাপলে ফাঁক</span></div>
 </div>
-</div>
-<div class="art-block">
-<label class="art-label">অতিরিক্ত ছবি (গ্যালারি) <small>ঐচ্ছিক</small></label>
-<div class="img-upload-row" id="art-gallery-row">
-<div class="img-upload-add" id="art-gallery-add" title="ছবি যোগ করুন"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.4" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-</div>
-<input accept="image/*" id="art-gallery-file" multiple="" style="display:none;" type="file"/>
 </div>
 </div>
 <div class="art-side">
@@ -702,6 +695,7 @@
 <script src="assets/vendor/supabase.js"></script>
 <script src="assets/js/core/config.js"></script>
 <script src="assets/js/core/app.js"></script>
+<script src="assets/js/core/custom-fonts.js"></script>
 <script src="assets/js/core/img-fit.js"></script>
 <script src="assets/js/core/live.js"></script>
 <script src="assets/vendor/firebase/firebase-app-compat.js"></script>
@@ -713,6 +707,7 @@
 <script src="assets/js/pages/admin-editor.js"></script>
 <script src="assets/js/pages/admin.js"></script>
 <script src="assets/js/pages/admin-forms.js"></script>
+<script src="assets/js/pages/admin-fonts.js"></script>
 <script src="assets/js/pages/admin-cleanup.js"></script>
 <script src="assets/js/components/scroll-top.js"></script>
 </body>

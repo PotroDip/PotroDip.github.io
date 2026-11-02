@@ -36,7 +36,7 @@
     │   ├── core/             config.js · app.js · ui.js · theme.js · intro-*.js · reveal.js (স্ক্রোল-এনিমেশন)
     │   ├── components/       nav.js (সার্চ + মোবাইল মেনু) · comments.js · scroll-top.js (পাতা-তারা স্ক্রোল বাটন)
     │   └── pages/            প্রতি পেজের নিজস্ব কোড (home, article, author, store, admin…)
-    ├── fonts/                Gunjoron-Font (Thin/Normal/Bold) — সাইটের একমাত্র ফন্ট, base.css-এ @font-face
+    ├── fonts/                Noto Serif Bengali (Thin–Black, ৯টি ওজন) — সাইটের একমাত্র ফন্ট, base.css-এ @font-face
     ├── img/                  favicon.svg · brand/ (লোগো)
     └── vendor/               supabase.js · pdfjs/ (নিজেদের সার্ভারেই রাখা বাইরের লাইব্রেরি)
 ```
@@ -48,7 +48,7 @@
 3. সেটিংস (Supabase URL, কী, Turnstile কী, পেজের নাম) শুধু `assets/js/core/config.js`-এ।
 4. ডেটাবেসের লেখা HTML-এ বসাতে `textContent` ব্যবহার করুন (`innerHTML` নয়), না হলে `PDUI.sanitize()`।
 5. `service_role` কী কোথাও রাখা যাবে না।
-6. ফন্ট সবসময় `font-family:'Gunjoron', serif` — বাইরের (Google) ফন্ট যোগ করলে CSP আটকে দেবে।
+6. ফন্ট সবসময় `font-family:'Noto Serif Bengali', serif` — বাইরের (Google) ফন্ট যোগ করলে CSP আটকে দেবে।
 7. ডেটাবেসের SQL (`potrodip-database` ফোল্ডার) এই রিপোতে রাখা হয় না।
 
 ## লগইন ও ফাইল রাখার ব্যবস্থা (Supabase + Firebase)
@@ -230,3 +230,10 @@
 | `assets/img/brand/logo-text.svg` + ইনলাইন কপি | শুধু "পত্রদ্বীপ" লেখা: ফুটার, কপিরাইট, এডমিন সাইডবার, মোবাইল মেনু, নোটিফিকেশন পপআপ, অ্যাকশন পেজ |
 | `assets/img/favicon.svg` | ব্রাউজার ট্যাবের আইকন |
 | `logo-email.png`, `og-logo.png` | ইমেইল টেমপ্লেট ও শেয়ার-প্রিভিউ (SVG থেকে বানানো) |
+
+## v83 — ফন্ট ম্যানেজার, শিরোনামের ফন্ট, Tab, লেখা-ঘেরা ছবি
+- **একবার** Supabase → SQL Editor-এ `supabase/migrations/20261105_custom_fonts.sql` চালাতে হবে (ফন্টের টেবিল, স্টোরেজের অনুমতি, `articles.title_font` কলাম)।
+- ফন্ট ম্যানেজার: `assets/js/core/custom-fonts.js` (ডেটা/লোড) + `assets/js/pages/admin-fonts.js` (উইন্ডো)। এডিটরের ফন্ট মেনু বা শিরোনামের ফন্ট বাছাই থেকে খোলে। ডিফল্ট ফন্ট (Noto Serif Bengali) তালিকায় থাকে কিন্তু মোছা যায় না।
+- ফন্ট ফাইল `media/fonts/` এ থাকে; লেখার পাতা শুধু সেই লেখায় ব্যবহৃত ফন্টই লোড করে (CSP-র font-src-এ Supabase যোগ করা হয়েছে)।
+- ছবি: `<figure data-w="শতাংশ" data-align="left|center|right" data-wrap="1" data-style="plain|round|shadow">`। `data-wrap` থাকলে লেখা ছবির চারপাশে ঘিরে আসে; ৬০০px-এর নিচে পুরো প্রস্থে নামে। পুরোনো `data-size` ছবি আগের মতোই চলে।
+- অতিরিক্ত ছবি (গ্যালারি) ফর্ম থেকে সরানো হয়েছে।
