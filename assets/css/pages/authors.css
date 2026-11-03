@@ -1,114 +1,106 @@
-/* authors.css — লেখক তালিকা (v40): আধুনিক ও প্রিমিয়াম ডিজাইন। শুধু authors.html-এ লোড হয়, হোমের লেখক-কার্ডে প্রভাব নেই। */
+/* v88: ফলো বাটন ছোট (২৬px) ও নামের লাইনের সাথে মিলানো; v89: হোমেও এই কার্ড ব্যবহার হয় */
+/* authors.css — লেখক তালিকা (v86): মিনিমাল, বক্স-ছাড়া প্রোফাইল। হোমের লেখক-স্ট্রিপের সাথে মেলানো। শুধু authors.html-এ লোড হয়। */
 .authors-page main.wrap{max-width:1200px;}
 
-/* ---------- হিরো ---------- */
-.au-hero{position:relative;margin:34px 0 28px;padding:44px 40px 40px;border-radius:24px;overflow:hidden;isolation:isolate;
-  background:linear-gradient(135deg, color-mix(in srgb, var(--primary) 16%, var(--surface)) 0%, var(--surface) 60%);
-  border:1px solid var(--border);}
-.au-hero::before{content:"";position:absolute;inset:0;z-index:-1;opacity:.55;
-  background:radial-gradient(520px 260px at 92% -10%, color-mix(in srgb, var(--secondary) 34%, transparent), transparent 70%),
-             radial-gradient(420px 240px at 0% 120%, color-mix(in srgb, var(--primary) 26%, transparent), transparent 70%);}
-.au-hero::after{content:"";position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;z-index:-1;
-  border:1px solid color-mix(in srgb, var(--primary) 22%, transparent);box-shadow:0 0 0 38px color-mix(in srgb, var(--primary) 5%, transparent), 0 0 0 78px color-mix(in srgb, var(--primary) 3%, transparent);}
-.au-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;letter-spacing:.04em;color:var(--primary);
-  background:color-mix(in srgb, var(--primary) 12%, transparent);padding:6px 14px;border-radius:999px;margin-bottom:16px;}
-.au-eyebrow svg{width:14px;height:14px;}
-.au-hero h1{font-size:clamp(30px,4.6vw,48px);line-height:1.2;margin:0 0 12px;}
-.au-hero p.au-sub{max-width:560px;font-size:16px;line-height:1.75;color:var(--text-muted);margin:0 0 26px;}
-.au-stats{display:flex;flex-wrap:wrap;gap:12px;}
-.au-stat{display:flex;align-items:center;gap:12px;padding:12px 18px 12px 14px;border-radius:14px;
-  background:color-mix(in srgb, var(--surface) 78%, transparent);border:1px solid var(--border);backdrop-filter:blur(6px);}
-.au-stat i{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-style:normal;
-  background:color-mix(in srgb, var(--primary) 14%, transparent);color:var(--primary);}
-.au-stat i svg{width:19px;height:19px;}
-.au-stat b{display:block;font-size:21px;line-height:1.1;}
-.au-stat span{font-size:12.5px;color:var(--text-muted);}
+/* ---------- শিরোনাম ---------- */
+.au-head{padding:56px 0 34px;margin-bottom:34px;border-bottom:1px solid var(--border);}
+.au-eyebrow{display:block;font-size:14px;font-weight:600;color:var(--secondary);margin-bottom:14px;}
+.au-head h1{font-size:clamp(34px,4.4vw,50px);line-height:1.2;margin:0 0 16px;}
+.au-head p.au-sub{max-width:58ch;font-size:16px;line-height:1.85;color:var(--text-muted);margin:0;}
+.au-count{margin:22px 0 0;font-size:14px;color:var(--text-muted);display:flex;align-items:center;flex-wrap:wrap;}
+.au-count[hidden]{display:none;}
+.au-count b{font-weight:700;color:var(--text);}
+#au-st-authors{margin-right:.3em;}
+.au-dot{display:inline-block;width:4px;height:4px;border-radius:50%;background:var(--secondary);margin:0 14px;}
 
-/* ---------- টুলবার ---------- */
-.au-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:26px;}
-.au-search{position:relative;flex:1 1 320px;max-width:460px;}
-.au-search svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--text-muted);pointer-events:none;}
-.au-search input{width:100%;box-sizing:border-box;height:48px;padding:0 44px 0 46px;border-radius:14px;border:1px solid var(--border);
-  background:var(--surface);color:var(--text);font:inherit;font-size:15px;transition:border-color .2s ease, box-shadow .2s ease;}
-.au-search input::placeholder{color:var(--text-muted);opacity:.7;}
-.au-search input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px color-mix(in srgb, var(--primary) 14%, transparent);}
-.au-search .au-x{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;border:0;cursor:pointer;
+/* ---------- খোঁজা ও সাজানো ---------- */
+.au-bar{display:flex;align-items:center;justify-content:space-between;gap:16px 24px;flex-wrap:wrap;margin-bottom:36px;}
+.au-search{position:relative;flex:1 1 300px;max-width:400px;}
+.au-search svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--text-muted);pointer-events:none;}
+.au-search input{width:100%;box-sizing:border-box;height:44px;padding:0 42px 0 42px;border-radius:999px;border:1px solid var(--border);
+  background:var(--surface);color:var(--text);font:inherit;font-size:14.5px;transition:border-color .2s ease, box-shadow .2s ease;}
+.au-search input::placeholder{color:var(--text-muted);opacity:.75;}
+.au-search input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px color-mix(in srgb, var(--primary) 14%, transparent);}
+.au-search .au-x{position:absolute;right:9px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;border:0;cursor:pointer;
   background:var(--border);color:var(--text-muted);display:none;align-items:center;justify-content:center;padding:0;}
 .au-search .au-x.show{display:flex;}
-.au-search .au-x svg{position:static;transform:none;width:12px;height:12px;}
-.au-sort{display:flex;gap:6px;padding:5px;border-radius:14px;background:var(--surface);border:1px solid var(--border);}
-.au-sort button{font:inherit;font-size:13.5px;font-weight:600;color:var(--text-muted);background:none;border:0;cursor:pointer;padding:9px 16px;border-radius:10px;transition:background-color .2s ease,color .2s ease;}
-.au-sort button:hover{color:var(--text);}
-.au-sort button.on{background:var(--primary);color:var(--overlay-bg);}
+.au-search .au-x svg{position:static;transform:none;width:11px;height:11px;}
+.au-sort{display:flex;gap:10px;flex-wrap:wrap;}
+.au-sort button{font:inherit;font-size:13px;color:var(--text-muted);background:none;border:1px solid var(--border);cursor:pointer;padding:7px 16px;border-radius:999px;transition:background-color .2s ease,color .2s ease,border-color .2s ease;}
+.au-sort button:hover{color:var(--text);border-color:var(--text-muted);}
+.au-sort button.on{background:var(--primary);color:var(--overlay-bg);border-color:var(--primary);}
 html[data-theme="dark"] .au-sort button.on{color:#0F1415;}
 
-/* ---------- গ্রিড ও কার্ড ---------- */
-#authors-row.au-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;padding-bottom:40px;overflow:visible;margin:0;scroll-snap-type:none;}
-.au-card{position:relative;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;
-  transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease, border-color .3s ease;
-  }
-/* ঢোকার এনিমেশন এখন সব পেজের জন্য একটাই — base.css-এর .rv (reveal.js) */
-.au-card:hover{transform:translateY(-6px);border-color:color-mix(in srgb, var(--primary) 45%, var(--border));box-shadow:0 22px 44px rgba(20,40,42,.14);}
-html[data-theme="dark"] .au-card:hover{box-shadow:0 22px 44px rgba(0,0,0,.45);}
-.au-banner{height:92px;position:relative;overflow:hidden;
-  background:linear-gradient(120deg, var(--primary), color-mix(in srgb, var(--primary) 55%, var(--secondary)));}
-.au-banner::before{content:"";position:absolute;inset:-30%;opacity:.35;transition:transform .8s ease;
-  background:radial-gradient(circle at 20% 30%, rgba(255,255,255,.55), transparent 38%), radial-gradient(circle at 85% 80%, rgba(255,255,255,.35), transparent 40%);}
-.au-card:hover .au-banner::before{transform:scale(1.12) translate(2%,-2%);}
-.au-card:nth-child(4n+2) .au-banner{background:linear-gradient(120deg, color-mix(in srgb, var(--secondary) 80%, #000), var(--primary));}
-.au-card:nth-child(4n+3) .au-banner{background:linear-gradient(120deg, var(--primary), color-mix(in srgb, var(--primary) 70%, #000));}
-.au-card:nth-child(4n+4) .au-banner{background:linear-gradient(120deg, color-mix(in srgb, var(--primary) 60%, var(--secondary)), color-mix(in srgb, var(--secondary) 70%, #000));}
-.au-top{display:block;text-align:center;padding:0 18px;color:inherit;text-decoration:none;}
-.au-ring{display:block;width:104px;height:104px;margin:-52px auto 14px;padding:4px;border-radius:50%;position:relative;
-  background:conic-gradient(from 200deg, var(--secondary-light), var(--primary), var(--secondary-light));box-shadow:0 8px 22px rgba(0,0,0,.18);}
-.au-ring img{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover;border:4px solid var(--surface);background:var(--surface);transition:transform .5s ease;}
-.au-card:hover .au-ring img{transform:scale(1.05);}
-.au-top h3{font-size:19px;line-height:1.35;margin:0 0 8px;transition:color .2s ease;}
-.au-top:hover h3{color:var(--primary);}
-.au-tags{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;min-height:28px;margin-bottom:16px;}
-.au-tag{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:var(--text-muted);padding:4px 11px;border-radius:999px;border:1px solid var(--border);background:color-mix(in srgb, var(--bg) 60%, var(--surface));}
-.au-tag.role{color:var(--primary);border-color:color-mix(in srgb, var(--primary) 30%, transparent);background:color-mix(in srgb, var(--primary) 9%, transparent);font-weight:600;}
-.au-tag svg{width:12px;height:12px;flex:none;}
-.au-meta{display:grid;grid-template-columns:1fr 1fr;margin:auto 18px 0;border-top:1px solid var(--border);}
-.au-meta div{padding:13px 4px;text-align:center;}
-.au-meta div + div{border-left:1px solid var(--border);}
-.au-meta b{display:flex;align-items:center;justify-content:center;gap:5px;font-size:17px;line-height:1.2;}
-.au-meta b svg{width:15px;height:15px;color:var(--secondary);}
-.au-meta span{font-size:12px;color:var(--text-muted);}
-.au-card .follow-btn{display:flex;align-items:center;justify-content:center;gap:8px;margin:0 18px 18px;padding:12px 16px;border-radius:12px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;
-  color:var(--primary);background:color-mix(in srgb, var(--primary) 8%, transparent);border:1.5px solid color-mix(in srgb, var(--primary) 55%, transparent);transition:background-color .2s ease,color .2s ease,transform .15s ease,border-color .2s ease;}
-.au-card .follow-btn svg{width:16px;height:16px;flex:none;}
-.au-card .follow-btn:hover{background:var(--primary);color:var(--overlay-bg);border-color:var(--primary);}
-html[data-theme="dark"] .au-card .follow-btn:hover{color:#0F1415;}
-.au-card .follow-btn:active{transform:scale(.97);}
-.au-card .follow-btn.following{background:var(--primary);color:var(--overlay-bg);border-color:var(--primary);}
+/* ---------- গ্রিড: বক্স-ছাড়া প্রোফাইল ---------- */
+#authors-row.au-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:56px 40px;padding:10px 0 64px;overflow:visible;margin:0;scroll-snap-type:none;}
+.au-card{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0;}
+.au-ring{display:block;width:124px;height:124px;padding:4px;border-radius:50%;flex:none;
+  background:conic-gradient(from 210deg, var(--secondary-light), var(--primary), var(--secondary-light));
+  transition:transform .4s cubic-bezier(.2,.8,.2,1);}
+.au-ring img{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover;border:3.5px solid var(--bg);background:var(--bg);}
+.au-card:hover .au-ring{transform:scale(1.04);}
+/* নাম + ফলো-আইকন */
+.au-id{display:flex;align-items:center;justify-content:center;gap:8px;margin:20px 0 6px;max-width:100%;}
+.au-id h3{font-size:20px;line-height:1.4;margin:0;min-width:0;color:var(--primary);transition:color .2s ease;}
+.au-id h3 a{display:block;}
+.au-id h3 a:hover{color:var(--secondary);}
+.au-card .follow-btn{flex:none;width:26px;height:26px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;cursor:pointer;align-self:center;
+  color:var(--primary);background:transparent;border:1.5px solid color-mix(in srgb, var(--primary) 50%, var(--border));
+  transition:background-color .2s ease,color .2s ease,border-color .2s ease,box-shadow .2s ease,transform .15s ease;}
+.au-card .follow-btn svg{width:13px;height:13px;}
+/* ফলো করা হয়নি: ফাঁকা গোল, রেখার আইকন (ব্যক্তি + চিহ্ন) — hover-এ ভরাট হয় */
+.au-card .follow-btn:hover{background:color-mix(in srgb, var(--primary) 12%, transparent);border-color:var(--primary);}
+/* ফলো করা হয়েছে: পুরো ভরাট গোল, সাদা/গাঢ় টিক-আইকন + চারপাশে হালকা আভা */
+.au-card .follow-btn.following{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 0 0 3px color-mix(in srgb, var(--primary) 16%, transparent);}
 html[data-theme="dark"] .au-card .follow-btn.following{color:#0F1415;}
-.au-card .follow-btn.following:hover{background:transparent;color:var(--error);border-color:var(--error);}
-.au-card .follow-btn:focus-visible,.au-top:focus-visible{outline:2px solid var(--primary);outline-offset:3px;border-radius:12px;}
+.au-card .follow-btn.following:hover{background:var(--primary);filter:brightness(1.08);}
+.au-card .follow-btn:active{transform:scale(.92);}
+.au-card .follow-btn:focus-visible,.au-id a:focus-visible{outline:2px solid var(--primary);outline-offset:3px;border-radius:8px;}
+/* গল্পকার · ঢাকা · ২টি লেখা */
+.au-line{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:2px 0;margin:0;font-size:13.5px;line-height:1.7;color:var(--text-muted);}
+.au-dot{display:inline-block;width:4px;height:4px;border-radius:50%;background:var(--text-muted);margin:0 9px;flex:none;opacity:.8;}
+/* স্টার-লাইন: ঠিকানা-লাইনের ঠিক নিচে, ছোট; ছোট দাগের মাঝে ৫ তারা, ডানে মান */
+.au-rate{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;column-gap:9px;width:min(100%,176px);margin:12px auto 0;}
+.au-rate .rr{display:flex;align-items:center;gap:9px;min-width:0;}
+.au-rate .ln{flex:1;height:1px;background:var(--border);}
+.au-rate .stars{display:inline-flex;gap:2px;color:var(--border);}
+.au-rate .stars span{display:inline-flex;}
+.au-rate .stars span.on{color:var(--success);}
+.au-rate .stars svg{width:10px;height:10px;}
+.au-rate b{font-size:11.5px;font-weight:600;line-height:1;color:var(--text-muted);min-width:1.9em;text-align:right;}
 
 /* ---------- লোডিং / খালি ---------- */
-.au-skel{height:372px;border-radius:20px;border:1px solid var(--border);background:linear-gradient(100deg, var(--surface) 30%, color-mix(in srgb, var(--border) 55%, var(--surface)) 50%, var(--surface) 70%);background-size:220% 100%;animation:au-shim 1.3s linear infinite;}
+.au-skel{height:250px;border-radius:18px;background:linear-gradient(100deg, transparent 30%, color-mix(in srgb, var(--border) 55%, transparent) 50%, transparent 70%);background-size:220% 100%;animation:au-shim 1.3s linear infinite;}
 @keyframes au-shim{to{background-position:-220% 0;}}
 .au-empty{grid-column:1/-1;text-align:center;padding:56px 16px;color:var(--text-muted);}
 .au-empty svg{width:42px;height:42px;margin-bottom:12px;color:var(--border);}
 .au-empty p{margin:0;font-size:15px;}
-.au-count{font-size:13.5px;color:var(--text-muted);margin:-8px 0 18px;}
 
-@media(max-width:1020px){ #authors-row.au-grid{grid-template-columns:repeat(3,1fr);} }
+@media(max-width:1020px){ #authors-row.au-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:48px 28px;} }
 @media(max-width:760px){
-  #authors-row.au-grid{grid-template-columns:repeat(2,1fr);gap:14px;}
-  .au-hero{margin:22px 0 22px;padding:30px 20px 24px;border-radius:20px;}
-  .au-hero p.au-sub{font-size:14.5px;margin-bottom:20px;}
-  .au-stat{padding:10px 14px 10px 10px;}
-  .au-sort{width:100%;}.au-sort button{flex:1;padding:9px 6px;}
+  .au-head{padding:30px 0 24px;margin-bottom:24px;}
+  .au-head p.au-sub{font-size:14.5px;}
+  .au-count{margin-top:16px;font-size:13px;}
+  .au-bar{margin-bottom:28px;}
   .au-search{max-width:none;flex-basis:100%;}
-  .au-banner{height:70px;}
-  .au-ring{width:84px;height:84px;margin-top:-42px;}
-  .au-top{padding:0 10px;}.au-top h3{font-size:16px;}
-  .au-tag{font-size:11.5px;padding:3px 9px;}
-  .au-meta{margin:auto 10px 0;}.au-meta b{font-size:15px;}
-  .au-card .follow-btn{margin:0 10px 12px;padding:10px 8px;font-size:13px;}
-  .au-skel{height:320px;}
+  .au-sort{flex-wrap:nowrap;width:100%;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;}
+  .au-sort::-webkit-scrollbar{display:none;}
+  .au-sort button{flex-shrink:0;}
+  #authors-row.au-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 18px;padding-bottom:48px;}
+  .au-ring{width:92px;height:92px;padding:3px;}
+  .au-ring img{border-width:3px;}
+  .au-id{gap:6px;margin-top:16px;}
+  .au-id h3{font-size:16px;}
+  .au-card .follow-btn{width:24px;height:24px;}
+  .au-card .follow-btn svg{width:12px;height:12px;}
+  .au-line{font-size:12px;}
+  .au-dot{margin:0 6px;}
+  .au-rate{column-gap:6px;width:min(100%,140px);margin-top:10px;}
+  .au-rate .rr{gap:6px;}
+  .au-rate .stars{gap:1px;}
+  .au-rate .stars svg{width:9px;height:9px;}
+  .au-rate b{font-size:10.5px;}
+  .au-skel{height:210px;}
 }
 @media(max-width:380px){ #authors-row.au-grid{grid-template-columns:1fr;} }
-@media (prefers-reduced-motion:reduce){ .au-card{animation:none;opacity:1;transform:none;} .au-skel{animation:none;} }
+@media (prefers-reduced-motion:reduce){ .au-card{animation:none;opacity:1;transform:none;} .au-skel{animation:none;} .au-ring{transition:none;} }

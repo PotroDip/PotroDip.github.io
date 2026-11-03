@@ -1,4 +1,4 @@
-/* authors.js — লেখক তালিকা (v40): প্রিমিয়াম কার্ড, খোঁজা, সাজানো, লেখার সংখ্যা, ফলো বাটন */
+/* authors.js — লেখক তালিকা (v86): বক্স-ছাড়া মিনিমাল প্রোফাইল (গোল ছবি, নামের পাশে ফলো-আইকন, স্টার-লাইন), খোঁজা, সাজানো, লেখার সংখ্যা, ফলো বাটন */
 (function () {
   'use strict';
   var PD = window.PD, UI = window.PDUI, row = document.getElementById('authors-row');
@@ -7,8 +7,8 @@
   var IC = {
     pin: SV('<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>'),
     star: '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
-    plus: SV('<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>', 2.4),
-    check: SV('<polyline points="20 6 9 17 4 12"/>', 2.6),
+    add: SV('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/>', 2),
+    done: SV('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/>', 2),
     none: SV('<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>', 1.6)
   };
   function skeleton() { var h = ''; for (var i = 0; i < 8; i++) h += '<div class="au-skel"></div>'; row.innerHTML = h; }
@@ -17,25 +17,30 @@
   var db = PD.db, ALL = [], F = {}, N = {}, sort = 'name', q = '';
   skeleton();
 
-  function btnHTML(on) { return (on ? IC.check : IC.plus) + '<span>' + (on ? 'ফলো করছেন' : 'ফলো করুন') + '</span>'; }
+  function btnHTML(on) { return on ? IC.done : IC.add; }
+  function setBtn(b, on) { b.classList.toggle('following', on); b.innerHTML = btnHTML(on); var t = on ? 'ফলো করছেন' : 'ফলো করুন'; b.title = t; b.setAttribute('aria-label', t); b.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+  var STAR = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
   function card(u, i) {
+    var url = UI.authorUrl(u);
     var c = document.createElement('article'); c.className = 'au-card'; c.style.setProperty('--i', Math.min(i, 12));
-    var ban = document.createElement('div'); ban.className = 'au-banner'; ban.setAttribute('aria-hidden', 'true');
-    var a = document.createElement('a'); a.className = 'au-top'; a.href = UI.authorUrl(u);
-    var ring = document.createElement('span'); ring.className = 'au-ring';
-    var im = document.createElement('img'); im.src = UI.avatar(u.image_url); im.alt = u.name || ''; im.loading = 'lazy'; ring.appendChild(im);
-    var h = document.createElement('h3'); h.textContent = u.name || '';
-    var tags = document.createElement('div'); tags.className = 'au-tags';
-    if (u.role_title) { var r = document.createElement('span'); r.className = 'au-tag role'; r.textContent = u.role_title; tags.appendChild(r); }
-    if (u.city) { var ct = document.createElement('span'); ct.className = 'au-tag'; ct.innerHTML = IC.pin; ct.appendChild(document.createTextNode(u.city)); tags.appendChild(ct); }
-    a.appendChild(ring); a.appendChild(h); a.appendChild(tags);
-    var meta = document.createElement('div'); meta.className = 'au-meta';
-    var rating = Number(u.avg_rating || 0);
-    meta.innerHTML = '<div><b></b><span>লেখা</span></div><div><b></b><span>রেটিং</span></div>';
-    meta.children[0].firstChild.textContent = UI.bn(N[u.id] || 0);
-    meta.children[1].firstChild.innerHTML = IC.star; meta.children[1].firstChild.appendChild(document.createTextNode(UI.bn(rating.toFixed(1))));
-    var b = document.createElement('button'); b.type = 'button'; b.className = 'follow-btn' + (F[u.id] ? ' following' : ''); b.dataset.id = u.id; b.innerHTML = btnHTML(!!F[u.id]);
-    c.appendChild(ban); c.appendChild(a); c.appendChild(meta); c.appendChild(b);
+    var a = document.createElement('a'); a.className = 'au-ring'; a.href = url; a.tabIndex = -1; a.setAttribute('aria-hidden', 'true');
+    var im = document.createElement('img'); im.src = UI.avatar(u.image_url); im.alt = ''; im.loading = 'lazy'; a.appendChild(im);
+    /* নাম + ফলো-আইকন (পাশাপাশি) */
+    var id = document.createElement('div'); id.className = 'au-id';
+    var h = document.createElement('h3'), na = document.createElement('a'); na.href = url; na.textContent = u.name || ''; h.appendChild(na);
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'follow-btn'; b.dataset.id = u.id; setBtn(b, !!F[u.id]);
+    id.appendChild(h); id.appendChild(b);
+    /* গল্পকার · ঢাকা · ২টি লেখা */
+    var sub = document.createElement('p'); sub.className = 'au-line';
+    var parts = []; if (u.role_title) parts.push(u.role_title); if (u.city) parts.push(u.city); parts.push(UI.bn(N[u.id] || 0) + 'টি লেখা');
+    parts.forEach(function (t, k) { if (k) { var d = document.createElement('i'); d.className = 'au-dot'; sub.appendChild(d); } var sp = document.createElement('span'); sp.textContent = t; sub.appendChild(sp); });
+    /* স্টার-লাইন: লাইনের মাঝে ৫ তারা, ডানে মান */
+    var rating = Math.max(0, Math.min(5, Number(u.avg_rating || 0))), full = Math.round(rating);
+    var rt = document.createElement('div'); rt.className = 'au-rate'; rt.setAttribute('role', 'img'); rt.setAttribute('aria-label', 'রেটিং ' + UI.bn(rating.toFixed(1)) + ' / ৫');
+    var st = ''; for (var k = 0; k < 5; k++) st += '<span class="' + (k < full ? 'on' : '') + '">' + STAR + '</span>';
+    rt.innerHTML = '<i class="ln"></i><span class="stars">' + st + '</span><span class="rr"><i class="ln"></i><b></b></span>';
+    rt.lastChild.lastChild.textContent = UI.bn(rating.toFixed(1));
+    c.appendChild(a); c.appendChild(id); c.appendChild(sub); c.appendChild(rt);
     return c;
   }
   function view() {
@@ -90,7 +95,7 @@
       b.disabled = false;
       if (r.error) return UI.toast(PD.msg(r.error), 1);
       if (on) delete F[id]; else F[id] = 1;
-      b.classList.toggle('following', !on); b.innerHTML = btnHTML(!on);
+      setBtn(b, !on);
     }, function (er) { b.disabled = false; UI.toast(PD.msg(er), 1); });
   });
 })();
