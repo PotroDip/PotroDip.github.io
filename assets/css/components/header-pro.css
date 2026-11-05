@@ -378,3 +378,69 @@ html[data-theme="dark"]{
 @media (prefers-reduced-motion:reduce){
   .site-header .pd-sweep{display:none;}
 }
+
+/* ============================================================
+   v114 — মোবাইল হেডার: সার্চ · থিম · প্রোফাইল · মেনু — চারটাই একই মাপের, সার্কেল/বর্ডার/ব্যাকগ্রাউন্ড ছাড়া শুধু আইকন
+   (ট্যাপ করার জায়গা আগের মতোই ৪০px/৩৮px)
+   ============================================================ */
+@media(max-width:960px){
+  .site-header .header-actions{gap:4px;}
+  .site-header .header-actions .search-pill,
+  .site-header .header-actions #theme-toggle,
+  .site-header .header-actions .account-btn:not(.logged):not(.has-avatar),
+  .site-header .hamburger{
+    width:40px !important;height:40px !important;min-width:40px;padding:0;border-radius:50% !important;
+    display:flex;align-items:center;justify-content:center;flex:none;
+    border:0 !important;background:transparent !important;box-shadow:none;color:var(--text-muted);
+  }
+  /* লগইন করা/ছবিসহ প্রোফাইল বাটন আগের মতোই থাকে, শুধু মাপ সমান */
+  .site-header .header-actions .account-btn.logged,
+  .site-header .header-actions .account-btn.has-avatar{width:40px;height:40px;flex:none;}
+  /* হোভার/ট্যাপে শুধু আইকনের রং বদলায় */
+  .site-header .header-actions .search-pill:hover,
+  .site-header .header-actions #theme-toggle:hover,
+  .site-header .header-actions .account-btn:not(.logged):not(.has-avatar):hover,
+  .site-header .hamburger:hover{border:0 !important;background:transparent !important;color:var(--primary);}
+  .site-header .header-actions .search-pill svg,
+  .site-header .header-actions #theme-toggle svg,
+  .site-header .header-actions .account-btn svg,
+  .site-header .hamburger svg{width:21px;height:21px;display:block;}
+  .site-header .hamburger{margin-left:4px;}
+}
+@media(max-width:430px){
+  .site-header .header-actions{gap:3px;}
+  .site-header .hamburger{margin-left:3px;}
+  .site-header .header-actions .search-pill,
+  .site-header .header-actions #theme-toggle,
+  .site-header .header-actions .account-btn:not(.logged):not(.has-avatar),
+  .site-header .hamburger{width:38px !important;height:38px !important;min-width:38px;}
+  .site-header .header-actions .account-btn.logged,
+  .site-header .header-actions .account-btn.has-avatar{width:38px;height:38px;}
+  .site-header .header-actions .search-pill svg,
+  .site-header .header-actions #theme-toggle svg,
+  .site-header .header-actions .account-btn svg,
+  .site-header .hamburger svg{width:20px;height:20px;}
+}
+
+/* ============================================================
+   v115 — মোবাইল হেডার: নোটিফিকেশন আইকন প্রোফাইলের পাশে; ছোট স্ক্রিনে থিম আইকন হ্যামবার্গার মেনুতে
+   ============================================================ */
+@media(max-width:960px){
+  .site-header .header-actions .notif-btn{
+    width:40px !important;height:40px !important;min-width:40px;padding:0;border-radius:50% !important;
+    align-items:center;justify-content:center;flex:none;margin-right:0;
+    border:0 !important;background:transparent !important;box-shadow:none;color:var(--text-muted);
+  }
+  .site-header .header-actions .notif-btn:hover{background:transparent !important;color:var(--primary);}
+  .site-header .header-actions .notif-btn[aria-expanded="true"]{color:var(--primary);background:color-mix(in srgb,var(--primary) 12%,transparent) !important;}
+  .site-header .header-actions .notif-btn > svg{width:21px;height:21px;display:block;}
+  .site-header .notif-btn .notif-badge{top:3px;right:2px;}
+}
+@media(max-width:430px){
+  .site-header .header-actions .notif-btn{width:38px !important;height:38px !important;min-width:38px;}
+  .site-header .header-actions .notif-btn > svg{width:20px;height:20px;}
+}
+/* ছোট স্ক্রিন: হেডারে জায়গা কম, তাই ডার্ক/লাইট আইকন হেডার থেকে সরে মেনুর ভেতরে যায় */
+@media(max-width:380px){
+  .site-header .header-actions #theme-toggle{display:none !important;}
+}
