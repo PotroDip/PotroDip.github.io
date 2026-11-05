@@ -122,13 +122,19 @@
         }).join('') + '<span class="hf-grain"></span></span>'
     }
 
+    /* বাটন: দুই স্তর — নিচেরটা গোল্ডেন (গাঢ় লেখা/তীর), ওপরেরটা সবুজ (সোনালি লেখা/তীর) যা হোভারে বাম থেকে ডানে খুলে যায় */
+    function ctaHtml(t) {
+      var lay = '<span class="hf-cta-t">' + t + '</span><span class="hf-go">' + arrow + '</span>';
+      return '<span class="hf-cta">' + lay + '<span class="hf-cta-fill" aria-hidden="true">' + lay + '</span></span>'
+    }
+
     function cardHtml(f, idx, total) {
       var sky = skyFor(idx);
       if (!f) {
         return '<article class="hf"><a class="hf-link" href="archive.html">' + sky +
           '<div class="hf-eyebrow"><span class="hf-star">' + star + '</span><span class="hf-label">পত্রদ্বীপ</span><i class="hf-rule"></i></div>' +
           '<h1 class="hf-title">কাগজের বুকে নক্ষত্র হওয়ার ক্ষুদ্র প্রয়াস</h1><p class="hf-ex">গল্প, কবিতা, প্রবন্ধ ও ভাবনার ঠিকানা</p>' +
-          '<div class="hf-foot"><span></span><span class="hf-cta">লেখাগুলো পড়ুন<span class="hf-go">' + arrow + '</span></span></div></a></article>'
+          '<div class="hf-foot"><span></span>' + ctaHtml('লেখাগুলো পড়ুন') + '</div></a></article>'
       }
       f.category = normCat(f.category);
       var u = au(f),
@@ -137,11 +143,11 @@
         T = idx === 0 ? 'h1' : 'h2';
       return '<article class="hf' + (f.cover_url ? ' has-art' : '') + '"><a class="hf-link" href="article.html?id=' + esc(f.id) + '">' +
         (f.cover_url ? '<img class="hf-bg" decoding="async" src="' + esc(f.cover_url) + '" alt="" aria-hidden="true">' : '') + sky +
-        '<div class="hf-eyebrow"><span class="hf-star">' + star + '</span><span class="hf-label">সম্পাদকের বাছাই</span><i class="hf-rule"></i>' + (f.category ? '<span class="hf-cat">' + esc(f.category) + '</span>' : '') + (total > 1 ? '<span class="hf-no">' + num(idx) + '<small>/' + bn(total) + '</small></span>' : '') + '</div>' +
+        ((f.category || total > 1) ? '<div class="hf-eyebrow">' + (f.category ? '<span class="hf-cat">' + esc(f.category) + '</span>' : '') + (total > 1 ? '<span class="hf-no">' + num(idx) + '<small>/' + bn(total) + '</small></span>' : '') + '</div>' : '') +
         '<' + T + ' class="hf-title">' + esc(f.title) + '</' + T + '>' +
         (ex ? '<p class="hf-ex">' + esc(ex) + '</p>' : '') +
         '<div class="hf-foot"><span class="hf-au"><img decoding="async" src="' + esc(u.image_url || AV) + '" alt=""><span class="hf-au-t"><b>' + esc(u.name) + '</b><small>' + (u.role_title ? '<span class="hf-role">' + esc(u.role_title) + '<span class="dot-sep"></span></span>' : '') + (when ? dt(when) : '') + '</small></span></span>' +
-        '<span class="hf-cta">পুরোটা পড়ুন<span class="hf-go">' + arrow + '</span></span></div>' +
+        '' + ctaHtml('পুরোটা পড়ুন') + '</div>' +
         (f.cover_url ? '<div class="hf-art" aria-hidden="true"><span class="hf-art-ring"></span><span class="hf-art-img"><img class="hf-art-blur" decoding="async" src="' + esc(f.cover_url) + '" alt=""><img class="hf-art-fg" decoding="async" src="' + esc(f.cover_url) + '" alt=""></span></div>' : '') +
         '</a></article>'
     }

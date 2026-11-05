@@ -600,21 +600,24 @@ html[data-theme="dark"] .follow-btn:hover,html[data-theme="dark"] .follow-btn.fo
 .hf-au-t b{font-size:14.5px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .hf-au-t small{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .hf-cta{
-  flex:none;display:inline-flex;align-items:center;gap:10px;padding:5px 5px 5px 18px;border-radius:999px;font-weight:800;font-size:14px;color:#123A3D;
-  background:linear-gradient(180deg,#F4E0B8,#E2BE88);box-shadow:0 10px 22px -10px rgba(233,203,152,.7),inset 0 1px 0 rgba(255,255,255,.6);transition:transform .35s cubic-bezier(.3,1.35,.5,1),box-shadow .3s ease;
+  position:relative;overflow:hidden;flex:none;display:inline-flex;align-items:center;justify-content:center;padding:12px 50px;border-radius:999px;font-weight:800;font-size:14px;color:#123A3D;white-space:nowrap;
+  background:linear-gradient(180deg,#F4E0B8,#E2BE88);box-shadow:0 10px 22px -10px rgba(233,203,152,.7),inset 0 1px 0 rgba(255,255,255,.6);
 }
-.hf-go{width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#123A3D;color:var(--gold);transition:transform .4s cubic-bezier(.3,1.35,.5,1);}
-.hf-go svg{width:15px;height:15px;}
-.hf-link:hover .hf-cta{transform:translateY(-2px);box-shadow:0 14px 26px -10px rgba(233,203,152,.85),inset 0 1px 0 rgba(255,255,255,.6);}
-.hf-link:hover .hf-go{transform:translateX(3px);}
+/* ('.hf ' প্রিফিক্স: body.theme-ready * এর transition-কে হারাতে)
+   v110: হোভারে সবুজ স্তর তীরের পেছনে পেছনে বাম থেকে ডানে খুলে যায় (লেখা/তীরের রংও সঙ্গে সঙ্গে বদলায়) */
+.hf .hf-cta-fill{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#123A3D;color:var(--gold);clip-path:inset(0 100% 0 0);transition:clip-path .65s cubic-bezier(.65,0,.35,1) .09s;}
+.hf .hf-go{position:absolute;top:50%;left:0;width:18px;height:18px;margin-top:-9px;display:block;opacity:0;transform:translateX(-100%);transition:left .65s cubic-bezier(.65,0,.35,1),transform .65s cubic-bezier(.65,0,.35,1),opacity .2s ease;}
+.hf .hf-go svg{width:100%;height:100%;display:block;}
+.hf .hf-cta:hover .hf-cta-fill,.hf .hf-link:focus-visible .hf-cta-fill{clip-path:inset(0 0 0 0);}
+.hf .hf-cta:hover .hf-go,.hf .hf-link:focus-visible .hf-go{left:calc(100% - 34px);transform:none;opacity:1;}
 
 /* কভার — ১৬:৯ ফ্রেমে পুরো ছবি দেখায় (কাটে না); ছবির মাপ আলাদা হলে দু-পাশে ঝাপসা আভা */
 .hf-art{grid-area:art;position:relative;width:calc(100% - 10px);aspect-ratio:16/9;margin:0 10px 10px 0;}
 .hf-art-img{position:absolute;inset:0;overflow:hidden;border-radius:18px;background:#0d3033;box-shadow:0 24px 40px -18px rgba(0,0,0,.65),inset 0 0 0 1px rgba(255,255,255,.12);}
 .hf-art-img img{position:absolute;inset:0;width:100%;height:100%;display:block;}
 .hf-art-blur{object-fit:cover;filter:blur(22px) saturate(1.25) brightness(.8);transform:scale(1.15);}
-.hf-art-fg{object-fit:contain;transition:transform 1s cubic-bezier(.2,.8,.2,1);}
-.hf-link:hover .hf-art-fg{transform:scale(1.025);}
+.hf-art-fg{object-fit:contain;transition:transform .6s cubic-bezier(0.2,0.8,0.2,1);}
+.hf-link:hover .hf-art-fg{transform:scale(1.05);}
 .hf-art-ring{position:absolute;inset:0;transform:translate(10px,10px);border:1.5px solid var(--gold-d);border-radius:18px;transition:transform .5s cubic-bezier(.2,.8,.2,1);}
 .hf-link:hover .hf-art-ring{transform:translate(14px,14px);}
 .hf-art-img{z-index:1;}
@@ -668,3 +671,11 @@ html[data-theme="dark"] .follow-btn:hover,html[data-theme="dark"] .follow-btn.fo
 .hf-arr svg{width:17px;height:17px;}
 .hf-arr:hover{background:var(--primary);color:#fff;transform:scale(1.08);}
 @media (prefers-reduced-motion:reduce){.hf-dots button.on i{animation:none;transform:scaleX(1);}}
+
+/* ============================================================
+   v110 — হিরো কার্ড
+   • "সম্পাদকের বাছাই" লেবেল (তারা + লেখা + রেখা) বাদ
+   • কভার ছবিতে হোভারে অন্য কার্ডের মতোই স্মুথ জুম (scale 1.05)
+   • "পুরোটা পড়ুন" — শুরুতে পুরো গোল্ডেন বাটন, মাঝে লেখা; বাটনে মাউস নিলে তীর ভেতরের বাম পাশ থেকে বেরিয়ে ডানে যায়, পেছনে পেছনে রং বাম থেকে ডানে সবুজ হয়
+   ============================================================ */
+@media (prefers-reduced-motion:reduce){.hf .hf-cta-fill,.hf .hf-go{transition:none;}}
