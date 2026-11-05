@@ -63,7 +63,14 @@
   function loadArticles(T) {
     /* 'body' (পুরো লেখা) তালিকায় আনা হয় না — অনেক লেখা থাকলে ডেটাবেস টাইমআউট করে তালিকা খালি দেখায়। এডিট খুললে তখন আলাদা আনা হয় */
     var BASE = 'id,slug,title,category,author_id,issue_id,cover_url,status,view_count,published_at,created_at';
-    return T('articles', BASE + ',home_order,home_hidden,home_featured').order('created_at', { ascending: false }).limit(1000).then(function (r) {
+    return T('articles', BASE + ',home_order,home_hidden,home_featured,hero_order').order('created_at', { ascending: false }).limit(1000).then(function (r) {
+      if (r.error && isMissing(r.error)) { /* hero_order (v109) না থাকলে আগের কলামগুলো নিয়ে চলুক */
+        S.heroColMissing = true;
+        return T('articles', BASE + ',home_order,home_hidden,home_featured').order('created_at', { ascending: false }).limit(1000);
+      }
+      S.heroColMissing = false;
+      return r;
+    }).then(function (r) {
       if (r.error && isMissing(r.error)) {
         S.homeColsMissing = true;
         return T('articles', BASE).order('created_at', { ascending: false }).limit(1000);

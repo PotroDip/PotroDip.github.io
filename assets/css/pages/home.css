@@ -528,24 +528,143 @@ html[data-theme="dark"] .follow-btn:hover,html[data-theme="dark"] .follow-btn.fo
 
 
 /* ============================================================
-   v103 — হিরো বক্সের চার পাশে ঘুরন্ত চিকন আলোর রেখা (ring-light.js)
-   • তিনটা স্তর (লেজ · মাঝ · মাথা) একই মাথা ধরে ছোটে, তাই লেজ ধীরে ফিকে হয়
-   • --pd-ring-t = একবার পুরো বক্স ঘুরতে কত সেকেন্ড
+   v106 — হিরো = বিশেষ লেখা (home.js → #hero-grid > .hf)
+   • রাতের-আকাশ ব্যাকগ্রাউন্ড: ধীরে নড়া অরোরা আভা, মিটমিটে তারা, সোনালি নক্ষত্রমালা, হালকা দানা
+   • কভার ১৬:৯ ফ্রেমে পুরোটা দেখায় (কাটে না) + সোনালি অফসেট রেখা; পিসিতে ডানে, মোবাইলে ওপরে
+   • সব থিমে একই (গাঢ় ক্যানভাস), তাই লাইট/ডার্ক দুটোতেই পড়া যায়
    ============================================================ */
-:root{--pd-ring-t:7s;--pd-ring-hi:#FFF4D6;--pd-ring-mid:#F2CF93;--pd-ring-lo:#D9A96A;}
-.hb > .pd-ring{
-  position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;overflow:visible;
-  filter:drop-shadow(0 0 3px rgba(255,226,170,.85)) drop-shadow(0 0 7px rgba(242,207,147,.45));
+.hero{padding:22px 0 10px;}
+.hero-grid:has(.hf){display:block;aspect-ratio:auto;}
+.hf{
+  --gold:#E9CB98;--gold-d:#C9A27A;
+  position:relative;overflow:hidden;isolation:isolate;border-radius:28px;color:#fff;
+  background:linear-gradient(160deg,#06252A 0%,#0C3A3F 48%,#082C31 100%);
+  box-shadow:0 26px 34px -26px rgba(18,58,61,.62),inset 0 0 0 1px rgba(255,255,255,.09),inset 0 1px 0 rgba(255,255,255,.16);
+  animation:hf-in .9s cubic-bezier(.2,.8,.2,1) both;
 }
-.hb > .pd-ring path{
-  fill:none;stroke-linecap:round;stroke-linejoin:round;
-  animation:var(--pd-ring-t) linear infinite;
+@keyframes hf-in{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+.hf-link{
+  position:relative;display:grid;color:inherit;text-decoration:none;border-radius:inherit;
+  grid-template-columns:minmax(0,1fr);grid-template-areas:"art" "eyebrow" "title" "ex" "foot";
+  row-gap:14px;align-items:start;padding:16px 16px 22px;
 }
-.hb > .pd-ring .pd-ring-tail{animation-name:pd-ring-tail;stroke:var(--pd-ring-lo);stroke-width:1.4;opacity:.5;stroke-dasharray:300 700;}
-.hb > .pd-ring .pd-ring-mid {animation-name:pd-ring-mid;stroke:var(--pd-ring-mid);stroke-width:1.8;opacity:.8;stroke-dasharray:150 850;}
-.hb > .pd-ring .pd-ring-head{animation-name:pd-ring-head;stroke:var(--pd-ring-hi);stroke-width:2.4;opacity:1;stroke-dasharray:55 945;}
-/* তিন স্তরের মাথা একই জায়গায় রাখতে শুরুর অফসেট = স্তরের দৈর্ঘ্য */
-@keyframes pd-ring-tail{from{stroke-dashoffset:300;}to{stroke-dashoffset:-700;}}
-@keyframes pd-ring-mid{from{stroke-dashoffset:150;}to{stroke-dashoffset:-850;}}
-@keyframes pd-ring-head{from{stroke-dashoffset:55;}to{stroke-dashoffset:-945;}}
-@media (prefers-reduced-motion:reduce){.hb > .pd-ring{display:none;}}
+.hf:not(.has-art) .hf-link{grid-template-areas:"eyebrow" "title" "ex" "foot";padding:26px 22px 22px;}
+.hf-eyebrow,.hf-title,.hf-ex,.hf-foot{margin-left:6px;margin-right:6px;}
+.hf-link:focus-visible{outline:2px solid var(--gold);outline-offset:-6px;}
+/* কভারের ঝাপসা আভা */
+.hf-bg{position:absolute;inset:-12%;width:124%;height:124%;object-fit:cover;z-index:-2;filter:blur(50px) saturate(1.3);opacity:.20;pointer-events:none;}
+.hf::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.07),transparent 28%),linear-gradient(100deg,rgba(5,30,34,.6) 0%,rgba(5,30,34,.22) 62%,rgba(5,30,34,0) 100%);}
+/* ঘন বৃত্তের সাজ */
+.hf-rings{position:absolute;right:-90px;top:50%;width:520px;height:520px;margin-top:-260px;border-radius:50%;z-index:-1;pointer-events:none;
+  border:1.5px solid rgba(255,255,255,.10);box-shadow:0 0 0 46px rgba(255,255,255,.028),0 0 0 47px rgba(255,255,255,.07),0 0 0 100px rgba(255,255,255,.02);}
+
+/* ---- ব্যাকগ্রাউন্ড: রাতের আকাশ (home.js → .hf-sky) ---- */
+.hf-sky{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none;border-radius:inherit;}
+.hf-aurora b{position:absolute;display:block;border-radius:50%;filter:blur(70px);will-change:transform;}
+.hf-aurora b:nth-child(1){width:58%;aspect-ratio:1;left:-14%;top:-38%;background:#1FA3A0;opacity:.50;animation:hf-d1 22s ease-in-out infinite alternate;}
+.hf-aurora b:nth-child(2){width:50%;aspect-ratio:1;right:-12%;bottom:-48%;background:#E9CB98;opacity:.30;animation:hf-d2 26s ease-in-out infinite alternate;}
+.hf-aurora b:nth-child(3){width:42%;aspect-ratio:1;left:34%;top:26%;background:#2F7FB0;opacity:.24;animation:hf-d3 30s ease-in-out infinite alternate;}
+@keyframes hf-d1{from{transform:translate(0,0) scale(1);}to{transform:translate(18%,14%) scale(1.15);}}
+@keyframes hf-d2{from{transform:translate(0,0) scale(1);}to{transform:translate(-16%,-12%) scale(1.2);}}
+@keyframes hf-d3{from{transform:translate(0,0) scale(1);}to{transform:translate(-14%,10%) scale(.9);}}
+.hf-stars i{position:absolute;border-radius:50%;background:#fff;opacity:.2;box-shadow:0 0 6px 1px rgba(255,255,255,.55);animation:hf-tw 4s ease-in-out infinite;}
+@keyframes hf-tw{0%,100%{opacity:.25;transform:scale(.85);}50%{opacity:.95;transform:scale(1.15);}}
+.hf-const{position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
+.hf-const polyline{fill:none;stroke:rgba(233,203,152,.42);stroke-width:1;stroke-dasharray:3 4;}
+.hf-cs{position:absolute;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:#F4E0B8;box-shadow:0 0 10px 2px rgba(233,203,152,.75);animation:hf-tw 5s ease-in-out infinite;}
+.hf-grain{position:absolute;inset:0;opacity:.16;mix-blend-mode:overlay;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");}
+@media (prefers-reduced-motion:reduce){.hf-aurora b,.hf-stars i,.hf-cs{animation:none;}}
+
+.hf-eyebrow{grid-area:eyebrow;display:flex;align-items:center;gap:9px;min-width:0;}
+.hf-star{width:16px;height:16px;flex:none;color:var(--gold);display:inline-flex;animation:hf-twinkle 3.6s ease-in-out infinite;}
+.hf-star svg{width:100%;height:100%;fill:currentColor;display:block;}
+@keyframes hf-twinkle{0%,100%{transform:scale(1) rotate(0);opacity:.9;}50%{transform:scale(1.25) rotate(18deg);opacity:1;}}
+.hf-label{font-size:12.5px;letter-spacing:.07em;font-weight:700;color:var(--gold);white-space:nowrap;}
+.hf-rule{flex:1 1 24px;max-width:110px;height:1px;background:linear-gradient(90deg,var(--gold),transparent);opacity:.75;}
+.hf-cat{font-size:12px;font-weight:600;padding:4px 13px;border-radius:999px;white-space:nowrap;color:#fff;background:rgba(255,255,255,.12);box-shadow:inset 0 0 0 1px rgba(255,255,255,.2);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);}
+
+.hf-title{
+  grid-area:title;margin:0;font-weight:800;color:#fff;letter-spacing:-.012em;
+  font-size:clamp(25px,6.6vw,34px);line-height:1.28;overflow-wrap:anywhere;text-shadow:0 2px 18px rgba(0,0,0,.25);
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;line-clamp:4;overflow:hidden;
+}
+.hf-ex{
+  grid-area:ex;margin:0;color:rgba(255,255,255,.84);font-size:15px;line-height:1.9;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3;overflow:hidden;
+  padding-left:14px;border-left:2px solid var(--gold-d);
+}
+.hf-foot{grid-area:foot;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:2px;padding-top:16px;border-top:1px dashed rgba(255,255,255,.2);}
+.hf-au{display:flex;align-items:center;gap:10px;min-width:0;}
+.hf-au img{width:40px;height:40px;border-radius:50%;object-fit:cover;flex:none;background:#fff2;box-shadow:0 0 0 2px #154246,0 0 0 3.5px var(--gold-d);}
+.hf-au-t{display:flex;flex-direction:column;min-width:0;line-height:1.4;}
+.hf-au-t b{font-size:14.5px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hf-au-t small{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hf-cta{
+  flex:none;display:inline-flex;align-items:center;gap:10px;padding:5px 5px 5px 18px;border-radius:999px;font-weight:800;font-size:14px;color:#123A3D;
+  background:linear-gradient(180deg,#F4E0B8,#E2BE88);box-shadow:0 10px 22px -10px rgba(233,203,152,.7),inset 0 1px 0 rgba(255,255,255,.6);transition:transform .35s cubic-bezier(.3,1.35,.5,1),box-shadow .3s ease;
+}
+.hf-go{width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#123A3D;color:var(--gold);transition:transform .4s cubic-bezier(.3,1.35,.5,1);}
+.hf-go svg{width:15px;height:15px;}
+.hf-link:hover .hf-cta{transform:translateY(-2px);box-shadow:0 14px 26px -10px rgba(233,203,152,.85),inset 0 1px 0 rgba(255,255,255,.6);}
+.hf-link:hover .hf-go{transform:translateX(3px);}
+
+/* কভার — ১৬:৯ ফ্রেমে পুরো ছবি দেখায় (কাটে না); ছবির মাপ আলাদা হলে দু-পাশে ঝাপসা আভা */
+.hf-art{grid-area:art;position:relative;width:calc(100% - 10px);aspect-ratio:16/9;margin:0 10px 10px 0;}
+.hf-art-img{position:absolute;inset:0;overflow:hidden;border-radius:18px;background:#0d3033;box-shadow:0 24px 40px -18px rgba(0,0,0,.65),inset 0 0 0 1px rgba(255,255,255,.12);}
+.hf-art-img img{position:absolute;inset:0;width:100%;height:100%;display:block;}
+.hf-art-blur{object-fit:cover;filter:blur(22px) saturate(1.25) brightness(.8);transform:scale(1.15);}
+.hf-art-fg{object-fit:contain;transition:transform 1s cubic-bezier(.2,.8,.2,1);}
+.hf-link:hover .hf-art-fg{transform:scale(1.025);}
+.hf-art-ring{position:absolute;inset:0;transform:translate(10px,10px);border:1.5px solid var(--gold-d);border-radius:18px;transition:transform .5s cubic-bezier(.2,.8,.2,1);}
+.hf-link:hover .hf-art-ring{transform:translate(14px,14px);}
+.hf-art-img{z-index:1;}
+
+@media(min-width:700px){
+  .hf-link{padding:26px 30px 32px;row-gap:18px;}
+  .hf:not(.has-art) .hf-link{padding:40px 42px 34px;}
+  .hf-title{font-size:clamp(30px,4.4vw,46px);}
+  .hf-ex{font-size:17px;max-width:62ch;}
+}
+@media(min-width:900px){
+  .hf{border-radius:32px;}
+  .hf-link{
+    grid-template-columns:minmax(0,1fr) minmax(0,1.18fr);column-gap:48px;
+    grid-template-areas:"eyebrow art" "title art" "ex art" "foot art";
+    grid-template-rows:auto auto auto auto;align-content:center;row-gap:20px;align-items:center;padding:48px 52px 48px 58px;
+  }
+  .hf:not(.has-art) .hf-link{grid-template-columns:1fr;grid-template-areas:"eyebrow" "title" "ex" "foot";min-height:320px;}
+  .hf-eyebrow,.hf-title,.hf-ex,.hf-foot{margin-left:0;margin-right:0;}
+  .hf-art{align-self:center;margin:0 12px 12px 0;width:calc(100% - 12px);}
+  .hf-title{font-size:clamp(32px,3.5vw,48px);}
+  .hf-foot{margin-top:8px;}
+}
+@media(max-width:520px){.hf-role{display:none;}.hf-cat{font-size:11.5px;}}
+@media (prefers-reduced-motion:reduce){.hf,.hf-star{animation:none;}}
+
+/* ============================================================
+   v109 — হিরোতে একাধিক লেখা: স্লাইডার (home.js → .hf-slider)
+   • অ্যাডমিনে "হিরো সেকশনে ক্রম" ১, ২, ৩ … দিলে সেই ক্রমে কার্ড; একটা হলে স্লাইডার আসেই না
+   • স্ক্রল-স্ন্যাপ (মোবাইলে সোয়াইপ) · ডট (চলমানটা ভরাট হয়) · দুই পাশে তীর · ৮ সেকেন্ডে অটো-স্লাইড
+   ============================================================ */
+.hf-no{margin-left:auto;flex:none;font-weight:800;font-size:15px;letter-spacing:.04em;color:var(--gold);white-space:nowrap;}
+.hf-no small{font-size:11px;font-weight:600;opacity:.6;margin-left:1px;}
+.hf-slider{position:relative;}
+.hf-track{display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;padding:4px 0 46px;margin:-4px 0 -30px;}
+.hf-track::-webkit-scrollbar{display:none;}
+.hf-track:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:28px;}
+.hf-slide{flex:0 0 100%;min-width:0;scroll-snap-align:start;scroll-snap-stop:always;display:flex;}
+.hf-slide > .hf{flex:1;min-width:0;display:flex;}
+.hf-slide > .hf > .hf-link{flex:1;min-width:0;align-content:center;}
+.hf-slide:not(.on) .hf-aurora b,.hf-slide:not(.on) .hf-stars i,.hf-slide:not(.on) .hf-cs,.hf-slide:not(.on) .hf-star{animation-play-state:paused;}
+.hf-ctrl{display:flex;justify-content:center;align-items:center;gap:14px;margin-top:4px;position:relative;z-index:1;}
+.hf-dots{display:flex;align-items:center;gap:8px;}
+.hf-dots button{position:relative;width:10px;height:10px;padding:0;border:0;border-radius:999px;overflow:hidden;cursor:pointer;background:color-mix(in srgb,var(--text) 20%,transparent);transition:width .45s cubic-bezier(.2,.8,.2,1);}
+.hf-dots button.on{width:48px;}
+.hf-dots button i{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(90deg,var(--primary),var(--pd-warm,#9B7357));transform:scaleX(0);transform-origin:left center;}
+.hf-dots button.on i{animation:hf-fill var(--hf-iv,8s) linear forwards;}
+.hf-slider.paused .hf-dots button.on i{animation-play-state:paused;}
+@keyframes hf-fill{from{transform:scaleX(0);}to{transform:scaleX(1);}}
+.hf-arr{width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;padding:0;cursor:pointer;color:var(--primary);background:var(--bg);border:1px solid var(--border);transition:background-color .25s ease,color .25s ease,transform .3s cubic-bezier(.3,1.35,.5,1);}
+.hf-arr svg{width:17px;height:17px;}
+.hf-arr:hover{background:var(--primary);color:#fff;transform:scale(1.08);}
+@media (prefers-reduced-motion:reduce){.hf-dots button.on i{animation:none;transform:scaleX(1);}}

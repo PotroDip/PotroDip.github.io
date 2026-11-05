@@ -174,7 +174,7 @@
     closeCatNew();
     [].forEach.call($('article-modal').querySelectorAll('.invalid'), function (n) { n.classList.remove('invalid'); });
     $('art-published').checked = a ? a.status === 'published' : true;
-    $('art-home-order').value = a && a.home_order != null ? a.home_order : ''; $('art-home-hidden').checked = !!(a && a.home_hidden); $('art-home-featured').checked = !!(a && a.home_featured);
+    $('art-home-order').value = a && a.home_order != null ? a.home_order : ''; $('art-home-hidden').checked = !!(a && a.home_hidden); $('art-hero-order').value = a ? (a.hero_order != null ? a.hero_order : (a.home_featured ? 1 : '')) : '';
     setPreview($('art-cover-preview'), a ? a.cover_url : null); $('art-cover-file').value = '';
     /* শিরোনামের ফন্ট: আগে ডিফল্ট, তারপর সেভ করা মান এনে বসানো (কলাম না থাকলে চুপচাপ ডিফল্ট) */
     fillTitleFont(''); 
@@ -191,9 +191,9 @@
     if (!$('art-author').value) return flag('fr-author', 'লেখক বেছে নিন — না থাকলে "নতুন লেখক" চাপুন', 'art-author');
     busy(btn, true, 1);
     var old = art.id ? C.byId(S.articles, art.id) : null;
-    var row = { title: title, body: box.innerHTML, excerpt: text.slice(0, 160), category: PD.normCat($('art-cat').value), author_id: $('art-author').value, issue_id: $('art-issue').value || null, home_order: (function (v) { v = parseInt(v, 10); return isNaN(v) || v < 1 ? null : v; })($('art-home-order').value), home_hidden: $('art-home-hidden').checked, home_featured: $('art-home-featured').checked, status: $('art-published').checked ? 'published' : 'draft' };
+    var row = { title: title, body: box.innerHTML, excerpt: text.slice(0, 160), category: PD.normCat($('art-cat').value), author_id: $('art-author').value, issue_id: $('art-issue').value || null, home_order: (function (v) { v = parseInt(v, 10); return isNaN(v) || v < 1 ? null : v; })($('art-home-order').value), home_hidden: $('art-home-hidden').checked, hero_order: (function (v) { v = parseInt(v, 10); return isNaN(v) || v < 1 ? null : v; })($('art-hero-order').value), home_featured: false, status: $('art-published').checked ? 'published' : 'draft' };
     if (row.status === 'published' && !(old && old.published_at)) row.published_at = new Date().toISOString();
-    var tf = $('art-title-font').value || '', tfSkipped = false;
+    var tf = $('art-title-font').value || '', tfSkipped = false; var heroVal = row.hero_order, heroSkipped = false;
     if (tf || old) row.title_font = tf || null; /* কলাম না থাকলে নিচে বাদ দিয়ে আবার চেষ্টা হয় */
     function send() { return old ? db.from('articles').update(row).eq('id', old.id).select('id').single() : db.from('articles').insert(row).select('id').single(); }
     upload(art.cover, 'covers', 'article').then(function (url) {
@@ -201,14 +201,20 @@
       if (!old) row.slug = slug('a');
       return send();
     }).then(function (r) {
-      if (r.error && 'title_font' in row && /title_font/i.test(String(r.error.message || '') + String(r.error.details || ''))) { delete row.title_font; tfSkipped = !!tf; return send(); }
-      return r;
+      /* নতুন কলাম (title_font / hero_order) ডাটাবেসে না থাকলে সেটা বাদ দিয়ে বাকিটা সেভ হয় */
+      function drop(r) {
+        if (r.error) {
+          var m = String(r.error.message || '') + String(r.error.details || '');
+          if ('hero_order' in row && /hero_order/i.test(m)) { delete row.hero_order; heroSkipped = heroVal != null; return send().then(drop); }
+          if ('title_font' in row && /title_font/i.test(m)) { delete row.title_font; tfSkipped = !!tf; return send().then(drop); }
+        }
+        return r;
+      }
+      return drop(r);
     }).then(function (r) {
       if (r.error) throw r.error;
-      var aid = r.data.id, jobs = [];
-      if (row.home_featured) jobs.push(db.from('articles').update({ home_featured: false }).eq('home_featured', true).neq('id', aid)); /* আগের শুরুর লেখাটা সরিয়ে দেওয়া */
-      return Promise.all(jobs);
-    }).then(function () { busy(btn, false); A.closeModal('article-modal'); if (tfSkipped) setTimeout(function () { A.showToast('লেখা সেভ হয়েছে, কিন্তু শিরোনামের ফন্ট সেভ হয়নি — supabase/migrations/20261105_custom_fonts.sql একবার চালান'); }, 900); A.showToast(old ? 'লেখা হালনাগাদ হয়েছে' : (row.status === 'published' ? 'লেখা প্রকাশিত হয়েছে' : 'ড্রাফট সেভ হয়েছে')); C.refresh(); }).catch(function (e) { busy(btn, false); fail(e); });
+      return r;
+    }).then(function () { busy(btn, false); A.closeModal('article-modal'); if (heroSkipped) setTimeout(function () { A.showToast('লেখা সেভ হয়েছে, কিন্তু হিরোর ক্রম সেভ হয়নি — supabase/migrations/20261106_hero_order.sql একবার চালান'); }, 900); if (tfSkipped) setTimeout(function () { A.showToast('লেখা সেভ হয়েছে, কিন্তু শিরোনামের ফন্ট সেভ হয়নি — supabase/migrations/20261105_custom_fonts.sql একবার চালান'); }, 900); A.showToast(old ? 'লেখা হালনাগাদ হয়েছে' : (row.status === 'published' ? 'লেখা প্রকাশিত হয়েছে' : 'ড্রাফট সেভ হয়েছে')); C.refresh(); }).catch(function (e) { busy(btn, false); fail(e); });
   });
   document.querySelectorAll('[data-open-article]').forEach(function (b) { b.addEventListener('click', function () { openArticle(); }); });
 
