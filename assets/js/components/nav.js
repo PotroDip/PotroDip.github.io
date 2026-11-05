@@ -3,15 +3,10 @@
   'use strict';
   var PD = window.PD,
     UI = window.PDUI;
-  var MARKUP = '<div aria-label="সার্চ" id="search-overlay" role="dialog"> <div class="search-top"> <div class="search-top-inner"> <div class="search-field"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><line x1="21" x2="16.65" y1="21" y2="16.65"></line></svg> <input autocomplete="off" id="search-input" placeholder="লেখার শিরোনাম বা লেখকের নাম লিখুন..." type="text"/> <button aria-label="মুছে ফেলুন" class="search-clear" id="search-clear"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg> </button> </div> <button aria-label="বন্ধ করুন" class="search-close" id="search-close-btn"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg> </button> </div> </div> <div class="search-body"> <div class="search-body-inner"> <div id="search-suggest"> <div class="search-suggest-label">জনপ্রিয় সার্চ</div> <div class="suggest-chips"></div> </div> <div id="search-results"></div> </div> </div> </div><div id="mobile-scrim"></div><aside aria-label="মোবাইল মেনু" id="mobile-menu"> <div class="mm-head"> <div class="mm-logo"><img decoding="async" src="assets/img/brand/logo-text.svg" alt="পত্রদ্বীপ" width="150" height="63"></div> <button aria-label="বন্ধ করুন" class="mm-close" id="mm-close-btn"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg> </button> </div> <div class="mm-body"> <button class="mm-search-trigger" id="mm-search-trigger"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><line x1="21" x2="16.65" y1="21" y2="16.65"></line></svg> লেখা বা লেখক খুঁজুন... </button> <a class="mm-link" href="index.html"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> হোম </a> <a class="mm-link" href="archive.html"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg> আর্কাইভ </a> <a class="mm-link" href="authors.html"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> লেখক তালিকা </a> <a class="mm-link" href="store.html"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg> সংখ্যা কিনুন </a> <div class="mm-divider"></div> <a class="mm-link" href="auth.html"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" x2="3" y1="12" y2="12"></line></svg> লগইন / প্রোফাইল </a> </div> </aside>';
+  var MARKUP = '<div aria-label="সার্চ" id="search-overlay" role="dialog"> <div class="search-top"> <div class="search-top-inner"> <div class="search-field"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><line x1="21" x2="16.65" y1="21" y2="16.65"></line></svg> <input autocomplete="off" id="search-input" placeholder="লেখার শিরোনাম বা লেখকের নাম লিখুন..." type="text"/> <button aria-label="মুছে ফেলুন" class="search-clear" id="search-clear"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg> </button> </div> <button aria-label="বন্ধ করুন" class="search-close" id="search-close-btn"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg> </button> </div> </div> <div class="search-body"> <div class="search-body-inner"> <div id="search-suggest"> <div class="search-suggest-label">জনপ্রিয় সার্চ</div> <div class="suggest-chips"></div> </div> <div id="search-results"></div> </div> </div> </div><div id="mobile-scrim"></div><aside aria-label="মোবাইল মেনু" id="mobile-menu"> <div class="mm-head"> <div class="mm-logo"><img decoding="async" src="assets/img/brand/logo-text.svg" alt="পত্রদ্বীপ" width="150" height="63"></div> <button aria-label="বন্ধ করুন" class="mm-close" id="mm-close-btn"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg> </button> </div> <div class="mm-body"> <button class="mm-search-trigger" id="mm-search-trigger"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><line x1="21" x2="16.65" y1="21" y2="16.65"></line></svg> লেখা বা লেখক খুঁজুন... </button> <a class="mm-link" href="index.html"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> হোম </a><div class="mm-group">বিভাগ</div><div class="mm-cats"><a href="index.html#cat=গল্প">গল্প</a><a href="index.html#cat=কবিতা">কবিতা</a><a href="index.html#cat=প্রবন্ধ">প্রবন্ধ</a><a href="index.html#cat=ভ্রমণ">ভ্রমণ</a><a href="index.html#cat=সাহিত্য">সাহিত্য</a><a href="index.html#cat=রম্য">রম্য</a><a href="index.html#cat=স্মৃতিগদ্য">স্মৃতিগদ্য</a><a href="index.html#cat=কাব্য">কাব্য</a><a href="index.html#cat=ছড়া">ছড়া</a></div><div class="mm-group">ম্যাগাজিন</div><a class="mm-link" href="index.html#issue-band"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> চলতি সংখ্যা </a><a class="mm-link" href="archive.html"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> আর্কাইভ </a><a class="mm-link" href="store.html"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> সংখ্যা কিনুন </a><a class="mm-link" href="authors.html"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> লেখক তালিকা </a><div class="mm-group">আমার অ্যাকাউন্ট</div><a class="mm-link" href="auth.html"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> লগইন / প্রোফাইল </a><a class="mm-link" href="auth.html?tab=saved"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> সেভ করা লেখা </a><a class="mm-link" href="auth.html?tab=notifications"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> নোটিফিকেশন </a><div class="mm-group">তথ্য ও নীতিমালা</div><a class="mm-link sm" href="privacy.html"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> গোপনীয়তা নীতি </a><a class="mm-link sm" href="terms.html"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> ব্যবহারের শর্তাবলী </a><a class="mm-link sm" href="data-deletion.html"> <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg> ডেটা মুছে ফেলা </a><a class="mm-cta" href="store.html"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> সংখ্যা কিনুন</a> </div> </aside>';
 
-  /* টপবারের তারিখ ও স্ক্রল করলে হেডারের ছায়া */
+  /* স্ক্রল করলে হেডারের ছায়া */
   function chrome() {
-    var d = document.getElementById('tb-date');
-    if (d) {
-      var now = new Date(), DAY = ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'];
-      d.textContent = DAY[now.getDay()] + ', ' + (UI ? UI.date(now) : now.toLocaleDateString('bn-BD'));
-    }
     var h = document.querySelector('header.site-header');
     if (h) {
       var on = function () { h.classList.toggle('scrolled', window.scrollY > 40); };
@@ -413,4 +408,73 @@
     });
   }
   if (document.readyState !== 'loading') bell(); else document.addEventListener('DOMContentLoaded', bell);
+})();
+
+/* ============================================================
+   v98: প্রফেশনাল হেডার — ড্রপডাউন মেনু, বিভাগে সরাসরি যাওয়া (index.html#cat=গল্প),
+   মোবাইল মেনুর সক্রিয় লিংক, লগইন করা থাকলে টপবারের লেখা বদল
+   ============================================================ */
+(function () {
+  'use strict';
+  function ready(fn) {
+    if (document.readyState !== 'loading') fn(); else document.addEventListener('DOMContentLoaded', fn);
+  }
+  ready(function () {
+    /* ---------- ড্রপডাউন: মাউস হোভারে CSS খোলে; ট্যাপ/কিবোর্ডে এখানে ---------- */
+    var dds = [].slice.call(document.querySelectorAll('.site-header .nav-dd'));
+    function closeAll(except) {
+      dds.forEach(function (d) {
+        if (d === except) return;
+        d.classList.remove('open');
+        var b = d.querySelector('.nav-dd-btn');
+        if (b) b.setAttribute('aria-expanded', 'false');
+      });
+    }
+    dds.forEach(function (d) {
+      var b = d.querySelector('.nav-dd-btn');
+      if (!b) return;
+      b.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var open = !d.classList.contains('open');
+        closeAll(d);
+        d.classList.toggle('open', open);
+        b.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    });
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.nav-dd')) closeAll();
+      else if (e.target.closest('.dd-item, .mega-grid a, .mega-foot a')) closeAll();
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(); });
+
+    /* ---------- হোমে বিভাগের সেকশনে সরাসরি যাওয়া ---------- */
+    function goCat() {
+      var m = /^#cat=(.+)$/.exec((function () { try { return decodeURIComponent(location.hash || ''); } catch (e) { return ''; } })());
+      if (!m || !document.getElementById('cat-sections')) return;
+      var name = m[1], tries = 0;
+      var iv = setInterval(function () {
+        tries++;
+        var box = document.getElementById('cat-sections');
+        var sec = null;
+        if (box) [].forEach.call(box.querySelectorAll('.cat-sec'), function (s) { if (s.getAttribute('data-cat') === name) sec = s; });
+        if (sec) {
+          clearInterval(iv);
+          window.scrollTo({ top: sec.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' });
+        } else if (tries > 40) {
+          clearInterval(iv);
+        }
+      }, 250);
+    }
+    goCat();
+    window.addEventListener('hashchange', goCat);
+
+    /* ---------- মোবাইল মেনুর সক্রিয় লিংক ---------- */
+    var file = (location.pathname.split('/').pop() || 'index.html');
+    var map = { 'issue.html': 'archive.html', 'article.html': 'archive.html', 'author.html': 'authors.html' };
+    var cur = map[file] || file;
+    [].forEach.call(document.querySelectorAll('#mobile-menu .mm-link'), function (a) {
+      var h = a.getAttribute('href') || '';
+      if (h === cur && h.indexOf('#') < 0 && h.indexOf('?') < 0) a.classList.add('active');
+    });
+  });
 })();

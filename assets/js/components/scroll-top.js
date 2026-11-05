@@ -86,17 +86,7 @@
         tip.textContent = end ? 'শেষ — উপরে ফিরুন' : 'উপরে যান';
       }
       liftCheck(Date.now());
-      // ফুটারের "Created by" অংশ দেখা গেলে বাটন তার ওপরে উঠে বসে — যাতে নাম/ফোন ঢেকে না যায়
-      var cr = document.querySelector('.creator');
       var extra = '';
-      if (cr) {
-        var r = cr.getBoundingClientRect();
-        var bl = window.innerWidth - (window.innerWidth <= 640 ? 14 : 18) - btn.offsetWidth;
-        if (r.top < window.innerHeight && r.bottom > 0 && r.right > bl - 8 && r.left < window.innerWidth) {
-          var need = Math.round(window.innerHeight - r.top + 14);
-          if (need > 0) extra = need + 'px';
-        }
-      }
       if (extra !== lastExtra) { lastExtra = extra; btn.style.bottom = extra; }
       if (going && y <= 2) { going = false; btn.classList.remove('pd-going'); }
     }

@@ -1,0 +1,380 @@
+/* ============================================================
+   header-pro.css (v103) — "ভাসমান গ্লাস-আইল্যান্ড" হেডার (সব পেজে একই)
+   • হেডার এখন পাতার ওপর ভাসমান একটা ক্যাপসুল — কাচের মতো ঝাপসা ব্যাকগ্রাউন্ড, গ্রেডিয়েন্ট ধার
+   • লোগোর পেছনে হালকা আলোর আভা · স্ক্রলে ক্যাপসুল ছোট হয় · নিচে স্ক্রল-প্রগ্রেস রেখা
+   • মেনুর পেছনে চলমান ইন্ডিকেটর (header-fx.js) · খুঁজুন বাটনে "/" শর্টকাট
+   • নিচে স্ক্রলে হেডার সরে যায়, ওপরে স্ক্রলে ফিরে আসে
+   • রং, ফন্ট, লোগো, মেনুর আইটেম — আগের স্টাইলই; বদলেছে শুধু গঠন ও আধুনিকতা
+   chrome.css-এর পরে লোড হয়, তাই আগের হেডার স্টাইলের ওপর বসে।
+   ============================================================ */
+
+:root{--pd-warm:#9B7357;--pd-ease:cubic-bezier(.2,.8,.2,1);--pd-spring:cubic-bezier(.3,1.35,.5,1);}
+html[data-theme="dark"]{--pd-warm:#C79A7B;}
+
+/* ---------- ১) বাইরের স্তর: স্বচ্ছ, স্থির উচ্চতা (স্ক্রলে কনটেন্ট লাফাবে না) ---------- */
+header.site-header{
+  position:sticky;top:0;z-index:500;
+  height:104px;padding:12px 16px 0;box-sizing:border-box;
+  background:transparent;border:0;box-shadow:none;
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+  pointer-events:none;
+  transition:transform .5s var(--pd-ease);
+}
+header.site-header.scrolled,
+html[data-theme="dark"] header.site-header.scrolled{box-shadow:none;}
+header.site-header.pd-hide{transform:translateY(-135%);}
+
+/* ---------- ২) ক্যাপসুল ---------- */
+.site-header .header-inner{
+  position:relative;pointer-events:auto;box-sizing:border-box;
+  max-width:1200px;margin:0 auto;padding:0 18px 0 22px;height:84px;border-radius:32px;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 84%,transparent),color-mix(in srgb,var(--bg) 72%,transparent));
+  -webkit-backdrop-filter:saturate(170%) blur(20px);backdrop-filter:saturate(170%) blur(20px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.65),
+    0 24px 44px -26px rgba(18,58,61,.38),
+    0 3px 10px -4px rgba(18,58,61,.12);
+  transition:height .45s var(--pd-ease),max-width .45s var(--pd-ease),border-radius .45s var(--pd-ease),box-shadow .45s var(--pd-ease);
+}
+html[data-theme="dark"] .site-header .header-inner{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 24px 44px -22px rgba(0,0,0,.75),0 3px 10px -4px rgba(0,0,0,.4);
+}
+.site-header.scrolled .header-inner{
+  height:66px;max-width:1120px;border-radius:26px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.65),0 30px 50px -24px rgba(18,58,61,.5),0 4px 14px -4px rgba(18,58,61,.18);
+}
+html[data-theme="dark"] .site-header.scrolled .header-inner{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 30px 50px -20px rgba(0,0,0,.85),0 4px 14px -4px rgba(0,0,0,.5);
+}
+
+/* গ্রেডিয়েন্ট হেয়ারলাইন ধার: সবুজ (প্রাইমারি) থেকে কলমের বাদামি */
+.site-header .header-inner::before{
+  content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;z-index:0;
+  background:linear-gradient(120deg,
+    color-mix(in srgb,var(--primary) 42%,transparent) 0%,
+    color-mix(in srgb,var(--border) 90%,transparent) 30%,
+    color-mix(in srgb,var(--border) 90%,transparent) 70%,
+    color-mix(in srgb,var(--pd-warm) 55%,transparent) 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+}
+/* লোগোর পেছনে নরম আলোর আভা */
+.site-header .header-inner::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 150px 62px at 50% 46%,color-mix(in srgb,var(--primary) 13%,transparent),transparent 72%),
+    radial-gradient(ellipse 90px 40px at 54% 40%,color-mix(in srgb,var(--pd-warm) 11%,transparent),transparent 75%);
+  opacity:1;transition:opacity .4s ease;
+}
+.site-header.scrolled .header-inner::after{opacity:.55;}
+.site-header .header-inner > *{position:relative;z-index:1;}
+.site-header .header-inner > .pd-progress{position:absolute;}
+
+/* স্ক্রল-প্রগ্রেস রেখা (ক্যাপসুলের নিচের কিনারায়) */
+.site-header .pd-progress{
+  left:34px;right:34px;bottom:0;height:2px;border-radius:2px;z-index:2;pointer-events:none;
+  background:linear-gradient(90deg,var(--primary),var(--pd-warm));
+  transform-origin:left center;transform:scaleX(var(--pd-prog,0));
+  opacity:0;transition:opacity .35s ease;
+}
+.site-header.scrolled .pd-progress{opacity:.9;}
+
+/* লোগো */
+.site-header #header-logo-slot{width:140px;height:77px;transition:width .45s var(--pd-ease),height .45s var(--pd-ease);}
+.site-header.scrolled #header-logo-slot{width:102px;height:56px;}
+.site-header .brand{transition:transform .35s var(--pd-spring);}
+.site-header .brand:hover{transform:translateY(-1px) scale(1.03);}
+
+/* ---------- ৩) মেনু ---------- */
+.site-header nav.main-nav{gap:14px;}
+.site-header .nav-links{position:relative;display:flex;align-items:center;gap:2px;}
+.site-header .nav-links > a,
+.site-header .nav-dd-btn{
+  position:relative;z-index:1;display:inline-flex;align-items:center;gap:5px;
+  font:inherit;font-size:15.5px;color:var(--text-muted);background:none;border:0;cursor:pointer;
+  padding:10px 14px;border-radius:999px;white-space:nowrap;
+  transition:color .25s ease,background-color .25s ease;
+}
+.site-header .nav-links > a:hover,
+.site-header .nav-dd:hover > .nav-dd-btn,
+.site-header .nav-dd.open > .nav-dd-btn{color:var(--text);background:color-mix(in srgb,var(--primary) 7%,transparent);}
+.site-header .nav-links > a.active,
+.site-header .nav-dd.active > .nav-dd-btn{color:var(--primary);font-weight:600;background:color-mix(in srgb,var(--primary) 10%,transparent);}
+.site-header .nav-dd-btn .chev{width:13px;height:13px;transition:transform .3s var(--pd-spring);opacity:.7;}
+.site-header .nav-dd:hover > .nav-dd-btn .chev,
+.site-header .nav-dd.open > .nav-dd-btn .chev{transform:rotate(180deg);}
+
+/* চলমান ইন্ডিকেটর — JS চালু থাকলে লিংকের নিজের ব্যাকগ্রাউন্ড বন্ধ, ইন্ডিকেটরই দেখায় */
+html.pd-fx .site-header .nav-links > a:hover,
+html.pd-fx .site-header .nav-dd:hover > .nav-dd-btn,
+html.pd-fx .site-header .nav-dd.open > .nav-dd-btn,
+html.pd-fx .site-header .nav-links > a.active,
+html.pd-fx .site-header .nav-dd.active > .nav-dd-btn{background:transparent;}
+html.pd-fx .site-header .nav-links > a:hover,
+html.pd-fx .site-header .nav-dd:hover > .nav-dd-btn{color:var(--primary);}
+.site-header .pd-ind{
+  position:absolute;left:0;top:0;bottom:0;width:0;border-radius:999px;pointer-events:none;z-index:0;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--primary) 13%,transparent),color-mix(in srgb,var(--primary) 7%,transparent));
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--primary) 14%,transparent);
+  transform:translateX(var(--ix,0px));width:var(--iw,0px);
+  opacity:0;
+  transition:transform .5s var(--pd-spring),width .5s var(--pd-spring),opacity .25s ease;
+}
+.site-header .pd-ind.on{opacity:1;}
+.site-header .pd-ind.noanim{transition:none;}
+.site-header .pd-ind::after{
+  content:"";position:absolute;left:50%;bottom:4px;width:4px;height:4px;margin-left:-2px;border-radius:50%;
+  background:var(--pd-warm);opacity:.9;
+}
+
+/* ---------- ৪) ড্রপডাউন / মেগা-মেনু ---------- */
+.site-header .nav-dd{position:relative;}
+.site-header .dd-panel{
+  position:absolute;top:calc(100% + 20px);left:50%;z-index:600;
+  min-width:230px;padding:10px;border-radius:22px;
+  background:var(--bg);border:1px solid var(--border);
+  box-shadow:0 30px 60px -24px rgba(18,58,61,.45),0 6px 18px -8px rgba(18,58,61,.2);
+  opacity:0;visibility:hidden;transform:translate(-50%,14px) scale(.96);transform-origin:50% -10px;
+  transition:opacity .22s ease,transform .38s var(--pd-spring),visibility .22s;
+}
+html[data-theme="dark"] .site-header .dd-panel{background:#141B1C;box-shadow:0 30px 60px -20px rgba(0,0,0,.8);}
+/* ওপরের ছোট তীর */
+.site-header .dd-panel::after{
+  content:"";position:absolute;top:-7px;left:50%;width:12px;height:12px;margin-left:-6px;
+  background:inherit;border-left:1px solid var(--border);border-top:1px solid var(--border);
+  border-radius:3px 0 0 0;transform:rotate(45deg);
+}
+/* হোভার করে মাউস নামানোর সময় প্যানেল যেন হারিয়ে না যায় */
+.site-header .dd-panel::before{content:"";position:absolute;left:0;right:0;top:-22px;height:22px;}
+.site-header .nav-dd:hover > .dd-panel,
+.site-header .nav-dd:focus-within > .dd-panel,
+.site-header .nav-dd.open > .dd-panel{opacity:1;visibility:visible;transform:translate(-50%,0) scale(1);}
+.site-header .dd-panel.right{left:auto;right:-14px;transform:translate(0,14px) scale(.96);transform-origin:calc(100% - 38px) -10px;}
+.site-header .dd-panel.right::after{left:auto;right:34px;margin-left:0;}
+.site-header .nav-dd:hover > .dd-panel.right,
+.site-header .nav-dd:focus-within > .dd-panel.right,
+.site-header .nav-dd.open > .dd-panel.right{transform:translate(0,0) scale(1);}
+
+.site-header .dd-label{font-size:11.5px;letter-spacing:.3px;color:var(--text-muted);padding:6px 12px 8px;font-weight:600;}
+.site-header .dd-item{
+  display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;color:var(--text);font-size:14.5px;
+  transition:background-color .15s ease,transform .25s var(--pd-spring);
+}
+.site-header .dd-item:hover,.site-header .dd-item:focus-visible{background:color-mix(in srgb,var(--primary) 8%,transparent);outline:none;transform:translateX(3px);}
+.site-header .dd-item .di-ic{
+  width:34px;height:34px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  background:color-mix(in srgb,var(--primary) 10%,transparent);color:var(--primary);
+}
+.site-header .dd-item .di-ic svg{width:17px;height:17px;}
+.site-header .dd-item .di-tx{display:flex;flex-direction:column;min-width:0;line-height:1.35;}
+.site-header .dd-item .di-tx b{font-weight:600;font-size:14.5px;}
+.site-header .dd-item .di-tx small{font-size:12px;color:var(--text-muted);}
+.site-header .dd-sep{height:1px;background:var(--border);margin:8px 6px;}
+
+/* বিভাগের মেগা-প্যানেল */
+.site-header .dd-panel.mega{width:min(560px,92vw);padding:14px;left:-84px;transform:translate(0,14px) scale(.96);transform-origin:124px -10px;}
+.site-header .dd-panel.mega::after{left:124px;margin-left:-6px;}
+.site-header .nav-dd:hover > .dd-panel.mega,
+.site-header .nav-dd:focus-within > .dd-panel.mega,
+.site-header .nav-dd.open > .dd-panel.mega{transform:translate(0,0) scale(1);}
+.site-header .mega-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;}
+.site-header .mega-grid a{
+  display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:12px;font-size:14.5px;color:var(--text);
+  transition:background-color .15s ease,color .15s ease;
+}
+.site-header .mega-grid a::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--primary);opacity:.45;flex-shrink:0;transition:opacity .15s ease,transform .25s var(--pd-spring),background-color .15s ease;}
+.site-header .mega-grid a:hover{background:color-mix(in srgb,var(--primary) 8%,transparent);color:var(--primary);}
+.site-header .mega-grid a:hover::before{opacity:1;transform:scale(1.5);background:var(--pd-warm);}
+.site-header .mega-foot{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;padding:11px 12px 2px;border-top:1px solid var(--border);
+  font-size:13px;color:var(--text-muted);
+}
+.site-header .mega-foot a{color:var(--primary);font-weight:600;display:inline-flex;align-items:center;gap:5px;}
+.site-header .mega-foot a svg{width:14px;height:14px;}
+
+/* ---------- ৫) অ্যাকশন বাটন ---------- */
+.site-header .header-actions{padding-left:16px;gap:6px;align-items:center;border-left:none;}
+.site-header .icon-btn,.site-header #theme-toggle{transition:background-color .25s ease,color .25s ease,transform .3s var(--pd-spring),border-color .25s ease;}
+.site-header .icon-btn:active,.site-header #theme-toggle:active{transform:scale(.92);}
+
+/* খুঁজুন: কিবোর্ড শর্টকাট "/" ইঙ্গিত সহ */
+.site-header .search-pill{
+  width:auto !important;height:42px;border-radius:999px !important;padding:0 8px 0 14px;gap:8px;
+  border:1px solid var(--border);background:color-mix(in srgb,var(--surface) 80%,transparent);color:var(--text-muted);font-size:14px;
+}
+.site-header .search-pill svg{flex-shrink:0;}
+.site-header .search-pill:hover{border-color:var(--primary);color:var(--primary);background:color-mix(in srgb,var(--primary) 6%,var(--surface));}
+.site-header .search-pill::after{
+  content:"/";display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;
+  font:600 12px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--text-muted);
+  border:1px solid var(--border);border-bottom-width:2px;border-radius:7px;background:var(--bg);
+}
+
+/* থিম বাটন: চাঁদ ↔ সূর্য ঘুরে বদলায় */
+.site-header #theme-toggle{position:relative;overflow:hidden;}
+.site-header #theme-toggle svg{
+  display:block !important;position:absolute;left:50%;top:50%;margin:-9.5px 0 0 -9.5px;
+  transition:transform .6s var(--pd-spring),opacity .3s ease;
+}
+html:not([data-theme="dark"]) .site-header #theme-toggle .icon-sun{opacity:0;transform:rotate(-120deg) scale(.3);}
+html[data-theme="dark"] .site-header #theme-toggle .icon-moon{opacity:0;transform:rotate(120deg) scale(.3);}
+.site-header #theme-toggle:hover .icon-moon{transform:rotate(-14deg) scale(1.08);}
+html[data-theme="dark"] .site-header #theme-toggle:hover .icon-sun{transform:rotate(45deg) scale(1.08);}
+
+/* সংখ্যা কিনুন: আলোর ঝলক */
+.site-header .hdr-cta{
+  position:relative;overflow:hidden;isolation:isolate;
+  display:inline-flex;align-items:center;gap:7px;margin-left:8px;padding:0 20px;height:42px;border-radius:999px;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--primary) 100%,#fff 10%),var(--primary) 55%,color-mix(in srgb,var(--primary) 88%,#000));
+  color:var(--overlay-bg);font-size:14.5px;font-weight:600;white-space:nowrap;
+  box-shadow:0 12px 22px -12px color-mix(in srgb,var(--primary) 80%,transparent),inset 0 1px 0 rgba(255,255,255,.22);
+  transition:transform .3s var(--pd-spring),box-shadow .3s ease,filter .2s ease;
+}
+html[data-theme="dark"] .site-header .hdr-cta{color:#0F1415;}
+.site-header .hdr-cta::after{
+  content:"";position:absolute;top:0;bottom:0;left:0;width:55%;z-index:-1;pointer-events:none;
+  background:linear-gradient(105deg,transparent 20%,rgba(255,255,255,.42) 50%,transparent 80%);
+  transform:translateX(-130%) skewX(-12deg);
+  animation:pd-shine 6s ease-in-out 2.5s infinite;
+}
+@keyframes pd-shine{0%,70%{transform:translateX(-130%) skewX(-12deg);}100%{transform:translateX(330%) skewX(-12deg);}}
+.site-header .hdr-cta:hover{transform:translateY(-2px);filter:brightness(1.07);box-shadow:0 16px 26px -12px color-mix(in srgb,var(--primary) 85%,transparent),inset 0 1px 0 rgba(255,255,255,.28);}
+.site-header .hdr-cta svg{width:16px;height:16px;transition:transform .35s var(--pd-spring);}
+.site-header .hdr-cta:hover svg{transform:translateX(-2px) rotate(-8deg) scale(1.08);}
+
+/* ---------- ৬) মাঝারি স্ক্রিন: জায়গা বাঁচানো ---------- */
+@media(max-width:1180px){
+  .site-header .search-pill span,.site-header .search-pill::after{display:none;}
+  .site-header .search-pill{width:42px !important;padding:0;justify-content:center;border-color:transparent;background:transparent;}
+  .site-header .hdr-cta{padding:0 15px;}
+  .site-header .nav-links > a,.site-header .nav-dd-btn{padding:10px 11px;}
+}
+@media(max-width:1060px){
+  .site-header .hdr-cta{display:none;}
+}
+
+/* ---------- ডেস্কটপ: বামে মেনু · মাঝে লোগো · ডানে অ্যাকশন ---------- */
+@media(min-width:961px){
+  .site-header .header-inner{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;column-gap:24px;}
+  .site-header nav.main-nav{display:contents;}
+  .site-header .nav-links{grid-column:1;grid-row:1;justify-self:start;}
+  .site-header .brand{grid-column:2;grid-row:1;justify-self:center;margin:0;}
+  .site-header .header-actions{grid-column:3;grid-row:1;justify-self:end;padding-left:0;border-left:none;}
+  .site-header .hamburger{display:none;}
+}
+
+/* ---------- ছোট স্ক্রিন: ভাসমান ছোট ক্যাপসুল + হ্যামবার্গার ---------- */
+@media(max-width:960px){
+  header.site-header{height:80px;padding:10px 10px 0;}
+  .site-header .nav-links{display:none;}
+  .site-header .hamburger{display:flex;border:1px solid var(--border);background:color-mix(in srgb,var(--surface) 80%,transparent);}
+  .site-header .header-inner{height:64px;border-radius:24px;padding:0 10px 0 14px;}
+  .site-header.scrolled .header-inner{height:56px;max-width:100%;border-radius:22px;}
+  .site-header #header-logo-slot{width:108px;height:60px;}
+  .site-header.scrolled #header-logo-slot{width:88px;height:48px;}
+  .site-header .search-pill{border-color:transparent;}
+  .site-header .pd-progress{left:24px;right:24px;}
+  .site-header .dd-panel{display:none;}
+  /* মোবাইলে লোগো বাঁয়ে — আভাও লোগোর পেছনে */
+  .site-header .header-inner::after{
+    background:
+      radial-gradient(ellipse 110px 46px at 74px 46%,color-mix(in srgb,var(--primary) 10%,transparent),transparent 72%),
+      radial-gradient(ellipse 70px 32px at 86px 40%,color-mix(in srgb,var(--pd-warm) 10%,transparent),transparent 75%);
+  }
+}
+@media(max-width:430px){
+  .site-header #header-logo-slot{width:94px;height:52px;}
+  .site-header.scrolled #header-logo-slot{width:82px;height:45px;}
+  .site-header .header-inner{padding:0 8px 0 12px;}
+}
+
+/* ---------- মোশন কমাতে বলা থাকলে ---------- */
+@media(prefers-reduced-motion:reduce){
+  .site-header .hdr-cta::after{animation:none;}
+  header.site-header,.site-header .header-inner,.site-header .pd-ind,.site-header .dd-panel,.site-header #theme-toggle svg{transition-duration:.01ms !important;}
+}
+
+/* ---------- মোবাইল মেনু (গোছানো, ভাগ করা) ---------- */
+#mobile-menu .mm-head{padding:6px 20px;}
+#mobile-menu .mm-group{font-size:11.5px;letter-spacing:.3px;font-weight:600;color:var(--text-muted);padding:16px 16px 6px;}
+#mobile-menu .mm-cats{display:flex;flex-wrap:wrap;gap:8px;padding:4px 14px 6px;}
+#mobile-menu .mm-cats a{
+  font-size:13.5px;padding:7px 15px;border:1px solid var(--border);border-radius:999px;color:var(--text);
+  transition:border-color .18s ease,color .18s ease,background-color .18s ease;
+}
+#mobile-menu .mm-cats a:hover{border-color:var(--primary);color:var(--primary);background:color-mix(in srgb, var(--primary) 7%, transparent);}
+#mobile-menu .mm-cta{
+  display:flex;align-items:center;justify-content:center;gap:8px;margin:14px 14px 4px;padding:13px;border-radius:12px;
+  background:var(--primary);color:var(--overlay-bg);font-weight:600;font-size:15px;
+}
+html[data-theme="dark"] #mobile-menu .mm-cta{color:#0F1415;}
+#mobile-menu .mm-cta svg{width:18px;height:18px;}
+#mobile-menu .mm-link.sm{font-size:14px;padding-top:10px;padding-bottom:10px;color:var(--text-muted);}
+
+/* হেডারে স্টিকি থাকায় অ্যাঙ্কর লিংকে গেলে সেকশনের মাথা যেন ঢাকা না পড়ে */
+#issue-band,#article-grid,#cat-sections,#cat-sections .cat-sec,#mag-section,#authors-row{scroll-margin-top:112px;}
+
+/* base.css-এর পুরোনো নেভ গ্যাপের (26px) ওপরে বসানোর জন্য */
+.site-header nav.main-nav .nav-links{gap:2px;}
+.site-header nav.main-nav .nav-links > a{padding:10px 14px;}
+
+/* ---------- লগইন/সাইনআপ মোডে (auth.html) হেডার আগের মতোই শুধু থিম-বাটন ---------- */
+body.auth-mode header.site-header{height:auto;padding:0;pointer-events:auto;transform:none !important;}
+body.auth-mode .site-header .header-inner{max-width:none;border-radius:0;background:none;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;}
+body.auth-mode .site-header .header-inner::before,
+body.auth-mode .site-header .header-inner::after,
+body.auth-mode .site-header .pd-progress{display:none;}
+
+
+/* ============================================================
+   v103 — লাইট সুইপ (After Effects "CC Light Sweep"-এর মতো)
+   • পুরো হেডার-ক্যাপসুলের ওপর দিয়ে একটা নরম আলোর ফালি যায়
+   • প্রতি ৫ সেকেন্ডে একবার: প্রথমবার ডান → বামে, ৫ সেকেন্ড পরে বাম → ডানে, এভাবে লুপে
+   • একটা সুইপ ~১.৫ সেকেন্ড চলে, বাকি সময় লুকানো থাকে (মোট চক্র ১০ সেকেন্ড)
+   • সময় বদলাতে: --pd-sweep-cycle (দুই সুইপের মোট চক্র) ও --pd-sweep-delay (শুরুর দেরি)
+   ============================================================ */
+:root{
+  --pd-sweep-cycle:10s;   /* ডান→বাম + বাম→ডান = ১ চক্র (প্রতি সুইপের মাঝে অর্ধেক = ৫ সেকেন্ড) */
+  --pd-sweep-delay:1.2s;  /* পেজ খোলার কত পরে প্রথম সুইপ */
+  --pd-sweep-core:rgba(255,255,255,.95);
+  --pd-sweep-glow:rgba(255,226,170,.42);
+}
+html[data-theme="dark"]{
+  --pd-sweep-core:rgba(255,255,255,.34);
+  --pd-sweep-glow:rgba(199,154,123,.20);
+}
+.site-header .pd-sweep{
+  position:absolute;inset:0;z-index:2;border-radius:inherit;overflow:hidden;pointer-events:none;
+  contain:paint;
+}
+.site-header .pd-sweep b{
+  position:absolute;top:-30%;bottom:-30%;left:0;width:26%;display:block;
+  background:linear-gradient(90deg,
+    transparent 0%,
+    var(--pd-sweep-glow) 26%,
+    var(--pd-sweep-core) 50%,
+    var(--pd-sweep-glow) 74%,
+    transparent 100%);
+  filter:blur(7px);
+  opacity:0;will-change:transform,opacity;
+  transform:translate3d(340%,0,0) skewX(-22deg);
+  animation:pd-sweep var(--pd-sweep-cycle) cubic-bezier(.5,.05,.25,1) var(--pd-sweep-delay) infinite;
+}
+@keyframes pd-sweep{
+  /* ১ম সুইপ: ডান → বাম (০% → ১৫%) */
+  0%    {transform:translate3d(340%,0,0) skewX(-22deg);opacity:0;}
+  2%    {opacity:1;}
+  13%   {opacity:1;}
+  15%   {transform:translate3d(-150%,0,0) skewX(-22deg);opacity:0;}
+  /* অপেক্ষা (বাম পাশে লুকানো) */
+  49.99%{transform:translate3d(-150%,0,0) skewX(-22deg);opacity:0;}
+  /* ২য় সুইপ: বাম → ডান (৫০% → ৬৫%) — ঠিক ৫ সেকেন্ড পরে */
+  50%   {transform:translate3d(-150%,0,0) skewX(-22deg);opacity:0;}
+  52%   {opacity:1;}
+  63%   {opacity:1;}
+  65%   {transform:translate3d(340%,0,0) skewX(-22deg);opacity:0;}
+  100%  {transform:translate3d(340%,0,0) skewX(-22deg);opacity:0;}
+}
+@media (prefers-reduced-motion:reduce){
+  .site-header .pd-sweep{display:none;}
+}
