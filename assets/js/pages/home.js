@@ -147,15 +147,17 @@
       var u = au(f),
         when = f.published_at || f.created_at,
         ex = cut(f.excerpt, 190),
-        T = idx === 0 ? 'h1' : 'h2';
+        T = idx === 0 ? 'h1' : 'h2',
+        /* গতি: প্রথম স্লাইডের ছবি সবার আগে (fetchpriority), বাকি স্লাইডের ছবি দরকার হলে (lazy) */
+        lz = idx ? ' loading="lazy"' : '', pri = idx ? '' : ' fetchpriority="high"';
       return '<article class="hf' + (f.cover_url ? ' has-art' : '') + '"><div class="hf-link">' +
-        (f.cover_url ? '<img class="hf-bg" decoding="async" src="' + esc(f.cover_url) + '" alt="" aria-hidden="true">' : '') + sky +
+        (f.cover_url ? '<img class="hf-bg" decoding="async"' + lz + ' src="' + esc(f.cover_url) + '" alt="" aria-hidden="true">' : '') + sky +
         ((f.category || total > 1) ? '<div class="hf-eyebrow">' + (f.category ? '<span class="hf-cat">' + esc(f.category) + '</span>' : '') + (total > 1 ? '<span class="hf-no">' + num(idx) + '<small>/' + bn(total) + '</small></span>' : '') + '</div>' : '') +
         '<' + T + ' class="hf-title">' + esc(f.title) + '</' + T + '>' +
         (ex ? '<p class="hf-ex">' + esc(ex) + '</p>' : '') +
         '<div class="hf-foot"><span class="hf-au"><img decoding="async" src="' + esc(u.image_url || AV) + '" alt=""><span class="hf-au-t"><b>' + esc(u.name) + '</b><small>' + (u.role_title ? '<span class="hf-role">' + esc(u.role_title) + '<span class="dot-sep"></span></span>' : '') + (when ? dt(when) : '') + '</small></span></span>' +
         '' + ctaHtml('পুরোটা পড়ুন', 'article.html?id=' + esc(f.id)) + '</div>' +
-        (f.cover_url ? '<div class="hf-art" aria-hidden="true"><span class="hf-art-ring"></span><span class="hf-art-img"><img class="hf-art-blur" decoding="async" src="' + esc(f.cover_url) + '" alt=""><img class="hf-art-fg" decoding="async" src="' + esc(f.cover_url) + '" alt=""></span></div>' : '') +
+        (f.cover_url ? '<div class="hf-art" aria-hidden="true"><span class="hf-art-ring"></span><span class="hf-art-img"><img class="hf-art-blur" decoding="async"' + lz + ' src="' + esc(f.cover_url) + '" alt=""><img class="hf-art-fg" decoding="async"' + lz + pri + ' src="' + esc(f.cover_url) + '" alt=""></span></div>' : '') +
         '</div></article>'
     }
     /* এড স্লাইড: পুরো ছবি (কাটে না) + পেছনে একই ছবির ঝাপসা আভা + ছোট "বিজ্ঞাপন" ট্যাগ */
@@ -164,8 +166,8 @@
         tag = link ? 'a' : 'div',
         attrs = link ? ' href="' + esc(a.link_url) + '" target="_blank" rel="noopener sponsored"' : '';
       return '<article class="hf hf-ad"><' + tag + ' class="hf-ad-link"' + attrs + ' aria-label="বিজ্ঞাপন">' +
-        '<img class="hf-ad-glow" decoding="async" src="' + esc(a.image_url) + '" alt="" aria-hidden="true">' +
-        '<img class="hf-ad-img" decoding="async" src="' + esc(a.image_url) + '" alt="বিজ্ঞাপন">' +
+        '<img class="hf-ad-glow" decoding="async" loading="lazy" src="' + esc(a.image_url) + '" alt="" aria-hidden="true">' +
+        '<img class="hf-ad-img" decoding="async" loading="lazy" src="' + esc(a.image_url) + '" alt="বিজ্ঞাপন">' +
         '<span class="hf-ad-tag">বিজ্ঞাপন</span></' + tag + '></article>'
     }
     var NA = list.length,

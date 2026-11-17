@@ -14,8 +14,9 @@
 <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
 <link rel="preconnect" href="https://pqoszcuhxdavehnxundq.supabase.co" crossorigin>
 <link rel="preload" href="assets/fonts/NotoSerifByGunjoron-Regular.woff2?v=1" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/NotoSerifByGunjoron-SemiBold.woff2?v=1" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/NotoSerifByGunjoron-Bold.woff2?v=1" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/base.css?v=4">
+<link rel="stylesheet" href="assets/css/base.css?v=5">
 <link rel="stylesheet" href="assets/css/layout.css?v=2">
 <link rel="stylesheet" href="assets/css/pages/home.css?v=120">
 <link rel="stylesheet" href="assets/css/pages/authors.css">
@@ -192,7 +193,7 @@
   </div>
 </header>
 
-  <main class="wrap">
+  <main data-dyn class="wrap">
 
     <!-- ============ হিরো ============ -->
     <section class="hero">
@@ -201,7 +202,7 @@
 
     <!-- ============ এড স্লট: টপ ব্যানার ============ -->
     <div class="ad-slot ad-top" style="display:none">
-      <img decoding="async" class="ad-bg" src="assets/img/placeholder.svg" alt="">
+      <img decoding="async" class="ad-bg" alt="">
       <div class="ad-overlay"></div>
       <span class="ad-tag">বিজ্ঞাপন</span>
       <div class="ad-content">
@@ -227,7 +228,7 @@
 
     <!-- ============ এড স্লট: মিড-স্ক্রল ============ -->
     <div class="ad-slot ad-mid" style="display:none">
-      <img decoding="async" class="ad-bg" src="assets/img/placeholder.svg" alt="">
+      <img decoding="async" class="ad-bg" alt="">
       <div class="ad-overlay"></div>
       <span class="ad-tag">বিজ্ঞাপন</span>
       <div class="ad-content">
@@ -293,19 +294,19 @@
 
 </div>
 
-<script src="assets/js/core/intro-home.js?v=2"></script>
+<script defer src="assets/js/core/intro-home.js?v=3"></script>
 
-<script src="assets/vendor/supabase.js"></script>
-<script src="assets/js/core/config.js"></script>
-<script src="assets/js/core/app.js?v=2"></script>
-<script src="assets/js/core/ui.js?v=4"></script>
-<script src="assets/js/components/nav.js?v=117"></script>
+<script defer src="assets/vendor/supabase.js"></script>
+<script defer src="assets/js/core/config.js"></script>
+<script defer src="assets/js/core/app.js?v=2"></script>
+<script defer src="assets/js/core/ui.js?v=4"></script>
+<script defer src="assets/js/components/nav.js?v=117"></script>
 <script src="assets/js/components/header-fx.js?v=104" defer></script>
-<script src="assets/js/core/reveal.js"></script>
+<script defer src="assets/js/core/reveal.js"></script>
 
 <style>.follow-btn.following{background:var(--primary);color:var(--surface)}.article-card{cursor:pointer}.pd-empty{padding:48px 16px;text-align:center;color:var(--text-muted);grid-column:1/-1}.hero-media .ph{width:100%;aspect-ratio:4/3;background:var(--secondary-light);border-radius:12px}</style>
-<script src="assets/js/pages/home.js?v=116"></script>
-<script src="assets/js/components/scroll-top.js"></script>
+<script defer src="assets/js/pages/home.js?v=117"></script>
+<script defer src="assets/js/components/scroll-top.js"></script>
 <script src="assets/js/components/popup-ad.js?v=2" defer></script>
 </body>
 </html>

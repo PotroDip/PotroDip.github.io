@@ -38,9 +38,24 @@
   var introAnimDuration = 620;
   var holdAfterIntro = 90;
 
-  window.addEventListener('load', function(){
-    setTimeout(startFlip, introAnimDuration + holdAfterIntro);
-  });
+  /* v120 (গতি): আগে window 'load'-এর জন্য অপেক্ষা হতো — সেটা আসে Turnstile, Firebase, ছবি সব নামার পর
+     (লগইন পেজে ~৫ সেকেন্ড), ততক্ষণ পুরো পেজ লুকানো থাকত। এখন শুধু HTML পার্স + ফন্ট তৈরি হলেই
+     (সর্বোচ্চ ৩৫০ms অপেক্ষা) লোগো হেডারে বসে পেজ দেখা যায়; লোগোর ছোট এনিমেশনটা শুধু পুরো চলার সময় পায়। */
+  var flipped = false;
+  function go(){
+    if(flipped) return; flipped = true;
+    var since = (window.performance && performance.now) ? performance.now() : 0;
+    setTimeout(startFlip, Math.max(0, introAnimDuration + holdAfterIntro - since));
+  }
+  function whenReady(){
+    var t = setTimeout(go, 350);
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ clearTimeout(t); go(); }, go);
+    else { clearTimeout(t); go(); }
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', whenReady);
+  else whenReady();
+  /* নিরাপত্তা: যা-ই হোক, ২.৫ সেকেন্ডের মধ্যে পেজ দেখাবেই */
+  setTimeout(go, 2500);
 
   function startFlip(){
     /* ট্যাগলাইনসহ পুরো লোগো যেন হেডারে বসার আগেই সম্পূর্ণ দেখায় */

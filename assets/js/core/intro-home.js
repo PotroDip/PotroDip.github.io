@@ -74,10 +74,18 @@
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
   else start();
 
-  if(document.readyState === 'complete'){ loaded = true; }
-  else window.addEventListener('load', function(){ loaded = true; tryFinish(); });
+  /* v120 (গতি): আগে window 'load' (সব ছবি নামা) পর্যন্ত ইন্ট্রো আটকে থাকত — এখন HTML পার্স + ফন্ট তৈরি হলেই চলে
+     (ফন্টের জন্য সর্বোচ্চ ৪০০ms); লোগোর এনিমেশন নিজের সময়েই শেষ হয়, ধীর নেটে বাড়তি অপেক্ষা নেই */
+  function markLoaded(){ if(loaded) return; loaded = true; tryFinish(); }
+  function whenReady(){
+    var t = setTimeout(markLoaded, 400);
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ clearTimeout(t); markLoaded(); }, markLoaded);
+    else { clearTimeout(t); markLoaded(); }
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', whenReady);
+  else whenReady();
 
   /* নিরাপত্তা: কিছু আটকে গেলেও ইন্ট্রো ৬ সেকেন্ডের বেশি ধরে রাখবে না */
   setTimeout(function(){ overlay.classList.add('pdi-go'); }, 1500);
-  setTimeout(finish, 7000);
+  setTimeout(finish, 4500);
 })();

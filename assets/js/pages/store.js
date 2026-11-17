@@ -407,14 +407,34 @@
   }
   readerScroll.addEventListener('scroll', updateProgress);
 
+  var pdfJsP = null;
+  function loadPdfJs() {
+    if (window.pdfjsLib) return Promise.resolve();
+    if (pdfJsP) return pdfJsP;
+    pdfJsP = new Promise(function (ok, no) {
+      var sc = document.createElement('script');
+      sc.src = 'assets/vendor/pdfjs/pdf.min.js';
+      sc.onload = function () {
+        if (!window.pdfjsLib) return no();
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'assets/vendor/pdfjs/pdf.worker.min.js';
+        ok();
+      };
+      sc.onerror = function () { pdfJsP = null; no(); };
+      document.head.appendChild(sc);
+    });
+    return pdfJsP;
+  }
   function loadPdfIntoReader(pdfUrl) {
     readerLoading.style.display = 'flex';
     readerLoading.style.opacity = '1';
     readerErrorBox.classList.remove('show');
     readerErrorLink.href = pdfUrl;
+    /* pdf.js (৮৯ KB) পেজের সাথে আর লোড হয় না — প্রথমবার নমুনা পাতা খুললে তখন আনা হয় */
     if (!window.pdfjsLib) {
-      readerLoading.style.display = 'none';
-      readerErrorBox.classList.add('show');
+      loadPdfJs().then(function () { loadPdfIntoReader(pdfUrl); }, function () {
+        readerLoading.style.display = 'none';
+        readerErrorBox.classList.add('show');
+      });
       return;
     }
     var loadingTask = pdfjsLib.getDocument(pdfUrl);

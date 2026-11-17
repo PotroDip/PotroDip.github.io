@@ -10,19 +10,19 @@
 
   /* কোন ছবি কোথায় কেমন দেখায় — মাপ (পিক্সেল) ও সর্বোচ্চ ফাইল সাইজ */
   var KINDS = PD.IMG_KINDS = {
-    avatar:       { w: 512,  h: 512,  max: 800 * KB, label: 'প্রোফাইল ছবি' },   /* বর্গ, বৃত্তে দেখায় */
-    profileCover: { w: 1800, h: 560,  max: 1 * MB,   label: 'প্রোফাইল কভার' },    /* লেখকের পেজের চওড়া কভার */
-    article:      { w: 1600, h: 900,  max: 1 * MB,   label: 'লেখার কভার' },       /* ১৬:৯ */
-    gallery:      { w: 1600, h: 900,  max: 1 * MB,   label: 'লেখার ছবি' },        /* ১৬:৯ */
-    issue:        { w: 1200, h: 1600, max: 1 * MB,   label: 'সংখ্যার কভার' },     /* ৩:৪ */
-    'banner-top':    { w: 2400, h: 400, max: 1 * MB, label: 'টপ ব্যানার' },       /* ১২০০×২০০ এর ২x */
-    'banner-mid':    { w: 1456, h: 300, max: 1 * MB, label: 'মিড ব্যানার' },      /* ৭২৮×১৫০ এর ২x */
-    'banner-square': { w: 600,  h: 600, max: 1 * MB, label: 'স্কোয়ার ব্যানার' }, /* ৩০০×৩০০ এর ২x */
-    inline:       { w: 1600, h: 0,    max: 1.5 * MB, label: 'লেখার ভেতরের ছবি', fit: true }, /* v66: ক্রপ নয় — অনুপাত ঠিক রেখে শুধু ছোট করা (স্ক্রিনশটের জন্য) */
-    'banner-mobile': { w: 640,  h: 200, max: 1 * MB, label: 'মোবাইল ব্যানার' }   /* ৩২০×১০০ এর ২x */
+    avatar:       { w: 512,  h: 512,  max: 160 * KB, label: 'প্রোফাইল ছবি' },   /* বর্গ, বৃত্তে দেখায় */
+    profileCover: { w: 1800, h: 560,  max: 420 * KB, label: 'প্রোফাইল কভার' },    /* লেখকের পেজের চওড়া কভার */
+    article:      { w: 1600, h: 900,  max: 360 * KB, label: 'লেখার কভার' },       /* ১৬:৯ */
+    gallery:      { w: 1600, h: 900,  max: 360 * KB, label: 'লেখার ছবি' },        /* ১৬:৯ */
+    issue:        { w: 1200, h: 1600, max: 400 * KB, label: 'সংখ্যার কভার' },     /* ৩:৪ */
+    'banner-top':    { w: 2400, h: 400, max: 380 * KB, label: 'টপ ব্যানার' },       /* ১২০০×২০০ এর ২x */
+    'banner-mid':    { w: 1456, h: 300, max: 260 * KB, label: 'মিড ব্যানার' },      /* ৭২৮×১৫০ এর ২x */
+    'banner-square': { w: 600,  h: 600, max: 200 * KB, label: 'স্কোয়ার ব্যানার' }, /* ৩০০×৩০০ এর ২x */
+    inline:       { w: 1600, h: 0,    max: 600 * KB, label: 'লেখার ভেতরের ছবি', fit: true }, /* v66: ক্রপ নয় — অনুপাত ঠিক রেখে শুধু ছোট করা (স্ক্রিনশটের জন্য) */
+    'banner-mobile': { w: 640,  h: 200, max: 160 * KB, label: 'মোবাইল ব্যানার' }   /* ৩২০×১০০ এর ২x */
   };
   /* v91: হোমের হিরো ব্যানার ১–৫ (৩:১ — ১৫০০×৫০০ এর ~১.৬x) */
-  for (var hi = 1; hi <= 5; hi++) KINDS['banner-hero' + hi] = { w: 2400, h: 800, max: 1.5 * MB, label: 'হিরো ব্যানার ' + hi };
+  for (var hi = 1; hi <= 5; hi++) KINDS['banner-hero' + hi] = { w: 2400, h: 800, max: 520 * KB, label: 'হিরো ব্যানার ' + hi };
   PD.IMG_RAW_LIMIT = 40 * MB; /* এর চেয়ে বড় আসল ফাইল ব্রাউজারের মেমরিতে সামলানো যায় না */
 
   function load(file) {
@@ -66,11 +66,12 @@
   }
   /* সর্বোচ্চ কোয়ালিটি খোঁজা যাতে সাইজ max-এর মধ্যে থাকে (বাইনারি সার্চ) */
   function best(canvas, type, max) {
-    return enc(canvas, type, 0.95).then(function (b) {
+    /* v120: শুরু ৮২% কোয়ালিটিতে — ওয়েবে চোখে পার্থক্য প্রায় নেই, কিন্তু ফাইল ৩–৪ গুণ ছোট (সাইট দ্রুত খোলে) */
+    return enc(canvas, type, 0.82).then(function (b) {
       if (!b) return null;
       if (b.type !== type) return { blob: b, bad: true }; /* ব্রাউজার এই ফরম্যাট দিতে পারে না */
       if (b.size <= max) return { blob: b };
-      var lo = 0.3, hi = 0.95, keep = null, n = 0;
+      var lo = 0.4, hi = 0.82, keep = null, n = 0;
       return (function step() {
         if (n++ >= 7) return Promise.resolve(keep);
         var mid = (lo + hi) / 2;

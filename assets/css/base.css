@@ -331,3 +331,5 @@ input::placeholder, textarea::placeholder{font-family:inherit;}
 /* লেখার ভেতরের ছোট আইকন (তীর/টিক) — ফন্টে নেই এমন চিহ্নের বদলে SVG, যাতে সব লেখা ব্র্যান্ড ফন্টেই থাকে */
 .ic-inline{display:inline-block;width:1em;height:1em;vertical-align:-.14em;flex-shrink:0;}
 input[type="file"]::file-selector-button{font-family:inherit;}
+/* গতি/স্থিরতা: ডেটা আসার আগেও মূল অংশ পুরো স্ক্রিনজুড়ে থাকে, তাই ফুটার উপরে এসে পরে লাফিয়ে নামে না (CLS) */
+main[data-dyn]{min-height:100vh;min-height:100svh;}
