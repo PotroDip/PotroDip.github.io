@@ -137,7 +137,7 @@
       var list = r.data || [];
       count('orders', list.length);
       if (!list.length) {
-        box.innerHTML = '<div class="order-empty"><p>এখনো কোনো অর্ডার করেননি।</p><a href="store.html" class="order-shop">ছাপা সংখ্যা দেখুন →</a></div>';
+        box.innerHTML = '<div class="order-empty"><p>এখনো কোনো অর্ডার করেননি।</p><a href="store.html" class="order-shop">ছাপা সংখ্যা দেখুন <svg class="ic-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>';
         return;
       }
       var ids = list.map(function (o) { return o.id; });

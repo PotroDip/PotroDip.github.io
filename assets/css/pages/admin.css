@@ -47,7 +47,7 @@ html[data-theme="dark"]{
 body{
     background:var(--bg);
     color:var(--text);
-    font-family:'Noto Serif Bengali', serif;
+    font-family:'Noto Serif by Gunjoron';
     font-weight:400;
     line-height:1.7;
     overflow-x:hidden;
@@ -58,7 +58,7 @@ body.theme-ready, body.theme-ready *{
     transition:background-color .25s ease, color .25s ease, border-color .25s ease, fill .25s ease, box-shadow .25s ease;
   }
 
-h4, button{font-family:'Noto Serif Bengali', serif; font-weight:600;}
+h4, button{font-family:'Noto Serif by Gunjoron'; font-weight:600;}
 
 p{font-weight:400;}
 
@@ -666,7 +666,7 @@ select.status-select{
 .rt-btn svg{width:16px; height:16px; flex-shrink:0;}
 .rt-btn svg.rt-chev{width:11px; height:11px; opacity:.65; margin-left:1px;}
 .rt-btn.open svg.rt-chev{transform:rotate(180deg);}
-.rt-txt{font-size:15px; font-weight:700; line-height:1; font-family:'Noto Serif Bengali', serif;}
+.rt-txt{font-size:15px; font-weight:700; line-height:1; font-family:'Noto Serif by Gunjoron';}
 .rt-b{font-weight:900;} .rt-i{font-style:italic; font-weight:600;} .rt-u{text-decoration:underline; text-underline-offset:2px;} .rt-s{text-decoration:line-through;}
 .rt-sc{font-size:14px;} .rt-sc sub, .rt-sc sup{font-size:.62em;}
 .rt-sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;}
@@ -733,7 +733,7 @@ select.status-select{
     margin:14px 0; padding:10px 16px; border-left:3px solid var(--secondary);
     background:color-mix(in srgb, var(--secondary) 8%, transparent); border-radius:0 6px 6px 0; font-style:italic;
   }
-.rte-body pre{margin:12px 0; padding:12px 14px; background:color-mix(in srgb, var(--text) 7%, transparent); border:1px solid var(--border); border-radius:10px; font-family:'Courier New', Consolas, monospace; font-size:.9em; line-height:1.6; white-space:pre-wrap;}
+.rte-body pre{margin:12px 0; padding:12px 14px; background:color-mix(in srgb, var(--text) 7%, transparent); border:1px solid var(--border); border-radius:10px; font-family:'Noto Serif by Gunjoron'; font-size:.9em; line-height:1.6; white-space:pre-wrap;}
 .rte-body ul, .rte-body ol{padding-left:26px; margin:8px 0;}
 .rte-body ul{list-style:disc;} .rte-body ol{list-style:decimal;}
 .rte-body hr{border:0; height:1px; background:var(--border); margin:20px 0;}

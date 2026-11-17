@@ -11,17 +11,13 @@
   /* ---------- ধ্রুবক ---------- */
   var SIZES = [10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 28, 32, 36, 42, 48, 60, 72];
   var FONTS_BASE = [
-    { k: '', n: 'ডিফল্ট ফন্ট', v: '' },
-    { k: 'noto serif bengali', n: 'নোটো সেরিফ বাংলা', v: "'Noto Serif Bengali', serif" },
-    { k: 'georgia', n: 'সেরিফ (ক্লাসিক)', v: "Georgia, 'Noto Serif Bengali', 'Times New Roman', serif" },
-    { k: 'noto sans bengali', n: 'সান-সেরিফ (আধুনিক)', v: "'Noto Sans Bengali', 'Segoe UI', 'Nirmala UI', Arial, sans-serif" },
-    { k: 'courier new', n: 'মনোস্পেস (কোড)', v: "'Courier New', Consolas, monospace" },
-    { k: 'segoe script', n: 'হাতের লেখা', v: "'Segoe Script', 'Bradley Hand', cursive" }
+    /* সাইটের একমাত্র বিল্ট-ইন ফন্ট: ব্র্যান্ড ফন্ট (বেছে নিলে আলাদা ফন্ট মুছে যায়, লেখা ব্র্যান্ড ফন্টেই থাকে) */
+    { k: 'noto serif by gunjoron', n: 'ব্র্যান্ড ফন্ট (ডিফল্ট)', v: '' }
   ];
   /* নিজের যোগ করা ফন্টগুলো (ফন্ট ম্যানেজার থেকে) তালিকার শেষে জুড়ে যায় */
   function fonts() {
     var out = FONTS_BASE.slice(), PF = window.PDFonts;
-    if (PF) PF.list().forEach(function (r) { out.push({ k: r.family, n: r.name, v: "'" + r.family + "', 'Noto Serif Bengali', serif" }); });
+    if (PF) PF.list().forEach(function (r) { out.push({ k: r.family, n: r.name, v: "'" + r.family + "', 'Noto Serif by Gunjoron'" }); });
     return out;
   }
   /* নোটপ্যাডের মতো সাতটা ধরন। ট্যাগ একই থাকে (h2/h3/h4/p) — তাই সাইটের পুরোনো লেখা ও SEO ঠিক থাকে;
@@ -36,7 +32,7 @@
     { k: 'p', t: 'p', n: 'সাধারণ লেখা', s: 'font-size:14px' },
     { sep: 1 },
     { k: 'blockquote', t: 'blockquote', n: 'উদ্ধৃতি', s: 'font-style:italic' },
-    { k: 'pre', t: 'pre', n: 'কোড ব্লক', s: 'font-family:monospace;font-size:13px' }
+    { k: 'pre', t: 'pre', n: 'কোড ব্লক', s: 'font-size:13px' }
   ];
   var BLOCK_LBL = { title: 'মূল শিরোনাম', subtitle: 'উপশিরোনাম', h2: 'শিরোনাম', h3: 'উপ-শিরোনাম', h4: 'বিভাগ', sub: 'উপ-বিভাগ', p: 'সাধারণ লেখা', blockquote: 'উদ্ধৃতি', pre: 'কোড ব্লক', ul: 'তালিকা', ol: 'তালিকা', li: 'তালিকা', table: 'টেবিল', figure: 'ছবি', aside: 'তথ্য বক্স' };
   var LH = [{ v: '', n: 'ডিফল্ট' }, { v: '1.3', n: '১.৩ — ঘন' }, { v: '1.6', n: '১.৬' }, { v: '1.85', n: '১.৮৫ — আরামদায়ক' }, { v: '2.2', n: '২.২ — খোলা' }, { v: '2.8', n: '২.৮ — অনেক খোলা' }];
@@ -105,7 +101,7 @@
     '<div class="rt-main">' +
     group(
       menu('block', 'অনুচ্ছেদ ও শিরোনামের ধরন', '<span class="rt-lbl" id="rt-block-lbl">সাধারণ লেখা</span>', 'rt-w-block') +
-      menu('font', 'ফন্ট বদলান (নির্বাচিত অংশে)', '<span class="rt-lbl" id="rt-font-lbl">নোটো সেরিফ বাংলা</span>', 'rt-w-font')
+      menu('font', 'ফন্ট বদলান (নির্বাচিত অংশে)', '<span class="rt-lbl" id="rt-font-lbl">ব্র্যান্ড ফন্ট</span>', 'rt-w-font')
     ) +
     group(
       btn('size-dec', 'লেখা ছোট করুন', '<span class="rt-txt">−</span>') +
@@ -1125,7 +1121,7 @@
     setOn('left', qs('justifyLeft')); setOn('center', qs('justifyCenter')); setOn('right', qs('justifyRight')); setOn('justify', qs('justifyFull'));
     setOn('callout', !!(e.closest && e.closest('aside'))); setOn('quote', blk === 'blockquote'); setOn('code', blk === 'pre'); setOn('link', !!anchorAtSel());
     var cs = window.getComputedStyle(e), fam = (cs.fontFamily.split(',')[0] || '').replace(/["']/g, '').trim().toLowerCase(), fl = doc.getElementById('rt-font-lbl');
-    var name = 'নোটো সেরিফ বাংলা', FL = fonts();
+    var name = 'ব্র্যান্ড ফন্ট', FL = fonts();
     FL.forEach(function (f) { if (f.k && fam === f.k) name = f.n; });
     if (fl) fl.textContent = fam && !FL.some(function (f) { return f.k && f.k === fam; }) ? (fam.charAt(0).toUpperCase() + fam.slice(1)) : name;
     if (doc.activeElement !== sizeIn) sizeIn.value = Math.round(parseFloat(cs.fontSize) || 16);

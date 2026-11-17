@@ -5,7 +5,7 @@
   position:fixed;inset:0;z-index:2147483000;
   display:flex;align-items:center;justify-content:center;
   padding:max(20px,env(safe-area-inset-top)) 18px max(20px,env(safe-area-inset-bottom));
-  font-family:'Noto Serif Bengali',serif;
+  font-family:'Noto Serif by Gunjoron';
 }
 .pd-pop-back{
   position:absolute;inset:0;cursor:pointer;

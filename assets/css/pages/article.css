@@ -37,7 +37,7 @@ html[data-theme="dark"]{
 body{
     background:var(--bg);
     color:var(--text);
-    font-family:'Noto Serif Bengali', serif;
+    font-family:'Noto Serif by Gunjoron';
     font-weight:400;
     line-height:1.7;
     overflow-x:hidden;
@@ -48,7 +48,7 @@ body.theme-ready, body.theme-ready *{
     transition:background-color .3s ease, color .3s ease, border-color .3s ease, fill .3s ease, stroke .3s ease, filter .3s ease;
   }
 
-h4, button, .brand-name{font-family:'Noto Serif Bengali', serif; font-weight:600;}
+h4, button, .brand-name{font-family:'Noto Serif by Gunjoron'; font-weight:600;}
 
 p{font-weight:400;}
 
@@ -194,7 +194,7 @@ html[data-theme="dark"] .cat-badge{ background:rgba(10,14,15,.75); }
 .article-body li{margin-bottom:6px;}
 .article-body li > ul, .article-body li > ol{margin:6px 0 0;}
 .article-body hr{border:0; height:1px; background:var(--border); margin:36px 0;}
-.article-body pre{margin:0 0 24px; padding:16px 18px; background:var(--surface); border:1px solid var(--border); border-radius:12px; font-family:'Courier New', Consolas, monospace; font-size:16px; line-height:1.7; white-space:pre-wrap; overflow-x:auto; color:var(--text);}
+.article-body pre{margin:0 0 24px; padding:16px 18px; background:var(--surface); border:1px solid var(--border); border-radius:12px; font-family:'Noto Serif by Gunjoron'; font-size:16px; line-height:1.7; white-space:pre-wrap; overflow-x:auto; color:var(--text);}
 .article-body a{color:var(--primary); text-decoration:underline; text-underline-offset:3px;}
 .article-body mark{background:color-mix(in srgb, var(--success) 38%, transparent); color:inherit; padding:0 2px; border-radius:3px;}
 .article-body sub, .article-body sup{font-size:.72em; line-height:0;}
@@ -218,7 +218,7 @@ html[data-theme="dark"] .cat-badge{ background:rgba(10,14,15,.75); }
 }
 
 .pull-quote{
-    font-family:'Noto Serif Bengali', serif; font-weight:700; font-size:30px; color:var(--secondary);
+    font-family:'Noto Serif by Gunjoron'; font-weight:700; font-size:30px; color:var(--secondary);
     padding:24px 28px; border-left:3px solid var(--secondary); margin:36px 0; line-height:1.5;
     background:var(--quote-highlight); border-radius:0 8px 8px 0; text-align:left;
   }

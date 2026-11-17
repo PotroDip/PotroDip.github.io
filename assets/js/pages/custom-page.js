@@ -11,7 +11,7 @@
     if (tries > 24) {
       clearInterval(t);
       if (!main.children.length) {
-        main.innerHTML = '<div style="padding:90px 16px;text-align:center"><h1 style="font-size:28px;margin-bottom:12px">পেজটি পাওয়া যায়নি</h1><p style="color:var(--text-muted);margin-bottom:20px">এই ঠিকানায় কোনো পেজ নেই বা এখনো প্রকাশ হয়নি।</p><a href="index.html" style="color:var(--primary);font-weight:600">← হোমে ফিরুন</a></div>';
+        main.innerHTML = '<div style="padding:90px 16px;text-align:center"><h1 style="font-size:28px;margin-bottom:12px">পেজটি পাওয়া যায়নি</h1><p style="color:var(--text-muted);margin-bottom:20px">এই ঠিকানায় কোনো পেজ নেই বা এখনো প্রকাশ হয়নি।</p><a href="index.html" style="color:var(--primary);font-weight:600"><svg class="ic-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> হোমে ফিরুন</a></div>';
       }
     }
   }, 250);

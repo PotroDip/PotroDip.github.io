@@ -6,7 +6,7 @@ body.theme-ready, body.theme-ready *{
     transition:background-color .3s ease, color .3s ease, border-color .3s ease, fill .3s ease, stroke .3s ease, filter .3s ease;
   }
 
-.eng{font-family:'Noto Serif Bengali', serif;}
+.eng{font-family:'Noto Serif by Gunjoron';}
 
 /* ============ হিরো (v91) — পুরো-ব্যানার স্লাইডার (লেখা/ছবির কার্ড নয়) ============
    ব্যানার আসে অ্যাডমিন > বিজ্ঞাপন > "হিরো ব্যানার ১–৫" থেকে। নিচে ছোট ডট (চলমানটা লম্বা), স্বাইপ/তীর/অটো-স্লাইড।

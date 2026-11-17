@@ -95,7 +95,7 @@ html[data-theme="dark"] .ap-tabs a.on{color:#0F1415;}
 .bio-story p{font-size:16.5px;line-height:1.95;}
 .bio-quote{position:relative;font-size:22px;line-height:1.65;color:var(--text);background:linear-gradient(120deg, color-mix(in srgb, var(--secondary) 13%, var(--surface)), var(--surface));
   border:1px solid color-mix(in srgb, var(--secondary) 28%, var(--border));border-left:0;border-radius:18px;padding:34px 34px 28px 74px;margin:30px 0;}
-.bio-quote::before{content:"“";position:absolute;left:22px;top:4px;font-size:84px;line-height:1;color:var(--secondary);opacity:.75;font-family:Georgia,serif;}
+.bio-quote::before{content:"“";position:absolute;left:22px;top:4px;font-size:84px;line-height:1;color:var(--secondary);opacity:.75;font-family:'Noto Serif by Gunjoron';}
 
 /* ---------- লেখার কার্ড ---------- */
 .article-grid{gap:26px;padding-bottom:64px;}

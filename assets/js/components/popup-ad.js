@@ -44,7 +44,7 @@
       img.src = ad.image_url;
       var css = document.createElement('link');
       css.rel = 'stylesheet';
-      css.href = 'assets/css/components/popup-ad.css?v=1';
+      css.href = 'assets/css/components/popup-ad.css?v=2';
       var cssReady = new Promise(function (ok) { css.onload = ok; css.onerror = ok; });
       document.head.appendChild(css);
 

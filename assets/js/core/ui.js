@@ -48,7 +48,9 @@
         'color': function (v) { return COLOR.test(v) && !BADCOLOR.test(v); },
         'background-color': function (v) { return COLOR.test(v) && !BADCOLOR.test(v); },
         'font-size': function (v) { var m = /^(\d{1,3}(?:\.\d+)?)(px|pt|em|rem|%)$/i.exec(v); if (!m) return false; var n = parseFloat(m[1]); return m[2] === 'px' || m[2] === 'pt' ? (n >= 8 && n <= 140) : m[2] === '%' ? (n >= 50 && n <= 400) : (n >= .5 && n <= 8); },
-        'font-family': function (v) { return /^[\w\s,'"\-ঀ-৿]{1,160}$/.test(v) && !/inherit|initial/i.test(v); },
+        /* v119: সাইটে শুধু ব্র্যান্ড ফন্ট — আলাদা ফন্ট রাখা হয় কেবল এডমিনের যোগ করা নিজের ফন্ট (pdf_…) হলে;
+           পুরোনো লেখায় Georgia/Arial/Noto ইত্যাদি থাকলে সেটা বাদ পড়ে, লেখা ব্র্যান্ড ফন্টে দেখায় */
+        'font-family': function (v) { return /pdf_[a-z0-9]{6,20}/.test(v); },
         'text-align': function (v) { return /^(left|right|center|justify)$/.test(v); },
         'line-height': function (v) { return /^\d{1,2}(\.\d+)?(px|em|%)?$/.test(v); },
         'letter-spacing': function (v) { return /^-?\d(\.\d+)?(px|em)$/.test(v); },
@@ -73,13 +75,15 @@
         'padding-left': function (v) { var m = /^(\d{1,2})px$/.exec(v); return !!m && +m[1] <= 60; },
         'padding-right': function (v) { var m = /^(\d{1,2})px$/.exec(v); return !!m && +m[1] <= 60; }
       };
+      /* ফন্টের মান পরিষ্কার: শুধু নিজের ফন্টের নাম + ব্র্যান্ড ফন্ট (পুরোনো ফলব্যাক নাম মুছে যায়) */
+      var NORM = { 'font-family': function (v) { return "'" + /pdf_[a-z0-9]{6,20}/.exec(v)[0] + "', 'Noto Serif by Gunjoron'"; } };
       function keepStyles(n, el, extra) {
         var st = {}, k, i;
         if (n.style) for (i = 0; i < n.style.length; i++) {
           k = n.style[i];
-          if (STYLE_OK[k]) { var v = (n.style.getPropertyValue(k) || '').trim(); if (v && STYLE_OK[k](v)) st[k] = v; }
+          if (STYLE_OK[k]) { var v = (n.style.getPropertyValue(k) || '').trim(); if (v && STYLE_OK[k](v)) st[k] = NORM[k] ? NORM[k](v) : v; }
         }
-        for (k in (extra || {})) if (STYLE_OK[k] && STYLE_OK[k](extra[k])) st[k] = extra[k];
+        for (k in (extra || {})) if (STYLE_OK[k] && STYLE_OK[k](extra[k])) st[k] = NORM[k] ? NORM[k](extra[k]) : extra[k];
         for (k in st) el.style.setProperty(k, st[k]);
         return st;
       }

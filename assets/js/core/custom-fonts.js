@@ -1,19 +1,16 @@
 /* custom-fonts.js — নিজের ফন্ট যোগ করা (v82)
    • ফন্ট ফাইল Supabase Storage ('media/fonts/…') এ থাকে, তালিকা থাকে public.custom_fonts টেবিলে
-   • এডমিন যত খুশি ফন্ট যোগ করতে ও মুছতে পারে; ডিফল্ট ফন্ট (Noto Serif Bengali) সাইটের সঙ্গেই বাঁধা — মোছা যায় না
+   • এডমিন যত খুশি ফন্ট যোগ করতে ও মুছতে পারে; ব্র্যান্ড ফন্ট (Noto Serif by Gunjoron) সাইটের সঙ্গেই বাঁধা — মোছা যায় না
    • লেখার পাতায় (article.js) শুধু সেই লেখায় ব্যবহৃত ফন্টগুলোই লোড হয় */
 (function () {
   'use strict';
   var PD = window.PD;
   var FAM = /^pdf_[a-z0-9]{6,20}$/;
-  var FALLBACK = "'Noto Serif Bengali', serif";
-  /* সাইটের নিজস্ব/সিস্টেম ফন্ট — এগুলো মোছা যায় না */
+  var FALLBACK = "'Noto Serif by Gunjoron'";
+  /* সাইটের ব্র্যান্ড ফন্ট — মোছা যায় না (অন্য কোনো বিল্ট-ইন ফন্ট নেই) */
   var BUILTIN = [
-    { k: '', n: 'নোটো সেরিফ বাংলা', css: FALLBACK, def: 1 },
-    { k: 'georgia', n: 'সেরিফ (ক্লাসিক)', css: "Georgia, 'Noto Serif Bengali', 'Times New Roman', serif" },
-    { k: 'sans', n: 'সান-সেরিফ (আধুনিক)', css: "'Noto Sans Bengali', 'Segoe UI', 'Nirmala UI', Arial, sans-serif" },
-    { k: 'mono', n: 'মনোস্পেস (কোড)', css: "'Courier New', Consolas, monospace" },
-    { k: 'script', n: 'হাতের লেখা', css: "'Segoe Script', 'Bradley Hand', cursive" }
+    { k: '', n: 'ব্র্যান্ড ফন্ট — Noto Serif by Gunjoron', css: FALLBACK, def: 1 }
+    /* আগের "সেরিফ/সান-সেরিফ/মনোস্পেস/হাতের লেখা" বাদ — পুরোনো লেখায় সেগুলো থাকলে css() ব্র্যান্ড ফন্টই দেয় */
   ];
   var MAX_BYTES = 8 * 1024 * 1024;
   var EXT = { truetype: 'ttf', opentype: 'otf', woff: 'woff', woff2: 'woff2' };

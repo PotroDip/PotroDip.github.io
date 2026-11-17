@@ -47,7 +47,7 @@
 
   function draw() {
     var rows = F.list(), h = '';
-    h += '<div class="pdf-item is-def"><div class="pdf-meta"><b>নোটো সেরিফ বাংলা</b><span class="pdf-tag">ডিফল্ট</span><i class="pdf-lock" title="ডিফল্ট ফন্ট মোছা যায় না">🔒 মোছা যাবে না</i></div><div class="pdf-sample" style="font-family:' + esc(F.FALLBACK) + '">' + SAMPLE + '</div></div>';
+    h += '<div class="pdf-item is-def"><div class="pdf-meta"><b>Noto Serif by Gunjoron</b><span class="pdf-tag">ব্র্যান্ড ফন্ট</span><i class="pdf-lock" title="ডিফল্ট ফন্ট মোছা যায় না">🔒 মোছা যাবে না</i></div><div class="pdf-sample" style="font-family:' + esc(F.FALLBACK) + '">' + SAMPLE + '</div></div>';
     if (F.isMissing()) h += '<div class="pdf-empty warn">ফন্ট টেবিল এখনো তৈরি হয়নি। প্রজেক্টের <code>supabase/migrations/20261105_custom_fonts.sql</code> ফাইলটা একবার Supabase → SQL Editor-এ চালান।</div>';
     else if (!rows.length) h += '<div class="pdf-empty">এখনো নিজের কোনো ফন্ট যোগ করা হয়নি।</div>';
     rows.forEach(function (r) {
