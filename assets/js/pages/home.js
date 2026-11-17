@@ -36,7 +36,7 @@
       nullsFirst: false
     }).order('created_at', {
       ascending: false
-    }).limit(30), db.from('authors').select('id,slug,name,role_title,city,image_url,avg_rating,popular_rank').limit(100), db.from('issues').select('*'), db.from('ads').select('slot_id,image_url,link_url').eq('is_active', true), db.from('print_issues').select('id,issue_id,teaser,price,in_stock,cover_url').limit(50), db.from('articles').select('id,title,excerpt,category,cover_url,author_id,issue_id,published_at,created_at,home_order,home_hidden').not('home_order', 'is', null).order('home_order', { ascending: true }).limit(20), db.from('articles').select('id,title,excerpt,category,cover_url,author_id,issue_id,published_at,created_at,home_order,home_hidden').eq('home_featured', true).eq('status', 'published').order('created_at', { ascending: false }).limit(1), db.from('articles').select('id,title,excerpt,category,cover_url,author_id,issue_id,published_at,created_at,hero_order').not('hero_order', 'is', null).eq('status', 'published').order('hero_order', { ascending: true }).limit(6)]);
+    }).limit(30), db.from('authors').select('id,slug,name,role_title,city,image_url,avg_rating,popular_rank').limit(100), db.from('issues').select('*'), db.from('ads').select('slot_id,image_url,link_url').eq('is_active', true), db.from('print_issues').select('id,issue_id,teaser,price,in_stock,cover_url').limit(50), db.from('articles').select('id,title,excerpt,category,cover_url,author_id,issue_id,published_at,created_at,home_order,home_hidden').not('home_order', 'is', null).order('home_order', { ascending: true }).limit(20), db.from('articles').select('id,title,excerpt,category,cover_url,author_id,issue_id,published_at,created_at,home_order,home_hidden').eq('home_featured', true).eq('status', 'published').order('created_at', { ascending: false }).limit(1), db.from('articles').select('id,title,excerpt,category,cover_url,author_id,issue_id,published_at,created_at,hero_order').not('hero_order', 'is', null).eq('status', 'published').order('hero_order', { ascending: true }).limit(6), db.from('site_settings').select('value').eq('key', 'contact').maybeSingle()]);
   if (R[0].error) { /* নতুন কলাম (home_order) এখনো ডাটাবেসে না থাকলে আগের মতো চালু থাকুক */
     var fb = await db.from('articles').select('id,title,excerpt,category,cover_url,author_id,issue_id,published_at,created_at').order('published_at', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false }).limit(30);
     if (!fb.error) R[0] = fb
@@ -58,9 +58,16 @@
   (R[2].data || []).forEach(function(x) {
     I[x.id] = x
   });
+  /* হিরো ব্যানার এড (hero1…hero5) — স্লাইডারে বিশেষ লেখাগুলোর পরে, নম্বর অনুযায়ী */
+  var HERO_ADS = [];
   (R[3].data || []).forEach(function(x) {
+    var hm = /hero\s*([1-9])/i.exec(x.slot_id || '');
+    if (hm) { if (x.image_url) HERO_ADS.push({ n: +hm[1], a: x }); return }
     (/top/i.test(x.slot_id) ? ADS.top = x : /mid/i.test(x.slot_id) ? ADS.mid = x : /mobile/i.test(x.slot_id) ? ADS.mobile = x : 0)
   });
+  HERO_ADS.sort(function(p, q) { return p.n - q.n });
+  /* এডমিনের সেটিংস (site_settings → contact.ui): হিরো স্লাইডের সময় ইত্যাদি */
+  var UIS = (R[8] && !R[8].error && R[8].data && R[8].data.value && R[8].data.value.ui) || {};
   var au = function(a) {
       return U[a.author_id] || {
         name: 'অজানা লেখক'
@@ -151,9 +158,24 @@
         (f.cover_url ? '<div class="hf-art" aria-hidden="true"><span class="hf-art-ring"></span><span class="hf-art-img"><img class="hf-art-blur" decoding="async" src="' + esc(f.cover_url) + '" alt=""><img class="hf-art-fg" decoding="async" src="' + esc(f.cover_url) + '" alt=""></span></div>' : '') +
         '</div></article>'
     }
-    var N = list.length;
+    /* এড স্লাইড: পুরো ছবি (কাটে না) + পেছনে একই ছবির ঝাপসা আভা + ছোট "বিজ্ঞাপন" ট্যাগ */
+    function adHtml(a) {
+      var link = a.link_url && /^https?:\/\//i.test(a.link_url),
+        tag = link ? 'a' : 'div',
+        attrs = link ? ' href="' + esc(a.link_url) + '" target="_blank" rel="noopener sponsored"' : '';
+      return '<article class="hf hf-ad"><' + tag + ' class="hf-ad-link"' + attrs + ' aria-label="বিজ্ঞাপন">' +
+        '<img class="hf-ad-glow" decoding="async" src="' + esc(a.image_url) + '" alt="" aria-hidden="true">' +
+        '<img class="hf-ad-img" decoding="async" src="' + esc(a.image_url) + '" alt="বিজ্ঞাপন">' +
+        '<span class="hf-ad-tag">বিজ্ঞাপন</span></' + tag + '></article>'
+    }
+    var NA = list.length,
+      items = list.map(function(f, i) { return { f: f, i: i } });
+    if (!NA) items = [{ f: null, i: 0 }];
+    HERO_ADS.forEach(function(h) { items.push({ ad: h.a }) });
+    var N = items.length,
+      itemHtml = function(it) { return it.ad ? adHtml(it.ad) : cardHtml(it.f, it.i, Math.max(NA, 1)) };
     if (N <= 1) {
-      hbG.innerHTML = cardHtml(list[0] || null, 0, 1);
+      hbG.innerHTML = itemHtml(items[0]);
       return
     }
     /* একাধিক: স্ক্রল-স্ন্যাপ স্লাইডার + ডট (চলমানটা ভরাট হয়) + তীর */
@@ -161,11 +183,11 @@
       return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="' + d + '"/></svg>'
     };
     hbG.innerHTML = '<div class="hf-slider" role="region" aria-roledescription="carousel" aria-label="বিশেষ লেখা"><div class="hf-track" tabindex="0">' +
-      list.map(function(f, i) {
-        return '<div class="hf-slide' + (i ? '' : ' on') + '" role="group" aria-label="' + bn(i + 1) + ' / ' + bn(N) + '">' + cardHtml(f, i, N) + '</div>'
+      items.map(function(it, i) {
+        return '<div class="hf-slide' + (i ? '' : ' on') + (it.ad ? ' is-ad' : '') + '" role="group" aria-label="' + bn(i + 1) + ' / ' + bn(N) + '">' + itemHtml(it) + '</div>'
       }).join('') + '</div><div class="hf-ctrl"><button type="button" class="hf-arr prev" aria-label="আগের লেখা">' + chev('15 18 9 12 15 6') + '</button><div class="hf-dots" role="group" aria-label="লেখা বেছে নিন">' +
-      list.map(function(_, i) {
-        return '<button type="button" class="' + (i ? '' : 'on') + '" aria-label="লেখা ' + bn(i + 1) + '"><i></i></button>'
+      items.map(function(it, i) {
+        return '<button type="button" class="' + (i ? '' : 'on') + '" aria-label="' + (it.ad ? 'বিজ্ঞাপন' : 'লেখা') + ' ' + bn(i + 1) + '"><i></i></button>'
       }).join('') + '</div><button type="button" class="hf-arr next" aria-label="পরের লেখা">' + chev('9 18 15 12 9 6') + '</button></div></div>';
     var box = hbG.querySelector('.hf-slider'),
       trk = hbG.querySelector('.hf-track'),
@@ -175,7 +197,10 @@
       timer = 0,
       raf = 0,
       RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches,
-      INTERVAL = 8000;
+      INTERVAL = (function() { /* এডমিন > এড স্লট > "হিরো স্লাইডের সময়" (৩–৩০ সেকেন্ড), না থাকলে ৮ */
+        var v = parseFloat(UIS.hero_interval);
+        return (v >= 3 && v <= 30 ? v : 8) * 1000
+      })();
     box.style.setProperty('--hf-iv', INTERVAL + 'ms');
 
     function mark(i) {

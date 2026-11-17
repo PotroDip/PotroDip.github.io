@@ -451,6 +451,11 @@
     var d = S.set.delivery || {}, p = S.set.payment || {}, c = S.set.contact || {};
     var map = { 'dhaka-normal': d.in_normal, 'dhaka-bulk': d.in_bulk, 'outside-normal': d.out_normal, 'outside-bulk': d.out_bulk, 'bulk-threshold': d.bulk_min, 'pay-bkash': p.bkash, 'pay-nagad': p.nagad, 'pay-rocket': p.rocket, 'contact-phone': c.phone, 'contact-fb': c.facebook, 'contact-ig': c.instagram };
     Object.keys(map).forEach(function (k) { $(k).value = map[k] == null ? '' : map[k]; });
+    /* হিরো স্লাইডের সময় ও পপআপ এডের সেটিংস — contact.ui-তে রাখা (ভিজিটররা এই কী পড়তে পারে) */
+    var ui = c.ui || {};
+    $('ui-hero-interval').value = ui.hero_interval == null ? '' : ui.hero_interval;
+    $('ui-popup-delay').value = ui.popup_delay == null ? '' : ui.popup_delay;
+    $('ui-popup-freq').value = ui.popup_freq === 'day' ? 'day' : 'session';
   }
   function saveSetting(key, value, msg) {
     var old = S.set[key] || {};
@@ -472,6 +477,15 @@
     if (p === null) return A.showToast('মোবাইল নাম্বার সঠিক নয়');
     if ((fb && !/^https?:\/\//i.test(fb)) || (ig && !/^https?:\/\//i.test(ig))) return A.showToast('সোশ্যাল লিংক https:// দিয়ে শুরু হতে হবে');
     saveSetting('contact', { phone: p, facebook: fb, instagram: ig }, 'যোগাযোগ তথ্য সংরক্ষণ হয়েছে');
+  });
+
+  $('save-ad-ui').addEventListener('click', function () {
+    var iv = val('ui-hero-interval'), dl = val('ui-popup-delay');
+    iv = iv === '' ? 8 : Number(iv); dl = dl === '' ? 1.5 : Number(dl);
+    if (!(iv >= 3 && iv <= 30)) return A.showToast('স্লাইডের সময় ৩ থেকে ৩০ সেকেন্ডের মধ্যে দিন');
+    if (!(dl >= 0 && dl <= 30)) return A.showToast('পপআপের সময় ০ থেকে ৩০ সেকেন্ডের মধ্যে দিন');
+    var old = (S.set.contact && S.set.contact.ui) || {};
+    saveSetting('contact', { ui: Object.assign({}, old, { hero_interval: iv, popup_delay: dl, popup_freq: $('ui-popup-freq').value === 'day' ? 'day' : 'session' }) }, 'সেটিংস সংরক্ষণ হয়েছে — সাইটে সঙ্গে সঙ্গে কাজ করবে');
   });
 
   window.AdminForms = { upload: upload, openArticle: openArticle, openAuthor: openAuthor, openArchive: openArchive, openPrint: openPrint, fillSettings: fillSettings };

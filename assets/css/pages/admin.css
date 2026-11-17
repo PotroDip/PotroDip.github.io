@@ -1394,3 +1394,12 @@ html.rte-dragging .rte-body img{pointer-events:none;}
 .pdf-sample{font-size:19px; line-height:1.6; word-break:break-word;}
 .pdf-empty{padding:14px; font-size:13px; color:var(--text-muted); text-align:center; border:1px dashed var(--border); border-radius:12px;} .pdf-empty.warn{color:#b45309; text-align:left; border-color:#d99a00; background:color-mix(in srgb,#facc15 10%,transparent);}
 .pdf-empty code{font-size:12px; word-break:break-all;}
+
+/* এড স্লট পেজ: হিরো স্লাইডের সময় ও পপআপ সেটিংস */
+.field-row select{
+  width:100%; padding:11px 13px; background:var(--field-bg); border:1px solid var(--border);
+  border-radius:8px; color:var(--text); font-size:14px; font-family:inherit; cursor:pointer;
+}
+.field-row select:focus{outline:none; border-color:var(--primary);}
+.ad-ui-grid{margin-bottom:0;}
+.ad-ui-foot{margin:16px 0 26px;}

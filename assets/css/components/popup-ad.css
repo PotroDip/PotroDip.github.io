@@ -1,0 +1,72 @@
+/* popup-ad.css — পপআপ বিজ্ঞাপন (popup-ad.js শুধু এড চালু থাকলেই এটা লোড করে)
+   গাঢ় ঝাপসা পর্দা · মাঝখানে কার্ড (সোনালি চিকন রেখা, নরম ছায়া) · উপরের কোণে গোল ✕ · নিচে "বিজ্ঞাপন" + বাটন
+   লাইট/ডার্ক দুই থিমেই base.css-এর রঙ ব্যবহার করে */
+.pd-pop{
+  position:fixed;inset:0;z-index:2147483000;
+  display:flex;align-items:center;justify-content:center;
+  padding:max(20px,env(safe-area-inset-top)) 18px max(20px,env(safe-area-inset-bottom));
+  font-family:'Noto Serif Bengali',serif;
+}
+.pd-pop-back{
+  position:absolute;inset:0;cursor:pointer;
+  background:radial-gradient(120% 90% at 50% 40%,rgba(10,46,51,.55),rgba(4,18,21,.78));
+  -webkit-backdrop-filter:blur(7px) saturate(1.1);backdrop-filter:blur(7px) saturate(1.1);
+  opacity:0;transition:opacity .38s ease;
+}
+.pd-pop-card{
+  --pp-gold:#C9A27A;
+  position:relative;display:flex;flex-direction:column;
+  width:min(440px,100%);padding:10px;border-radius:26px;
+  background:var(--surface,#fff);color:var(--text,#1d1d1b);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--pp-gold) 55%,transparent),0 40px 80px -28px rgba(0,0,0,.6),0 12px 28px -12px rgba(0,0,0,.35);
+  opacity:0;transform:translateY(26px) scale(.95);
+  transition:opacity .38s ease,transform .55s cubic-bezier(.2,.9,.25,1.12);
+}
+.pd-pop.in .pd-pop-back{opacity:1;}
+.pd-pop.in .pd-pop-card{opacity:1;transform:none;}
+.pd-pop.out .pd-pop-card{opacity:0;transform:translateY(14px) scale(.97);transition:opacity .3s ease,transform .3s ease;}
+
+.pd-pop-media{display:block;position:relative;border-radius:18px;overflow:hidden;background:var(--secondary-light,#eee);line-height:0;}
+.pd-pop-img{display:block;width:100%;height:auto;max-height:min(66vh,620px);margin:0 auto;object-fit:contain;transition:transform .8s cubic-bezier(.2,.8,.2,1);}
+a.pd-pop-media:hover .pd-pop-img{transform:scale(1.025);}
+a.pd-pop-media:focus-visible{outline:2px solid var(--primary);outline-offset:3px;}
+
+.pd-pop-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 6px 4px 8px;}
+.pd-pop-tag{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--text-muted,#6b6b66);letter-spacing:.02em;}
+.pd-pop-tag::before{content:"";width:7px;height:7px;border-radius:2px;transform:rotate(45deg);background:var(--pp-gold);}
+.pd-pop-cta,.pd-pop-later{
+  display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;
+  font:inherit;font-size:14.5px;font-weight:700;line-height:1.2;text-decoration:none;cursor:pointer;border:0;
+  transition:transform .3s cubic-bezier(.3,1.35,.5,1),box-shadow .3s ease,background-color .25s ease;
+}
+.pd-pop-cta{color:#fff;background:linear-gradient(135deg,var(--primary,#1F5459),color-mix(in srgb,var(--primary,#1F5459) 70%,#000));box-shadow:0 10px 20px -10px color-mix(in srgb,var(--primary,#1F5459) 80%,transparent);}
+.pd-pop-cta svg{width:16px;height:16px;transition:transform .3s ease;}
+.pd-pop-cta:hover{transform:translateY(-1px);box-shadow:0 14px 26px -12px color-mix(in srgb,var(--primary,#1F5459) 90%,transparent);}
+.pd-pop-cta:hover svg{transform:translateX(3px);}
+.pd-pop-later{color:var(--text,#1d1d1b);background:color-mix(in srgb,var(--text,#1d1d1b) 8%,transparent);}
+.pd-pop-later:hover{background:color-mix(in srgb,var(--text,#1d1d1b) 13%,transparent);}
+.pd-pop-cta:focus-visible,.pd-pop-later:focus-visible{outline:2px solid var(--primary);outline-offset:3px;}
+html[data-theme="dark"] .pd-pop-cta{color:#0F1415;}
+
+.pd-pop-x{
+  position:absolute;top:-14px;right:-14px;z-index:2;
+  width:40px;height:40px;border-radius:50%;padding:0;border:0;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--text,#1d1d1b);background:var(--surface,#fff);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--pp-gold) 60%,transparent),0 8px 20px -6px rgba(0,0,0,.45);
+  transition:transform .35s cubic-bezier(.3,1.35,.5,1),color .2s ease;
+}
+.pd-pop-x svg{width:17px;height:17px;}
+.pd-pop-x:hover{transform:rotate(90deg) scale(1.06);color:var(--primary);}
+.pd-pop-x:focus-visible{outline:2px solid var(--primary);outline-offset:3px;}
+
+@media(max-width:520px){
+  .pd-pop-card{padding:8px;border-radius:22px;}
+  .pd-pop-media{border-radius:15px;}
+  .pd-pop-img{max-height:58vh;}
+  .pd-pop-x{top:-12px;right:-8px;width:38px;height:38px;}
+  .pd-pop-cta,.pd-pop-later{padding:9px 15px;font-size:14px;}
+}
+@media (prefers-reduced-motion:reduce){
+  .pd-pop-back,.pd-pop-card,.pd-pop-img,.pd-pop-x{transition:none;}
+}

@@ -679,3 +679,23 @@ html[data-theme="dark"] .follow-btn:hover,html[data-theme="dark"] .follow-btn.fo
    • "পুরোটা পড়ুন" — শুরুতে পুরো গোল্ডেন বাটন, মাঝে লেখা; বাটনে মাউস নিলে তীর ভেতরের বাম পাশ থেকে বেরিয়ে ডানে যায়, পেছনে পেছনে রং বাম থেকে ডানে সবুজ হয়
    ============================================================ */
 @media (prefers-reduced-motion:reduce){.hf .hf-cta-fill,.hf .hf-go,.hf .hf-art-fg,.hf .hf-art-ring{transition:none;}}
+
+/* ============================================================
+   v116 — হিরো স্লাইডারে বিজ্ঞাপন (এডমিন > এড স্লট > হিরো ব্যানার ১–৫)
+   • বিশেষ লেখাগুলোর পরে আসে; স্লাইডের উচ্চতা অন্য কার্ডের সমান
+   • ছবি কখনো কাটে না (contain) — চারপাশের ফাঁকা জায়গায় একই ছবির ঝাপসা আভা
+   ============================================================ */
+.hf-ad{background:#0A2E33;}
+.hf-ad::after{display:none;}
+.hf-ad-link{position:relative;flex:1;display:block;min-height:clamp(150px,30vw,380px);border-radius:inherit;overflow:hidden;color:inherit;}
+.hf-ad-glow{position:absolute;inset:-14%;width:128%;height:128%;object-fit:cover;filter:blur(38px) saturate(1.25) brightness(.8);opacity:.75;pointer-events:none;}
+.hf-ad-img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transition:transform .7s cubic-bezier(.2,.8,.2,1);}
+a.hf-ad-link:hover .hf-ad-img{transform:scale(1.02);}
+a.hf-ad-link:focus-visible{outline:2px solid #E9CB98;outline-offset:-4px;}
+.hf-ad-tag{
+  position:absolute;top:14px;left:14px;z-index:1;
+  padding:3px 11px;border-radius:999px;font-size:11.5px;font-weight:600;letter-spacing:.02em;color:#fff;
+  background:rgba(6,30,34,.55);box-shadow:inset 0 0 0 1px rgba(255,255,255,.22);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+}
+@media (prefers-reduced-motion:reduce){.hf-ad-img{transition:none;}}
