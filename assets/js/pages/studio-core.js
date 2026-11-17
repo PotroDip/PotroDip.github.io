@@ -174,8 +174,12 @@
     }
     var lastIsAnchor = segs.length && segs[segs.length - 1].charAt(0) === '#';
     if (anchor) { segs.push(anchor); lastIsAnchor = true; }
+    /* v121: ঠিকানায় অন্তত একটা নোঙর (id, ক্লাস বা data-pd-id) থাকতেই হবে। শুধু "button:nth-of-type(4)"-এর মতো
+       ঠিকানা স্টুডিওতে একটাকে বোঝালেও সাইটে পরে আসা অন্য বোতামকেও (যেমন সার্চের জনপ্রিয় সার্চ) ধরে ফেলত */
+    var anchored = function (x) { return /[#.\[]/.test(x.replace(/:nth-[a-z-]+\(\d+\)/g, '')); };
     for (var k = 1; k <= segs.length; k++) {
       var sel = segs.slice(0, k).reverse().join(' > ');
+      if (k < segs.length && !anchored(sel)) continue;
       try { var m = doc.querySelectorAll(sel); if (m.length === 1 && m[0] === el) return sel; } catch (e) {}
     }
     var full = (lastIsAnchor ? '' : 'body > ') + segs.slice().reverse().join(' > ');

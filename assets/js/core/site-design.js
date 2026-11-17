@@ -148,10 +148,34 @@
     '.pd-wrap{max-width:1200px;margin:0 auto;padding:24px 16px;width:100%;}';
 
   /* ---------- কম্পাইল: ডিজাইন → CSS লেখা ---------- */
+  /* v121: নোঙরহীন ঠিকানা (যেমন "button:nth-of-type(4)") মেরামত — স্টুডিওর আগের সংস্করণ কখনো এমন ঠিকানা সেভ করত,
+     যা সাইটে পরে আসা অন্য উপাদানকেও (সার্চের জনপ্রিয় সার্চ ইত্যাদি) ধরে ফেলে।
+     • একই পাতায় একই ধরনের নোঙরসহ ঠিকানা থাকলে (যেমন "#chips > button:nth-of-type(2)") সেই অভিভাবকের ভেতরেই সীমাবদ্ধ
+     • না থাকলে শুধু পেজের মূল অংশে (main) */
+  var NTH = /:nth-(?:of-type|child)\(\d+\)/g;
+  function bare(sel) { return /^[a-z][a-z0-9]*(?::nth-(?:of-type|child)\(\d+\))+$/i.test(sel) && sel !== 'body' && sel !== 'html'; }
+  function fixScope(sc) {
+    if (!sc || !sc.edits) return sc;
+    var keys = Object.keys(sc.edits), bad = keys.filter(bare);
+    if (!bad.length) return sc;
+    var ed = {};
+    keys.forEach(function (k) {
+      if (!bare(k)) { ed[k] = sc.edits[k]; return; }
+      var tag = k.replace(NTH, ''), pre = null;
+      keys.forEach(function (o) {
+        var m = new RegExp('^(.*>\\s*)' + tag + '(?::nth-(?:of-type|child)\\(\\d+\\))+$', 'i').exec(o);
+        if (m && !bare(o) && /[#.\[]/.test(m[1])) pre = pre === null || pre === m[1] ? m[1] : false;
+      });
+      ed[(pre ? pre : 'main ') + k] = sc.edits[k];
+    });
+    var out = {}; for (var x in sc) out[x] = sc[x];
+    out.edits = ed;
+    return out;
+  }
   function scopesFor(design, pk) {
     var o = [];
-    if (design && design.global) o.push(design.global);
-    if (design && design.pages && design.pages[pk]) o.push(design.pages[pk]);
+    if (design && design.global) o.push(fixScope(design.global));
+    if (design && design.pages && design.pages[pk]) o.push(fixScope(design.pages[pk]));
     return o;
   }
   function compile(design, pk) {
