@@ -5,7 +5,7 @@
   if (!PD || !PD.db) return;
   var db = PD.db, $ = function (i) { return document.getElementById(i); };
   window.maybeShowNotifPopup = function () { }; /* ব্রাউজার-পুশ সার্ভার এখনো নেই, তাই অনুমতির পপআপ বন্ধ */
-  var STATUS = { pending: 'যাচাই বাকি', verified: 'পেমেন্ট যাচাই হয়েছে', delivered: 'ডেলিভারি হয়েছে' };
+  var STATUS = { pending: 'যাচাই বাকি', verified: 'পেমেন্ট যাচাই হয়েছে', delivered: 'ডেলিভারি হয়েছে', cancelled: 'অর্ডার বাতিল' };
 
   function ago(iso) {
     var m = Math.max(0, Math.round((Date.now() - new Date(iso)) / 60000));
@@ -145,15 +145,15 @@
         var items = {};
         (it.data || []).forEach(function (x) { (items[x.order_id] = items[x.order_id] || []).push(x); });
         box.innerHTML = list.map(function (o) {
-          var st = o.payment_status === 'verified' || o.payment_status === 'delivered' ? o.payment_status : 'pending';
-          var lv = { pending: 0, verified: 1, delivered: 2 }[st];
+          var st = o.payment_status === 'verified' || o.payment_status === 'delivered' || o.payment_status === 'cancelled' ? o.payment_status : 'pending';
+          var lv = { pending: 0, verified: 1, delivered: 2, cancelled: -1 }[st];
           var steps = ['অর্ডার জমা', 'পেমেন্ট যাচাই', 'ডেলিভারি'].map(function (t, k) {
             return '<li class="' + (k <= lv ? 'done' : '') + (k === lv ? ' now' : '') + '"><span></span>' + t + '</li>';
           }).join('');
           var rows = (items[o.id] || []).map(function (x) {
             return '<li><span>' + esc(x.title_snapshot) + ' <em>× ' + UI.bn(x.quantity) + '</em></span><span>' + tk(x.price_snapshot * x.quantity) + '</span></li>';
           }).join('');
-          return '<div class="order-card"><div class="oc-head"><div><strong>#' + esc(o.order_number) + '</strong><span>' + UI.date(o.created_at) + (o.area ? ' · ' + (o.area === 'dhaka' ? 'ঢাকার ভিতরে' : 'ঢাকার বাহিরে') : '') + '</span></div><span class="oc-status s-' + st + '">' + STATUS[st] + '</span></div><ol class="oc-track">' + steps + '</ol>' + (rows ? '<ul class="oc-items">' + rows + '</ul>' : '') + '<div class="oc-total"><div><span>বইয়ের দাম (ক্যাশ অন ডেলিভারি)</span><b>' + tk(o.subtotal) + '</b></div><div><span>ডেলিভারি চার্জ (অগ্রিম)</span><b>' + tk(o.delivery_charge) + '</b></div><div class="grand"><span>মোট</span><b>' + tk(Number(o.subtotal || 0) + Number(o.delivery_charge || 0)) + '</b></div></div></div>';
+          return '<div class="order-card"><div class="oc-head"><div><strong>#' + esc(o.order_number) + '</strong><span>' + UI.date(o.created_at) + (o.area ? ' · ' + (o.area === 'dhaka' ? 'ঢাকার ভিতরে' : 'ঢাকার বাহিরে') : '') + '</span></div><span class="oc-status s-' + st + '">' + STATUS[st] + '</span></div>' + (st === 'cancelled' ? '<p class="oc-cancel">এই অর্ডারটি বাতিল করা হয়েছে। কোনো প্রশ্ন থাকলে আমাদের সাথে যোগাযোগ করুন।</p>' : '<ol class="oc-track">' + steps + '</ol>') + (rows ? '<ul class="oc-items">' + rows + '</ul>' : '') + '<div class="oc-total"><div><span>বইয়ের দাম (ক্যাশ অন ডেলিভারি)</span><b>' + tk(o.subtotal) + '</b></div><div><span>ডেলিভারি চার্জ (অগ্রিম)</span><b>' + tk(o.delivery_charge) + '</b></div><div class="grand"><span>মোট</span><b>' + tk(Number(o.subtotal || 0) + Number(o.delivery_charge || 0)) + '</b></div></div></div>';
         }).join('');
       });
     });

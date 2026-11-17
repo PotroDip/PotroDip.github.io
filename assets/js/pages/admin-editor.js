@@ -96,7 +96,13 @@
 
   toolbar.setAttribute('role', 'toolbar');
   toolbar.setAttribute('aria-label', 'লেখা সম্পাদনার টুলবার');
+  /* v117: টুলবার দুই স্তরে — উপরের সারিতে সবসময় লাগে এমন টুল; "আরো টুল" চাপলে নিচে বাকিগুলো (নাম দেওয়া দলে)।
+     "অনুচ্ছেদ" বাটন = ইনডিজাইনের মতো অনুচ্ছেদ প্যানেল (admin-editor-pro.js) */
+  function lgroup(label, html) { return '<div class="rt-group rt-lgroup"><span class="rt-glabel">' + label + '</span><div class="rt-gbtns">' + html + '</div></div>'; }
+  I.para = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 3h10v2h-2v16h-2V5h-2v16h-2v-8a5 5 0 0 1 0-10z"/></svg>';
+  I.more = ic('<circle cx="5" cy="12" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="19" cy="12" r="1.3" fill="currentColor"/>');
   toolbar.innerHTML =
+    '<div class="rt-main">' +
     group(
       menu('block', 'অনুচ্ছেদ ও শিরোনামের ধরন', '<span class="rt-lbl" id="rt-block-lbl">সাধারণ লেখা</span>', 'rt-w-block') +
       menu('font', 'ফন্ট বদলান (নির্বাচিত অংশে)', '<span class="rt-lbl" id="rt-font-lbl">নোটো সেরিফ বাংলা</span>', 'rt-w-font')
@@ -110,14 +116,11 @@
     group(
       btn('bold', 'বোল্ড (Ctrl+B)', '<span class="rt-txt rt-b">B</span>') +
       btn('italic', 'ইটালিক (Ctrl+I)', '<span class="rt-txt rt-i">I</span>') +
-      btn('underline', 'আন্ডারলাইন (Ctrl+U)', '<span class="rt-txt rt-u">U</span>') +
-      btn('strike', 'কাটা দাগ', '<span class="rt-txt rt-s">S</span>')
+      btn('underline', 'আন্ডারলাইন (Ctrl+U)', '<span class="rt-txt rt-u">U</span>')
     ) +
     group(
       menu('color', 'লেখার রং', '<span class="rt-txt rt-a">A</span><i class="rt-bar" id="rt-bar-color"></i>', 'rt-colorbtn') +
-      menu('hl', 'হাইলাইট (লেখার পেছনের রং)', I.pen + '<i class="rt-bar" id="rt-bar-hl"></i>', 'rt-colorbtn') +
-      btn('sub', 'সাবস্ক্রিপ্ট (নিচে ছোট)', '<span class="rt-txt rt-sc">x<sub>২</sub></span>') +
-      btn('sup', 'সুপারস্ক্রিপ্ট (উপরে ছোট)', '<span class="rt-txt rt-sc">x<sup>২</sup></span>')
+      menu('hl', 'হাইলাইট (লেখার পেছনের রং)', I.pen + '<i class="rt-bar" id="rt-bar-hl"></i>', 'rt-colorbtn')
     ) +
     group(
       btn('left', 'বামে সাজান', I.left) +
@@ -127,25 +130,47 @@
     ) +
     group(
       btn('ul', 'বুলেট তালিকা', I.ul) +
-      btn('ol', 'নম্বর তালিকা', I.ol) +
+      btn('ol', 'নম্বর তালিকা', I.ol)
+    ) +
+    group(
+      btn('link', 'লিংক যুক্ত করুন (Ctrl+K)', I.link) +
+      btn('image', 'ছবি / স্ক্রিনশট বসান (স্ক্রিনশট কপি করে Ctrl+V-ও চলবে)', I.image)
+    ) +
+    group(
+      btn('para', 'অনুচ্ছেদ প্যানেল — ইনডেন্ট, ফাঁক, ড্রপ ক্যাপ, কলাম, রুল, শেডিং (ইনডিজাইনের মতো)', I.para + '<span class="rt-wlbl">অনুচ্ছেদ</span>', 'rt-para') +
+      btn('more', 'আরো টুল', I.more + '<span class="rt-wlbl">আরো টুল</span>' + CHEV, 'rt-morebtn')
+    ) +
+    '</div>' +
+    '<div class="rt-more" id="rt-more" role="group" aria-label="আরো টুল">' +
+    lgroup('লেখা',
+      btn('strike', 'কাটা দাগ', '<span class="rt-txt rt-s">S</span>') +
+      btn('sub', 'সাবস্ক্রিপ্ট (নিচে ছোট)', '<span class="rt-txt rt-sc">x<sub>২</sub></span>') +
+      btn('sup', 'সুপারস্ক্রিপ্ট (উপরে ছোট)', '<span class="rt-txt rt-sc">x<sup>২</sup></span>') +
+      btn('clear', 'সব ফরম্যাট মুছে ফেলুন', I.clear)
+    ) +
+    lgroup('অনুচ্ছেদ',
       btn('outdent', 'ভেতর থেকে বের করুন', I.outdent) +
       btn('indent', 'ভেতরে ঢোকান (ইনডেন্ট)', I.indent) +
-      menu('lh', 'লাইনের ফাঁক', I.lh)
-    ) +
-    group(
+      menu('lh', 'লাইনের ফাঁক', I.lh) +
       btn('quote', 'উদ্ধৃতি', I.quote) +
-      btn('code', 'কোড ব্লক', I.code) +
+      btn('code', 'কোড ব্লক', I.code)
+    ) +
+    lgroup('যোগ করুন',
       btn('hr', 'আড়াআড়ি বিভাজক রেখা', I.hr) +
       menu('table', 'টেবিল ঢোকান ও সম্পাদনা', I.table) +
-      btn('link', 'লিংক যুক্ত করুন (Ctrl+K)', I.link) +
+      btn('callout', 'তথ্য বক্স (আবার চাপলে রং বদলায়, শেষে সরে যায়)', I.callout) +
       btn('unlink', 'লিংক সরান', I.unlink)
     ) +
-    group(
-      btn('image', 'ছবি / স্ক্রিনশট বসান (স্ক্রিনশট কপি করে Ctrl+V-ও চলবে)', I.image) +
-      btn('callout', 'তথ্য বক্স (আবার চাপলে রং বদলায়, শেষে সরে যায়)', I.callout)
-    ) +
-    group(btn('clear', 'সব ফরম্যাট মুছে ফেলুন', I.clear)) +
-    '<button type="button" class="rt-btn rt-fs" id="rt-fs" data-act="fullscreen" title="ফুল স্ক্রিনে লিখুন (বের হতে Esc)" aria-label="ফুল স্ক্রিন" aria-pressed="false">' + I.expand + '</button>';
+    '</div>' +
+    '<button type="button" class="rt-btn rt-fs" id="rt-fs" data-act="fullscreen" title="ফুল স্ক্রিনে লিখুন — মাইক্রোসফট ওয়ার্ডের মতো (বের হতে Esc)" aria-label="ফুল স্ক্রিন" aria-pressed="false">' + I.expand + '</button>';
+
+  /* "আরো টুল" খোলা/বন্ধ — শেষ অবস্থা মনে থাকে */
+  function setMore(on) {
+    toolbar.classList.toggle('more-open', !!on);
+    var mb = toolbar.querySelector('[data-act="more"]'); if (mb) { mb.classList.toggle('is-active', !!on); mb.setAttribute('aria-expanded', on ? 'true' : 'false'); }
+    try { localStorage.setItem('pd-rte-more', on ? '1' : '0'); } catch (e) {}
+  }
+  try { setMore(localStorage.getItem('pd-rte-more') === '1'); } catch (e) { setMore(false); }
 
   var sizeIn = doc.getElementById('rt-size-in');
 
@@ -1062,6 +1087,8 @@
     else if (act === 'callout') toggleCallout();
     else if (act === 'clear') clearAll();
     else if (act === 'fullscreen') setFull(!isFull);
+    else if (act === 'more') setMore(!toolbar.classList.contains('more-open'));
+    else if (act === 'para') { if (window.PDParaPanel) window.PDParaPanel.toggle(b); }
   });
   /* সাইজ বক্সে হাতে লিখে Enter */
   sizeIn.addEventListener('focus', function () { sizeIn.select(); });
@@ -1193,9 +1220,21 @@
   }
   if (modalBox) new MutationObserver(function () { if (isFull && !modalBox.classList.contains('open')) setFull(false); }).observe(modalBox, { attributes: true, attributeFilter: ['class'] });
   doc.addEventListener('keydown', function (e) {
+    /* খুঁজুন-বার বা অনুচ্ছেদ প্যানেলের ভেতরে Esc হলে আগে সেগুলো বন্ধ হয় (admin-editor-pro.js) */
+    if (e.target && e.target.closest && e.target.closest('.fsw-find, .pp-panel')) return;
     if (e.key === 'Escape' && isFull && !pop) { e.stopPropagation(); e.preventDefault(); setFull(false); }
   }, true);
   window.PDEditorFullscreen = setFull;
+  /* admin-editor-pro.js (অনুচ্ছেদ প্যানেল, ওয়ার্ড-স্টাইল ফুল স্ক্রিন, খুঁজুন-বদলান) এই API ব্যবহার করে */
+  window.PDEditor = {
+    body: artBody, toolbar: toolbar, wrap: wrap,
+    focus: focusEd, restoreSel: restoreSel, exec: exec, changed: changed, state: scheduleState, closePop: closePop,
+    setFull: setFull, isFull: function () { return isFull; },
+    /* নির্বাচিত অনুচ্ছেদগুলো (না থাকলে বর্তমান লাইনকে অনুচ্ছেদ বানিয়ে) */
+    blocks: function () { focusEd(); var bl = leafBlocks(); if (!bl.length) { exec('formatBlock', '<p>', false); bl = leafBlocks(); } return bl; },
+    peekBlocks: function () { return leafBlocks(); },
+    hasSel: function () { return !!lastRange; }
+  };
 
   if (window.PDFonts) { window.PDFonts.onChange(scheduleState); window.PDFonts.load(); }
   paintBars();

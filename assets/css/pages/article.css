@@ -494,3 +494,15 @@ html[data-theme="dark"] .ap-id:hover .ap-cta{color:#0F1415;}
   .article-body figure[data-wrap="1"]{float:none; clear:both; width:100% !important; margin:0 0 22px;}
   .article-body figure[data-w]{width:100%;}
 }
+
+/* উপশিরোনাম (সাব-হেডলাইন) */
+.article-head h1:has(+ .article-subtitle){margin-bottom:12px;}
+.article-subtitle{font-size:21px; line-height:1.6; font-weight:500; color:var(--text-muted); margin:0 0 26px; max-width:62ch;}
+@media(max-width:640px){ .article-subtitle{font-size:17px; margin-bottom:20px;} }
+
+/* ============ অনুচ্ছেদ-নকশা (এডমিন সম্পাদকের "অনুচ্ছেদ" প্যানেল থেকে) ============ */
+/* ড্রপ ক্যাপ: প্রথম অক্ষর ২–৪ লাইন জুড়ে বড় */
+.article-body p[data-dropcap]::first-letter{float:left; font-size:calc(var(--dc-l, 3) * 1.12em); line-height:.86; font-weight:800; color:var(--primary); margin:.06em .14em 0 0;}
+.article-body p[data-dropcap="2"]{--dc-l:2;} .article-body p[data-dropcap="3"]{--dc-l:3;} .article-body p[data-dropcap="4"]{--dc-l:4;}
+/* কলাম: মোবাইলে সবসময় এক কলাম */
+@media(max-width:640px){ .article-body [style*="column-count"]{column-count:1 !important;} }

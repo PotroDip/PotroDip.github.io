@@ -52,7 +52,26 @@
         'text-align': function (v) { return /^(left|right|center|justify)$/.test(v); },
         'line-height': function (v) { return /^\d{1,2}(\.\d+)?(px|em|%)?$/.test(v); },
         'letter-spacing': function (v) { return /^-?\d(\.\d+)?(px|em)$/.test(v); },
-        'margin-left': function (v) { var m = /^(\d{1,3})px$/.exec(v); return !!m && +m[1] <= 240; }
+        'margin-left': function (v) { var m = /^(\d{1,3})px$/.exec(v); return !!m && +m[1] <= 240; },
+        /* v117: ইনডিজাইনের মতো অনুচ্ছেদ-নিয়ন্ত্রণ (এডমিন সম্পাদকের "অনুচ্ছেদ" প্যানেল) */
+        'margin-right': function (v) { var m = /^(\d{1,3})px$/.exec(v); return !!m && +m[1] <= 240; },
+        'margin-top': function (v) { var m = /^(\d{1,3})px$/.exec(v); return !!m && +m[1] <= 160; },
+        'margin-bottom': function (v) { var m = /^(\d{1,3})px$/.exec(v); return !!m && +m[1] <= 160; },
+        'text-indent': function (v) { var m = /^(-?\d{1,3})(\.\d+)?px$/.exec(v); return !!m && Math.abs(+m[1]) <= 240; },
+        'word-spacing': function (v) { return /^-?\d{1,2}(\.\d+)?(px|em)$/.test(v) && Math.abs(parseFloat(v)) <= 40; },
+        'text-align-last': function (v) { return /^(auto|left|right|center|justify)$/.test(v); },
+        'column-count': function (v) { return /^[1-3]$/.test(v); },
+        'column-gap': function (v) { var m = /^(\d{1,2})px$/.exec(v); return !!m && +m[1] <= 80; },
+        'border-top-width': function (v) { return /^(0|[1-8])(\.\d+)?px$/.test(v); },
+        'border-bottom-width': function (v) { return /^(0|[1-8])(\.\d+)?px$/.test(v); },
+        'border-top-style': function (v) { return /^(none|solid|dashed|dotted|double)$/.test(v); },
+        'border-bottom-style': function (v) { return /^(none|solid|dashed|dotted|double)$/.test(v); },
+        'border-top-color': function (v) { return COLOR.test(v) && !BADCOLOR.test(v); },
+        'border-bottom-color': function (v) { return COLOR.test(v) && !BADCOLOR.test(v); },
+        'padding-top': function (v) { var m = /^(\d{1,2})px$/.exec(v); return !!m && +m[1] <= 60; },
+        'padding-bottom': function (v) { var m = /^(\d{1,2})px$/.exec(v); return !!m && +m[1] <= 60; },
+        'padding-left': function (v) { var m = /^(\d{1,2})px$/.exec(v); return !!m && +m[1] <= 60; },
+        'padding-right': function (v) { var m = /^(\d{1,2})px$/.exec(v); return !!m && +m[1] <= 60; }
       };
       function keepStyles(n, el, extra) {
         var st = {}, k, i;
@@ -91,6 +110,8 @@
           }
           if (!name) { clean(n, out); return; }
           var el = document.createElement(name);
+          /* ড্রপ ক্যাপ (২–৪ লাইন) — শুধু অনুচ্ছেদে */
+          if (name === 'p') { var dcap = n.getAttribute('data-dropcap'); if (/^[234]$/.test(dcap || '')) el.setAttribute('data-dropcap', dcap); }
           if (name === 'a') {
             var href = n.getAttribute('href') || '';
             if (!/^(https?:|mailto:)/i.test(href)) { clean(n, out); return; }

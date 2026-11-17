@@ -157,11 +157,20 @@
     fillTitleFont('');
   }
 
+  /* তারিখ → ক্যালেন্ডারের মান (স্থানীয় সময়ে yyyy-mm-dd) */
+  function localDay(iso) { var d = new Date(iso); if (isNaN(d)) return ''; var p = function (n) { return (n < 10 ? '0' : '') + n; }; return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()); }
+  $('art-date-today').addEventListener('click', function () { $('art-date').value = localDay(new Date().toISOString()); });
+  $('art-date-clear').addEventListener('click', function () { $('art-date').value = ''; });
+  /* তারিখের ঘরে চাপলেই ক্যালেন্ডার খোলে */
+  $('art-date').addEventListener('click', function () { try { if (this.showPicker) this.showPicker(); } catch (e) {} });
+
   function openArticle(id) {
     art = { id: id || null, cover: null };
     var a = id ? C.byId(S.articles, id) : null;
     $('article-modal-title').textContent = a ? 'লেখা এডিট করুন' : 'নতুন লেখা প্রকাশ করুন';
     $('art-title').value = a ? a.title : '';
+    $('art-subtitle').value = a && a.subtitle ? a.subtitle : '';
+    $('art-date').value = a && a.published_at ? localDay(a.published_at) : '';
     $('art-body').innerHTML = a ? bodyToHtml(a.body || '') : '';
     /* তালিকায় পুরো লেখা আনা হয় না — এডিট খুললে এখানে আলাদা এনে বসানো হয় */
     if (a && a.body == null) db.from('articles').select('body').eq('id', a.id).single().then(function (r) {
@@ -178,6 +187,7 @@
     setPreview($('art-cover-preview'), a ? a.cover_url : null); $('art-cover-file').value = '';
     /* শিরোনামের ফন্ট: আগে ডিফল্ট, তারপর সেভ করা মান এনে বসানো (কলাম না থাকলে চুপচাপ ডিফল্ট) */
     fillTitleFont(''); 
+    if (a && a.subtitle == null) db.from('articles').select('subtitle').eq('id', a.id).maybeSingle().then(function (r) { if (!r.error && r.data && art.id === a.id) { a.subtitle = r.data.subtitle || ''; $('art-subtitle').value = a.subtitle; } }, function () {});
     if (a) db.from('articles').select('title_font').eq('id', a.id).maybeSingle().then(function (r) { if (!r.error && r.data && art.id === a.id) { var v = r.data.title_font || ''; (window.PDFonts ? PDFonts.load() : Promise.resolve()).then(function () { if (art.id === a.id) fillTitleFont(v); }); } }, function () {});
     syncArt();
     A.openModal('article-modal');
@@ -193,6 +203,16 @@
     var old = art.id ? C.byId(S.articles, art.id) : null;
     var row = { title: title, body: box.innerHTML, excerpt: UI.excerptFrom(box.innerHTML, 220) || text.slice(0, 160), /* লাইন-ব্রেক থাকে — কবিতা কার্ডে কবিতার মতো দেখায় */ category: PD.normCat($('art-cat').value), author_id: $('art-author').value, issue_id: $('art-issue').value || null, home_order: (function (v) { v = parseInt(v, 10); return isNaN(v) || v < 1 ? null : v; })($('art-home-order').value), home_hidden: $('art-home-hidden').checked, hero_order: (function (v) { v = parseInt(v, 10); return isNaN(v) || v < 1 ? null : v; })($('art-hero-order').value), home_featured: false, status: $('art-published').checked ? 'published' : 'draft' };
     if (row.status === 'published' && !(old && old.published_at)) row.published_at = new Date().toISOString();
+    /* কাস্টম তারিখ: ক্যালেন্ডারে বেছে নেওয়া দিন (সময় আগেরটাই থাকে, নতুন হলে এখনকার সময়) */
+    var dv = $('art-date').value;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dv)) {
+      var base = new Date((old && old.published_at) || Date.now()), pp = dv.split('-');
+      if (isNaN(base)) base = new Date();
+      base.setFullYear(+pp[0], +pp[1] - 1, +pp[2]);
+      row.published_at = base.toISOString();
+    }
+    var sub = val('art-subtitle'), subSkipped = false;
+    if (sub || (old && old.subtitle)) row.subtitle = sub || null; /* কলাম না থাকলে নিচে বাদ দিয়ে আবার চেষ্টা */
     var tf = $('art-title-font').value || '', tfSkipped = false; var heroVal = row.hero_order, heroSkipped = false;
     if (tf || old) row.title_font = tf || null; /* কলাম না থাকলে নিচে বাদ দিয়ে আবার চেষ্টা হয় */
     function send() { return old ? db.from('articles').update(row).eq('id', old.id).select('id').single() : db.from('articles').insert(row).select('id').single(); }
@@ -207,6 +227,7 @@
           var m = String(r.error.message || '') + String(r.error.details || '');
           if ('hero_order' in row && /hero_order/i.test(m)) { delete row.hero_order; heroSkipped = heroVal != null; return send().then(drop); }
           if ('title_font' in row && /title_font/i.test(m)) { delete row.title_font; tfSkipped = !!tf; return send().then(drop); }
+          if ('subtitle' in row && /subtitle/i.test(m)) { delete row.subtitle; subSkipped = !!sub; return send().then(drop); }
         }
         return r;
       }
@@ -214,7 +235,7 @@
     }).then(function (r) {
       if (r.error) throw r.error;
       return r;
-    }).then(function () { busy(btn, false); A.closeModal('article-modal'); if (heroSkipped) setTimeout(function () { A.showToast('লেখা সেভ হয়েছে, কিন্তু হিরোর ক্রম সেভ হয়নি — supabase/migrations/20261106_hero_order.sql একবার চালান'); }, 900); if (tfSkipped) setTimeout(function () { A.showToast('লেখা সেভ হয়েছে, কিন্তু শিরোনামের ফন্ট সেভ হয়নি — supabase/migrations/20261105_custom_fonts.sql একবার চালান'); }, 900); A.showToast(old ? 'লেখা হালনাগাদ হয়েছে' : (row.status === 'published' ? 'লেখা প্রকাশিত হয়েছে' : 'ড্রাফট সেভ হয়েছে')); C.refresh(); }).catch(function (e) { busy(btn, false); fail(e); });
+    }).then(function () { busy(btn, false); A.closeModal('article-modal'); if (heroSkipped) setTimeout(function () { A.showToast('লেখা সেভ হয়েছে, কিন্তু হিরোর ক্রম সেভ হয়নি — supabase/migrations/20261106_hero_order.sql একবার চালান'); }, 900); if (subSkipped) setTimeout(function () { A.showToast('লেখা সেভ হয়েছে, কিন্তু উপশিরোনাম সেভ হয়নি — supabase/migrations/20261117_article_subtitle.sql একবার চালান'); }, 1700); if (tfSkipped) setTimeout(function () { A.showToast('লেখা সেভ হয়েছে, কিন্তু শিরোনামের ফন্ট সেভ হয়নি — supabase/migrations/20261105_custom_fonts.sql একবার চালান'); }, 900); A.showToast(old ? 'লেখা হালনাগাদ হয়েছে' : (row.status === 'published' ? 'লেখা প্রকাশিত হয়েছে' : 'ড্রাফট সেভ হয়েছে')); C.refresh(); }).catch(function (e) { busy(btn, false); fail(e); });
   });
   document.querySelectorAll('[data-open-article]').forEach(function (b) { b.addEventListener('click', function () { openArticle(); }); });
 

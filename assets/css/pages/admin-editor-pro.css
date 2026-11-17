@@ -1,0 +1,199 @@
+/* ============================================================
+   admin-editor-pro.css — লেখা সম্পাদক v117
+   ১) দুই স্তরের টুলবার ("আরো টুল")  ২) অনুচ্ছেদ প্যানেল (ইনডিজাইনের মতো)
+   ৩) ওয়ার্ড-স্টাইল ফুল স্ক্রিন (ধূসর ক্যানভাস, সাদা পাতা, টাইটেল-বার, স্ট্যাটাস-বার, খুঁজুন-বদলান)
+   ৪) ড্রপ ক্যাপ ও কলাম (সম্পাদকে প্রিভিউ)
+   ============================================================ */
+
+/* ---------- ১) টুলবার: উপরের সারি + "আরো টুল" সারি ---------- */
+.rte-toolbar{flex-direction:column; align-items:stretch; gap:0;}
+.rt-main{display:flex; align-items:center; flex-wrap:wrap; gap:4px 2px;}
+.rt-more{display:none; align-items:stretch; flex-wrap:wrap; gap:6px 4px; margin-top:6px; padding:8px 2px 2px; border-top:1px dashed var(--border);}
+.rte-toolbar.more-open .rt-more{display:flex; animation:rtMore .18s ease-out;}
+@keyframes rtMore{from{opacity:0; transform:translateY(-3px);}to{opacity:1; transform:none;}}
+.rt-lgroup{flex-direction:column; align-items:flex-start; gap:3px; padding:2px 10px 2px 8px;}
+.rt-lgroup + .rt-lgroup::before{top:4px; bottom:4px;}
+.rt-glabel{font-size:10.5px; font-weight:700; letter-spacing:.03em; color:var(--text-muted); opacity:.8; padding-left:4px;}
+.rt-gbtns{display:flex; align-items:center; gap:1px;}
+.rt-wlbl{font-size:12.5px; font-weight:600; margin-left:2px; white-space:nowrap;}
+.rt-para, .rt-morebtn{padding:0 9px; border:1px solid transparent;}
+.rt-para svg{width:15px; height:15px;}
+.rt-para:hover, .rt-morebtn:hover{border-color:var(--border);}
+.rt-morebtn svg.rt-chev{transition:transform .2s ease;}
+.rte-toolbar.more-open .rt-morebtn svg.rt-chev{transform:rotate(180deg);}
+@media(max-width:1180px){ .rt-wlbl{display:none;} }
+
+/* মোবাইল: দুই সারিই আলাদা করে আঙুলে সরানো যায় */
+@media(max-width:960px){
+  .rte-toolbar{display:flex; flex-wrap:nowrap; overflow:visible;}
+  .rt-main,.rt-more{flex-wrap:nowrap; overflow-x:auto; overflow-y:hidden; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding-right:46px;}
+  .rt-main::-webkit-scrollbar,.rt-more::-webkit-scrollbar{display:none;}
+  .rt-fs{position:absolute; top:6px; right:6px; margin:0;}
+}
+
+/* ---------- ২) অনুচ্ছেদ প্যানেল ---------- */
+.pp-panel{
+  position:absolute; right:10px; top:58px; z-index:45; width:330px; max-height:min(540px, 72vh);
+  display:flex; flex-direction:column; overflow:hidden;
+  background:var(--bg); color:var(--text); border:1px solid var(--border); border-radius:16px;
+  box-shadow:0 24px 50px -18px rgba(0,0,0,.45), 0 2px 8px rgba(0,0,0,.08);
+  animation:ppIn .18s ease-out;
+}
+.pp-panel[hidden]{display:none;}
+@keyframes ppIn{from{opacity:0; transform:translateY(-6px) scale(.985);}to{opacity:1; transform:none;}}
+.pp-head{display:flex; align-items:flex-start; justify-content:space-between; gap:10px; padding:13px 14px 11px; border-bottom:1px solid var(--border); background:linear-gradient(180deg, color-mix(in srgb, var(--primary) 7%, var(--bg)), var(--bg));}
+.pp-head b{display:block; font-size:15px;}
+.pp-head small{display:block; font-size:11.5px; color:var(--text-muted); margin-top:1px;}
+.pp-x{width:30px; height:30px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; color:var(--text-muted); flex-shrink:0;}
+.pp-x:hover{background:var(--surface); color:var(--text);}
+.pp-x svg{width:16px; height:16px;}
+.pp-scroll{overflow-y:auto; padding:4px 0 6px; flex:1; min-height:0; overscroll-behavior:contain;}
+.pp-sec{border-bottom:1px solid color-mix(in srgb, var(--border) 70%, transparent);}
+.pp-sec:last-child{border-bottom:0;}
+.pp-sec > summary{list-style:none; cursor:pointer; padding:10px 14px; font-size:12.5px; font-weight:700; letter-spacing:.02em; color:var(--text); display:flex; align-items:center; justify-content:space-between; user-select:none;}
+.pp-sec > summary::-webkit-details-marker{display:none;}
+.pp-sec > summary::after{content:""; width:7px; height:7px; border-right:1.8px solid var(--text-muted); border-bottom:1.8px solid var(--text-muted); transform:rotate(45deg) translateY(-2px); transition:transform .2s ease;}
+.pp-sec[open] > summary::after{transform:rotate(-135deg) translateY(-1px);}
+.pp-sec > summary:hover{background:var(--surface);}
+.pp-sec-in{padding:2px 14px 13px; display:flex; flex-direction:column; gap:9px;}
+.pp-help{font-size:11.5px; line-height:1.55; color:var(--text-muted); margin:0;}
+
+.pp-presets{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.pp-preset{text-align:left; padding:8px 10px; border:1px solid var(--border); border-radius:10px; background:var(--field-bg); color:var(--text); cursor:pointer; transition:border-color .15s ease, background-color .15s ease, transform .1s ease;}
+.pp-preset b{display:block; font-size:12.5px; line-height:1.35;}
+.pp-preset small{display:block; font-size:10.5px; line-height:1.45; color:var(--text-muted); margin-top:2px;}
+.pp-preset:hover{border-color:var(--primary); background:color-mix(in srgb, var(--primary) 6%, var(--field-bg));}
+.pp-preset:active{transform:scale(.98);}
+
+.pp-seg{display:flex; padding:3px; gap:2px; background:var(--surface); border:1px solid var(--border); border-radius:10px;}
+.pp-seg button{flex:1; min-height:30px; display:inline-flex; align-items:center; justify-content:center; border-radius:7px; font-size:12.5px; font-weight:600; color:var(--text-muted); cursor:pointer; transition:background-color .15s ease, color .15s ease;}
+.pp-seg button svg{width:16px; height:16px;}
+.pp-seg button:hover{color:var(--text);}
+.pp-seg button.on{background:var(--bg); color:var(--primary); box-shadow:0 1px 3px rgba(0,0,0,.12), 0 0 0 1px color-mix(in srgb, var(--primary) 30%, transparent);}
+
+.pp-grid2{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+.pp-grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;}
+.pp-num{display:flex; flex-direction:column; gap:4px; min-width:0;}
+.pp-nlbl, .pp-sel > span{font-size:11px; font-weight:600; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.pp-nbox{display:flex; align-items:center; border:1px solid var(--border); border-radius:8px; background:var(--field-bg); overflow:hidden; transition:border-color .15s ease, box-shadow .15s ease;}
+.pp-nbox:focus-within{border-color:var(--primary); box-shadow:0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent);}
+.pp-nbox input{flex:1; min-width:0; width:100%; border:0; background:transparent; color:var(--text); padding:7px 4px 7px 9px; font:inherit; font-size:13px; font-weight:600; -moz-appearance:textfield;}
+.pp-nbox input:focus{outline:none;}
+.pp-nbox em{font-style:normal; font-size:10.5px; color:var(--text-muted); padding-right:7px; white-space:nowrap;}
+.pp-sel{display:flex; flex-direction:column; gap:4px;}
+.pp-sel select{width:100%; padding:7px 9px; border:1px solid var(--border); border-radius:8px; background:var(--field-bg); color:var(--text); font:inherit; font-size:13px; cursor:pointer;}
+.pp-sel select:focus{outline:none; border-color:var(--primary);}
+.pp-checks{display:flex; gap:14px; flex-wrap:wrap; font-size:13px;}
+.pp-checks label{display:inline-flex; align-items:center; gap:6px; cursor:pointer;}
+.pp-checks input{accent-color:var(--primary); width:15px; height:15px;}
+.pp-swatches{display:flex; gap:7px; flex-wrap:wrap;}
+.pp-swatches button{width:26px; height:26px; border-radius:50%; border:1px solid color-mix(in srgb, var(--text) 18%, transparent); cursor:pointer; position:relative; transition:transform .15s ease;}
+.pp-swatches button:hover{transform:scale(1.1);}
+.pp-swatches button.on{box-shadow:0 0 0 2px var(--bg), 0 0 0 4px var(--primary);}
+.pp-swatches button.none{background:linear-gradient(135deg, transparent 46%, #d33 46%, #d33 54%, transparent 54%), var(--field-bg);}
+.pp-foot{padding:10px 14px; border-top:1px solid var(--border); background:var(--bg);}
+.pp-reset{display:flex; align-items:center; justify-content:center; gap:7px; width:100%; padding:9px; border-radius:10px; font-size:13px; font-weight:600; color:var(--text-muted); border:1px dashed var(--border); cursor:pointer;}
+.pp-reset svg{width:15px; height:15px;}
+.pp-reset:hover{color:var(--error, #B3261E); border-color:currentColor;}
+.rte-wrap.pp-open .rt-para{border-color:color-mix(in srgb, var(--primary) 35%, transparent);}
+
+@media(max-width:960px){
+  .pp-panel{position:fixed; left:0; right:0; bottom:0; top:auto; width:auto; max-height:62vh; border-radius:18px 18px 0 0; z-index:1350;}
+}
+
+/* ---------- ৩) ওয়ার্ড-স্টাইল ফুল স্ক্রিন ---------- */
+.fsw-head, .fsw-find, .fsw-status{display:none;}
+.fsw-find[hidden]{display:none !important;}
+
+.rte-wrap.is-full{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto;
+  grid-template-rows:auto auto auto minmax(0,1fr) auto;
+  grid-template-areas:"head head" "find find" "tb tb" "canvas panel" "meta meta";
+  background:#E8E4DC;
+}
+html[data-theme="dark"] .rte-wrap.is-full{background:#0C1011;}
+.rte-wrap.is-full .fsw-head{grid-area:head; display:flex;}
+.rte-wrap.is-full .fsw-find{grid-area:find; display:flex;}
+.rte-wrap.is-full .rte-toolbar{grid-area:tb; justify-content:center; padding:8px 14px !important; background:var(--bg); box-shadow:0 1px 0 var(--border), 0 6px 16px -14px rgba(0,0,0,.4) !important; z-index:2;}
+.rte-wrap.is-full .rt-main, .rte-wrap.is-full .rt-more{justify-content:center;}
+.rte-wrap.is-full .rt-fs{display:none;}
+.rte-wrap.is-full .fsw-canvas{grid-area:canvas; overflow:auto; padding:34px 28px 70px; min-height:0; scroll-behavior:smooth;}
+.rte-wrap.is-full .pp-panel{grid-area:panel; position:static; width:330px; max-height:none; border-radius:0; border-width:0 0 0 1px; box-shadow:-10px 0 24px -22px rgba(0,0,0,.5); animation:none;}
+.rte-wrap.is-full .rte-meta{grid-area:meta; display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
+.rte-wrap.is-full .fsw-status{display:flex; align-items:center; gap:16px; margin-left:auto;}
+.rte-wrap.is-full .rte-meta .rte-tip{display:none;}
+
+/* সাদা পাতা */
+.rte-wrap.is-full .fsw-canvas .rte-body{
+  flex:none; overflow:visible; border:0; border-radius:3px; min-height:1056px;
+  width:100%; max-width:816px; margin:0 auto; padding:96px 92px 110px;
+  background:#FFFFFF; color:#1E1E1C; font-size:17px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.08), 0 18px 40px -18px rgba(0,0,0,.35);
+  transform-origin:top center;
+}
+.rte-wrap.is-full[data-page="web"] .fsw-canvas .rte-body{max-width:780px; padding:56px 48px 90px; min-height:80vh;}
+.rte-wrap.is-full[data-page="wide"] .fsw-canvas .rte-body{max-width:none; padding:48px 6vw 90px; min-height:100%;}
+html[data-theme="dark"] .rte-wrap.is-full .fsw-canvas .rte-body{background:#1A2123; color:#E8E4DA; box-shadow:0 0 0 1px rgba(255,255,255,.06), 0 18px 40px -18px rgba(0,0,0,.8);}
+.rte-wrap.is-full .fsw-canvas .rte-body[data-empty="1"]::before{left:92px; top:96px; right:92px;}
+.rte-wrap.is-full[data-page="web"] .fsw-canvas .rte-body[data-empty="1"]::before{left:48px; top:56px;}
+.rte-wrap.is-full[data-page="wide"] .fsw-canvas .rte-body[data-empty="1"]::before{left:6vw; top:48px;}
+
+/* টাইটেল-বার */
+.fsw-head{align-items:center; justify-content:space-between; gap:14px; padding:8px 14px; background:linear-gradient(180deg, #1F5459, #184549); color:#fff;}
+.fsw-doc{display:flex; align-items:center; gap:10px; min-width:0;}
+.fsw-doc > svg{width:22px; height:22px; flex-shrink:0; color:#E9CB98;}
+.fsw-doc b{display:block; font-size:14.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:42vw;}
+.fsw-doc small{display:block; font-size:11px; opacity:.72; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:42vw;}
+.fsw-tools, .fsw-end{display:flex; align-items:center; gap:4px;}
+.fsw-btn{height:34px; min-width:34px; padding:0 9px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; gap:7px; color:#fff; font-size:13px; font-weight:600; cursor:pointer; transition:background-color .15s ease;}
+.fsw-btn svg{width:17px; height:17px;}
+.fsw-btn:hover{background:rgba(255,255,255,.14);}
+.fsw-btn:focus-visible, .fsw-save:focus-visible{outline:2px solid #E9CB98; outline-offset:2px;}
+.fsw-sep{width:1px; height:20px; background:rgba(255,255,255,.22); margin:0 4px;}
+.fsw-save{height:34px; padding:0 15px; border-radius:999px; display:inline-flex; align-items:center; gap:7px; background:#E9CB98; color:#1E2A2B; font-size:13.5px; font-weight:700; cursor:pointer; box-shadow:0 6px 14px -8px rgba(0,0,0,.6); transition:transform .2s ease, box-shadow .2s ease;}
+.fsw-save svg{width:16px; height:16px;}
+.fsw-save:hover{transform:translateY(-1px); box-shadow:0 10px 18px -10px rgba(0,0,0,.7);}
+
+/* খুঁজুন ও বদলান */
+.fsw-find{align-items:center; flex-wrap:wrap; gap:6px; padding:8px 14px; background:var(--surface); border-bottom:1px solid var(--border); font-size:13px;}
+.fsw-fin{display:flex; align-items:center; gap:6px; padding:0 10px; height:34px; border:1px solid var(--border); border-radius:9px; background:var(--field-bg); min-width:200px; flex:0 1 260px;}
+.fsw-fin svg{width:15px; height:15px; color:var(--text-muted); flex-shrink:0;}
+.fsw-fin:focus-within{border-color:var(--primary); box-shadow:0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent);}
+.fsw-fin input{border:0; background:transparent; color:var(--text); font:inherit; font-size:13.5px; width:100%; min-width:0;}
+.fsw-fin input:focus{outline:none;}
+.fsw-count{font-size:12px; color:var(--text-muted); min-width:72px;}
+.fsw-count.none{color:var(--error, #B3261E);}
+.fsw-find button{height:34px; min-width:34px; padding:0 12px; border-radius:9px; border:1px solid var(--border); background:var(--bg); color:var(--text); font:inherit; font-size:13px; font-weight:600; cursor:pointer;}
+.fsw-find button:hover{border-color:var(--primary); color:var(--primary);}
+.fsw-find .fsw-fx{margin-left:auto; padding:0; display:inline-flex; align-items:center; justify-content:center; border-color:transparent; background:transparent;}
+.fsw-find .fsw-fx svg{width:16px; height:16px;}
+
+/* স্ট্যাটাস-বার: পাতার মাপ ও জুম */
+.fsw-pages{display:flex; padding:2px; border:1px solid var(--border); border-radius:8px; background:var(--surface);}
+.fsw-pages button{padding:3px 10px; border-radius:6px; font-size:12px; font-weight:600; color:var(--text-muted); cursor:pointer;}
+.fsw-pages button.on{background:var(--bg); color:var(--primary); box-shadow:0 1px 2px rgba(0,0,0,.12);}
+.fsw-zoom{display:flex; align-items:center; gap:6px;}
+.fsw-zoom button{width:24px; height:24px; border-radius:6px; font-size:16px; font-weight:700; color:var(--text-muted); display:inline-flex; align-items:center; justify-content:center; cursor:pointer;}
+.fsw-zoom button:hover{background:var(--surface); color:var(--text);}
+.fsw-zoom input[type="range"]{width:120px; accent-color:var(--primary);}
+.fsw-zoom b{font-size:12px; min-width:40px; text-align:right; color:var(--text-muted);}
+
+@media(max-width:960px){
+  .rte-wrap.is-full{grid-template-columns:minmax(0,1fr); grid-template-areas:"head" "find" "tb" "canvas" "meta";}
+  .rte-wrap.is-full .pp-panel{position:fixed; grid-area:auto; width:auto; border-radius:18px 18px 0 0; border-width:1px 0 0; max-height:62vh; box-shadow:0 -20px 40px -20px rgba(0,0,0,.5);}
+  .rte-wrap.is-full .fsw-canvas{padding:0;}
+  .rte-wrap.is-full .fsw-canvas .rte-body, .rte-wrap.is-full[data-page] .fsw-canvas .rte-body{max-width:none; min-height:100%; padding:22px 16px 80px; border-radius:0; box-shadow:none; zoom:1 !important;}
+  .rte-wrap.is-full .fsw-canvas .rte-body[data-empty="1"]::before, .rte-wrap.is-full[data-page] .fsw-canvas .rte-body[data-empty="1"]::before{left:16px; top:22px;}
+  .fsw-tools .fsw-wide span, .fsw-save span{display:none;}
+  .fsw-save{padding:0 11px;}
+  .fsw-doc small{display:none;}
+  .rte-wrap.is-full .fsw-status{display:none;}
+  .fsw-fin{min-width:0; flex:1 1 140px;}
+}
+
+/* ---------- ৪) ড্রপ ক্যাপ ও কলাম (সম্পাদকে) ---------- */
+.rte-body p[data-dropcap]::first-letter{float:left; font-size:calc(var(--dc-l, 3) * 1.12em); line-height:.86; font-weight:800; color:var(--primary); margin:.06em .14em 0 0;}
+.rte-body p[data-dropcap="2"]{--dc-l:2;} .rte-body p[data-dropcap="3"]{--dc-l:3;} .rte-body p[data-dropcap="4"]{--dc-l:4;}
+.rte-wrap.is-full .fsw-canvas .rte-body p[data-dropcap]::first-letter{color:#1F5459;}
+html[data-theme="dark"] .rte-wrap.is-full .fsw-canvas .rte-body p[data-dropcap]::first-letter{color:#7CC4BF;}

@@ -95,6 +95,12 @@
     var cv = document.querySelector('.cover-media img'); cv.src = UI.cover(a.cover_url); cv.alt = a.title;
     var badge = document.querySelector('.cover-media .cat-badge'); if (a.category) badge.textContent = a.category; else badge.remove();
     UI.set(document, '.article-head h1', a.title);
+    /* উপশিরোনাম (সাব-হেডলাইন) — থাকলে শিরোনামের ঠিক নিচে */
+    if (a.subtitle && String(a.subtitle).trim()) {
+      var h1s = document.querySelector('.article-head h1'), sp = document.createElement('p');
+      sp.className = 'article-subtitle'; sp.textContent = String(a.subtitle).trim();
+      if (h1s) h1s.insertAdjacentElement('afterend', sp);
+    }
     /* v82: শিরোনামের ফন্ট + লেখায় ব্যবহৃত নিজের ফন্টগুলো লোড (শুধু যেগুলো লাগে) */
     (function () {
       var PF = window.PDFonts, h1 = document.querySelector('.article-head h1');

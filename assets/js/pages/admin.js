@@ -45,8 +45,8 @@
   function ok(r) { if (r && r.error) { A.showToast(PD.msg(r.error)); return false; } return true; }
   function byId(list, id) { return list.filter(function (x) { return x.id === id; })[0]; }
   function authorName(id) { var a = byId(S.authors, id); return a ? a.name : '—'; }
-  function ostatus(o) { return o.payment_status === 'verified' || o.payment_status === 'delivered' ? o.payment_status : 'pending'; }
-  var STATUS_LABEL = { pending: 'যাচাই বাকি', verified: 'যাচাই হয়েছে', delivered: 'ডেলিভারি হয়েছে' };
+  function ostatus(o) { return o.payment_status === 'verified' || o.payment_status === 'delivered' || o.payment_status === 'cancelled' ? o.payment_status : 'pending'; }
+  var STATUS_LABEL = { pending: 'যাচাই বাকি', verified: 'যাচাই হয়েছে', delivered: 'ডেলিভারি হয়েছে', cancelled: 'বাতিল' };
   function ago(iso) {
     var m = Math.max(0, Math.round((Date.now() - new Date(iso)) / 60000));
     if (m < 2) return 'এইমাত্র';
@@ -243,19 +243,46 @@
   var ordFilter = 'all';
   function renderOrders() {
     var by = {}; S.items.forEach(function (i) { (by[i.order_id] = by[i.order_id] || []).push(i); });
-    var c = { pending: 0, verified: 0, delivered: 0 }; S.orders.forEach(function (o) { c[ostatus(o)]++; });
+    var c = { pending: 0, verified: 0, delivered: 0, cancelled: 0 }; S.orders.forEach(function (o) { c[ostatus(o)]++; });
     $('stat-total-orders').textContent = UI.bn(S.orders.length); $('stat-pending-orders').textContent = UI.bn(c.pending); $('stat-verified-orders').textContent = UI.bn(c.verified); $('stat-delivered-orders').textContent = UI.bn(c.delivered);
     var list = S.orders.filter(function (o) { return ordFilter === 'all' || ostatus(o) === ordFilter; });
     $('orders-tbody').innerHTML = list.length ? list.map(function (o) {
       var its = by[o.id] || [], qty = its.reduce(function (s, i) { return s + i.quantity; }, 0), st = ostatus(o);
-      return H`<tr><td>#${o.order_number}</td><td class="wrap-cell"><strong>${o.customer_name}</strong><span>${o.phone}</span></td><td>${its.map(function (i) { return i.title_snapshot; }).join(', ')}</td><td>${UI.bn(qty)} কপি</td><td>${A.bnTaka(Number(o.delivery_charge || 0))}</td><td>${o.transaction_id || ''}</td><td><select class="status-select" data-id="${o.id}">${raw(['pending', 'verified', 'delivered'].map(function (k) { return H`<option value="${k}"${raw(st === k ? ' selected' : '')}>${STATUS_LABEL[k]}</option>`; }).join(''))}</select></td></tr>`;
-    }).join('') : '<tr><td colspan="7"><div class="empty-row-note">কোনো অর্ডার নেই।</div></td></tr>';
+      return H`<tr><td>#${o.order_number}</td><td class="wrap-cell"><strong>${o.customer_name}</strong><span>${o.phone}</span></td><td>${its.map(function (i) { return i.title_snapshot; }).join(', ')}</td><td>${UI.bn(qty)} কপি</td><td>${A.bnTaka(Number(o.delivery_charge || 0))}</td><td>${o.transaction_id || ''}</td><td><select class="status-select st-${st}" data-id="${o.id}">${raw(['pending', 'verified', 'delivered', 'cancelled'].map(function (k) { return H`<option value="${k}"${raw(st === k ? ' selected' : '')}>${STATUS_LABEL[k]}</option>`; }).join(''))}</select></td><td><div class="row-actions"><button type="button" class="icon-btn-sm danger" data-del-order="${o.id}" title="অর্ডার মুছে ফেলুন">${raw(ICON.del)}</button></div></td></tr>`;
+    }).join('') : '<tr><td colspan="8"><div class="empty-row-note">কোনো অর্ডার নেই।</div></td></tr>';
   }
   $('order-filters').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; this.querySelectorAll('button').forEach(function (x) { x.classList.remove('active'); }); b.classList.add('active'); ordFilter = b.dataset.filter; renderOrders(); });
   $('orders-tbody').addEventListener('change', function (e) {
     var sel = e.target.closest('.status-select'); if (!sel) return;
     var o = byId(S.orders, sel.dataset.id), v = sel.value;
-    PD.db.from('orders').update({ payment_status: v }).eq('id', o.id).then(function (r) { if (ok(r)) { o.payment_status = v; renderOrders(); renderDashboard(); A.showToast('অর্ডার #' + o.order_number + '-এর স্ট্যাটাস "' + STATUS_LABEL[v] + '" করা হয়েছে'); } else sel.value = ostatus(o); });
+    PD.db.from('orders').update({ payment_status: v }).eq('id', o.id).then(function (r) {
+      if (r.error && v === 'cancelled' && /check|constraint|invalid input/i.test(String(r.error.message || ''))) { sel.value = ostatus(o); return A.showToast('ডাটাবেস এখনো "বাতিল" স্ট্যাটাস চেনে না — supabase/migrations/20261117_order_cancel_delete.sql একবার চালান'); }
+      if (ok(r)) { o.payment_status = v; renderOrders(); renderDashboard(); A.showToast('অর্ডার #' + o.order_number + '-এর স্ট্যাটাস "' + STATUS_LABEL[v] + '" করা হয়েছে'); } else sel.value = ostatus(o); });
+  });
+
+  /* অর্ডার মুছে ফেলা: আগে ডাটাবেস ফাংশন (pd_admin_delete_order), না থাকলে সরাসরি মোছার চেষ্টা;
+     কিছুই না মুছলে (ডাটাবেসের নিয়মে আটকালে) SQL চালানোর নির্দেশনা দেখায় */
+  $('orders-tbody').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-del-order]'); if (!b) return;
+    var o = byId(S.orders, b.dataset.delOrder); if (!o) return;
+    A.showConfirm('অর্ডার #' + o.order_number + ' মুছে ফেলবেন?', o.customer_name + '-এর এই অর্ডার ও এর সব আইটেম স্থায়ীভাবে মুছে যাবে, ফেরানো যাবে না। শুধু বন্ধ রাখতে চাইলে স্ট্যাটাস "বাতিল" করুন।', function () {
+      b.disabled = true;
+      var db = PD.db;
+      function gone() {
+        S.orders = S.orders.filter(function (x) { return x.id !== o.id; });
+        S.items = S.items.filter(function (x) { return x.order_id !== o.id; });
+        renderOrders(); renderDashboard(); updateBadges();
+        A.showToast('অর্ডার #' + o.order_number + ' মুছে ফেলা হয়েছে');
+      }
+      function blocked() { b.disabled = false; A.showToast('ডাটাবেস অর্ডার মুছতে দিচ্ছে না — supabase/migrations/20261117_order_cancel_delete.sql একবার চালান'); }
+      db.rpc('pd_admin_delete_order', { p_id: o.id }).then(function (r) {
+        if (!r.error) return gone();
+        if (!/pd_admin_delete_order|function|schema cache|PGRST202/i.test(String(r.error.message || '') + ' ' + String(r.error.code || ''))) { b.disabled = false; return A.showToast(r.error.message || 'মোছা যায়নি'); }
+        return db.from('order_items').delete().eq('order_id', o.id).then(function () {
+          return db.from('orders').delete().eq('id', o.id).select('id');
+        }).then(function (r2) { if (!r2.error && r2.data && r2.data.length) gone(); else blocked(); });
+      }).catch(function () { blocked(); });
+    });
   });
 
   /* ---------- বিজ্ঞাপন ---------- */

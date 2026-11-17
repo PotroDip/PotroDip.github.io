@@ -1491,3 +1491,9 @@ html[data-theme="dark"] .act-badge{color:#0B1517;}
 .social-row.one .soc-ico svg{width:18px; height:18px;}
 .fp-ok{margin:14px 0 0; padding:9px 12px; border-radius:12px; font-size:13px; font-weight:600; color:var(--stock-ok); background:color-mix(in srgb, var(--stock-ok) 10%, transparent); border:1px solid color-mix(in srgb, var(--stock-ok) 28%, transparent);}
 .fp-ok[hidden]{display:none;}
+
+/* অর্ডার বাতিল (এডমিন বাতিল করলে ইউজারের ড্যাশবোর্ডে) */
+.oc-status.s-cancelled{background:color-mix(in srgb, #B3261E 12%, transparent);color:#B3261E !important;}
+html[data-theme="dark"] .oc-status.s-cancelled{color:#F2B8B5 !important;}
+.oc-cancel{margin:4px 0 14px;padding:10px 14px;border-radius:10px;font-size:13.5px;line-height:1.6;color:#B3261E;background:color-mix(in srgb, #B3261E 8%, transparent);}
+html[data-theme="dark"] .oc-cancel{color:#F2B8B5;}

@@ -9,7 +9,8 @@
 <meta name="description" content="পত্রদ্বীপ এডমিন প্যানেল।">
 <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
 <link href="assets/css/base.css?v=2" rel="stylesheet"/>
-<link href="assets/css/pages/admin.css?v=3" rel="stylesheet"/>
+<link href="assets/css/pages/admin.css?v=4" rel="stylesheet"/>
+<link href="assets/css/pages/admin-editor-pro.css?v=1" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/css/components/scroll-top.css">
 </head>
 <body>
@@ -188,11 +189,12 @@
 <button data-filter="pending">যাচাই বাকি</button>
 <button data-filter="verified">যাচাই হয়েছে</button>
 <button data-filter="delivered">ডেলিভারি হয়েছে</button>
+<button data-filter="cancelled">বাতিল</button>
 </div>
 </div>
 <div style="overflow-x:auto;">
 <table class="data-table">
-<thead><tr><th>অর্ডার নম্বর</th><th>ক্রেতা</th><th>সংখ্যা</th><th>পরিমাণ</th><th>মোট (ডেলিভারি)</th><th>ট্রানজেকশন আইডি</th><th>স্ট্যাটাস</th></tr></thead>
+<thead><tr><th>অর্ডার নম্বর</th><th>ক্রেতা</th><th>সংখ্যা</th><th>পরিমাণ</th><th>মোট (ডেলিভারি)</th><th>ট্রানজেকশন আইডি</th><th>স্ট্যাটাস</th><th aria-label="মুছুন"></th></tr></thead>
 <tbody id="orders-tbody"></tbody>
 </table>
 </div>
@@ -449,6 +451,8 @@
 <div class="art-block" id="fr-title">
 <div class="art-label-row"><label class="art-label" for="art-title">শিরোনাম <em class="req">*</em></label><label class="title-font-pick" for="art-title-font">শিরোনামের ফন্ট<select id="art-title-font" aria-label="শিরোনামের ফন্ট"><option value="">নোটো সেরিফ বাংলা (ডিফল্ট)</option></select></label></div>
 <input class="art-title-input" id="art-title" maxlength="160" placeholder="যেমন: আল্লাহকে চিনার উপায়" type="text"/>
+<label class="art-sub-label" for="art-subtitle">উপশিরোনাম / সাব-হেডলাইন <small>(ঐচ্ছিক — শিরোনামের ঠিক নিচে ছোট করে দেখাবে)</small></label>
+<input class="art-subtitle-input" id="art-subtitle" maxlength="240" placeholder="যেমন: একটি ছোট্ট ভাবনা, যা বদলে দিতে পারে দৃষ্টিভঙ্গি" type="text"/>
 </div>
 <div class="art-block" id="fr-body">
 <label class="art-label">লেখার মূল অংশ <em class="req">*</em></label>
@@ -462,6 +466,11 @@
 <div class="art-side">
 <section class="art-card art-publish">
 <div class="stock-toggle-row"><span>এখনই প্রকাশ করুন<small>বন্ধ থাকলে ড্রাফট হিসেবে সেভ হবে</small></span><label class="switch"><input checked="" id="art-published" type="checkbox"/><span class="track"></span></label></div>
+<div class="art-date-row">
+<label class="art-date-label" for="art-date"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>প্রকাশের তারিখ</label>
+<div class="art-date-ctl"><input class="art-num art-date" id="art-date" type="date"/><button class="art-date-today" id="art-date-today" type="button">আজ</button><button class="art-date-clear" id="art-date-clear" type="button" title="তারিখ মুছুন" aria-label="তারিখ মুছুন">✕</button></div>
+<small class="art-date-hint">ক্যালেন্ডার থেকে যেকোনো তারিখ বেছে নিন — সাইটে লেখার তারিখ হিসেবে এটাই দেখাবে। খালি রাখলে প্রকাশের দিনের তারিখ বসবে।</small>
+</div>
 </section>
 <section class="art-card" id="fr-author">
 <div class="art-card-head"><span class="art-ico"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><h4>লেখক <em class="req">*</em></h4><button class="mini-add" id="art-author-new" type="button"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.4" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>নতুন লেখক</button></div>
@@ -716,10 +725,11 @@
 <script src="assets/vendor/firebase/firebase-auth-compat.js"></script>
 <script src="assets/vendor/firebase/firebase-storage-compat.js"></script>
 <script src="assets/js/core/firebase.js"></script>
-<script src="assets/js/core/ui.js?v=2"></script>
+<script src="assets/js/core/ui.js?v=3"></script>
 <script src="assets/js/pages/admin-shell.js"></script>
-<script src="assets/js/pages/admin-editor.js"></script>
-<script src="assets/js/pages/admin.js?v=2"></script>
+<script src="assets/js/pages/admin-editor.js?v=2"></script>
+<script src="assets/js/pages/admin-editor-pro.js?v=1"></script>
+<script src="assets/js/pages/admin.js?v=3"></script>
 <script src="assets/js/pages/admin-forms.js?v=3"></script>
 <script src="assets/js/pages/admin-fonts.js"></script>
 <script src="assets/js/pages/admin-cleanup.js"></script>
