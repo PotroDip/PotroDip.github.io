@@ -1029,3 +1029,7 @@ html[data-theme="dark"] .issue-card .issue-price{color:var(--primary-dark);}
 
 /* মূল্য-বাটন সারি সবসময় কার্ডের তলায় (মোবাইলের পুরোনো নিয়ম বদলে) */
 .issue-card .issue-meta{margin-top:auto;}
+
+/* গতি/স্থিরতা: বিশেষ সংখ্যার ব্যান্ড ডেটা আসার আগেই নিজের জায়গা নিয়ে রাখে — নিচের অংশ পরে লাফিয়ে নামে না */
+.issue-band.pd-pending{min-height:632px;}
+@media(max-width:860px){.issue-band.pd-pending{min-height:760px;}}

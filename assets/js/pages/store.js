@@ -793,6 +793,7 @@
     if (!box) return;
     var list = items.filter(function(x) { return x.in_stock; });
     var p = list.sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); })[0];
+    box.classList.remove('pd-pending'); /* জায়গা আগে থেকেই রাখা ছিল (CLS) */
     if (!p) return box.remove();
     var arrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
     var chk = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
@@ -831,6 +832,7 @@
   if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'assets/vendor/pdfjs/pdf.worker.min.js';
   if (!PD || !PD.db) {
     gridMsg('সংযোগ করা যায়নি। ইন্টারনেট যাচাই করে আবার চেষ্টা করুন।');
+    var fb0 = document.getElementById('storeFeature'); if (fb0) fb0.remove();
   } else {
     Promise.all([
       PD.db.from('print_issues').select('id,issue_id,title,teaser,cover_url,price,in_stock,preview_pdf_url,sort_order,created_at').order('sort_order', {
@@ -841,6 +843,7 @@
     ]).then(function(r) {
       if (r[0].error) {
         gridMsg('সংখ্যাগুলো লোড করা যায়নি');
+        var fb = document.getElementById('storeFeature'); if (fb) fb.remove(); /* রাখা জায়গা ফাঁকা পড়ে না থাকে */
         return;
       }
       var items = r[0].data || [],
