@@ -93,7 +93,8 @@ input, select, textarea{font-family:inherit;}
 
 .sidebar-brand-text .wordmark-logo{display:block; margin:0 auto; width:102px; max-width:100%; color:#fff; line-height:0;}
 
-.sidebar-brand-text .wordmark-logo svg{width:100%; height:auto; display:block; filter:brightness(0) invert(1);}
+.sidebar-brand-text .wordmark-logo svg{width:100%; height:auto; display:block;}
+.sidebar-brand-text .wordmark-logo svg path:not([fill="#9B7357"]){fill:#fff;} /* পাতা ব্র্যান্ড রঙে */
 
 .sidebar-brand-text .sub{font-size:11.5px; color:rgba(242,239,232,.55); margin-top:5px;}
 

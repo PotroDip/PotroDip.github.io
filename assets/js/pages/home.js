@@ -289,10 +289,12 @@
       return '<article class="article-card" data-id="' + a.id + '"><a class="ac-link" href="article.html?id=' + a.id + '"><div class="thumb"><img decoding="async" src="' + esc(a.cover_url || PH) + '" alt="" loading="lazy">' + (a.category ? '<span class="ac-cat">' + esc(a.category) + '</span>' : '') + '</div><div class="ac-body"><h3>' + esc(a.title) + '</h3><p>' + esc(cut(a.excerpt, 120)) + '</p><div class="card-meta">' + im(au(a)) + '<span class="cm-name">' + esc(au(a).name) + '</span><span class="cm-date">' + dt(a.published_at || a.created_at) + '</span></div></div></a></article>'
   }
   /* v93: প্রতিটা সেকশনে প্রথমে সর্বোচ্চ ৬টা কার্ড; বেশি লেখা থাকলে লাইনের ডানে "আরো দেখুন" (চাপলে আরও ৬টা, সব দেখানো হলে "কম দেখুন") */
-  var PER = 6,
+  var PER_DEF = 6,
     MORE_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
 
-  function pager(head, gridEl, list) {
+  /* per: প্রথমে কয়টা কার্ড ও প্রতি ক্লিকে কয়টা বাড়বে (সাম্প্রতিক লেখা ৬, বিভাগ-সেকশন ৩ = এক সারি) */
+  function pager(head, gridEl, list, per) {
+    var PER = per || PER_DEF;
     var shown = Math.min(PER, list.length),
       btn = head.querySelector('.sec-more');
     gridEl.innerHTML = list.slice(0, shown).map(card).join('');
@@ -394,7 +396,7 @@
       return '<section class="cat-sec" data-cat="' + esc(c) + '"><div class="section-head"><h2>' + esc(c) + '</h2></div><div class="article-grid"></div></section>'
     }).join('');
     [].forEach.call(box.querySelectorAll('.cat-sec'), function(sec) {
-      pager(sec.querySelector('.section-head'), sec.querySelector('.article-grid'), by[sec.dataset.cat])
+      pager(sec.querySelector('.section-head'), sec.querySelector('.article-grid'), by[sec.dataset.cat], 3)
     })
   }
   await catSections();

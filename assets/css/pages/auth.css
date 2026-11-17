@@ -599,7 +599,7 @@ html[data-theme="dark"] .confirm-danger:hover{background:#c65243;}
 
 .npo-logo-badge svg{width:100%; height:auto; display:block;}
 
-html[data-theme="dark"] #npo-brand-logo{filter:brightness(0) invert(1);}
+html[data-theme="dark"] #npo-brand-logo path:not([fill="#9B7357"]){fill:#fff;} /* পাতা ব্র্যান্ড রঙে */
 
 .npo-bell{
     position:absolute; bottom:-8px; right:-8px; width:28px; height:28px; border-radius:50%;

@@ -395,7 +395,9 @@ body.home-cards .section-head{
 }
 body.home-cards .section-head::after{
   content:"";grid-area:1/1/2/-1;align-self:center;height:1px;z-index:0;pointer-events:none;
-  background:linear-gradient(90deg,transparent,color-mix(in srgb, var(--primary) 45%, transparent) 18%,color-mix(in srgb, var(--primary) 45%, transparent) 82%,transparent);
+  /* পুরোনো ব্রাউজারে (color-mix নেই) সাধারণ রং; নতুনে দুই প্রান্তে সামান্য মিলিয়ে যায় */
+  background:var(--border);
+  background:linear-gradient(90deg,transparent,color-mix(in srgb, var(--primary) 50%, transparent) 7%,color-mix(in srgb, var(--primary) 50%, transparent) 93%,transparent);
 }
 body.home-cards .section-head h2{
   grid-area:1/2;justify-self:center;position:relative;z-index:1;

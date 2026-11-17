@@ -213,10 +213,11 @@ html[data-theme="dark"] .free-badge{color:#123A3D;}
     margin-bottom:10px;
   }
 
+/* লোগো: অক্ষর সাদা, কিন্তু "প"-এর উপরের পাতা (#9B7357) সবসময় ব্র্যান্ডের আসল রঙে */
 .footer-logo-mark svg{
     height:100%;width:auto;display:block;
-    filter:brightness(0) invert(1) opacity(.92);
   }
+.footer-logo-mark svg path:not([fill="#9B7357"]){fill:rgba(255,255,255,.94);}
 
 .footer-cols p{font-size:14px;color:rgba(242,239,232,.8);max-width:32ch;}
 
@@ -248,9 +249,8 @@ html[data-theme="dark"] .free-badge{color:#123A3D;}
 
 .copyright-logo-mark svg{
     height:100%;width:auto;display:block;
-    filter:brightness(0) invert(1);
-    opacity:.75;
   }
+.copyright-logo-mark svg path:not([fill="#9B7357"]){fill:rgba(255,255,255,.75);}
 
 /* ============ ডেভেলপার ক্রেডিট (Developed by Gunjoron IT) ============ */
   .dev-credit{

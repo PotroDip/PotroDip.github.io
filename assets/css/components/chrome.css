@@ -92,7 +92,8 @@ footer.site-footer::before{
 
 /* ব্র্যান্ড + যোগাযোগ (v11: লিংক কলাম বাদ — হেডারেই আছে) */
 .site-footer .footer-logo-mark{display:block;height:46px;width:fit-content;margin-bottom:16px;line-height:0;}
-.site-footer .footer-logo-mark svg{height:100%;width:auto;display:block;filter:brightness(0) invert(1) opacity(.95);}
+.site-footer .footer-logo-mark svg{height:100%;width:auto;display:block;filter:none;}
+.site-footer .footer-logo-mark svg path:not([fill="#9B7357"]){fill:rgba(255,255,255,.95);}
 
 .site-footer .footer-main{display:flex;align-items:center;justify-content:space-between;gap:28px 48px;margin-bottom:44px;}
 .site-footer .fm-brand{min-width:0;}
@@ -108,9 +109,14 @@ footer.site-footer::before{
   .site-footer .footer-social{justify-content:center;}
 }
 .footer-social{display:flex;gap:10px;flex-wrap:wrap;}
-.footer-social .soc{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(242,239,232,.25);color:#F2EFE8;transition:background-color .2s ease,border-color .2s ease,transform .2s ease;}
-.footer-social .soc:hover{background:#F2EFE8;color:#123A3D;border-color:#F2EFE8;transform:translateY(-2px);}
-.footer-social .soc svg{width:17px;height:17px;}
+/* সোশ্যাল আইকন: আসল ব্র্যান্ড লোগো (ভেক্টর) নিজস্ব রঙে, সাদা গোল চাকতির ওপর */
+.footer-social .soc{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:0;background:#fff;
+  box-shadow:0 6px 14px -6px rgba(0,0,0,.45),inset 0 0 0 1px rgba(0,0,0,.04);
+  transition:transform .3s cubic-bezier(.3,1.35,.5,1),box-shadow .3s ease;}
+.footer-social .soc:hover{transform:translateY(-3px) scale(1.06);box-shadow:0 12px 22px -8px rgba(0,0,0,.55),0 0 0 3px rgba(233,203,152,.35);}
+.footer-social .soc:focus-visible{outline:2px solid #E9CB98;outline-offset:3px;}
+.footer-social .soc svg{width:21px;height:21px;display:block;}
+.footer-social .soc-mail svg,.footer-social .soc-phone svg{width:20px;height:20px;}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
 
 /* নিচের সারি */
@@ -173,7 +179,10 @@ footer.site-footer::before{
 #mobile-menu .mm-head{padding:6px 20px;}
 #mobile-menu .mm-logo{flex:1;min-width:0;display:flex;align-items:center;}
 #mobile-menu .mm-logo img{width:132px;height:auto;max-width:none;margin:0;object-fit:contain;display:block;}
-html[data-theme="dark"] #mobile-menu .mm-logo img{filter:brightness(0) invert(1);}
+/* মোবাইল মেনুর লোগো: ডার্ক মোডে সাদা-অক্ষরের সংস্করণ (পাতা ব্র্যান্ড রঙেই থাকে) */
+#mobile-menu .mm-logo .mm-logo-dk{display:none;}
+html[data-theme="dark"] #mobile-menu .mm-logo .mm-logo-lt{display:none;}
+html[data-theme="dark"] #mobile-menu .mm-logo .mm-logo-dk{display:block;}
 
 /* v10: পিসিতেও নিউজলেটার বক্স মোবাইলের মতো মাঝখানে সাজানো */
 @media(min-width:901px){
