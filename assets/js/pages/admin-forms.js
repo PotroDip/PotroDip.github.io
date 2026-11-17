@@ -191,7 +191,7 @@
     if (!$('art-author').value) return flag('fr-author', 'লেখক বেছে নিন — না থাকলে "নতুন লেখক" চাপুন', 'art-author');
     busy(btn, true, 1);
     var old = art.id ? C.byId(S.articles, art.id) : null;
-    var row = { title: title, body: box.innerHTML, excerpt: text.slice(0, 160), category: PD.normCat($('art-cat').value), author_id: $('art-author').value, issue_id: $('art-issue').value || null, home_order: (function (v) { v = parseInt(v, 10); return isNaN(v) || v < 1 ? null : v; })($('art-home-order').value), home_hidden: $('art-home-hidden').checked, hero_order: (function (v) { v = parseInt(v, 10); return isNaN(v) || v < 1 ? null : v; })($('art-hero-order').value), home_featured: false, status: $('art-published').checked ? 'published' : 'draft' };
+    var row = { title: title, body: box.innerHTML, excerpt: UI.excerptFrom(box.innerHTML, 220) || text.slice(0, 160), /* লাইন-ব্রেক থাকে — কবিতা কার্ডে কবিতার মতো দেখায় */ category: PD.normCat($('art-cat').value), author_id: $('art-author').value, issue_id: $('art-issue').value || null, home_order: (function (v) { v = parseInt(v, 10); return isNaN(v) || v < 1 ? null : v; })($('art-home-order').value), home_hidden: $('art-home-hidden').checked, hero_order: (function (v) { v = parseInt(v, 10); return isNaN(v) || v < 1 ? null : v; })($('art-hero-order').value), home_featured: false, status: $('art-published').checked ? 'published' : 'draft' };
     if (row.status === 'published' && !(old && old.published_at)) row.published_at = new Date().toISOString();
     var tf = $('art-title-font').value || '', tfSkipped = false; var heroVal = row.hero_order, heroSkipped = false;
     if (tf || old) row.title_font = tf || null; /* কলাম না থাকলে নিচে বাদ দিয়ে আবার চেষ্টা হয় */

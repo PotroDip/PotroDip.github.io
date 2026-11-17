@@ -97,7 +97,7 @@
       if (!list.length) { grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:40px 0">এখনো কোনো লেখা প্রকাশিত হয়নি।</p>'; return; }
       list.forEach(function (a) {
         var c = UI.tpl('tpl-card'), rs = rate[a.id] || [], av = rs.length ? rs.reduce(function (s, v) { return s + v; }, 0) / rs.length : 0;
-        UI.img(c, '.thumb img', UI.cover(a.cover_url), ''); UI.set(c, '.cat-badge', a.category || ''); UI.set(c, 'h3', a.title); UI.set(c, 'p', a.excerpt || '');
+        UI.img(c, '.thumb img', UI.cover(a.cover_url), ''); UI.set(c, '.cat-badge', a.category || ''); UI.set(c, 'h3', a.title); var exP = c.querySelector('p'); if (exP) { exP.innerHTML = UI.excerptHtml(a); exP.classList.add('ac-ex'); if (UI.excerptClass(a)) exP.classList.add('ex-poem'); } c.setAttribute('data-id', a.id);
         c.querySelector('.stars-mini').innerHTML = av ? UI.starsHTML(av) : '';
         UI.set(c, '.card-meta > span:last-child', UI.date(a.published_at || a.created_at));
         c.addEventListener('click', function () { location.href = UI.articleUrl(a); });
@@ -105,6 +105,7 @@
         if (!cat && list.length >= 3 && list[0] === a) c.classList.add('featured');
         grid.appendChild(c);
       });
+      UI.fixPoemExcerpts(db, list, grid); /* পুরোনো কবিতা: কবিতার লাইন */
     }
     var cats = [];
     arts.forEach(function (a) { if (a.category && cats.indexOf(a.category) < 0) cats.push(a.category); });

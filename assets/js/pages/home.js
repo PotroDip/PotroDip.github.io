@@ -286,7 +286,7 @@
   })();
   /* লেখার কার্ড (সাম্প্রতিক লেখা ও বিভাগ-সেকশন একই চেহারা) */
   function card(a) {
-      return '<article class="article-card" data-id="' + a.id + '"><a class="ac-link" href="article.html?id=' + a.id + '"><div class="thumb"><img decoding="async" src="' + esc(a.cover_url || PH) + '" alt="" loading="lazy">' + (a.category ? '<span class="ac-cat">' + esc(a.category) + '</span>' : '') + '</div><div class="ac-body"><h3>' + esc(a.title) + '</h3><p>' + esc(cut(a.excerpt, 120)) + '</p><div class="card-meta">' + im(au(a)) + '<span class="cm-name">' + esc(au(a).name) + '</span><span class="cm-date">' + dt(a.published_at || a.created_at) + '</span></div></div></a></article>'
+      return '<article class="article-card" data-id="' + a.id + '"><a class="ac-link" href="article.html?id=' + a.id + '"><div class="thumb"><img decoding="async" src="' + esc(a.cover_url || PH) + '" alt="" loading="lazy">' + (a.category ? '<span class="ac-cat">' + esc(a.category) + '</span>' : '') + '</div><div class="ac-body"><h3>' + esc(a.title) + '</h3><p class="ac-ex ' + PDUI.excerptClass(a) + '">' + PDUI.excerptHtml(a) + '</p><div class="card-meta">' + im(au(a)) + '<span class="cm-name">' + esc(au(a).name) + '</span><span class="cm-date">' + dt(a.published_at || a.created_at) + '</span></div></div></a></article>'
   }
   /* v93: প্রতিটা সেকশনে প্রথমে সর্বোচ্চ ৬টা কার্ড; বেশি লেখা থাকলে লাইনের ডানে "আরো দেখুন" (চাপলে আরও ৬টা, সব দেখানো হলে "কম দেখুন") */
   var PER_DEF = 6,
@@ -400,6 +400,8 @@
     })
   }
   await catSections();
+  /* পুরোনো কবিতা (সারাংশে লাইন-ব্রেক নেই): মূল লেখা এনে কার্ডে কবিতার মতো লাইন */
+  PDUI.fixPoemExcerpts(db, A.concat((R[5] && R[5].data) || []), document);
   /* ম্যাগাজিন: চলতি সংখ্যার ব্যান্ডের নিচে আগের সংখ্যাগুলোর প্রচ্ছদ */
   (function() {
     var row = $('issue-row');

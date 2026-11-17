@@ -66,7 +66,7 @@
       var list = arts.filter(function (a) { return !cat || a.category === cat; });
       $('article-grid').innerHTML = list.map(function (a) {
         var u = au(a);
-        return '<article class="article-card"><a class="ac-link" href="' + UI.articleUrl(a) + '"><div class="thumb"><img decoding="async" src="' + esc(UI.cover(a.cover_url)) + '" alt="" loading="lazy">' + (a.category ? '<span class="ac-cat">' + esc(a.category) + '</span>' : '') + '</div><div class="ac-body"><h3>' + esc(a.title) + '</h3><p>' + esc(cut(a.excerpt, 120)) + '</p><div class="card-meta"><img decoding="async" src="' + esc(UI.avatar(u.image_url)) + '" alt=""><span class="cm-name">' + esc(u.name) + '</span><span class="cm-date">' + UI.date(a.published_at || a.created_at) + '</span></div></div></a></article>';
+        return '<article class="article-card" data-id="' + esc(a.id) + '"><a class="ac-link" href="' + UI.articleUrl(a) + '"><div class="thumb"><img decoding="async" src="' + esc(UI.cover(a.cover_url)) + '" alt="" loading="lazy">' + (a.category ? '<span class="ac-cat">' + esc(a.category) + '</span>' : '') + '</div><div class="ac-body"><h3>' + esc(a.title) + '</h3><p class="ac-ex ' + UI.excerptClass(a) + '">' + UI.excerptHtml(a) + '</p><div class="card-meta"><img decoding="async" src="' + esc(UI.avatar(u.image_url)) + '" alt=""><span class="cm-name">' + esc(u.name) + '</span><span class="cm-date">' + UI.date(a.published_at || a.created_at) + '</span></div></div></a></article>';
       }).join('');
     }
     var chips = $('chips');
@@ -79,5 +79,7 @@
       });
     } else chips.remove();
     grid('');
+    /* পুরোনো কবিতার সারাংশে লাইন-ব্রেক না থাকলে মূল লেখা থেকে কবিতার লাইন বসানো */
+    UI.fixPoemExcerpts(db, arts, $('article-grid'));
   }
 })();

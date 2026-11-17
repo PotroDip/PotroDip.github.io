@@ -9,6 +9,7 @@
 
   window.PDUI = {
     bn: function (n) { return String(n).replace(/\d/g, function (d) { return DIG[d]; }); },
+    esc: function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); },
     date: function (s) {
       var d = new Date(s);
       if (isNaN(d)) return '';
@@ -145,6 +146,57 @@
       var box = document.createElement('div');
       clean(doc.body, box);
       return box;
+    },
+    /* ---------- কার্ডের সারাংশ (excerpt) ----------
+       • কবিতা/ছড়া/কাব্য/গান: গদ্যের মতো টানা নয় — কবিতার মতোই আলাদা লাইনে, প্রথম ৩ লাইন
+       • বাকি সব লেখা: টানা লেখা, কার্ডে ৩ লাইন পর্যন্ত (CSS line-clamp) */
+    isPoem: function (cat) { return /কবিতা|ছড়া|ছড়া|কাব্য|গান|পদ্য/.test(cat || ''); },
+    /* সম্পাদকের HTML → লাইনের তালিকা (প্রতিটা অনুচ্ছেদ/লাইন-ব্রেক আলাদা লাইন) */
+    lines: function (html) {
+      var d = document.createElement('div');
+      if (this.isHtml(html)) d.appendChild(this.sanitize(html)); else d.textContent = String(html || '');
+      [].forEach.call(d.querySelectorAll('br'), function (b) { b.replaceWith('\n'); });
+      [].forEach.call(d.querySelectorAll('p,div,li,h1,h2,h3,h4,h5,h6,blockquote,pre,tr'), function (b) { b.appendChild(document.createTextNode('\n')); });
+      return (d.textContent || '').split(/\n/).map(function (l) { return l.replace(/[ \t ]+/g, ' ').trim(); }).filter(Boolean);
+    },
+    /* সেভ করার সময় সারাংশ: লাইন-ব্রেক রেখে (কবিতার লাইন হারায় না) */
+    excerptFrom: function (html, max) {
+      max = max || 220;
+      var out = '';
+      this.lines(html).some(function (l) { var n = out ? out + '\n' + l : l; if (n.length > max) { if (!out) out = l.slice(0, max); return true; } out = n; return false; });
+      return out;
+    },
+    /* কার্ডের <p>-এর ভেতরের HTML */
+    excerptHtml: function (a, n) {
+      var self = this, ex = String((a && a.excerpt) || '');
+      if (this.isPoem(a && a.category) && /\n/.test(ex)) {
+        return ex.split(/\n/).map(function (l) { return l.trim(); }).filter(Boolean).slice(0, 3).map(function (l) { return self.esc(l); }).join('<br>');
+      }
+      var cutOff = ex.length >= 150; /* সেভের সময় সারাংশ ১৬০/২২০ অক্ষরে কাটা — তাই শেষ শব্দ অসম্পূর্ণ হতে পারে */
+      ex = ex.replace(/\s+/g, ' ').trim(); n = n || 180;
+      if (cutOff && ex.length <= n) { var k0 = ex.lastIndexOf(' '); if (k0 > ex.length * .6) ex = ex.slice(0, k0); ex = ex.replace(/[\s,;:।]+$/, '') + ' …'; }
+      else if (ex.length > n) { ex = ex.slice(0, n); var k = ex.lastIndexOf(' '); ex = (k > n * .6 ? ex.slice(0, k) : ex) + ' …'; }
+      return this.esc(ex);
+    },
+    excerptClass: function (a) { return this.isPoem(a && a.category) && /\n/.test(String((a && a.excerpt) || '')) ? 'ex-poem' : ''; },
+    /* পুরোনো কবিতা (লাইন-ব্রেক ছাড়া সেভ হয়েছিল): মূল লেখা এনে কার্ডে কবিতার লাইন বসানো।
+       root-এর ভেতরে [data-id] কার্ড খোঁজে; list-এর লেখাগুলোর excerpt-ও ঠিক হয়ে যায় */
+    fixPoemExcerpts: function (db, list, root) {
+      var self = this, need = (list || []).filter(function (a) { return a && a.id && self.isPoem(a.category) && !/\n/.test(String(a.excerpt || '')); });
+      if (!db || !need.length) return Promise.resolve();
+      var ids = need.map(function (a) { return a.id; }).filter(function (v, i, arr) { return arr.indexOf(v) === i; }).slice(0, 60);
+      return db.from('articles').select('id,body').in('id', ids).then(function (r) {
+        var B = {}; (r.data || []).forEach(function (x) { B[x.id] = x.body; });
+        need.forEach(function (a) {
+          if (B[a.id] == null) return;
+          var ex = self.excerptFrom(B[a.id]);
+          if (!/\n/.test(ex)) return;
+          a.excerpt = ex;
+          [].forEach.call((root || document).querySelectorAll('[data-id="' + a.id + '"] .ac-body p, [data-id="' + a.id + '"] .ac-ex'), function (p) {
+            p.innerHTML = self.excerptHtml(a); p.classList.add('ex-poem');
+          });
+        });
+      }, function () {});
     },
     /* লেখার মূল অংশ কি সম্পাদকের HTML? (না হলে সাধারণ টেক্সট) */
     isHtml: function (s) { return /^\s*</.test(s || ''); },
