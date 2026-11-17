@@ -2,7 +2,7 @@
    header-pro.css (v104) — "ভাসমান গ্লাস-আইল্যান্ড" হেডার (সব পেজে একই)
    • হেডার এখন পাতার ওপর ভাসমান একটা ক্যাপসুল — কাচের মতো ঝাপসা ব্যাকগ্রাউন্ড, গ্রেডিয়েন্ট ধার
    • লোগোর পেছনে হালকা আলোর আভা · স্ক্রলে ক্যাপসুল ছোট হয় · নিচে স্ক্রল-প্রগ্রেস রেখা
-   • মেনুর পেছনে চলমান ইন্ডিকেটর (header-fx.js) · খুঁজুন বাটনে "/" শর্টকাট
+   • মেনুর পেছনে চলমান ইন্ডিকেটর (header-fx.js) · খুঁজুন বাটন
    • নিচে স্ক্রলে হেডার সরে যায়, ওপরে স্ক্রলে ফিরে আসে
    • রং, ফন্ট, লোগো, মেনুর আইটেম — আগের স্টাইলই; বদলেছে শুধু গঠন ও আধুনিকতা
    chrome.css-এর পরে লোড হয়, তাই আগের হেডার স্টাইলের ওপর বসে।
@@ -197,18 +197,13 @@ html[data-theme="dark"] .site-header .dd-panel{background:#141B1C;box-shadow:0 3
 .site-header .icon-btn,.site-header #theme-toggle{transition:background-color .25s ease,color .25s ease,transform .3s var(--pd-spring),border-color .25s ease;}
 .site-header .icon-btn:active,.site-header #theme-toggle:active{transform:scale(.92);}
 
-/* খুঁজুন: কিবোর্ড শর্টকাট "/" ইঙ্গিত সহ */
+/* খুঁজুন বাটন (কিবোর্ডে "/" চাপলে সার্চ খোলে, তবে বাটনে চিহ্নটা দেখানো হয় না) */
 .site-header .search-pill{
-  width:auto !important;height:42px;border-radius:999px !important;padding:0 8px 0 14px;gap:8px;
+  width:auto !important;height:42px;border-radius:999px !important;padding:0 18px 0 15px;gap:8px;
   border:1px solid var(--border);background:color-mix(in srgb,var(--surface) 80%,transparent);color:var(--text-muted);font-size:14px;
 }
 .site-header .search-pill svg{flex-shrink:0;}
 .site-header .search-pill:hover{border-color:var(--primary);color:var(--primary);background:color-mix(in srgb,var(--primary) 6%,var(--surface));}
-.site-header .search-pill::after{
-  content:"/";display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;
-  font:600 12px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--text-muted);
-  border:1px solid var(--border);border-bottom-width:2px;border-radius:7px;background:var(--bg);
-}
 
 /* থিম বাটন: চাঁদ ↔ সূর্য ঘুরে বদলায় */
 .site-header #theme-toggle{position:relative;overflow:hidden;}
@@ -244,7 +239,7 @@ html[data-theme="dark"] .site-header .hdr-cta{color:#0F1415;}
 
 /* ---------- ৬) মাঝারি স্ক্রিন: জায়গা বাঁচানো ---------- */
 @media(max-width:1180px){
-  .site-header .search-pill span,.site-header .search-pill::after{display:none;}
+  .site-header .search-pill span{display:none;}
   .site-header .search-pill{width:42px !important;padding:0;justify-content:center;border-color:transparent;background:transparent;}
   .site-header .hdr-cta{padding:0 15px;}
   .site-header .nav-links > a,.site-header .nav-dd-btn{padding:10px 11px;}
