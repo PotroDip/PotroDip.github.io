@@ -333,3 +333,5 @@ input::placeholder, textarea::placeholder{font-family:inherit;}
 input[type="file"]::file-selector-button{font-family:inherit;}
 /* গতি/স্থিরতা: ডেটা আসার আগেও মূল অংশ পুরো স্ক্রিনজুড়ে থাকে, তাই ফুটার উপরে এসে পরে লাফিয়ে নামে না (CLS) */
 main[data-dyn]{min-height:100vh;min-height:100svh;}
+/* বিজ্ঞাপন-প্রিভিউ (?adpreview=1): প্রতিটা বিজ্ঞাপনের ওপর নাম ও মাপ */
+.pd-ad-label{position:absolute;left:10px;bottom:10px;z-index:5;padding:5px 11px;border-radius:8px;font-size:12.5px;font-weight:700;line-height:1.3;color:#14383B;background:#E9CB98;box-shadow:0 6px 16px -6px rgba(0,0,0,.5);pointer-events:none;}

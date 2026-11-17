@@ -70,11 +70,10 @@
   $('pe-file').addEventListener('change', function () {
     var f = this.files && this.files[0];
     if (!f) return;
-    if (!/^image\//i.test(f.type)) { UI.toast('শুধু ছবির ফাইল দিন', 1); this.value = ''; return; }
+    if (!PD.isImageFile(f)) { UI.toast('শুধু ছবির ফাইল দিন', 1); this.value = ''; return; }
     file = f; photo = undefined;
     if (previewUrl) URL.revokeObjectURL(previewUrl);
-    previewUrl = URL.createObjectURL(f);
-    setPreview(previewUrl);
+    PD.previewUrl(f).then(function (u) { previewUrl = u; setPreview(u); }, function (e) { UI.toast(e.message || 'ছবিটা পড়া যাচ্ছে না', 1); });
     $('pe-remove-photo').style.display = '';
   });
   $('pe-remove-photo').addEventListener('click', function () {

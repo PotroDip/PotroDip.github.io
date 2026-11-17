@@ -30,17 +30,18 @@
   /* ---------- ডেটা ---------- */
   var S = { authors: [], articles: [], issues: [], prints: [], orders: [], items: [], ads: [], comments: [], subs: [], set: {}, users: 0, follows: 0 };
   window.AdminData = S;
+  /* v121: হিরো বিজ্ঞাপন আর হিরোর লেখার ভেতরে নয় — হিরোর নিচে আলাদা বিজ্ঞাপনের জায়গায়, ১২০০×৪৫০ (মোবাইল ও পিসিতে একই) */
   var SLOTS = [
-    { id: 'hero1', re: /hero1(?!\d)/i, name: 'হিরো ব্যানার ১', size: '১৫০০ × ৫০০ px (৩:১)', where: 'হোমপেজের উপরের হিরো স্লাইডারে, বিশেষ লেখাগুলোর পরে — ১ নম্বর বিজ্ঞাপন-স্লাইড (ছবি পুরোটাই দেখায়, কাটে না)', ratio: '3/1' },
-    { id: 'hero2', re: /hero2(?!\d)/i, name: 'হিরো ব্যানার ২', size: '১৫০০ × ৫০০ px (৩:১)', where: 'হোমপেজের উপরের হিরো স্লাইডারে, বিশেষ লেখাগুলোর পরে — ২ নম্বর বিজ্ঞাপন-স্লাইড (ছবি পুরোটাই দেখায়, কাটে না)', ratio: '3/1' },
-    { id: 'hero3', re: /hero3(?!\d)/i, name: 'হিরো ব্যানার ৩', size: '১৫০০ × ৫০০ px (৩:১)', where: 'হোমপেজের উপরের হিরো স্লাইডারে, বিশেষ লেখাগুলোর পরে — ৩ নম্বর বিজ্ঞাপন-স্লাইড (ছবি পুরোটাই দেখায়, কাটে না)', ratio: '3/1' },
-    { id: 'hero4', re: /hero4(?!\d)/i, name: 'হিরো ব্যানার ৪', size: '১৫০০ × ৫০০ px (৩:১)', where: 'হোমপেজের উপরের হিরো স্লাইডারে, বিশেষ লেখাগুলোর পরে — ৪ নম্বর বিজ্ঞাপন-স্লাইড (ছবি পুরোটাই দেখায়, কাটে না)', ratio: '3/1' },
-    { id: 'hero5', re: /hero5(?!\d)/i, name: 'হিরো ব্যানার ৫', size: '১৫০০ × ৫০০ px (৩:১)', where: 'হোমপেজের উপরের হিরো স্লাইডারে, বিশেষ লেখাগুলোর পরে — ৫ নম্বর বিজ্ঞাপন-স্লাইড (ছবি পুরোটাই দেখায়, কাটে না)', ratio: '3/1' },
-    { id: 'top', re: /top/i, name: 'টপ ব্যানার', size: '১২০০ × ২০০ px', where: 'হোমপেজ উপরে', ratio: '6/1' },
-    { id: 'mid', re: /mid/i, name: 'মিড-স্ক্রল ব্যানার', size: '৭২৮ × ১৫০ px', where: 'হোমপেজ/আর্টিকেল লিস্টের মাঝে', ratio: '4.85/1' },
-    { id: 'square', re: /square|side/i, name: 'সাইডবার/স্কোয়ার', size: '৩০০ × ৩০০ px', where: 'আর্টিকেল পেজে, লেখার শেষে', ratio: '1/1' },
-    { id: 'mobile', re: /mobile/i, name: 'মোবাইল ব্যানার', size: '৩২০ × ১০০ px', where: 'মোবাইলে হোমপেজের উপরের ব্যানারের জায়গায়', ratio: '3.2/1' },
-    { id: 'popup', re: /popup/i, name: 'পপআপ এড', size: '১০৮০ × ১৩৫০ px (৪:৫) — যেকোনো মাপ চলবে', where: 'সাইটে ঢুকলেই মাঝখানে পপআপ হয়ে আসে (কতবার ও কখন — উপরের সেটিংসে)', ratio: '4/5' }
+    { id: 'hero1', re: /hero1(?!\d)/i, name: 'হিরো বিজ্ঞাপন ১', size: '১২০০ × ৪৫০ px — মোবাইল ও পিসিতে একই', where: 'হোমপেজে হিরোর ঠিক নিচে আলাদা বিজ্ঞাপনের জায়গায় — পালা করে দেখায় (১ নম্বর)', ratio: '8/3' },
+    { id: 'hero2', re: /hero2(?!\d)/i, name: 'হিরো বিজ্ঞাপন ২', size: '১২০০ × ৪৫০ px — মোবাইল ও পিসিতে একই', where: 'হোমপেজে হিরোর ঠিক নিচে আলাদা বিজ্ঞাপনের জায়গায় — পালা করে দেখায় (২ নম্বর)', ratio: '8/3' },
+    { id: 'hero3', re: /hero3(?!\d)/i, name: 'হিরো বিজ্ঞাপন ৩', size: '১২০০ × ৪৫০ px — মোবাইল ও পিসিতে একই', where: 'হোমপেজে হিরোর ঠিক নিচে আলাদা বিজ্ঞাপনের জায়গায় — পালা করে দেখায় (৩ নম্বর)', ratio: '8/3' },
+    { id: 'hero4', re: /hero4(?!\d)/i, name: 'হিরো বিজ্ঞাপন ৪', size: '১২০০ × ৪৫০ px — মোবাইল ও পিসিতে একই', where: 'হোমপেজে হিরোর ঠিক নিচে আলাদা বিজ্ঞাপনের জায়গায় — পালা করে দেখায় (৪ নম্বর)', ratio: '8/3' },
+    { id: 'hero5', re: /hero5(?!\d)/i, name: 'হিরো বিজ্ঞাপন ৫', size: '১২০০ × ৪৫০ px — মোবাইল ও পিসিতে একই', where: 'হোমপেজে হিরোর ঠিক নিচে আলাদা বিজ্ঞাপনের জায়গায় — পালা করে দেখায় (৫ নম্বর)', ratio: '8/3' },
+    { id: 'top', re: /top/i, name: 'টপ ব্যানার', size: '১২০০ × ২০০ px (৬:১)', where: 'হোমপেজে "সাম্প্রতিক লেখা"-র পরে (পিসিতে; মোবাইলে মোবাইল ব্যানার না থাকলে এটাই)', ratio: '6/1' },
+    { id: 'mid', re: /mid/i, name: 'মিড-স্ক্রল ব্যানার', size: '৭২৮ × ১৫০ px', where: 'হোমপেজে বিভাগগুলোর পরে, আর লেখার পাতায় লেখার মাঝখানে', ratio: '4.85/1' },
+    { id: 'square', re: /square|side/i, name: 'সাইডবার/স্কোয়ার', size: '৩০০ × ৩০০ px', where: 'লেখার পাতায়, লেখা শেষ হওয়ার পরে', ratio: '1/1' },
+    { id: 'mobile', re: /mobile/i, name: 'মোবাইল ব্যানার', size: '৩২০ × ১০০ px', where: 'মোবাইলে টপ ব্যানারের জায়গায় (আর লেখার পাতায় মিড ব্যানার না থাকলে)', ratio: '3.2/1' },
+    { id: 'popup', re: /popup/i, name: 'পপআপ এড', size: '১০৮০ × ১৩৫০ px (৪:৫) — যেকোনো মাপ চলবে, কাটে না', where: 'সাইটে ঢুকলেই মাঝখানে পপআপ হয়ে আসে (কতবার ও কখন — উপরের সেটিংসে)', ratio: '4/5' }
   ];
   function ok(r) { if (r && r.error) { A.showToast(PD.msg(r.error)); return false; } return true; }
   function byId(list, id) { return list.filter(function (x) { return x.id === id; })[0]; }
@@ -296,7 +297,7 @@
       var stage = img
         ? H`<div class="ad-frame" style="aspect-ratio:${s.ratio}"><img src="${img}" alt=""><span class="ad-swap">${raw(ICON.up)} ছবি বদলান</span></div>`
         : H`<div class="ad-empty">${raw(ICON.up)}<b>ছবি আপলোড করুন</b><span>এখানে ক্লিক করুন বা ছবি টেনে এনে ছাড়ুন</span></div>`;
-      return H`<div class="ad-card ${st}"><div class="ad-top"><div><div class="ad-name">${s.name}</div><div class="ad-where">${s.where}</div></div><span class="ad-pill ${st}"><i></i>${pill}</span></div><div class="ad-stage" data-slot-trigger="${s.id}" data-slot-drop="${s.id}" style="--ar:${s.ratio}">${raw(stage)}</div><input type="file" accept="image/*" style="display:none;" data-slot-file="${s.id}"><div class="ad-chips"><span>${s.size}</span><span>JPG · PNG · WebP · GIF</span></div><div class="ad-link"><label>ক্লিক করলে যে লিংকে যাবে <small>(ঐচ্ছিক)</small></label><div class="ad-link-row"><input type="url" placeholder="https://example.com" value="${(a && a.link_url) || ''}" data-slot-link="${s.id}"${raw(img ? '' : ' disabled')}><button class="btn btn-secondary ad-save" data-slot-linksave="${s.id}"${raw(img ? '' : ' disabled')}>সংরক্ষণ</button></div></div><div class="ad-foot"><label class="ad-toggle"><span class="switch"><input type="checkbox" data-slot-active="${s.id}"${raw(live ? ' checked' : '')}><span class="track"></span></span><span>সাইটে দেখান</span></label>${raw(img ? H`<button class="ad-remove" data-slot-remove="${s.id}">${raw(ICON.del)} সরিয়ে ফেলুন</button>` : '')}</div></div>`;
+      return H`<div class="ad-card ${st}"><div class="ad-top"><div><div class="ad-name">${s.name}</div><div class="ad-where">${s.where}</div></div><span class="ad-pill ${st}"><i></i>${pill}</span></div><div class="ad-stage" data-slot-trigger="${s.id}" data-slot-drop="${s.id}" style="--ar:${s.ratio}">${raw(stage)}</div><input type="file" accept="image/*,.jpg,.jpeg,.jfif,.pjpeg,.pjp,.png,.apng,.webp,.gif,.avif,.bmp,.dib,.svg,.svgz,.ico,.cur,.heic,.heif,.hif,.tif,.tiff" style="display:none;" data-slot-file="${s.id}"><div class="ad-chips"><span>${s.size}</span><span>যেকোনো ছবি: JPG · PNG · WebP · GIF · HEIC · AVIF · TIFF…</span></div><div class="ad-link"><label>ক্লিক করলে যে লিংকে যাবে <small>(ঐচ্ছিক)</small></label><div class="ad-link-row"><input type="url" placeholder="https://example.com" value="${(a && a.link_url) || ''}" data-slot-link="${s.id}"${raw(img ? '' : ' disabled')}><button class="btn btn-secondary ad-save" data-slot-linksave="${s.id}"${raw(img ? '' : ' disabled')}>সংরক্ষণ</button></div></div><div class="ad-foot"><label class="ad-toggle"><span class="switch"><input type="checkbox" data-slot-active="${s.id}"${raw(live ? ' checked' : '')}><span class="track"></span></span><span>সাইটে দেখান</span></label>${raw(img ? H`<button class="ad-remove" data-slot-remove="${s.id}">${raw(ICON.del)} সরিয়ে ফেলুন</button>` : '')}</div></div>`;
     }).join('');
     $('adStats').innerHTML = [['চালু', on, 'on'], ['বন্ধ', off, 'off'], ['ছবি নেই', empty, 'empty']].map(function (x) { return '<div class="ad-stat ' + x[2] + '"><strong>' + UI.bn(x[1]) + '</strong><span>' + x[0] + '</span></div>'; }).join('');
     /* ছবি লোড না হলে (যেমন AdBlock আটকালে) ফাঁকা না রেখে কারণ দেখানো */
@@ -311,7 +312,7 @@
   function slotOf(id) { return SLOTS.filter(function (x) { return x.id === id; })[0]; }
   function uploadAd(s, file) {
     var a = adFor(s);
-    if (!file || !/^image\//.test(file.type)) return A.showToast('শুধু ছবি বা GIF দিন');
+    if (!file || !PD.isImageFile(file)) return A.showToast('শুধু ছবির ফাইল দিন (JPG, PNG, WebP, GIF, HEIC, AVIF, TIFF…)');
     A.showToast('আপলোড হচ্ছে…');
     window.AdminForms.upload(file, 'banners', 'banner-' + s.id).then(function (url) {
       var row = { image_url: url, is_active: true, link_url: a && a.link_url ? a.link_url : null };

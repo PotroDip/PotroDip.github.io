@@ -2,14 +2,14 @@
 <html lang="bn">
 <html lang="bn">
 <head>
-<meta charset="utf-8"/><meta content="default-src 'self'; script-src 'self' https://apis.google.com; style-src 'self' 'unsafe-inline'; font-src 'self' data: https://pqoszcuhxdavehnxundq.supabase.co; img-src 'self' data: blob: https:; connect-src 'self' https://pqoszcuhxdavehnxundq.supabase.co wss://pqoszcuhxdavehnxundq.supabase.co https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebasestorage.googleapis.com https://www.googleapis.com; frame-src https://potrodip-99ad4.firebaseapp.com https://accounts.google.com; object-src 'none'; base-uri 'self'; form-action 'self'" http-equiv="Content-Security-Policy"/>
+<meta charset="utf-8"/><meta content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://apis.google.com; style-src 'self' 'unsafe-inline'; font-src 'self' data: https://pqoszcuhxdavehnxundq.supabase.co; img-src 'self' data: blob: https:; connect-src 'self' https://pqoszcuhxdavehnxundq.supabase.co wss://pqoszcuhxdavehnxundq.supabase.co https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebasestorage.googleapis.com https://www.googleapis.com; frame-src https://potrodip-99ad4.firebaseapp.com https://accounts.google.com; object-src 'none'; base-uri 'self'; form-action 'self'" http-equiv="Content-Security-Policy"/>
 <meta content="strict-origin-when-cross-origin" name="referrer"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>এডমিন প্যানেল | পত্রদ্বীপ | Potrodip</title>
 <meta name="description" content="পত্রদ্বীপ এডমিন প্যানেল।">
 <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
-<link href="assets/css/base.css?v=5" rel="stylesheet"/>
-<link href="assets/css/pages/admin.css?v=5" rel="stylesheet"/>
+<link href="assets/css/base.css?v=6" rel="stylesheet"/>
+<link href="assets/css/pages/admin.css?v=6" rel="stylesheet"/>
 <link href="assets/css/pages/admin-editor-pro.css?v=1" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/css/components/scroll-top.css?v=2">
 <script src="assets/js/core/theme.js?v=2"></script>
@@ -218,6 +218,14 @@
 <h3>পপআপ এড</h3><div class="settings-sub">নিচের "পপআপ এড" স্লটে ছবি দিয়ে চালু করলে সাইটে ঢুকলেই দেখাবে</div>
 <div class="field-row"><label>কতবার দেখাবে</label><select id="ui-popup-freq"><option value="session">প্রতি ভিজিটে একবার</option><option value="day">দিনে একবার</option></select></div>
 <div class="field-row"><label>সাইটে ঢোকার কত সেকেন্ড পরে (০ থেকে ৩০)</label><input id="ui-popup-delay" type="number" min="0" max="30" step="0.5" placeholder="১.৫"/></div>
+</div>
+<div class="settings-card">
+<h3>খালি জায়গায় নিজস্ব বিজ্ঞাপন</h3><div class="settings-sub">যে জায়গায় চালু বিজ্ঞাপন নেই, সেখানে পত্রদ্বীপের নিজের বিজ্ঞাপন (ছাপা সংখ্যা, আর্কাইভ, লেখক) দেখাবে</div>
+<div class="stock-toggle-row"><span>নিজস্ব বিজ্ঞাপন দেখাবে<small>বন্ধ করলে খালি জায়গা লুকিয়ে যায়</small></span><label class="switch"><input checked="" id="ui-house-ads" type="checkbox"/><span class="track"></span></label></div>
+</div>
+<div class="settings-card">
+<h3>কোন বিজ্ঞাপন কোথায় — প্রিভিউ</h3><div class="settings-sub">সাইট খুলে প্রতিটা বিজ্ঞাপনের ওপর তার নাম ও মাপ দেখুন (পপআপও দেখাবে)। শুধু এই লিংকে দেখায়, সাধারণ ভিজিটর দেখেন না।</div>
+<div class="ad-preview-links"><a class="btn btn-secondary" href="index.html?adpreview=1" target="_blank" rel="noopener">হোমপেজের প্রিভিউ</a><a class="btn btn-secondary" id="ad-preview-article" href="index.html?adpreview=1" target="_blank" rel="noopener">লেখার পাতার প্রিভিউ</a></div>
 </div>
 </div>
 <div class="settings-foot ad-ui-foot">
@@ -493,7 +501,7 @@
 <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><rect height="18" rx="2" width="18" x="3" y="3"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
 <span>কভার ছবি দিন<small>ক্লিক করুন বা ছবি টেনে আনুন</small></span>
 <img alt="" id="art-cover-preview"/>
-<input accept="image/*" id="art-cover-file" style="display:none;" type="file"/>
+<input accept="image/*,.jpg,.jpeg,.jfif,.pjpeg,.pjp,.png,.apng,.webp,.gif,.avif,.bmp,.dib,.svg,.svgz,.ico,.cur,.heic,.heif,.hif,.tif,.tiff" id="art-cover-file" style="display:none;" type="file"/>
 </label>
 </section>
 <section class="art-card">
@@ -523,7 +531,7 @@
 <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><rect height="18" rx="2" width="18" x="3" y="3"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
 <span>ছবি আপলোড</span>
 <img alt="" id="author-cover-preview"/>
-<input accept="image/*" id="author-cover-file" style="display:none;" type="file"/>
+<input accept="image/*,.jpg,.jpeg,.jfif,.pjpeg,.pjp,.png,.apng,.webp,.gif,.avif,.bmp,.dib,.svg,.svgz,.ico,.cur,.heic,.heif,.hif,.tif,.tiff" id="author-cover-file" style="display:none;" type="file"/>
 </label>
 <div class="field-row"><label>নাম</label><input id="author-name" placeholder="যেমন: আব্দুল্লাহ" type="text"/></div>
 <div class="field-grid-2" style="margin-bottom:16px;">
@@ -545,7 +553,7 @@
 <div class="field-grid-2">
 <div class="field-row"><label>ফেসবুক লিংক</label><input id="author-fb" placeholder="https://facebook.com/..." type="url"/></div>
 <div class="field-row"><label>ইনস্টাগ্রাম লিংক</label><input id="author-ig" placeholder="https://instagram.com/..." type="url"/></div>
-</div><details class="author-more" style="margin-top:6px"><summary style="cursor:pointer;font-weight:600;margin:8px 0">বিস্তারিত পরিচিতি (ঐচ্ছিক — লেখকের পেজে দেখাবে)</summary><div class="field-row"><label>ওয়েবসাইট লিংক</label><input id="author-website" type="url"/></div><div class="field-grid-2"><div class="field-row"><label>পূর্ণ নাম</label><input id="author-fullname" type="text"/></div><div class="field-row"><label>পিতার নাম</label><input id="author-father" type="text"/></div></div><div class="field-grid-2"><div class="field-row"><label>জন্ম তারিখ</label><input id="author-birth" type="date"/></div><div class="field-row"><label>লেখালেখির বয়স</label><input id="author-years" type="text"/></div></div><div class="field-row"><label>বর্তমান ঠিকানা</label><input id="author-address" type="text"/></div><div class="field-grid-2"><div class="field-row"><label>শিক্ষাগত যোগ্যতা</label><input id="author-edu" type="text"/></div><div class="field-row"><label>পেশা</label><input id="author-prof" type="text"/></div></div><div class="field-row"><label>উল্লেখযোগ্য স্বীকৃতি</label><input id="author-recog" type="text"/></div><div class="field-row"><label>প্রোফাইলের কভার ছবি</label><label class="cover-upload" id="author-bg-upload"><span>কভার আপলোড করতে ক্লিক করুন</span><img alt="" id="author-bg-preview"/><input accept="image/*" id="author-bg-file" type="file"/></label></div><div class="field-row"><label>জীবনী</label><textarea id="author-bio" rows="6"></textarea><p class="field-hint">প্রতিটি অনুচ্ছেদ খালি লাইন দিয়ে আলাদা করুন। "# " দিয়ে শুরু করলে শিরোনাম, "&gt; " দিয়ে শুরু করলে উদ্ধৃতি হবে।</p></div></details>
+</div><details class="author-more" style="margin-top:6px"><summary style="cursor:pointer;font-weight:600;margin:8px 0">বিস্তারিত পরিচিতি (ঐচ্ছিক — লেখকের পেজে দেখাবে)</summary><div class="field-row"><label>ওয়েবসাইট লিংক</label><input id="author-website" type="url"/></div><div class="field-grid-2"><div class="field-row"><label>পূর্ণ নাম</label><input id="author-fullname" type="text"/></div><div class="field-row"><label>পিতার নাম</label><input id="author-father" type="text"/></div></div><div class="field-grid-2"><div class="field-row"><label>জন্ম তারিখ</label><input id="author-birth" type="date"/></div><div class="field-row"><label>লেখালেখির বয়স</label><input id="author-years" type="text"/></div></div><div class="field-row"><label>বর্তমান ঠিকানা</label><input id="author-address" type="text"/></div><div class="field-grid-2"><div class="field-row"><label>শিক্ষাগত যোগ্যতা</label><input id="author-edu" type="text"/></div><div class="field-row"><label>পেশা</label><input id="author-prof" type="text"/></div></div><div class="field-row"><label>উল্লেখযোগ্য স্বীকৃতি</label><input id="author-recog" type="text"/></div><div class="field-row"><label>প্রোফাইলের কভার ছবি</label><label class="cover-upload" id="author-bg-upload"><span>কভার আপলোড করতে ক্লিক করুন</span><img alt="" id="author-bg-preview"/><input accept="image/*,.jpg,.jpeg,.jfif,.pjpeg,.pjp,.png,.apng,.webp,.gif,.avif,.bmp,.dib,.svg,.svgz,.ico,.cur,.heic,.heif,.hif,.tif,.tiff" id="author-bg-file" type="file"/></label></div><div class="field-row"><label>জীবনী</label><textarea id="author-bio" rows="6"></textarea><p class="field-hint">প্রতিটি অনুচ্ছেদ খালি লাইন দিয়ে আলাদা করুন। "# " দিয়ে শুরু করলে শিরোনাম, "&gt; " দিয়ে শুরু করলে উদ্ধৃতি হবে।</p></div></details>
 </div>
 <div class="modal-foot">
 <button class="btn btn-secondary" data-close-sub="author-modal">বাতিল করুন</button>
@@ -568,7 +576,7 @@
 <span>ক্লিক করুন বা ছবি টেনে এনে ছাড়ুন</span>
 <img alt="" id="issue-archive-cover-preview"/>
 <em class="pm-swap">ছবি বদলান</em>
-<input accept="image/*" id="issue-archive-cover-file" style="display:none;" type="file"/>
+<input accept="image/*,.jpg,.jpeg,.jfif,.pjpeg,.pjp,.png,.apng,.webp,.gif,.avif,.bmp,.dib,.svg,.svgz,.ico,.cur,.heic,.heif,.hif,.tif,.tiff" id="issue-archive-cover-file" style="display:none;" type="file"/>
 </label>
 <p class="field-hint" style="text-align:center;">৩:৪ অনুপাতের ছবি সবচেয়ে ভালো দেখায় · সর্বোচ্চ ৫ MB</p>
 <div class="ia-note"><b>খেয়াল রাখুন:</b> এই ঘরগুলোই হোমের "চলতি সংখ্যা" অংশে হুবহু দেখানো হবে। যে ঘর খালি রাখবেন, সেটা হোমে দেখাবে না।</div>
@@ -627,7 +635,7 @@
 <span>ক্লিক করুন বা ছবি টেনে এনে ছাড়ুন</span>
 <img alt="" id="cover-preview"/>
 <em class="pm-swap">ছবি বদলান</em>
-<input accept="image/*" id="cover-file" style="display:none;" type="file"/>
+<input accept="image/*,.jpg,.jpeg,.jfif,.pjpeg,.pjp,.png,.apng,.webp,.gif,.avif,.bmp,.dib,.svg,.svgz,.ico,.cur,.heic,.heif,.hif,.tif,.tiff" id="cover-file" style="display:none;" type="file"/>
 </label>
 <p class="field-hint" style="text-align:center;">৩:৪ অনুপাতের ছবি সবচেয়ে ভালো দেখায় · সর্বোচ্চ ৫ MB</p>
 </div>
@@ -719,7 +727,7 @@
 <script defer src="assets/js/core/config.js"></script>
 <script defer src="assets/js/core/app.js?v=2"></script>
 <script defer src="assets/js/core/custom-fonts.js?v=2"></script>
-<script defer src="assets/js/core/img-fit.js?v=2"></script>
+<script defer src="assets/js/core/img-fit.js?v=3"></script>
 <script defer src="assets/js/core/live.js"></script>
 <script defer src="assets/vendor/firebase/firebase-app-compat.js"></script>
 <script defer src="assets/vendor/firebase/firebase-auth-compat.js"></script>
@@ -727,10 +735,10 @@
 <script defer src="assets/js/core/firebase.js"></script>
 <script defer src="assets/js/core/ui.js?v=4"></script>
 <script defer src="assets/js/pages/admin-shell.js"></script>
-<script defer src="assets/js/pages/admin-editor.js?v=3"></script>
+<script defer src="assets/js/pages/admin-editor.js?v=4"></script>
 <script defer src="assets/js/pages/admin-editor-pro.js?v=1"></script>
-<script defer src="assets/js/pages/admin.js?v=3"></script>
-<script defer src="assets/js/pages/admin-forms.js?v=3"></script>
+<script defer src="assets/js/pages/admin.js?v=4"></script>
+<script defer src="assets/js/pages/admin-forms.js?v=4"></script>
 <script defer src="assets/js/pages/admin-fonts.js?v=2"></script>
 <script defer src="assets/js/pages/admin-cleanup.js"></script>
 <script defer src="assets/js/components/scroll-top.js"></script>

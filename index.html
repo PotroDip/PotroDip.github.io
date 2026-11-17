@@ -16,9 +16,9 @@
 <link rel="preload" href="assets/fonts/NotoSerifByGunjoron-Regular.woff2?v=1" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/NotoSerifByGunjoron-SemiBold.woff2?v=1" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/NotoSerifByGunjoron-Bold.woff2?v=1" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/base.css?v=5">
+<link rel="stylesheet" href="assets/css/base.css?v=6">
 <link rel="stylesheet" href="assets/css/layout.css?v=2">
-<link rel="stylesheet" href="assets/css/pages/home.css?v=120">
+<link rel="stylesheet" href="assets/css/pages/home.css?v=121">
 <link rel="stylesheet" href="assets/css/pages/authors.css">
 <link rel="stylesheet" href="assets/css/components/nav.css?v=116">
 <link rel="stylesheet" href="assets/css/components/issue-band.css">
@@ -200,7 +200,21 @@
       <div class="hero-grid" id="hero-grid"></div>
     </section>
 
-    <!-- ============ এড স্লট: টপ ব্যানার ============ -->
+    <!-- ============ বিজ্ঞাপনের জায়গা (হিরো বিজ্ঞাপন ১–৫, ১২০০×৪৫০ — মোবাইল ও পিসিতে একই) ============ -->
+    <section class="ad-stage" id="ad-stage" aria-label="বিজ্ঞাপন"></section>
+
+
+    <!-- ============ আর্টিকেল গ্রিড ============ -->
+    <section>
+      <div class="section-head">
+        <h2>সাম্প্রতিক লেখা</h2>
+        <div class="filter-chips" id="chips"></div>
+      </div>
+
+      <div class="article-grid" id="article-grid"></div>
+    </section>
+
+    <!-- ============ এড স্লট: টপ ব্যানার (সাম্প্রতিক লেখার পরে) ============ -->
     <div class="ad-slot ad-top" style="display:none">
       <img decoding="async" class="ad-bg" alt="">
       <div class="ad-overlay"></div>
@@ -212,16 +226,6 @@
         </span>
       </div>
     </div>
-
-    <!-- ============ আর্টিকেল গ্রিড ============ -->
-    <section>
-      <div class="section-head">
-        <h2>সাম্প্রতিক লেখা</h2>
-        <div class="filter-chips" id="chips"></div>
-      </div>
-
-      <div class="article-grid" id="article-grid"></div>
-    </section>
 
     <!-- ============ বিভাগ-ভিত্তিক সেকশন (গল্প, সাহিত্য, ভ্রমণ, কবিতা, প্রবন্ধ, রম্য, স্মৃতিগদ্য, কাব্য, ছড়া — লেখা থাকলেই আসে) ============ -->
     <div id="cat-sections"></div>
@@ -261,7 +265,7 @@
   </main>
 
   <!-- ============ ফুটার ============ -->
-  <footer class="site-footer">
+  <footer class="site-footer" id="site-footer">
     <div class="footer-inner">
       <div class="newsletter-block">
         <div class="newsletter-copy">
@@ -305,8 +309,9 @@
 <script defer src="assets/js/core/reveal.js"></script>
 
 <style>.follow-btn.following{background:var(--primary);color:var(--surface)}.article-card{cursor:pointer}.pd-empty{padding:48px 16px;text-align:center;color:var(--text-muted);grid-column:1/-1}.hero-media .ph{width:100%;aspect-ratio:4/3;background:var(--secondary-light);border-radius:12px}</style>
-<script defer src="assets/js/pages/home.js?v=117"></script>
+<script defer src="assets/js/components/ads.js?v=1"></script>
+<script defer src="assets/js/pages/home.js?v=118"></script>
 <script defer src="assets/js/components/scroll-top.js"></script>
-<script src="assets/js/components/popup-ad.js?v=2" defer></script>
+<script src="assets/js/components/popup-ad.js?v=3" defer></script>
 </body>
 </html>

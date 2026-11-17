@@ -55,16 +55,22 @@
   function pickAd(ads, re) {
     return (ads || []).filter(function (x) { return x.image_url && re.test(x.slot_id || ''); })[0];
   }
+  /* v121: চালু বিজ্ঞাপন না থাকলে পত্রদ্বীপের নিজস্ব বিজ্ঞাপন (components/ads.js; এডমিন বন্ধ করতে পারেন) */
+  var UIS = {};
   function makeAd(ads, kind) {
-    var isMob = window.matchMedia && window.matchMedia('(max-width:760px)').matches;
+    var isMob = window.matchMedia && window.matchMedia('(max-width:760px)').matches, AD = window.PDAds;
     var a = kind === 'square' ? pickAd(ads, /square|side/i) : (pickAd(ads, /mid|article|body/i) || (isMob ? pickAd(ads, /mobile/i) : null));
+    var slot = kind === 'square' ? 'square' : (a && /mobile/i.test(a.slot_id || '') ? 'mobile' : 'mid');
+    if ((!a || !a.image_url) && AD && AD.useHouse(UIS)) { slot = kind === 'square' ? 'square' : (isMob ? 'mobile' : 'mid'); a = AD.house(slot); a.slot_id = slot; }
     if (!a || !a.image_url) return null;
     var s = UI.tpl('tpl-ad');
     if (kind === 'square') { s.classList.remove('ad-mid'); s.classList.add('ad-square'); }
     else if (/mobile/i.test(a.slot_id || '')) s.classList.add('ad-mobile');
     s.querySelector('.ad-bg').src = a.image_url;
     ['.ad-content', '.ad-overlay'].forEach(function (q) { var e = s.querySelector(q); if (e) e.remove(); });
-    if (a.link_url) { s.style.cursor = 'pointer'; s.addEventListener('click', function () { window.open(a.link_url, '_blank', 'noopener'); }); }
+    var h = AD ? AD.href(a.link_url) : (a.link_url ? { url: a.link_url, ext: true } : null);
+    if (h) { s.style.cursor = 'pointer'; s.addEventListener('click', function () { if (h.ext) window.open(h.url, '_blank', 'noopener'); else location.href = h.url; }); }
+    if (AD) AD.tag(s, slot, !!a.house);
     return s;
   }
 
@@ -79,7 +85,11 @@
       a.author_id ? db.from('articles').select('id,title,category,cover_url').eq('author_id', a.author_id).neq('id', a.id).order('published_at', { ascending: false }).limit(3) : Promise.resolve({ data: [] }),
       a.category ? db.from('articles').select('id,title,category,cover_url,author_id').in('category', PD.catVariants(rawCat)).neq('id', a.id).order('published_at', { ascending: false }).limit(3) : Promise.resolve({ data: [] })
     ];
-    return Promise.all(jobs).then(function (res) { show(a, res[0].data, res[1].data, res[2].data || [], res[3].data || []); });
+    jobs.push(db.from('site_settings').select('value').eq('key', 'contact').maybeSingle());
+    return Promise.all(jobs).then(function (res) {
+      UIS = (res[4] && res[4].data && res[4].data.value && res[4].data.value.ui) || {};
+      show(a, res[0].data, res[1].data, res[2].data || [], res[3].data || []);
+    });
   });
 
   function show(a, au, ads, more, rel) {

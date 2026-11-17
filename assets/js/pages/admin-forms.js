@@ -10,8 +10,8 @@
   /* ---------- আপলোড (শুধু এডমিন; ধরন ও আকার যাচাই) ---------- */
   function upload(file, folder, kind) {
     if (!file) return Promise.resolve(null);
-    var img = /^image\//.test(file.type), pdf = file.type === 'application/pdf';
-    if (!img && !pdf) return Promise.reject(new Error('শুধু ছবি (JPG, PNG, WebP, GIF) বা PDF দেওয়া যাবে'));
+    var pdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name || ''), img = !pdf && PD.isImageFile(file);
+    if (!img && !pdf) return Promise.reject(new Error('শুধু ছবি (JPG, PNG, WebP, GIF, HEIC, AVIF, TIFF…) বা PDF দেওয়া যাবে'));
     if (pdf && file.size > MAX_PDF) return Promise.reject(new Error('PDF ১০ MB-এর বেশি হওয়া চলবে না'));
     var name = function (ext) { return folder + '/' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8) + '.' + ext; };
     if (pdf) return PD.upload(file, name('pdf'), file.type);
@@ -24,9 +24,9 @@
   function pickFile(input, preview, labelSel, cb) {
     input.addEventListener('change', function () {
       var f = input.files[0]; if (!f) return;
-      if (!/^image\//.test(f.type)) { A.showToast('শুধু ছবি দিন'); input.value = ''; return; }
-      if (f.size > MAX_IMG) { A.showToast('ছবির ফাইল অনেক বড় (৪০ MB-এর বেশি) — একটু ছোট ছবি দিন'); input.value = ''; return; }
-      preview.src = URL.createObjectURL(f); preview.style.display = 'block';
+      if (!PD.isImageFile(f)) { A.showToast('শুধু ছবি দিন'); input.value = ''; return; }
+      if (f.size > MAX_IMG) { A.showToast('ছবির ফাইল অনেক বড় (৬০ MB-এর বেশি) — একটু ছোট ছবি দিন'); input.value = ''; return; }
+      PD.previewUrl(f).then(function (u) { preview.src = u; }, function (e) { A.showToast(e.message || 'ছবিটা পড়া যাচ্ছে না'); }); preview.style.display = 'block';
       var sp = input.parentNode.querySelector('span'); if (sp) sp.style.display = 'none';
       cb(f);
     });
@@ -477,6 +477,10 @@
     $('ui-hero-interval').value = ui.hero_interval == null ? '' : ui.hero_interval;
     $('ui-popup-delay').value = ui.popup_delay == null ? '' : ui.popup_delay;
     $('ui-popup-freq').value = ui.popup_freq === 'day' ? 'day' : 'session';
+    $('ui-house-ads').checked = ui.house_ads !== false;
+    /* লেখার পাতার প্রিভিউ: প্রকাশিত প্রথম লেখা */
+    var pa = (S.articles || []).filter(function (x) { return x.status === 'published'; })[0];
+    if (pa && $('ad-preview-article')) $('ad-preview-article').href = 'article.html?id=' + encodeURIComponent(pa.id) + '&adpreview=1';
   }
   function saveSetting(key, value, msg) {
     var old = S.set[key] || {};
@@ -506,7 +510,7 @@
     if (!(iv >= 3 && iv <= 30)) return A.showToast('স্লাইডের সময় ৩ থেকে ৩০ সেকেন্ডের মধ্যে দিন');
     if (!(dl >= 0 && dl <= 30)) return A.showToast('পপআপের সময় ০ থেকে ৩০ সেকেন্ডের মধ্যে দিন');
     var old = (S.set.contact && S.set.contact.ui) || {};
-    saveSetting('contact', { ui: Object.assign({}, old, { hero_interval: iv, popup_delay: dl, popup_freq: $('ui-popup-freq').value === 'day' ? 'day' : 'session' }) }, 'সেটিংস সংরক্ষণ হয়েছে — সাইটে সঙ্গে সঙ্গে কাজ করবে');
+    saveSetting('contact', { ui: Object.assign({}, old, { hero_interval: iv, popup_delay: dl, popup_freq: $('ui-popup-freq').value === 'day' ? 'day' : 'session', house_ads: $('ui-house-ads').checked }) }, 'সেটিংস সংরক্ষণ হয়েছে — সাইটে সঙ্গে সঙ্গে কাজ করবে');
   });
 
   window.AdminForms = { upload: upload, openArticle: openArticle, openAuthor: openAuthor, openArchive: openArchive, openPrint: openPrint, fillSettings: fillSettings };

@@ -683,7 +683,7 @@
   var uploading = 0, selFig = null, figBar = null, figCtl = null;
   window.PDEditorBusy = function () { return uploading > 0; };
   var fileIn = doc.createElement('input');
-  fileIn.type = 'file'; fileIn.accept = 'image/png,image/jpeg,image/webp,image/gif'; fileIn.multiple = true; fileIn.style.display = 'none';
+  fileIn.type = 'file'; fileIn.accept = PD.IMG_ACCEPT || 'image/*'; fileIn.multiple = true; fileIn.style.display = 'none';
   doc.body.appendChild(fileIn);
   fileIn.addEventListener('change', function () { var fs = [].slice.call(fileIn.files || []); fileIn.value = ''; if (fs.length) insertImages(fs); });
 
@@ -769,8 +769,8 @@
   }
 
   function insertImages(files, at) {
-    var imgs = files.filter(function (f) { return /^image\//.test(f.type); });
-    if (!imgs.length) { toast('শুধু ছবি দেওয়া যাবে (JPG, PNG, WebP, GIF)'); return; }
+    var imgs = files.filter(function (f) { return PD.isImageFile(f); });
+    if (!imgs.length) { toast('শুধু ছবি দেওয়া যাবে (JPG, PNG, WebP, GIF, HEIC, AVIF, TIFF…)'); return; }
     if (imgs.length > 10) { toast('একবারে সর্বোচ্চ ১০টি ছবি দেওয়া যায়'); imgs = imgs.slice(0, 10); }
     var up = window.AdminForms && window.AdminForms.upload;
     if (!up) { toast('আপলোড এখনো চালু হয়নি — পাতাটি রিফ্রেশ করে আবার চেষ্টা করুন'); return; }
@@ -1029,7 +1029,7 @@
   artBody.addEventListener('dragleave', function (e) { if (!artBody.contains(e.relatedTarget)) artBody.classList.remove('is-drop'); });
   artBody.addEventListener('drop', function (e) {
     artBody.classList.remove('is-drop');
-    var fs = [].filter.call((e.dataTransfer && e.dataTransfer.files) || [], function (f) { return /^image\//.test(f.type); });
+    var fs = [].filter.call((e.dataTransfer && e.dataTransfer.files) || [], function (f) { return PD.isImageFile(f); });
     if (!fs.length) return;
     e.preventDefault();
     insertImages(fs, { x: e.clientX, y: e.clientY });
@@ -1170,7 +1170,7 @@
     var cd = e.clipboardData; if (!cd) return;
     var html = cd.getData('text/html'), txt = cd.getData('text/plain');
     if (e.target.closest && e.target.closest('figcaption')) { e.preventDefault(); exec('insertText', (txt || '').replace(/\s+/g, ' '), false); return; } /* ক্যাপশনে শুধু সাধারণ লেখা */
-    var imgFiles = [].filter.call(cd.files || [], function (f) { return /^image\//.test(f.type); });
+    var imgFiles = [].filter.call(cd.files || [], function (f) { return PD.isImageFile(f); });
     if (imgFiles.length && !(txt && txt.trim())) { e.preventDefault(); insertImages(imgFiles); return; } /* স্ক্রিনশট কপি করে সরাসরি পেস্ট */
     e.preventDefault();
     if (html && UI && UI.sanitize) {

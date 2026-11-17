@@ -160,22 +160,11 @@
         (f.cover_url ? '<div class="hf-art" aria-hidden="true"><span class="hf-art-ring"></span><span class="hf-art-img"><img class="hf-art-blur" decoding="async"' + lz + ' src="' + esc(f.cover_url) + '" alt=""><img class="hf-art-fg" decoding="async"' + lz + pri + ' src="' + esc(f.cover_url) + '" alt=""></span></div>' : '') +
         '</div></article>'
     }
-    /* এড স্লাইড: পুরো ছবি (কাটে না) + পেছনে একই ছবির ঝাপসা আভা + ছোট "বিজ্ঞাপন" ট্যাগ */
-    function adHtml(a) {
-      var link = a.link_url && /^https?:\/\//i.test(a.link_url),
-        tag = link ? 'a' : 'div',
-        attrs = link ? ' href="' + esc(a.link_url) + '" target="_blank" rel="noopener sponsored"' : '';
-      return '<article class="hf hf-ad"><' + tag + ' class="hf-ad-link"' + attrs + ' aria-label="বিজ্ঞাপন">' +
-        '<img class="hf-ad-glow" decoding="async" loading="lazy" src="' + esc(a.image_url) + '" alt="" aria-hidden="true">' +
-        '<img class="hf-ad-img" decoding="async" loading="lazy" src="' + esc(a.image_url) + '" alt="বিজ্ঞাপন">' +
-        '<span class="hf-ad-tag">বিজ্ঞাপন</span></' + tag + '></article>'
-    }
     var NA = list.length,
       items = list.map(function(f, i) { return { f: f, i: i } });
     if (!NA) items = [{ f: null, i: 0 }];
-    HERO_ADS.forEach(function(h) { items.push({ ad: h.a }) });
     var N = items.length,
-      itemHtml = function(it) { return it.ad ? adHtml(it.ad) : cardHtml(it.f, it.i, Math.max(NA, 1)) };
+      itemHtml = function(it) { return cardHtml(it.f, it.i, Math.max(NA, 1)) }; /* v121: হিরোতে শুধু লেখা — বিজ্ঞাপন আলাদা জায়গায় (#ad-stage) */
     if (N <= 1) {
       hbG.innerHTML = itemHtml(items[0]);
       return
@@ -446,35 +435,73 @@
     box.classList.toggle('no-cover', !cover);
     box.innerHTML = '<div class="ib-inner">' + (cover ? '<a class="ib-cover" href="issue.html?id=' + cur.id + '">' + bookHtml(cover, cur.title) + '<span class="pd-shelf ib-shelf" aria-hidden="true"></span></a>' : '') + '<div class="ib-text"><div class="ib-kicker"><span>চলতি সংখ্যা</span>' + (cur.issue_number ? '<span class="ib-no">সংখ্যা ' + bn(cur.issue_number) + '</span>' : '') + '</div><h2>' + esc(cur.title) + '</h2>' + (T('tagline') ? '<p class="ib-teaser">' + esc(cut(T('tagline'), 260)) + '</p>' : '') + (st.length ? '<div class="ib-stats">' + st.join('') + '</div>' : '') + ((readBtn || buyBtn) ? '<div class="ib-actions">' + readBtn + buyBtn + '</div>' : '') + '</div></div>';
   })();
-  /* বিজ্ঞাপন */
+  /* বিজ্ঞাপন (v121)
+     • হিরোর ঠিক নিচে আলাদা "বিজ্ঞাপনের জায়গা" (#ad-stage): হিরো বিজ্ঞাপন ১–৫ পালা করে — ১২০০×৪৫০, মোবাইল ও পিসিতে একই অনুপাত
+     • টপ ব্যানার: "সাম্প্রতিক লেখা"-র পরে (মোবাইলে "মোবাইল ব্যানার" থাকলে সেটা) · মিড ব্যানার: বিভাগ-সেকশনের পরে
+     • কোনো জায়গায় চালু বিজ্ঞাপন না থাকলে পত্রদ্বীপের নিজস্ব বিজ্ঞাপন (components/ads.js; এডমিন বন্ধ করতে পারেন) */
+  var AD = window.PDAds,
+    houseOn = !!(AD && AD.useHouse(UIS)),
+    RMQ = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  (function() {
+    var box = $('ad-stage');
+    if (!box) return;
+    var list = HERO_ADS.map(function(h) { return h.a }),
+      house = false;
+    if (!list.length && houseOn) { list = AD.house('hero'); house = true }
+    if (!list.length) { box.remove(); return }
+    box.innerHTML = '<div class="as-track">' + list.map(function(a, i) {
+      var at = AD ? AD.attrs(a.link_url) : '',
+        tg = at ? 'a' : 'div';
+      return '<' + tg + ' class="as-slide' + (i ? '' : ' on') + '"' + at + (i ? ' aria-hidden="true" tabindex="-1"' : '') + '><img decoding="async"' + (i ? ' loading="lazy"' : '') + ' src="' + esc(a.image_url) + '" alt="বিজ্ঞাপন" width="1200" height="450"></' + tg + '>'
+    }).join('') + '</div><span class="as-tag">বিজ্ঞাপন</span>' + (list.length > 1 ? '<div class="as-dots" role="group" aria-label="বিজ্ঞাপন বেছে নিন">' + list.map(function(_, i) {
+      return '<button type="button" class="' + (i ? '' : 'on') + '" aria-label="বিজ্ঞাপন ' + bn(i + 1) + '"></button>'
+    }).join('') + '</div>' : '');
+    box.classList.add('ready');
+    if (AD) AD.tag(box, 'hero', house);
+    if (list.length < 2) return;
+    var slides = box.querySelectorAll('.as-slide'),
+      dots = box.querySelectorAll('.as-dots button'),
+      cur = 0,
+      t = 0;
+    function show(i) {
+      cur = (i + list.length) % list.length;
+      slides.forEach(function(s, q) {
+        var on = q === cur;
+        s.classList.toggle('on', on);
+        if (on) { s.removeAttribute('aria-hidden'); s.removeAttribute('tabindex') } else { s.setAttribute('aria-hidden', 'true'); s.setAttribute('tabindex', '-1') }
+      });
+      dots.forEach(function(d, q) { d.classList.toggle('on', q === cur) })
+    }
+    function play() { clearInterval(t); if (!RMQ) t = setInterval(function() { show(cur + 1) }, 6000) }
+    dots.forEach(function(d, i) { d.addEventListener('click', function() { show(i); play() }) });
+    box.addEventListener('mouseenter', function() { clearInterval(t) });
+    box.addEventListener('mouseleave', play);
+    document.addEventListener('visibilitychange', function() { document.hidden ? clearInterval(t) : play() });
+    play()
+  })();
+  /* টপ ও মিড ব্যানার */
   var sl = document.querySelectorAll('.ad-slot'),
     isMob = window.matchMedia && window.matchMedia('(max-width:760px)').matches;
   ['top', 'mid'].forEach(function(k, i) {
     var s = sl[i];
     if (!s) return;
-    var a = ADS[k];
+    var a = ADS[k],
+      slot = k;
     /* মোবাইলে "মোবাইল ব্যানার" থাকলে উপরের ব্যানারের জায়গায় সেটা দেখানো হয় */
-    if (k === 'top' && isMob && ADS.mobile && ADS.mobile.image_url) {
-      a = ADS.mobile;
-      s.classList.add('ad-mobile');
-    }
-    if (!a || !a.image_url) {
-      s.remove();
-      return
-    }
+    if (k === 'top' && isMob && ADS.mobile && ADS.mobile.image_url) { a = ADS.mobile; slot = 'mobile' }
+    if ((!a || !a.image_url) && houseOn) { slot = k === 'top' && isMob ? 'mobile' : k; a = AD.house(slot) }
+    if (!a || !a.image_url) { s.remove(); return }
+    if (slot === 'mobile') s.classList.add('ad-mobile');
     s.style.display = '';
     var g = s.querySelector('.ad-bg');
     if (g) g.src = a.image_url;
-    var c = s.querySelector('.ad-content');
-    if (c) c.remove();
-    var o = s.querySelector('.ad-overlay');
-    if (o) o.remove();
-    if (a.link_url) {
+    ['.ad-content', '.ad-overlay'].forEach(function(q) { var e = s.querySelector(q); if (e) e.remove() });
+    var h = AD ? AD.href(a.link_url) : null;
+    if (h) {
       s.style.cursor = 'pointer';
-      s.onclick = function() {
-        window.open(a.link_url, '_blank', 'noopener')
-      }
+      s.onclick = function() { if (h.ext) window.open(h.url, '_blank', 'noopener'); else location.href = h.url }
     }
+    if (AD) AD.tag(s, slot, !!a.house)
   });
   /* জনপ্রিয় লেখক ও ফলো */
   await PD.load();

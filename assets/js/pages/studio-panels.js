@@ -215,29 +215,23 @@
   }
 
   /* ---------- ছবি আপলোড ---------- */
+  /* v121: সাইটের অন্য সব জায়গার মতো — যেকোনো ফরম্যাট (HEIC, TIFF, AVIF…) পড়ে, সবচেয়ে ছোট WebP বানিয়ে আপলোড;
+     SVG ভেক্টর বলে যেমন আছে তেমনই (ছোট হলে) */
   P.uploadImage = function (file) {
-    return new Promise(function (resolve, reject) {
-      if (!file || !/^image\//.test(file.type)) return reject(new Error('শুধু ছবির ফাইল দিন'));
-      if (file.size > 8 * 1024 * 1024) return reject(new Error('ছবি ৮ MB-এর বেশি হতে পারবে না'));
-      function send(blob, ext, type) {
-        var path = 'design/' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6) + '.' + ext;
-        PD.upload(blob, path, type).then(resolve, reject);
-      }
-      if (/svg|gif/.test(file.type)) return send(file, file.type.indexOf('svg') > -1 ? 'svg' : 'gif', file.type);
-      var img = new Image(), u = URL.createObjectURL(file);
-      img.onload = function () {
-        var max = 2200, k = Math.min(1, max / Math.max(img.width, img.height));
-        var c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
-        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-        URL.revokeObjectURL(u);
-        c.toBlob(function (b) { if (b) send(b, 'webp', 'image/webp'); else send(file, 'jpg', file.type); }, 'image/webp', 0.88);
-      };
-      img.onerror = function () { send(file, 'jpg', file.type); };
-      img.src = u;
-    });
+    function send(blob, ext, type) {
+      var path = 'design/' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6) + '.' + ext;
+      return PD.upload(blob, path, type);
+    }
+    if (!file || !(PD.isImageFile ? PD.isImageFile(file) : /^image\//.test(file.type))) return Promise.reject(new Error('শুধু ছবির ফাইল দিন'));
+    if (/svg/i.test(file.type) || /\.svg$/i.test(file.name || '')) {
+      if (file.size > 300 * 1024) return Promise.reject(new Error('SVG ৩০০ KB-এর বেশি হতে পারবে না'));
+      return send(file, 'svg', 'image/svg+xml');
+    }
+    if (!PD.fitImage) return Promise.reject(new Error('পাতাটি রিফ্রেশ করে আবার চেষ্টা করুন'));
+    return PD.fitImage(file, 'inline').then(function (b) { return send(b, PD.fitExt(b), b.type); });
   };
   function pickFile(cb) {
-    var f = E('input', { type: 'file', accept: 'image/*' });
+    var f = E('input', { type: 'file', accept: PD.IMG_ACCEPT || 'image/*' });
     f.addEventListener('change', function () {
       if (!f.files[0]) return;
       P.toast('ছবি আপলোড হচ্ছে…');

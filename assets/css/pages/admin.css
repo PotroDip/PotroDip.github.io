@@ -1422,3 +1422,5 @@ select.status-select.st-cancelled{color:#B3261E;border-color:color-mix(in srgb, 
 .art-date-today:hover,.art-date-clear:hover{border-color:var(--primary); color:var(--primary);}
 .art-date-clear{padding:0 10px; color:var(--text-muted);}
 .art-date-hint{display:block; margin-top:7px; font-size:11px; line-height:1.55; color:var(--text-muted);}
+.ad-preview-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+.ad-ui-grid .stock-toggle-row{padding:6px 0;}

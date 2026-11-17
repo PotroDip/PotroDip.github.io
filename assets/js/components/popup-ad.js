@@ -19,7 +19,9 @@
   }
   function store(kind) { try { return kind === 'day' ? window.localStorage : window.sessionStorage; } catch (e) { return null; } }
   function hash(s) { var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36); }
-  function safeLink(u) { return typeof u === 'string' && /^https?:\/\//i.test(u.trim()) ? u.trim() : ''; }
+  /* বাইরের লিংক (https) নতুন ট্যাবে; সাইটের ভেতরের পাতা (যেমন store.html) একই ট্যাবে */
+  function safeLink(u) { u = typeof u === 'string' ? u.trim() : ''; return /^https?:\/\//i.test(u) || /^[a-z0-9_\-]+\.html([?#].*)?$/i.test(u) ? u : ''; }
+  function linkAttrs(u) { return /^https?:/i.test(u) ? { href: u, target: '_blank', rel: 'noopener sponsored' } : { href: u }; }
 
   function start() {
     Promise.all([
@@ -27,6 +29,9 @@
       get('site_settings?key=eq.contact&select=value')
     ]).then(function (x) {
       var ad = x[0] && x[0][0];
+      var PREV = /[?&]adpreview=1\b/.test(location.search);
+      /* প্রিভিউ (?adpreview=1): চালু পপআপ না থাকলেও পত্রদ্বীপের নমুনা পপআপ — সাধারণ ভিজিটরকে নমুনা পপআপ দেখানো হয় না */
+      if ((!ad || !ad.image_url) && PREV) ad = { image_url: 'assets/img/ads/house-popup.webp', link_url: 'store.html', house: true };
       if (!ad || !ad.image_url) return;
       var ui = (x[1] && x[1][0] && x[1][0].value && x[1][0].value.ui) || {};
       var freq = ui.popup_freq === 'day' ? 'day' : 'session';
@@ -35,7 +40,7 @@
 
       var key = 'pd-popup-' + hash(ad.image_url), st = store(freq), seen = null;
       try { seen = st && st.getItem(key); } catch (e) {}
-      if (seen && (freq === 'session' || Date.now() - (+seen || 0) < 864e5)) return;
+      if (!PREV && seen && (freq === 'session' || Date.now() - (+seen || 0) < 864e5)) return;
 
       /* ছবি আর স্টাইল আগে থেকে পুরো লোড, তারপর দেখানো */
       var img = new Image();
@@ -50,8 +55,9 @@
 
       Promise.all([imgReady, cssReady, afterIntro(), wait(delay)]).then(function () {
         if (document.querySelector('.pd-pop')) return;
-        try { st && st.setItem(key, String(Date.now())); } catch (e) {}
+        if (!PREV) try { st && st.setItem(key, String(Date.now())); } catch (e) {}
         show(ad, img);
+        if (PREV) { var c = document.querySelector('.pd-pop-media'); if (c) { var l = document.createElement('span'); l.className = 'pd-ad-label'; l.textContent = 'পপআপ এড · ১০৮০×১৩৫০' + (ad.house ? ' · নমুনা' : ' · চালু বিজ্ঞাপন'); c.appendChild(l); } }
       }, function () {});
     });
   }
@@ -86,7 +92,7 @@
     var card = el('div', 'pd-pop-card');
     var close = el('button', 'pd-pop-x', { type: 'button', 'aria-label': 'বন্ধ করুন', title: 'বন্ধ করুন' });
     close.innerHTML = X_ICON;
-    var media = link ? el('a', 'pd-pop-media', { href: link, target: '_blank', rel: 'noopener sponsored' }) : el('div', 'pd-pop-media');
+    var media = link ? el('a', 'pd-pop-media', linkAttrs(link)) : el('div', 'pd-pop-media');
     img.className = 'pd-pop-img';
     img.alt = 'বিজ্ঞাপন';
     media.appendChild(img);
@@ -95,7 +101,7 @@
     tag.textContent = 'বিজ্ঞাপন';
     bar.appendChild(tag);
     if (link) {
-      var cta = el('a', 'pd-pop-cta', { href: link, target: '_blank', rel: 'noopener sponsored' });
+      var cta = el('a', 'pd-pop-cta', linkAttrs(link));
       cta.innerHTML = '<span>বিস্তারিত দেখুন</span>' + ARROW;
       bar.appendChild(cta);
     } else {

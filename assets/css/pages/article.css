@@ -234,7 +234,7 @@ html[data-theme="dark"] .cat-badge{ background:rgba(10,14,15,.75); }
 /* ============ এড স্লট (হোমপেজের সাথে হুবহু) ============ */
   .ad-slot{position:relative; margin:44px auto; overflow:hidden; background:var(--surface); border:1px solid var(--border);}
 
-.ad-mid{width:100%; max-width:728px; height:150px;}
+.ad-mid{width:100%; max-width:728px; height:auto; aspect-ratio:728/150;}
 
 .ad-slot .ad-bg{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;}
 
@@ -253,7 +253,7 @@ html[data-theme="dark"] .cat-badge{ background:rgba(10,14,15,.75); }
 @keyframes adFadeIn{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
 
 @media(max-width:640px){
-    .ad-mid{height:128px; max-width:100%;}
+    .ad-mid{height:auto; max-width:100%;}
     .ad-slot .ad-content{padding:0 20px;}
     .ad-slot .ad-eyebrow{font-size:9.5px; margin-bottom:4px;}
     .ad-slot .ad-title{font-size:16px; margin-bottom:8px; max-width:78%; line-height:1.3;}
