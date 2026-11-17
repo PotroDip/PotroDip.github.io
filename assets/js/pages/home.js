@@ -402,6 +402,10 @@
   await catSections();
   /* পুরোনো কবিতা (সারাংশে লাইন-ব্রেক নেই): মূল লেখা এনে কার্ডে কবিতার মতো লাইন */
   PDUI.fixPoemExcerpts(db, A.concat((R[5] && R[5].data) || []), document);
+  /* 3D বই (প্রচ্ছদ + বাঁধাই + পাতার স্তূপ + পেছনের মলাট) */
+  function bookHtml(src, title) {
+    return '<span class="pdb"><span class="pdb-3d"><img class="pdb-front" decoding="async" loading="lazy" src="' + esc(src) + '" alt="' + esc(title) + ' প্রচ্ছদ"><span class="pdb-shine"></span><span class="pdb-pages"></span><span class="pdb-back"></span></span></span>'
+  }
   /* ম্যাগাজিন: চলতি সংখ্যার ব্যান্ডের নিচে আগের সংখ্যাগুলোর প্রচ্ছদ */
   (function() {
     var row = $('issue-row');
@@ -409,9 +413,10 @@
     var list = (R[2].data || []).filter(function(i) { return i.cover_url }).sort(function(a, b) {
       return new Date(b.published_at || b.created_at) - new Date(a.published_at || a.created_at)
     }).slice(1, 7);
-    row.innerHTML = list.map(function(i) {
-      return '<a class="mag-card" href="issue.html?id=' + i.id + '"><div class="mag-cover"><img decoding="async" src="' + esc(i.cover_url) + '" alt="' + esc(i.title) + ' প্রচ্ছদ" loading="lazy"></div><h4>' + esc(i.title) + '</h4>' + (i.issue_number ? '<span>সংখ্যা ' + bn(i.issue_number) + '</span>' : '') + '</a>'
-    }).join('')
+    /* বই-সিস্টেম: প্রতিটা সংখ্যা ছোট 3D বই, নিচে তাক (components/book.css) */
+    row.innerHTML = list.length ? '<div class="mag-shelf-row">' + list.map(function(i) {
+      return '<a class="mag-card" href="issue.html?id=' + i.id + '">' + bookHtml(i.cover_url, i.title) + '<span class="pd-shelf" aria-hidden="true"></span><h4>' + esc(i.title) + '</h4>' + (i.issue_number ? '<span>সংখ্যা ' + bn(i.issue_number) + '</span>' : '') + '</a>'
+    }).join('') + '</div>' : ''
   })();
   /* চলতি সংখ্যা — সর্বশেষ সংখ্যার প্রচ্ছদ, বিবরণ, পড়া ও কেনার বাটন */
   (function() {
@@ -437,7 +442,7 @@
       buyBtn = (cur.show_print_btn !== false && pr && pr.in_stock) ? '<a class="ib-btn ghost" href="store.html">ছাপা কপি · ৳' + bn(Number(pr.price)) + '</a>' : '',
       cover = cur.cover_url;
     box.classList.toggle('no-cover', !cover);
-    box.innerHTML = '<div class="ib-inner">' + (cover ? '<a class="ib-cover" href="issue.html?id=' + cur.id + '"><img decoding="async" src="' + esc(cover) + '" alt="' + esc(cur.title) + ' প্রচ্ছদ" loading="lazy"></a>' : '') + '<div class="ib-text"><div class="ib-kicker"><span>চলতি সংখ্যা</span>' + (cur.issue_number ? '<span class="ib-no">সংখ্যা ' + bn(cur.issue_number) + '</span>' : '') + '</div><h2>' + esc(cur.title) + '</h2>' + (T('tagline') ? '<p class="ib-teaser">' + esc(cut(T('tagline'), 260)) + '</p>' : '') + (st.length ? '<div class="ib-stats">' + st.join('') + '</div>' : '') + ((readBtn || buyBtn) ? '<div class="ib-actions">' + readBtn + buyBtn + '</div>' : '') + '</div></div>';
+    box.innerHTML = '<div class="ib-inner">' + (cover ? '<a class="ib-cover" href="issue.html?id=' + cur.id + '">' + bookHtml(cover, cur.title) + '<span class="pd-shelf ib-shelf" aria-hidden="true"></span></a>' : '') + '<div class="ib-text"><div class="ib-kicker"><span>চলতি সংখ্যা</span>' + (cur.issue_number ? '<span class="ib-no">সংখ্যা ' + bn(cur.issue_number) + '</span>' : '') + '</div><h2>' + esc(cur.title) + '</h2>' + (T('tagline') ? '<p class="ib-teaser">' + esc(cut(T('tagline'), 260)) + '</p>' : '') + (st.length ? '<div class="ib-stats">' + st.join('') + '</div>' : '') + ((readBtn || buyBtn) ? '<div class="ib-actions">' + readBtn + buyBtn + '</div>' : '') + '</div></div>';
   })();
   /* বিজ্ঞাপন */
   var sl = document.querySelectorAll('.ad-slot'),

@@ -109,14 +109,22 @@ footer.site-footer::before{
   .site-footer .footer-social{justify-content:center;}
 }
 .footer-social{display:flex;gap:10px;flex-wrap:wrap;}
-/* সোশ্যাল আইকন: আসল ব্র্যান্ড লোগো (ভেক্টর) নিজস্ব রঙে, সাদা গোল চাকতির ওপর */
-.footer-social .soc{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:0;background:#fff;
-  box-shadow:0 6px 14px -6px rgba(0,0,0,.45),inset 0 0 0 1px rgba(0,0,0,.04);
-  transition:transform .3s cubic-bezier(.3,1.35,.5,1),box-shadow .3s ease;}
-.footer-social .soc:hover{transform:translateY(-3px) scale(1.06);box-shadow:0 12px 22px -8px rgba(0,0,0,.55),0 0 0 3px rgba(233,203,152,.35);}
+/* সোশ্যাল আইকন: আসল ব্র্যান্ড লোগো (ভেক্টর) নিজস্ব রঙে, কাচের মতো (গ্লাস) চাকতির ওপর */
+.footer-social .soc{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;
+  background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.04));
+  border:1px solid rgba(255,255,255,.22);
+  -webkit-backdrop-filter:blur(12px) saturate(1.5);backdrop-filter:blur(12px) saturate(1.5);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -1px 0 rgba(0,0,0,.12),0 8px 18px -10px rgba(0,0,0,.6);
+  transition:transform .3s cubic-bezier(.3,1.35,.5,1),box-shadow .3s ease,background .3s ease,border-color .3s ease;}
+/* কাচের ওপরের দিকে হালকা আলোর ঝলক */
+.footer-social .soc::before{content:"";position:absolute;left:12%;right:12%;top:3px;height:42%;border-radius:50% 50% 45% 45%;background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,0));pointer-events:none;}
+.footer-social .soc:hover{transform:translateY(-3px);background:linear-gradient(145deg,rgba(255,255,255,.24),rgba(255,255,255,.08));border-color:rgba(233,203,152,.55);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 14px 24px -10px rgba(0,0,0,.65),0 0 0 3px rgba(233,203,152,.16);}
 .footer-social .soc:focus-visible{outline:2px solid #E9CB98;outline-offset:3px;}
-.footer-social .soc svg{width:21px;height:21px;display:block;}
+.footer-social .soc svg{width:21px;height:21px;display:block;position:relative;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.25));}
 .footer-social .soc-mail svg,.footer-social .soc-phone svg{width:20px;height:20px;}
+/* ফেসবুকের "f" কাচের ভেতর দিয়ে স্পষ্ট দেখাতে লোগোর পেছনে সাদা */
+.footer-social .soc-fb svg{border-radius:50%;background:radial-gradient(circle,#fff 58%,transparent 60%);}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
 
 /* নিচের সারি */

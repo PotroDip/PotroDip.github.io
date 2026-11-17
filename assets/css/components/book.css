@@ -1,0 +1,63 @@
+/* ============================================================
+   book.css — "বই" কম্পোনেন্ট (v118): ম্যাগাজিনের প্রচ্ছদ আসল বইয়ের মতো
+   • সামনের প্রচ্ছদ + বাঁধাইয়ের ভাঁজ ও আলোর ঝলক + ডান পাশে পাতার স্তূপ + পেছনের মলাট
+   • হালকা ঘুরে থাকে (3D); মাউস নিলে সোজা হয়ে একটু উঠে আসে
+   • নিচে কাঠের তাক (pd-shelf) — বইগুলো তাকে দাঁড়িয়ে থাকে
+   ব্যবহার: <span class="pdb" style="--d:18px"><span class="pdb-3d"><img class="pdb-front">
+             <span class="pdb-shine"></span><span class="pdb-pages"></span><span class="pdb-back"></span></span></span>
+   ============================================================ */
+.pdb{--d:16px; display:block; position:relative; perspective:1600px; perspective-origin:50% 40%;}
+.pdb-3d{
+  position:relative; display:block; aspect-ratio:3/4;
+  transform-style:preserve-3d; transform:rotateY(-26deg);
+  transition:transform .8s cubic-bezier(.2,.8,.2,1);
+}
+a:hover > .pdb .pdb-3d, a:focus-visible > .pdb .pdb-3d, .pdb:hover .pdb-3d{transform:rotateY(-7deg) translateY(-6px);}
+.pdb-front{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;
+  border-radius:2px 5px 5px 2px; transform:translateZ(1px); backface-visibility:hidden;
+  background:var(--surface);
+}
+/* বাঁধাইয়ের ভাঁজ (বাম দিকে) + প্রচ্ছদে হালকা আলোর ঝলক */
+.pdb-shine{
+  position:absolute; inset:0; border-radius:2px 5px 5px 2px; pointer-events:none; transform:translateZ(1.5px);
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.32) 0, rgba(255,255,255,.22) 1.4%, rgba(0,0,0,.16) 3%, rgba(255,255,255,.06) 4.6%, transparent 8%),
+    linear-gradient(118deg, rgba(255,255,255,.22) 0, rgba(255,255,255,0) 34%),
+    linear-gradient(0deg, rgba(0,0,0,.10), transparent 22%);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);
+}
+/* পাতার স্তূপ (ডান পাশে, ঘোরানো অবস্থায় দেখা যায়) */
+.pdb-pages{
+  position:absolute; left:100%; top:1.3%; height:97.4%; width:var(--d);
+  transform-origin:left center; transform:rotateY(90deg);
+  background:repeating-linear-gradient(90deg, #FDFBF6 0 1px, #E7E0D1 1px 2px);
+  box-shadow:inset 0 0 8px rgba(0,0,0,.18), inset -2px 0 0 rgba(0,0,0,.08);
+}
+/* পেছনের মলাট */
+.pdb-back{
+  position:absolute; inset:0; border-radius:2px 5px 5px 2px; transform:translateZ(calc(var(--d) * -1));
+  background:#123A3D;
+}
+/* মেঝেতে ছায়া */
+.pdb::after{
+  content:""; position:absolute; left:6%; right:-6%; bottom:-10px; height:22px; z-index:-1; pointer-events:none;
+  background:radial-gradient(ellipse at 45% 50%, rgba(0,0,0,.38), rgba(0,0,0,0) 70%);
+  filter:blur(3px); transition:transform .8s cubic-bezier(.2,.8,.2,1), opacity .8s ease;
+}
+a:hover > .pdb::after, .pdb:hover::after{transform:scaleX(.92); opacity:.75;}
+
+/* কাঠের তাক */
+.pd-shelf{
+  position:relative; display:block; height:16px; border-radius:3px;
+  background:linear-gradient(180deg, #B48A68 0, #9B7357 38%, #7E5B43 100%);
+  box-shadow:0 1px 0 rgba(255,255,255,.35) inset, 0 14px 22px -12px rgba(60,35,18,.65);
+}
+.pd-shelf::after{ /* তাকের সামনের কিনারা */
+  content:""; position:absolute; left:0; right:0; bottom:-6px; height:6px; border-radius:0 0 4px 4px;
+  background:linear-gradient(180deg, #6E4E39, #5A3F2D);
+}
+html[data-theme="dark"] .pd-shelf{background:linear-gradient(180deg, #7C5C45 0, #634834 40%, #4C3727 100%);}
+html[data-theme="dark"] .pdb-pages{background:repeating-linear-gradient(90deg, #E9E3D6 0 1px, #CFC6B4 1px 2px);}
+
+@media (prefers-reduced-motion:reduce){ .pdb-3d, .pdb::after{transition:none;} }

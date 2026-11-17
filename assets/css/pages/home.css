@@ -705,3 +705,68 @@ a.hf-ad-link:focus-visible{outline:2px solid #E9CB98;outline-offset:-4px;}
 /* ============ কার্ডের সারাংশ: সব জায়গায় ৩ লাইন; কবিতা হলে কবিতার মতো আলাদা লাইনে ============ */
 .article-card p.ac-ex{-webkit-line-clamp:3;line-clamp:3;}
 .article-card p.ex-poem{font-style:normal;letter-spacing:.005em;}
+
+/* ============================================================
+   v118 — হোমের "ম্যাগাজিন": বই-সিস্টেম (components/book.css)
+   • গাঢ় পুরো-প্রস্থ ব্যান্ডের বদলে সাইটের অন্য কার্ডের মতো হালকা কার্ড
+   • চলতি সংখ্যা = বড় 3D বই, কাঠের তাকে দাঁড়ানো; পাশে বিবরণ ও বাটন
+   • আগের সংখ্যাগুলো = ছোট বই, এক তাকে সারি করে
+   ============================================================ */
+#mag-section #issue-band{
+  margin:6px 0 0; border-radius:28px; overflow:hidden; color:var(--text);
+  background:
+    radial-gradient(120% 90% at 0% 100%, color-mix(in srgb, var(--secondary) 14%, transparent), transparent 55%),
+    radial-gradient(90% 80% at 100% 0%, color-mix(in srgb, var(--primary) 10%, transparent), transparent 60%),
+    var(--surface);
+  border:1px solid var(--border);
+  box-shadow:0 26px 40px -34px rgba(18,58,61,.55);
+}
+#mag-section #issue-band::before{display:none;}
+html[data-theme="dark"] #mag-section #issue-band{background:radial-gradient(120% 90% at 0% 100%, rgba(155,115,87,.16), transparent 55%), var(--surface);}
+#mag-section #issue-band .ib-inner{padding:58px 56px 64px; gap:72px; align-items:center;}
+@media(min-width:861px){ #mag-section #issue-band .ib-inner{grid-template-columns:320px minmax(0,560px); justify-content:center;} }
+
+/* বড় বই + তাক */
+#mag-section #issue-band .ib-cover{width:100%; aspect-ratio:auto; transform:none; box-shadow:none; animation:none; padding:0 14px 0 4px; display:block;}
+#mag-section #issue-band .ib-cover::after{display:none;}
+#mag-section #issue-band .ib-cover .pdb{--d:26px;}
+#mag-section #issue-band .ib-shelf{margin:16px -14px 0 -18px;}
+
+/* লেখা — হালকা কার্ডে গাঢ় রং */
+#mag-section .ib-kicker{color:var(--secondary);}
+#mag-section .ib-no{border-left-color:var(--border); color:var(--text-muted);}
+#mag-section .ib-text h2{color:var(--primary);}
+html[data-theme="dark"] #mag-section .ib-text h2{color:var(--text);}
+#mag-section .ib-teaser{color:var(--text-muted);}
+#mag-section .ib-stats{border-color:var(--border);}
+#mag-section .ib-stats strong{color:var(--primary);}
+html[data-theme="dark"] #mag-section .ib-stats strong{color:var(--text);}
+#mag-section .ib-stats span{color:var(--text-muted);}
+#mag-section .ib-btn.primary{background:var(--primary); color:#fff; box-shadow:0 12px 22px -14px var(--primary);}
+#mag-section .ib-btn.primary:hover{background:var(--primary); filter:brightness(1.08);}
+html[data-theme="dark"] #mag-section .ib-btn.primary{color:#0F1415;}
+#mag-section .ib-btn.ghost{border-color:color-mix(in srgb, var(--primary) 45%, transparent); color:var(--primary);}
+#mag-section .ib-btn.ghost:hover{background:color-mix(in srgb, var(--primary) 8%, transparent);}
+html[data-theme="dark"] #mag-section .ib-btn.ghost{color:var(--text);}
+
+/* আগের সংখ্যা: ছোট বই, এক তাকে */
+#mag-section .issue-row{display:block; margin-top:42px;}
+#mag-section .mag-shelf-row{display:grid; grid-template-columns:repeat(auto-fit, 150px); justify-content:center; gap:34px 30px; align-items:end; padding:0 18px;}
+#mag-section .mag-card{display:flex; flex-direction:column; text-align:center;}
+#mag-section .mag-card .pdb{--d:12px; width:100%; max-width:150px; margin:0 auto;}
+#mag-section .mag-card h4{font-size:15px; margin-top:18px; line-height:1.45; transition:color .2s ease;}
+#mag-section .mag-card:hover h4{color:var(--primary);}
+#mag-section .mag-card span{font-size:12.5px; color:var(--text-muted);}
+/* প্রতিটা বইয়ের নিচে তাকের টুকরো; ফাঁকের অর্ধেক দুই পাশে বাড়ানো — পাশাপাশি বসলে এক টানা তাক দেখায় */
+#mag-section .mag-card .pd-shelf{margin:12px -15px 0; border-radius:0; height:12px;}
+#mag-section .mag-card .pd-shelf::after{border-radius:0;}
+
+@media(max-width:860px){
+  #mag-section #issue-band .ib-inner{padding:40px 22px 44px; gap:34px;}
+  #mag-section #issue-band .ib-cover{width:100%; max-width:230px; margin:0 auto; padding:0 12px;}
+}
+@media(max-width:640px){
+  #mag-section #issue-band{border-radius:22px;}
+  #mag-section .mag-shelf-row{grid-template-columns:repeat(2, minmax(0, 150px)); gap:26px 22px; padding:0 8px;}
+  #mag-section .mag-card .pd-shelf{margin:12px -11px 0;}
+}
