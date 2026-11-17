@@ -150,7 +150,11 @@
     var s = seg(el), p = el.parentElement;
     if (!p) return s;
     var same = [].filter.call(p.children, function (x) { return seg(x) === s; });
-    if (same.length > 1) s += ':nth-child(' + (([].indexOf.call(p.children, el)) + 1) + ')';
+    /* :nth-of-type — শুধু একই ট্যাগের ভাইদের মধ্যে ক্রম; মাঝে বিজ্ঞাপন/অন্য div আসা-যাওয়া করলেও সিলেক্টর বদলায় না */
+    if (same.length > 1) {
+      var sameTag = [].filter.call(p.children, function (x) { return x.localName === el.localName; });
+      s += ':nth-of-type(' + (sameTag.indexOf(el) + 1) + ')';
+    }
     return s;
   }
   function pdAnchor(el) { return el.getAttribute && el.getAttribute('data-pd-id'); }

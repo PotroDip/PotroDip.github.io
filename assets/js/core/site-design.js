@@ -63,7 +63,9 @@
     v = v.replace(/url\(\s*(['"]?)([^)'"]*)\1\s*\)/gi, function (m, q, u) { return safeUrl(u) ? 'url("' + u + '")' : 'none'; });
     return v;
   }
-  function okSel(s) { return typeof s === 'string' && s.length < 600 && /^[^{};@<>\\]+$/.test(s); }
+  /* স্টুডিওর সিলেক্টরে child-কম্বিনেটর '>' থাকে (main.wrap > section > h2) — তাই '>' অনুমোদিত।
+     '<' নিষিদ্ধ থাকায় <style> ভেঙে বের হওয়া সম্ভব নয়; '{' '}' ';' '@' '\\' নিষিদ্ধ। */
+  function okSel(s) { return typeof s === 'string' && s.length < 600 && /^[^{};@<\\]+$/.test(s); }
   function decls(css) {
     var o = '';
     for (var k in css) {
@@ -394,7 +396,7 @@
     var C = window.PD_CONFIG;
     if (!C || !window.fetch) return;
     fetch(C.supabaseUrl + '/rest/v1/site_settings?key=eq.' + KEY + '&select=value', {
-      headers: { apikey: C.anonKey, Authorization: 'Bearer ' + C.anonKey }
+      headers: { apikey: C.anonKey, Authorization: 'Bearer ' + C.anonKey }, cache: 'no-store'
     }).then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
       .then(function (rows) {
         if (rows && rows[0] && rows[0].value) return done(rows[0].value);
@@ -403,4 +405,29 @@
       .catch(function () { fromStatic(function (d) { if (d) done(d); }); });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', load); else load();
+
+  /* ---------- লাইভ আপডেট: স্টুডিওতে পাবলিশ করলেই খোলা পেজে সঙ্গে সঙ্গে ----------
+     • Supabase Realtime (site_settings টেবিল) — পাবলিশ হওয়া মাত্র নতুন ডিজাইন এনে বসায়
+     • Realtime সংযুক্ত না থাকলে প্রতি ২০ সেকেন্ডে, থাকলেও প্রতি ৬০ সেকেন্ডে (ট্যাব দেখা গেলে) মিলিয়ে নেয়
+     • ট্যাবে ফিরলে / উইন্ডো ফোকাস পেলেও মিলিয়ে নেয় */
+  function liveWatch() {
+    var last = 0, connected = false;
+    function refetch(force) {
+      if (!force && Date.now() - last < 3000) return;
+      last = Date.now(); load();
+    }
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) refetch(); });
+    window.addEventListener('focus', function () { refetch(); });
+    var P = window.PD;
+    if (P && P.db && P.db.channel) {
+      try {
+        P.db.channel('pd-site-design')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings', filter: 'key=eq.' + KEY }, function () { refetch(true); })
+          .subscribe(function (st) { connected = st === 'SUBSCRIBED'; });
+      } catch (e) {}
+    }
+    var n = 0; /* Realtime সংযুক্ত থাকলেও প্রতি ৬০ সেকেন্ডে একবার সেফটি-নেট */
+    setInterval(function () { if (!document.hidden && (!connected || ++n % 3 === 0)) refetch(); }, 20000);
+  }
+  if (document.readyState === 'complete') liveWatch(); else window.addEventListener('load', liveWatch);
 })();
