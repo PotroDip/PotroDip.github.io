@@ -394,10 +394,19 @@ body.home-cards .section-head{
   margin:76px 0 34px;padding:0;border:0;
 }
 body.home-cards .section-head::after{
-  content:"";grid-area:1/1/2/-1;align-self:center;height:1px;z-index:0;pointer-events:none;
-  /* পুরোনো ব্রাউজারে (color-mix নেই) সাধারণ রং; নতুনে দুই প্রান্তে সামান্য মিলিয়ে যায় */
-  background:var(--border);
-  background:linear-gradient(90deg,transparent,color-mix(in srgb, var(--primary) 50%, transparent) 7%,color-mix(in srgb, var(--primary) 50%, transparent) 93%,transparent);
+  content:"";grid-area:1/1/2/-1;align-self:center;height:0;z-index:0;pointer-events:none;
+  /* v122 (স্থায়ী সমাধান): আগে লাইনটা ছিল ১px উঁচু আধা-স্বচ্ছ ব্যাকগ্রাউন্ড — উইন্ডোজের ১২৫%/১৫০% স্কেলিং বা জুমে
+     আধা-পিক্সেলে পড়লে ব্রাউজার সেটা দুই ঝাপসা পিক্সেলে ভাগ করত, তাই কখনো কোনো সেকশনের লাইন প্রায় অদৃশ্য হয়ে যেত
+     (স্টুডিওতে কিছু বদলালে উচ্চতা বদলায়, তাই কোন সেকশনে হবে তাও বদলাত)।
+     এখন border — ব্রাউজার সবসময় পুরো পিক্সেলে আঁকে; রং নিরেট (স্বচ্ছ নয়); দুই প্রান্তের মিলিয়ে যাওয়া mask দিয়ে */
+  border:0;border-top:1px solid var(--border);
+  border-top-color:color-mix(in srgb, var(--primary) 52%, var(--bg));
+}
+/* ভগ্নাংশ স্কেলিং/জুম (১১০%, ১২৫%, ১৭৫% ইত্যাদি): ১ CSS পিক্সেল = ভগ্নাংশ আসল পিক্সেল, তাই সরু লাইন কোথাও পুরো,
+   কোথাও আধা আঁকা হয় — এখানে লাইন একটু পুরু ও রং একটু হালকা, যাতে অন্তত একটা আসল পিক্সেল সবসময় পুরো ভরে থাকে
+   (চোখে আগের মতোই সূক্ষ্ম; ১০০%/১৫০%/২০০%-এ যেমন ছিল তেমনই ১px) */
+@media (min-resolution:1.05dppx) and (max-resolution:1.45dppx), (min-resolution:1.55dppx) and (max-resolution:1.95dppx){
+  body.home-cards .section-head::after{border-top-width:2px;border-top-color:color-mix(in srgb, var(--primary) 45%, var(--bg));}
 }
 body.home-cards .section-head h2{
   grid-area:1/2;justify-self:center;position:relative;z-index:1;
