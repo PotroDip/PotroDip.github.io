@@ -55,7 +55,7 @@
 .w-ava img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:3px solid var(--surface);}
 .w-text strong{display:block;font-size:16.5px;color:var(--text);line-height:1.4;}
 .w-text span{font-size:13px;color:var(--text-muted);}
-#contents{padding-bottom:8px;}
+#contents{padding-bottom:80px;}
 
 @media(max-width:900px){
   .toc-list{grid-template-columns:1fr;}
@@ -69,5 +69,5 @@
   .toc-num{font-size:22px;min-width:30px;}
   .toc-title{font-size:16px;}
   .writer-row{grid-template-columns:1fr;gap:12px;}
-  .issue-writers{padding-bottom:56px;}
+  #contents{padding-bottom:56px;}
 }
