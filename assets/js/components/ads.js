@@ -9,11 +9,6 @@
   var PREVIEW = /[?&]adpreview=1\b/.test(location.search);
   var IMG = 'assets/img/ads/';
   var HOUSE = {
-    hero: [
-      { image_url: IMG + 'house-hero-1.webp', link_url: 'store.html' },
-      { image_url: IMG + 'house-hero-2.webp', link_url: 'archive.html' },
-      { image_url: IMG + 'house-hero-3.webp', link_url: 'authors.html' }
-    ],
     top: { image_url: IMG + 'house-top.webp', link_url: 'store.html' },
     mid: { image_url: IMG + 'house-mid.webp', link_url: '#site-footer' }, /* "যোগাযোগ করুন" → ফুটারের যোগাযোগ */
     mobile: { image_url: IMG + 'house-mobile.webp', link_url: 'store.html' },
@@ -21,7 +16,6 @@
     popup: { image_url: IMG + 'house-popup.webp', link_url: 'store.html' }
   };
   var LABEL = {
-    hero: 'হিরো বিজ্ঞাপন ১–৫ · ১২০০×৪৫০',
     top: 'টপ ব্যানার · ১২০০×২০০',
     mid: 'মিড-স্ক্রল ব্যানার · ৭২৮×১৫০',
     mobile: 'মোবাইল ব্যানার · ৩২০×১০০',

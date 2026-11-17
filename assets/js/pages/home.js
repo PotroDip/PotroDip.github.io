@@ -58,14 +58,11 @@
   (R[2].data || []).forEach(function(x) {
     I[x.id] = x
   });
-  /* হিরো ব্যানার এড (hero1…hero5) — স্লাইডারে বিশেষ লেখাগুলোর পরে, নম্বর অনুযায়ী */
-  var HERO_ADS = [];
+  /* আগের "হিরো ব্যানার" স্লট (hero1…hero5) আর কোথাও দেখানো হয় না — টপ/মিডে যেন না পড়ে তাই বাদ */
   (R[3].data || []).forEach(function(x) {
-    var hm = /hero\s*([1-9])/i.exec(x.slot_id || '');
-    if (hm) { if (x.image_url) HERO_ADS.push({ n: +hm[1], a: x }); return }
+    if (/hero\s*[1-9]/i.test(x.slot_id || '')) return;
     (/top/i.test(x.slot_id) ? ADS.top = x : /mid/i.test(x.slot_id) ? ADS.mid = x : /mobile/i.test(x.slot_id) ? ADS.mobile = x : 0)
   });
-  HERO_ADS.sort(function(p, q) { return p.n - q.n });
   /* এডমিনের সেটিংস (site_settings → contact.ui): হিরো স্লাইডের সময় ইত্যাদি */
   var UIS = (R[8] && !R[8].error && R[8].data && R[8].data.value && R[8].data.value.ui) || {};
   var au = function(a) {
@@ -435,50 +432,12 @@
     box.classList.toggle('no-cover', !cover);
     box.innerHTML = '<div class="ib-inner">' + (cover ? '<a class="ib-cover" href="issue.html?id=' + cur.id + '">' + bookHtml(cover, cur.title) + '<span class="pd-shelf ib-shelf" aria-hidden="true"></span></a>' : '') + '<div class="ib-text"><div class="ib-kicker"><span>চলতি সংখ্যা</span>' + (cur.issue_number ? '<span class="ib-no">সংখ্যা ' + bn(cur.issue_number) + '</span>' : '') + '</div><h2>' + esc(cur.title) + '</h2>' + (T('tagline') ? '<p class="ib-teaser">' + esc(cut(T('tagline'), 260)) + '</p>' : '') + (st.length ? '<div class="ib-stats">' + st.join('') + '</div>' : '') + ((readBtn || buyBtn) ? '<div class="ib-actions">' + readBtn + buyBtn + '</div>' : '') + '</div></div>';
   })();
-  /* বিজ্ঞাপন (v121)
-     • হিরোর ঠিক নিচে আলাদা "বিজ্ঞাপনের জায়গা" (#ad-stage): হিরো বিজ্ঞাপন ১–৫ পালা করে — ১২০০×৪৫০, মোবাইল ও পিসিতে একই অনুপাত
+  /* বিজ্ঞাপন (v122)
+     • হিরোতে শুধু লেখা; হিরোর নিচের আলাদা বিজ্ঞাপনের জায়গা বাদ (নিচে আরো দুটো ব্যানার আছে)
      • টপ ব্যানার: "সাম্প্রতিক লেখা"-র পরে (মোবাইলে "মোবাইল ব্যানার" থাকলে সেটা) · মিড ব্যানার: বিভাগ-সেকশনের পরে
      • কোনো জায়গায় চালু বিজ্ঞাপন না থাকলে পত্রদ্বীপের নিজস্ব বিজ্ঞাপন (components/ads.js; এডমিন বন্ধ করতে পারেন) */
   var AD = window.PDAds,
-    houseOn = !!(AD && AD.useHouse(UIS)),
-    RMQ = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  (function() {
-    var box = $('ad-stage');
-    if (!box) return;
-    var list = HERO_ADS.map(function(h) { return h.a }),
-      house = false;
-    if (!list.length && houseOn) { list = AD.house('hero'); house = true }
-    if (!list.length) { box.remove(); return }
-    box.innerHTML = '<div class="as-track">' + list.map(function(a, i) {
-      var at = AD ? AD.attrs(a.link_url) : '',
-        tg = at ? 'a' : 'div';
-      return '<' + tg + ' class="as-slide' + (i ? '' : ' on') + '"' + at + (i ? ' aria-hidden="true" tabindex="-1"' : '') + '><img decoding="async"' + (i ? ' loading="lazy"' : '') + ' src="' + esc(a.image_url) + '" alt="বিজ্ঞাপন" width="1200" height="450"></' + tg + '>'
-    }).join('') + '</div><span class="as-tag">বিজ্ঞাপন</span>' + (list.length > 1 ? '<div class="as-dots" role="group" aria-label="বিজ্ঞাপন বেছে নিন">' + list.map(function(_, i) {
-      return '<button type="button" class="' + (i ? '' : 'on') + '" aria-label="বিজ্ঞাপন ' + bn(i + 1) + '"></button>'
-    }).join('') + '</div>' : '');
-    box.classList.add('ready');
-    if (AD) AD.tag(box, 'hero', house);
-    if (list.length < 2) return;
-    var slides = box.querySelectorAll('.as-slide'),
-      dots = box.querySelectorAll('.as-dots button'),
-      cur = 0,
-      t = 0;
-    function show(i) {
-      cur = (i + list.length) % list.length;
-      slides.forEach(function(s, q) {
-        var on = q === cur;
-        s.classList.toggle('on', on);
-        if (on) { s.removeAttribute('aria-hidden'); s.removeAttribute('tabindex') } else { s.setAttribute('aria-hidden', 'true'); s.setAttribute('tabindex', '-1') }
-      });
-      dots.forEach(function(d, q) { d.classList.toggle('on', q === cur) })
-    }
-    function play() { clearInterval(t); if (!RMQ) t = setInterval(function() { show(cur + 1) }, 6000) }
-    dots.forEach(function(d, i) { d.addEventListener('click', function() { show(i); play() }) });
-    box.addEventListener('mouseenter', function() { clearInterval(t) });
-    box.addEventListener('mouseleave', play);
-    document.addEventListener('visibilitychange', function() { document.hidden ? clearInterval(t) : play() });
-    play()
-  })();
+    houseOn = !!(AD && AD.useHouse(UIS));
   /* টপ ও মিড ব্যানার */
   var sl = document.querySelectorAll('.ad-slot'),
     isMob = window.matchMedia && window.matchMedia('(max-width:760px)').matches;
