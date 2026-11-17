@@ -5,6 +5,16 @@
 (function(){
   var overlay = document.getElementById('intro-overlay');
   var mainContent = document.getElementById('main-content');
+  /* অন্য পেজে (issue, authors, privacy…) হেডারের স্লট খালি থাকে, লোগো থাকে #logo-stage-এ —
+     তখন লোগোটা হেডারে সরিয়ে বসানো হয়, না হলে হেডারে লোগো দেখা যায় না */
+  var slot = document.getElementById('header-logo-slot');
+  var stageSvg = document.querySelector('#logo-stage svg');
+  if(slot && stageSvg && !slot.querySelector('svg')){
+    slot.appendChild(stageSvg);
+    stageSvg.setAttribute('viewBox','24 156 464 264');
+    stageSvg.style.width = '100%';
+    stageSvg.style.height = '100%';
+  }
   var headerSvg = document.querySelector('#header-logo-slot svg');
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var t0 = Date.now();
