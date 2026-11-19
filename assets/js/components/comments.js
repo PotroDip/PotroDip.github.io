@@ -81,7 +81,9 @@
       var rateBox = $('rateStars'), cfBox = null, mySel = 0, cfSel = 0;
       var list = $('commentList'), input = $('commentInput'), me = function () { return rows.find(function (r) { return PD.user && r.user_id === PD.user.id && !r.parent_comment_id; }); };
 
-      buildStars(rateBox, 24);
+      buildStars(rateBox, 20);
+      var rm = document.querySelector('.rate-more');
+      if (rm) rm.addEventListener('click', function () { var o = rm.closest('.rating-card').classList.toggle('open'); rm.setAttribute('aria-expanded', o ? 'true' : 'false'); rm.textContent = o ? 'লুকান' : 'বিস্তারিত'; });
       hookStars(rateBox, function () { return mySel; }, function (v) { mySel = v; }, quickRate, [14, 34]);
       input.addEventListener('input', function () { $('cfCharHint').textContent = UI.bn(input.value.length) + ' / ' + UI.bn(MAX_LEN); });
       input.maxLength = MAX_LEN;

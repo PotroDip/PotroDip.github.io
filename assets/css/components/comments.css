@@ -553,3 +553,27 @@ html[data-theme="dark"] .pd-edit-yes{color:#0B1517; background:linear-gradient(1
   .rating-avg .num{font-size:36px;}
   .rate-cta{padding:12px 18px;flex-direction:row;text-align:left;}
 }
+
+
+/* ============ v127 — রেটিং: এক সারির কম্প্যাক্ট; বিতরণ-বার চাপলে খোলে ============ */
+.rating-card{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;padding:12px 18px;margin-bottom:12px;}
+.rating-top{display:contents;}
+.rating-avg{flex-direction:row;align-items:center;gap:10px;text-align:left;}
+.rating-avg .num-ring{margin:0;}
+.rating-avg .num{font-size:26px;}
+.rating-avg .stars{margin:0;}
+.rating-avg .stars svg{width:12px;height:12px;}
+.rating-avg .count{font-size:12px;}
+.rate-more{font-size:12px;color:var(--text-muted);background:none;border:0;padding:2px 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-color:color-mix(in srgb, var(--border) 100%, transparent);}
+.rate-more:hover{color:var(--text);}
+.rate-cta{margin-left:auto;padding:0;border:0;gap:10px;flex-wrap:nowrap;}
+.rate-cta-text p{font-size:12.5px;}
+.rate-stars button{padding:1px;}
+.dist-block{display:none;order:9;flex-basis:100%;padding:8px 0 4px;border-top:1px solid color-mix(in srgb, var(--border) 70%, transparent);margin-top:4px;}
+.rating-card.open .dist-block{display:block;}
+.dist-row{margin-bottom:5px;max-width:460px;}
+@media(max-width:640px){
+  .rating-top{display:contents;}
+  .rating-card{padding:12px 14px;gap:8px 14px;}
+  .rate-cta{margin-left:0;flex-basis:100%;justify-content:space-between;padding:0;}
+}
