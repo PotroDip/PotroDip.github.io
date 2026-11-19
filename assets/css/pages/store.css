@@ -1033,3 +1033,10 @@ html[data-theme="dark"] .issue-card .issue-price{color:var(--primary-dark);}
 /* গতি/স্থিরতা: বিশেষ সংখ্যার ব্যান্ড ডেটা আসার আগেই নিজের জায়গা নিয়ে রাখে — নিচের অংশ পরে লাফিয়ে নামে না */
 .issue-band.pd-pending{min-height:632px;}
 @media(max-width:860px){.issue-band.pd-pending{min-height:760px;}}
+
+
+/* v129 — হিরো কার্ড ও নিচের গাঢ় সংখ্যা-ব্যান্ডের মাঝে ফাঁক; তথ্য-সেকশন বাদ, তাই নিচে জায়গা */
+.store-head{margin-bottom:64px;}
+.issue-grid{margin-bottom:90px;}
+@media(max-width:900px){ .store-head{margin-bottom:44px;} }
+@media(max-width:640px){ .store-head{margin-bottom:36px;} .issue-grid{margin-bottom:110px;} }
