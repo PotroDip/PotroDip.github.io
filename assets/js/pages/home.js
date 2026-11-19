@@ -276,7 +276,7 @@
   function card(a) {
       return '<article class="article-card" data-id="' + a.id + '"><a class="ac-link" href="article.html?id=' + a.id + '"><div class="thumb"><img decoding="async" src="' + esc(a.cover_url || PH) + '" alt="" loading="lazy">' + (a.category ? '<span class="ac-cat">' + esc(a.category) + '</span>' : '') + '</div><div class="ac-body"><h3>' + esc(a.title) + '</h3><p class="ac-ex ' + PDUI.excerptClass(a) + '">' + PDUI.excerptHtml(a) + '</p><div class="card-meta">' + im(au(a)) + '<span class="cm-name">' + esc(au(a).name) + '</span><span class="cm-date">' + dt(a.published_at || a.created_at) + '</span></div></div></a></article>'
   }
-  /* v93: প্রতিটা সেকশনে প্রথমে সর্বোচ্চ ৬টা কার্ড; বেশি লেখা থাকলে লাইনের ডানে "আরো দেখুন" (চাপলে আরও ৬টা, সব দেখানো হলে "কম দেখুন") */
+  /* v93: প্রতিটা সেকশনে প্রথমে সর্বোচ্চ ৬টা কার্ড; বেশি লেখা থাকলে লাইনের ডানে "আরও দেখুন" (চাপলে আরও ৬টা, সব দেখানো হলে "কম দেখুন") */
   var PER_DEF = 6,
     MORE_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
 
@@ -302,7 +302,7 @@
       var all = shown >= list.length;
       btn.classList.toggle('open', all);
       btn.setAttribute('aria-expanded', all ? 'true' : 'false');
-      btn.innerHTML = '<span>' + (all ? 'কম দেখুন' : 'আরো দেখুন') + '</span>' + MORE_ARROW
+      if (!btn.firstChild) btn.innerHTML = '<em class="sm-more">আরও দেখুন</em><em class="sm-less">কম দেখুন</em>' + MORE_ARROW
     };
     paint();
     btn.onclick = function() {

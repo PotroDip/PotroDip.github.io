@@ -102,7 +102,7 @@
         UI.set(c, '.card-meta > span:last-child', UI.date(a.published_at || a.created_at));
         c.addEventListener('click', function () { location.href = UI.articleUrl(a); });
         c.style.cursor = 'pointer';
-        if (!cat && list.length >= 3 && list[0] === a) c.classList.add('featured');
+        if (!cat && list.length >= 3 && list[0] === a) { c.classList.add('featured'); var th = c.querySelector('.thumb'); if (th) { var fb = document.createElement('span'); fb.className = 'ac-feat'; fb.textContent = 'সর্বশেষ লেখা'; th.appendChild(fb); } }
         grid.appendChild(c);
       });
       UI.fixPoemExcerpts(db, list, grid); /* পুরোনো কবিতা: কবিতার লাইন */

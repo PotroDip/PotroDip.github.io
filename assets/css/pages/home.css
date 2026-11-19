@@ -440,12 +440,15 @@ body.home-cards .section-head.has-more .sec-more:hover{background:var(--primary)
 html[data-theme="dark"] body.home-cards .section-head .see-all:hover,
 html[data-theme="dark"] body.home-cards .section-head.has-more .sec-more:hover{color:#0F1415;}
 body.home-cards .section-head .see-all:hover span,
-body.home-cards .section-head .sec-more:hover span{text-decoration:none;}
+body.home-cards .section-head .sec-more:hover em{text-decoration:none;}
 
 .sec-more{display:none;}
 .sec-more svg,.see-all svg{width:15px;height:15px;flex-shrink:0;transition:transform .25s ease;}
 .sec-more:hover svg,.see-all:hover svg{transform:translateX(3px);}
 .see-all:focus-visible{outline:2px solid var(--primary);outline-offset:3px;border-radius:999px;}
+.sec-more em{font-style:normal;}
+.sec-more .sm-less,.sec-more.open .sm-more{display:none;}
+.sec-more.open .sm-less{display:inline;}
 .sec-more.open svg{transform:rotate(-90deg);}
 .sec-more.open:hover svg{transform:rotate(-90deg) translateX(3px);}
 .sec-more:focus-visible{outline:2px solid var(--primary);outline-offset:3px;border-radius:999px;}

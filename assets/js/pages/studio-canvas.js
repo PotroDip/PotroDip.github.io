@@ -550,7 +550,16 @@
   }
 
   /* ================= লেখা এডিট (ডাবল-ক্লিক) ================= */
+  /* আইকন/ছবির পাশের লেখা (যেমন "আরও দেখুন" + তীর): আইকনে বা বোতামে ডাবল-ক্লিক করলেও ভেতরের লেখাটাই এডিট হয় */
+  function textTarget(el) {
+    if (P.isTextEl(el)) return el;
+    if (el.localName === 'svg' && el.parentElement && P.isTextEl(el.parentElement)) return el.parentElement;
+    var found = [].filter.call(el.querySelectorAll('*'), function (x) { return P.isTextEl(x); });
+    var leaf = found.filter(function (x) { return !found.some(function (y) { return y !== x && x.contains(y); }); });
+    return leaf.length === 1 ? leaf[0] : el;
+  }
   function startEditing(el) {
+    el = textTarget(el);
     if (!P.isTextEl(el)) { P.select([el]); P.toast('এই এলিমেন্টে সরাসরি লেখা নেই — ভেতরের লেখাটির ওপর ডাবল-ক্লিক করুন'); return; }
     if (editing) stopEditing();
     P.select([el]);

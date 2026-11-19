@@ -130,13 +130,13 @@ html[data-theme="dark"] .cat-badge{ background:rgba(10,14,15,.75); }
 
 .copy-toast{position:relative;}
 
-.copy-toast::after{
-    content:"লিংক কপি হয়েছে"; position:absolute; bottom:120%; left:50%; transform:translateX(-50%) translateY(4px);
+.copy-toast .copy-tip{
+    position:absolute; bottom:120%; left:50%; transform:translateX(-50%) translateY(4px);
     background:var(--text); color:var(--bg); font-size:12px; padding:5px 10px; border-radius:5px; white-space:nowrap;
     opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease;
   }
 
-.copy-toast.show::after{opacity:1; transform:translateX(-50%) translateY(0);}
+.copy-toast.show .copy-tip{opacity:1; transform:translateX(-50%) translateY(0);}
 
 @media(max-width:640px){
     .article-head h1{font-size:28px;}
