@@ -1040,3 +1040,15 @@ html[data-theme="dark"] .issue-card .issue-price{color:var(--primary-dark);}
 .issue-grid{margin-bottom:90px;}
 @media(max-width:900px){ .store-head{margin-bottom:44px;} }
 @media(max-width:640px){ .store-head{margin-bottom:36px;} .issue-grid{margin-bottom:110px;} }
+
+
+/* v130 — প্রচ্ছদের হোভার স্মুথ: গ্লোবাল button{transition} নিয়মটা .ib-cover-এর transform-ট্রানজিশন কেটে দিচ্ছিল, তাই ধাপে ধাপে ঝটকায় বদলাত */
+button.ib-cover{
+  transition:transform .7s cubic-bezier(.22,.8,.2,1), box-shadow .7s cubic-bezier(.22,.8,.2,1);
+  will-change:transform; backface-visibility:hidden;
+}
+button.ib-cover:hover,button.ib-cover:focus-visible{
+  transform:rotate(0deg) translateY(-8px) scale(1.015);
+  box-shadow:30px 40px 70px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.1);
+}
+@media (prefers-reduced-motion:reduce){ button.ib-cover{transition:none;} }
