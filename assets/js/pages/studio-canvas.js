@@ -151,6 +151,14 @@
       e.preventDefault(); e.stopPropagation();
       var t = pick(e); if (!t) return;
       if (t.localName === 'img' || (t.localName === 'svg' && false)) { P.select([t]); P.emit('replaceImage'); return; }
+      if (!P.isTextEl(t)) {
+        /* আইকনের পাশের লেখা: ক্লিকের ঠিক নিচের লেখাটাই ধরা */
+        try {
+          var cr = e.target.ownerDocument.caretRangeFromPoint(e.clientX, e.clientY), cn = cr && cr.startContainer;
+          var ce = cn && (cn.nodeType === 3 ? cn.parentElement : cn);
+          if (ce && t.contains(ce) && P.isTextEl(ce)) t = ce;
+        } catch (er) {}
+      }
       startEditing(t);
     }, true);
     d.addEventListener('keydown', onKey, true);

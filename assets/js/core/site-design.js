@@ -239,6 +239,36 @@
     if (el.parentNode !== parent) parent.appendChild(el);
   }
 
+  /* v125: আইকন/ছবির পাশে সরাসরি পড়ে থাকা লেখা (যেমন মেনুর "হোম" + আইকন) স্টুডিওতে আলাদা করে ধরা যায় না।
+     তাই এমন লেখাকে <pd-t> (display:contents — চেহারা বদলায় না) দিয়ে মুড়ে দিই; তখন সেটা সাধারণ লেখার মতো এডিট হয় */
+  var INL_T = { STRONG: 1, EM: 1, B: 1, I: 1, U: 1, BR: 1, SPAN: 1, MARK: 1, SMALL: 1, A: 1, 'PD-T': 1 };
+  var WRAP_SKIP = /^(SCRIPT|STYLE|TEXTAREA|OPTION|SELECT|PD-T|SVG|TITLE|NOSCRIPT|TEMPLATE|IFRAME|HEAD|HTML|BODY)$/;
+  function blocky(c) {
+    if (!INL_T[c.tagName]) return true;
+    return (c.tagName === 'A' || c.tagName === 'SPAN') && !!c.querySelector('div,p,section,ul,img,svg');
+  }
+  function wrapText(doc) {
+    if (!doc || !doc.body) return;
+    if (!doc.getElementById('pd-t-css')) {
+      var st = doc.createElement('style'); st.id = 'pd-t-css'; st.textContent = 'pd-t{display:contents}';
+      (doc.head || doc.documentElement).appendChild(st);
+    }
+    var all = doc.body.getElementsByTagName('*');
+    for (var i = 0; i < all.length; i++) {
+      var el = all[i];
+      if (WRAP_SKIP.test(el.tagName) || el.hasAttribute('data-pd-editing')) continue;
+      var ch = el.children, hit = false, j;
+      for (j = 0; j < ch.length; j++) if (blocky(ch[j])) { hit = true; break; }
+      if (!hit) continue;
+      if (el.closest('svg,[contenteditable],.article-body,.rte-body,#intro-overlay,template')) continue;
+      var nodes = [].filter.call(el.childNodes, function (n) { return n.nodeType === 3 && /\S/.test(n.nodeValue); });
+      nodes.forEach(function (n) {
+        var w = doc.createElement('pd-t');
+        el.insertBefore(w, n); w.appendChild(n);
+      });
+    }
+  }
+
   var touched = new Map(); /* এলিমেন্ট -> আসল মান (পরিবর্তন ফেরত নেওয়ার জন্য) */
 
   function restore(el, o) {
@@ -249,6 +279,7 @@
 
   function applyDom(doc, design, pk) {
     if (!design) design = {};
+    wrapText(doc);
     var scopes = scopesFor(design, pk);
     /* ১) নতুন এলিমেন্ট (যেগুলো আর নেই সেগুলো সরানো হয়) */
     var ids = {};
@@ -380,7 +411,7 @@
   window.PDDesign = {
     studio: STUDIO, key: KEY, cacheKey: CACHE,
     set: set, render: function () { renderCss(); renderDom(); },
-    compile: compile, pageKey: pageKey, sanitizeHtml: sanitizeHtml, sanitizeFrag: sanitizeFrag,
+    compile: compile, pageKey: pageKey, wrapText: wrapText, sanitizeHtml: sanitizeHtml, sanitizeFrag: sanitizeFrag,
     safeUrl: safeUrl, safeHref: safeHref, cv: cv, okSel: okSel, isEmpty: empty,
     get current() { return cur; }
   };
@@ -391,6 +422,11 @@
     var ss = document.createElement('style');
     ss.textContent = '#intro-overlay{display:none!important}#main-content{opacity:1!important;transform:none!important}html{scroll-behavior:auto!important}*,*::before,*::after{caret-color:auto}';
     (document.head || document.documentElement).appendChild(ss);
+    var wt = 0, wbusy = false;
+    function runWrap() { wt = 0; wbusy = true; try { wrapText(document); } catch (e) {} if (wo) wo.takeRecords(); wbusy = false; }
+    var wo = window.MutationObserver ? new MutationObserver(function () { if (!wbusy && !wt) wt = setTimeout(runWrap, 60); }) : null;
+    document.addEventListener('DOMContentLoaded', function () { runWrap(); if (wo) wo.observe(document.body, { childList: true, subtree: true }); });
+    window.PDDesign.wrapText = function () { runWrap(); };
     var mo = new MutationObserver(function () {
       if (document.body) { document.body.setAttribute('data-intro', 'instant'); mo.disconnect(); }
     });

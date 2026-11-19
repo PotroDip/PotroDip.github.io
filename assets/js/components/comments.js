@@ -78,13 +78,11 @@
     init: function (articleId) {
       if (!PD || !PD.db || !$('commentList')) return;
       var db = PD.db, rows = [], likes = {}, sort = 'new', showAll = false;
-      var rateBox = $('rateStars'), cfBox = $('cfStars'), mySel = 0, cfSel = 0;
+      var rateBox = $('rateStars'), cfBox = null, mySel = 0, cfSel = 0;
       var list = $('commentList'), input = $('commentInput'), me = function () { return rows.find(function (r) { return PD.user && r.user_id === PD.user.id && !r.parent_comment_id; }); };
 
-      buildStars(rateBox, 30);
-      buildStars(cfBox, 19);
+      buildStars(rateBox, 24);
       hookStars(rateBox, function () { return mySel; }, function (v) { mySel = v; }, quickRate, [14, 34]);
-      hookStars(cfBox, function () { return cfSel; }, function (v) { cfSel = v; }, null, [9, 22]);
       input.addEventListener('input', function () { $('cfCharHint').textContent = UI.bn(input.value.length) + ' / ' + UI.bn(MAX_LEN); });
       input.maxLength = MAX_LEN;
 
@@ -122,7 +120,7 @@
         var mine = me();
         mySel = mine && mine.rating ? mine.rating : 0;
         paint(rateBox, mySel, 'selected');
-        if (mySel) { $('rateFeedback').textContent = 'আপনি ' + UI.bn(mySel) + ' স্টার দিয়েছেন।'; $('rateFeedback').classList.add('show'); }
+        if (mySel) { $('rateFeedback').textContent = 'আপনি ' + UI.bn(mySel) + ' স্টার দিয়েছেন'; $('rateFeedback').classList.add('show'); }
       }
 
       function comment(c, own) {
@@ -218,7 +216,7 @@
       function quickRate(v) {
         if (UI.needLogin()) { mySel = 0; paint(rateBox, 0, 'selected'); return; }
         var mine = me(), q = mine ? db.from('comments').update({ rating: v }).eq('id', mine.id) : db.from('comments').insert({ article_id: articleId, user_id: PD.user.id, body: '', rating: v });
-        q.then(function (r) { if (!fail(r)) { $('rateFeedback').textContent = 'ধন্যবাদ! আপনি ' + UI.bn(v) + ' স্টার দিয়েছেন।'; $('rateFeedback').classList.add('show'); refresh(); } });
+        q.then(function (r) { if (!fail(r)) { $('rateFeedback').textContent = 'ধন্যবাদ, ' + UI.bn(v) + ' স্টার দিয়েছেন'; $('rateFeedback').classList.add('show'); refresh(); } });
       }
 
       $('submitCommentBtn').addEventListener('click', function () {
@@ -231,7 +229,7 @@
         q.then(function (r) {
           btn.disabled = false;
           if (fail(r)) return;
-          input.value = ''; $('cfCharHint').textContent = '০ / ' + UI.bn(MAX_LEN); cfSel = 0; paint(cfBox, 0, 'selected');
+          input.value = ''; $('cfCharHint').textContent = '০ / ' + UI.bn(MAX_LEN); cfSel = 0;
           UI.toast(PD.isAdmin() ? (mine ? 'আপনার মন্তব্য হালনাগাদ হয়েছে' : 'মন্তব্য যোগ হয়েছে') : 'মন্তব্য জমা হয়েছে');
           sort = 'new'; [].forEach.call(document.querySelectorAll('#sortChips button'), function (c) { c.classList.toggle('active', c.dataset.sort === 'new'); });
           refresh();

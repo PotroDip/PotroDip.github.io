@@ -206,7 +206,7 @@
     return out;
   };
 
-  var INLINE = { STRONG: 1, EM: 1, B: 1, I: 1, U: 1, BR: 1, SPAN: 1, MARK: 1, SMALL: 1, A: 1 };
+  var INLINE = { STRONG: 1, EM: 1, B: 1, I: 1, U: 1, BR: 1, SPAN: 1, MARK: 1, SMALL: 1, A: 1, 'PD-T': 1 };
   P.isTextEl = function (el) {
     var t = el.localName;
     if (/^(img|svg|input|textarea|select|hr|video|audio|canvas|iframe|body|html)$/.test(t)) return false;
