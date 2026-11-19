@@ -212,12 +212,11 @@ html[data-theme="dark"] #mobile-menu .mm-logo .mm-logo-dk{display:block;}
 .nl-status.warn{color:#F0A596;}
 
 
-/* ============ v127 — ফুটার: কম্প্যাক্ট নিউজলেটার ব্যান্ড + তিন কলামের মূল অংশ + হালকা নিচের সারি ============ */
-.site-footer .footer-inner{padding:56px 20px 22px;}
-.site-footer .newsletter-block,
+/* ============ v128 — ফুটার: কম্প্যাক্ট নিউজলেটার ব্যান্ড; মূল অংশ ও নিচের সারি আগের মতোই ============ */
+.site-footer .footer-inner{padding:56px 16px 28px;}
 .site-footer .newsletter-block{
   display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px);gap:20px 48px;align-items:center;text-align:left;justify-items:stretch;
-  padding:0 0 36px;margin:0 0 40px;background:none;border:0;border-bottom:1px solid rgba(242,239,232,.14);border-radius:0;
+  padding:0 0 32px;margin:0 0 44px;background:none;border:0;border-bottom:1px solid rgba(242,239,232,.14);border-radius:0;
 }
 .site-footer .newsletter-copy{text-align:left;}
 .site-footer .newsletter-copy h3{justify-content:flex-start;font-size:22px;margin-bottom:6px;}
@@ -225,32 +224,9 @@ html[data-theme="dark"] #mobile-menu .mm-logo .mm-logo-dk{display:block;}
 .site-footer .nl-kicker{justify-content:flex-start;margin-bottom:6px;font-size:12.5px;}
 .site-footer .newsletter-form{max-width:none;width:100%;margin:0;}
 .site-footer .newsletter-form button{padding:9px 20px;font-size:13.5px;}
-.site-footer .footer-main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,1fr);gap:32px 48px;align-items:start;justify-content:stretch;margin-bottom:36px;}
-.site-footer .footer-logo-mark{height:40px;margin-bottom:14px;}
-.site-footer .fm-brand p{font-size:14px;line-height:1.8;max-width:40ch;}
-.site-footer .fm-links{display:flex;flex-direction:column;gap:9px;align-items:flex-start;}
-.site-footer .fm-links a{font-size:14px;color:rgba(242,239,232,.72);text-decoration:none;transition:color .2s ease;}
-.site-footer .fm-links a:hover{color:#fff;}
-.site-footer .fm-links .fm-label,.site-footer .fm-connect .fm-label{font-size:12px;letter-spacing:.6px;color:var(--secondary-light);margin-bottom:4px;display:block;}
-.site-footer .fm-connect{flex-direction:column;align-items:flex-start;gap:10px;flex-shrink:1;}
-.site-footer .footer-social .soc{width:38px;height:38px;}
-.site-footer .footer-social .soc svg{width:19px;height:19px;}
-.site-footer .footer-bottom{padding-top:18px;font-size:12.5px;gap:8px 24px;}
-.site-footer .legal-links{gap:18px;margin-left:auto;}
-.site-footer .fb-dev{flex-basis:100%;text-align:left;opacity:.8;}
 @media(max-width:900px){
   .site-footer .newsletter-block{grid-template-columns:1fr;text-align:center;padding-bottom:30px;}
   .site-footer .newsletter-copy,.site-footer .nl-kicker,.site-footer .newsletter-copy h3{text-align:center;justify-content:center;}
   .site-footer .newsletter-copy p{margin:0 auto;}
-  .site-footer .footer-main{grid-template-columns:1fr 1fr;}
-  .site-footer .fm-brand{grid-column:1/-1;text-align:center;}
-  .site-footer .footer-logo-mark,.site-footer .fm-brand p{margin-left:auto;margin-right:auto;}
 }
-@media(max-width:640px){
-  .site-footer .footer-inner{padding:44px 16px 24px;}
-  .site-footer .footer-main{gap:26px 20px;margin-bottom:28px;}
-  .site-footer .fm-links,.site-footer .fm-connect{align-items:center;text-align:center;}
-  .site-footer .footer-bottom{flex-direction:column;align-items:center;text-align:center;}
-  .site-footer .legal-links{margin:0;justify-content:center;}
-  .site-footer .fb-dev{text-align:center;}
-}
+@media(max-width:640px){ .site-footer .footer-inner{padding:44px 16px 26px;} }
